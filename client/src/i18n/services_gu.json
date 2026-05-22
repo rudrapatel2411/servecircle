@@ -1,0 +1,1432 @@
+{
+  "ac-repair": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "electrician-visit": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "plumbing-fix": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "carpenter-visit": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "painter-pro": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "car-wash": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "bike-repair": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "battery-jumpstart": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "dent-paint": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "deep-clean": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "sofa-cleaning": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pest-control": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "birthday-decor": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "catering-service": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "wifi-setup": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "cctv-setup": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "smart-doorbell": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "elder-care": {
+    "name": "કુટુંબ અને સંભાળ",
+    "description": "વૃદ્ધો અને બાળકો માટે વિશ્વાસપાત્ર સંભાળ",
+    "features": [
+      "વેરિફાઇડ કેરટેકર",
+      "અનુભવી સ્ટાફ",
+      "24/7 સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "beauty-home": {
+    "name": "કુટુંબ અને સંભાળ",
+    "description": "વૃદ્ધો અને બાળકો માટે વિશ્વાસપાત્ર સંભાળ",
+    "features": [
+      "વેરિફાઇડ કેરટેકર",
+      "અનુભવી સ્ટાફ",
+      "24/7 સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "driver-demand": {
+    "name": "દૈનિક ઉપયોગિતા",
+    "description": "રોજિંદા કામમાં મદદ",
+    "features": [
+      "વિશ્વસનીય વર્કર",
+      "સમયની બચત",
+      "કિફાયતી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "packers-helper": {
+    "name": "દૈનિક ઉપયોગિતા",
+    "description": "રોજિંદા કામમાં મદદ",
+    "features": [
+      "વિશ્વસનીય વર્કર",
+      "સમયની બચત",
+      "કિફાયતી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "home-tuition": {
+    "name": "ટ્યુશન અને લર્નિંગ",
+    "description": "બાળકો માટે શ્રેષ્ઠ ટ્યુશન",
+    "features": [
+      "અનુભવી શિક્ષક",
+      "ઓનલાઈન/ઓફલાઈન",
+      "સ્ટડી મટિરિયલ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "seniors-computer": {
+    "name": "ટ્યુશન અને લર્નિંગ",
+    "description": "બાળકો માટે શ્રેષ્ઠ ટ્યુશન",
+    "features": [
+      "અનુભવી શિક્ષક",
+      "ઓનલાઈન/ઓફલાઈન",
+      "સ્ટડી મટિરિયલ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "tenant-ready": {
+    "name": "પ્રોપર્ટી સર્વિસિસ",
+    "description": "ભાડૂતો અને માલિકો માટે પ્રોપર્ટી મેનેજમેન્ટ",
+    "features": [
+      "બેકગ્રાઉન્ડ ચેક",
+      "ક્લીનિંગ",
+      "પેપરવર્ક સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "rental-inspection": {
+    "name": "પ્રોપર્ટી સર્વિસિસ",
+    "description": "ભાડૂતો અને માલિકો માટે પ્રોપર્ટી મેનેજમેન્ટ",
+    "features": [
+      "બેકગ્રાઉન્ડ ચેક",
+      "ક્લીનિંગ",
+      "પેપરવર્ક સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "waterproofing": {
+    "name": "તહેવાર અને સીઝનલ",
+    "description": "તહેવારો માટે ખાસ સેવા",
+    "features": [
+      "ડિસ્કાઉન્ટ ઓફર",
+      "સજાવટ",
+      "ફાસ્ટ સર્વિસ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "diwali-prep": {
+    "name": "તહેવાર અને સીઝનલ",
+    "description": "તહેવારો માટે ખાસ સેવા",
+    "features": [
+      "ડિસ્કાઉન્ટ ઓફર",
+      "સજાવટ",
+      "ફાસ્ટ સર્વિસ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "furniture-assembly": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "furniture-polish": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "interior-design": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "wallpaper-install": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "plant-care": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "lawn-mowing": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "welding-gate-fix": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "full-home-shifting": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "single-item-transport": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "storage-vault": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "doctor-visit": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "physiotherapy": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "lab-diagnostics": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "babysitting": {
+    "name": "બાળકો અને વૃદ્ધોની સંભાળ",
+    "description": "તમારા પ્રિયજનો માટે પ્રેમ અને સંભાળ",
+    "features": [
+      "સહાનુભૂતિ",
+      "મેડિકલ બેકગ્રાઉન્ડ",
+      "સુરક્ષા"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "special-needs-care": {
+    "name": "બાળકો અને વૃદ્ધોની સંભાળ",
+    "description": "તમારા પ્રિયજનો માટે પ્રેમ અને સંભાળ",
+    "features": [
+      "સહાનુભૂતિ",
+      "મેડિકલ બેકગ્રાઉન્ડ",
+      "સુરક્ષા"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pet-grooming": {
+    "name": "પાલતુ પ્રાણીઓની સંભાળ",
+    "description": "પેટ ગ્રૂમિંગ અને વેટરનરી",
+    "features": [
+      "એનિમલ ફ્રેન્ડલી",
+      "રસીકરણ",
+      "ગ્રૂમિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "vet-visit": {
+    "name": "પાલતુ પ્રાણીઓની સંભાળ",
+    "description": "પેટ ગ્રૂમિંગ અને વેટરનરી",
+    "features": [
+      "એનિમલ ફ્રેન્ડલી",
+      "રસીકરણ",
+      "ગ્રૂમિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "home-chef": {
+    "name": "જમવાનું અને કિચન",
+    "description": "ઘરનું બનાવેલું સ્વાદિષ્ટ જમવાનું",
+    "features": [
+      "હાઇજેનિક",
+      "તાજી સામગ્રી",
+      "સ્વાદિષ્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "tiffin-subscription": {
+    "name": "જમવાનું અને કિચન",
+    "description": "ઘરનું બનાવેલું સ્વાદિષ્ટ જમવાનું",
+    "features": [
+      "હાઇજેનિક",
+      "તાજી સામગ્રી",
+      "સ્વાદિષ્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "airport-transfer": {
+    "name": "મુસાફરી અને કેબ",
+    "description": "સુરક્ષિત અને આરામદાયક મુસાફરી",
+    "features": [
+      "પ્રોફેશનલ ડ્રાઈવર",
+      "ક્લીન કાર",
+      "જીપીએસ ટ્રેકિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "outstation-chauffeur": {
+    "name": "મુસાફરી અને કેબ",
+    "description": "સુરક્ષિત અને આરામદાયક મુસાફરી",
+    "features": [
+      "પ્રોફેશનલ ડ્રાઈવર",
+      "ક્લીન કાર",
+      "જીપીએસ ટ્રેકિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "rwa-bulk-clean": {
+    "name": "સોસાયટી મેનેજમેન્ટ",
+    "description": "તમારી સોસાયટી માટે સુવિધાઓ",
+    "features": [
+      "સિક્યોરિટી ગાર્ડ",
+      "સાફ-સફાઈ",
+      "ઇવેન્ટ્સ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "society-security": {
+    "name": "સોસાયટી મેનેજમેન્ટ",
+    "description": "તમારી સોસાયટી માટે સુવિધાઓ",
+    "features": [
+      "સિક્યોરિટી ગાર્ડ",
+      "સાફ-સફાઈ",
+      "ઇવેન્ટ્સ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "geyser-repair": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "locksmith-pro": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "appliance-install": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "chimney-service": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "water-purifier": {
+    "name": "ઘર રિપેરિંગ",
+    "description": "નિષ્ણાત દ્વારા તમારા ઘરનું સમારકામ",
+    "features": [
+      "100% ગેરંટી",
+      "અનુભવી પ્રોફેશનલ",
+      "સસ્તું અને સારું"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "car-detailing": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "bike-puncture": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "windshield-repair": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "engine-coolant": {
+    "name": "વાહન સર્વિસિંગ",
+    "description": "તમારા વાહનની સંભાળ અને સમારકામ",
+    "features": [
+      "અસલ પાર્ટ્સ",
+      "ઝડપી સેવા",
+      "સર્ટિફાઇડ મિકેનિક"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "water-tank-clean": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "bathroom-deep-clean": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "kitchen-deep-clean": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "fridge-cleaning": {
+    "name": "સફાઈ સેવા",
+    "description": "ડીપ અને સુરક્ષિત સફાઈ",
+    "features": [
+      "કેમિકલ ફ્રી",
+      "પ્રોફેશનલ સફાઈ",
+      "ચમકદાર પરિણામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "dj-setup": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "photographer-pro": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "stage-lighting": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "anchor-emcee": {
+    "name": "ઇવેન્ટ મેનેજમેન્ટ",
+    "description": "તમારી પાર્ટી માટે શાનદાર સજાવટ",
+    "features": [
+      "થીમ આધારિત",
+      "પ્રીમિયમ સજાવટ",
+      "સમયસર કામ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "smart-tv-setup": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pc-tuneup": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "printer-install": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "home-theater-sync": {
+    "name": "સ્માર્ટ હોમ અને આઇટી",
+    "description": "કમ્પ્યુટર, વાઇ-ફાઇ અને સીસીટીવી સેટઅપ",
+    "features": [
+      "સુરક્ષિત કનેક્શન",
+      "હાઇ સ્પીડ",
+      "ફ્રી ચેકઅપ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "makeup-artist": {
+    "name": "કુટુંબ અને સંભાળ",
+    "description": "વૃદ્ધો અને બાળકો માટે વિશ્વાસપાત્ર સંભાળ",
+    "features": [
+      "વેરિફાઇડ કેરટેકર",
+      "અનુભવી સ્ટાફ",
+      "24/7 સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "yoga-instructor": {
+    "name": "કુટુંબ અને સંભાળ",
+    "description": "વૃદ્ધો અને બાળકો માટે વિશ્વાસપાત્ર સંભાળ",
+    "features": [
+      "વેરિફાઇડ કેરટેકર",
+      "અનુભવી સ્ટાફ",
+      "24/7 સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "cook-for-day": {
+    "name": "કુટુંબ અને સંભાળ",
+    "description": "વૃદ્ધો અને બાળકો માટે વિશ્વાસપાત્ર સંભાળ",
+    "features": [
+      "વેરિફાઇડ કેરટેકર",
+      "અનુભવી સ્ટાફ",
+      "24/7 સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "errand-boy": {
+    "name": "દૈનિક ઉપયોગિતા",
+    "description": "રોજિંદા કામમાં મદદ",
+    "features": [
+      "વિશ્વસનીય વર્કર",
+      "સમયની બચત",
+      "કિફાયતી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "laundry-pickup": {
+    "name": "દૈનિક ઉપયોગિતા",
+    "description": "રોજિંદા કામમાં મદદ",
+    "features": [
+      "વિશ્વસનીય વર્કર",
+      "સમયની બચત",
+      "કિફાયતી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "ironing-help": {
+    "name": "દૈનિક ઉપયોગિતા",
+    "description": "રોજિંદા કામમાં મદદ",
+    "features": [
+      "વિશ્વસનીય વર્કર",
+      "સમયની બચત",
+      "કિફાયતી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "spoken-english": {
+    "name": "ટ્યુશન અને લર્નિંગ",
+    "description": "બાળકો માટે શ્રેષ્ઠ ટ્યુશન",
+    "features": [
+      "અનુભવી શિક્ષક",
+      "ઓનલાઈન/ઓફલાઈન",
+      "સ્ટડી મટિરિયલ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "coding-tutor": {
+    "name": "ટ્યુશન અને લર્નિંગ",
+    "description": "બાળકો માટે શ્રેષ્ઠ ટ્યુશન",
+    "features": [
+      "અનુભવી શિક્ષક",
+      "ઓનલાઈન/ઓફલાઈન",
+      "સ્ટડી મટિરિયલ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "resume-writing": {
+    "name": "ટ્યુશન અને લર્નિંગ",
+    "description": "બાળકો માટે શ્રેષ્ઠ ટ્યુશન",
+    "features": [
+      "અનુભવી શિક્ષક",
+      "ઓનલાઈન/ઓફલાઈન",
+      "સ્ટડી મટિરિયલ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pest-pre-purchase": {
+    "name": "પ્રોપર્ટી સર્વિસિસ",
+    "description": "ભાડૂતો અને માલિકો માટે પ્રોપર્ટી મેનેજમેન્ટ",
+    "features": [
+      "બેકગ્રાઉન્ડ ચેક",
+      "ક્લીનિંગ",
+      "પેપરવર્ક સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "house-appraisal": {
+    "name": "પ્રોપર્ટી સર્વિસિસ",
+    "description": "ભાડૂતો અને માલિકો માટે પ્રોપર્ટી મેનેજમેન્ટ",
+    "features": [
+      "બેકગ્રાઉન્ડ ચેક",
+      "ક્લીનિંગ",
+      "પેપરવર્ક સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "key-management": {
+    "name": "પ્રોપર્ટી સર્વિસિસ",
+    "description": "ભાડૂતો અને માલિકો માટે પ્રોપર્ટી મેનેજમેન્ટ",
+    "features": [
+      "બેકગ્રાઉન્ડ ચેક",
+      "ક્લીનિંગ",
+      "પેપરવર્ક સપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "air-purifier-service": {
+    "name": "તહેવાર અને સીઝનલ",
+    "description": "તહેવારો માટે ખાસ સેવા",
+    "features": [
+      "ડિસ્કાઉન્ટ ઓફર",
+      "સજાવટ",
+      "ફાસ્ટ સર્વિસ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "christmas-tree-decor": {
+    "name": "તહેવાર અને સીઝનલ",
+    "description": "તહેવારો માટે ખાસ સેવા",
+    "features": [
+      "ડિસ્કાઉન્ટ ઓફર",
+      "સજાવટ",
+      "ફાસ્ટ સર્વિસ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "holi-color-clean": {
+    "name": "તહેવાર અને સીઝનલ",
+    "description": "તહેવારો માટે ખાસ સેવા",
+    "features": [
+      "ડિસ્કાઉન્ટ ઓફર",
+      "સજાવટ",
+      "ફાસ્ટ સર્વિસ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "sofa-upholstery": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "curtain-installation": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "modular-kitchen-fix": {
+    "name": "ફર્નિચર અને ડેકોર",
+    "description": "સુંદર અને મજબૂત ફર્નિચર",
+    "features": [
+      "પ્રીમિયમ ક્વોલિટી",
+      "કસ્ટમ ડિઝાઇન",
+      "પોલિશિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "drip-irrigation": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "garden-design": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "outdoor-lighting": {
+    "name": "ગાર્ડન અને આઉટડોર",
+    "description": "તમારા બગીચાની સંભાળ",
+    "features": [
+      "ઝાડ-છોડ કાપણી",
+      "ખાતર અને માટી",
+      "સુંદર લેન્ડસ્કેપિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "office-shifting": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "packing-supplies": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "vehicle-transit": {
+    "name": "પેકર્સ એન્ડ મૂવર્સ",
+    "description": "સુરક્ષિત અને સરળ શિફ્ટિંગ",
+    "features": [
+      "સેફ પેકેજિંગ",
+      "વીમાકૃત",
+      "સમયસર ડિલિવરી"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "nurse-home-care": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "mental-wellbeing": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "fitness-trainer": {
+    "name": "સ્વાસ્થ્ય અને વેલનેસ",
+    "description": "ઘરે ડોક્ટર અને લેબ ટેસ્ટ",
+    "features": [
+      "પ્રમાણિત ડોક્ટર",
+      "સ્વચ્છતા",
+      "ચોક્કસ રિપોર્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "newborn-nanny": {
+    "name": "બાળકો અને વૃદ્ધોની સંભાળ",
+    "description": "તમારા પ્રિયજનો માટે પ્રેમ અને સંભાળ",
+    "features": [
+      "સહાનુભૂતિ",
+      "મેડિકલ બેકગ્રાઉન્ડ",
+      "સુરક્ષા"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "seniors-activity-companion": {
+    "name": "બાળકો અને વૃદ્ધોની સંભાળ",
+    "description": "તમારા પ્રિયજનો માટે પ્રેમ અને સંભાળ",
+    "features": [
+      "સહાનુભૂતિ",
+      "મેડિકલ બેકગ્રાઉન્ડ",
+      "સુરક્ષા"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pet-walking": {
+    "name": "પાલતુ પ્રાણીઓની સંભાળ",
+    "description": "પેટ ગ્રૂમિંગ અને વેટરનરી",
+    "features": [
+      "એનિમલ ફ્રેન્ડલી",
+      "રસીકરણ",
+      "ગ્રૂમિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "pet-sitting": {
+    "name": "પાલતુ પ્રાણીઓની સંભાળ",
+    "description": "પેટ ગ્રૂમિંગ અને વેટરનરી",
+    "features": [
+      "એનિમલ ફ્રેન્ડલી",
+      "રસીકરણ",
+      "ગ્રૂમિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "aquarium-cleaning": {
+    "name": "પાલતુ પ્રાણીઓની સંભાળ",
+    "description": "પેટ ગ્રૂમિંગ અને વેટરનરી",
+    "features": [
+      "એનિમલ ફ્રેન્ડલી",
+      "રસીકરણ",
+      "ગ્રૂમિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "custom-cake": {
+    "name": "જમવાનું અને કિચન",
+    "description": "ઘરનું બનાવેલું સ્વાદિષ્ટ જમવાનું",
+    "features": [
+      "હાઇજેનિક",
+      "તાજી સામગ્રી",
+      "સ્વાદિષ્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "banquet-catering": {
+    "name": "જમવાનું અને કિચન",
+    "description": "ઘરનું બનાવેલું સ્વાદિષ્ટ જમવાનું",
+    "features": [
+      "હાઇજેનિક",
+      "તાજી સામગ્રી",
+      "સ્વાદિષ્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "dietician-plan": {
+    "name": "જમવાનું અને કિચન",
+    "description": "ઘરનું બનાવેલું સ્વાદિષ્ટ જમવાનું",
+    "features": [
+      "હાઇજેનિક",
+      "તાજી સામગ્રી",
+      "સ્વાદિષ્ટ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "luxury-cab": {
+    "name": "મુસાફરી અને કેબ",
+    "description": "સુરક્ષિત અને આરામદાયક મુસાફરી",
+    "features": [
+      "પ્રોફેશનલ ડ્રાઈવર",
+      "ક્લીન કાર",
+      "જીપીએસ ટ્રેકિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "weekend-getaway-driver": {
+    "name": "મુસાફરી અને કેબ",
+    "description": "સુરક્ષિત અને આરામદાયક મુસાફરી",
+    "features": [
+      "પ્રોફેશનલ ડ્રાઈવર",
+      "ક્લીન કાર",
+      "જીપીએસ ટ્રેકિંગ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "rwa-pest-spray": {
+    "name": "સોસાયટી મેનેજમેન્ટ",
+    "description": "તમારી સોસાયટી માટે સુવિધાઓ",
+    "features": [
+      "સિક્યોરિટી ગાર્ડ",
+      "સાફ-સફાઈ",
+      "ઇવેન્ટ્સ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  },
+  "cctv-gate-sync": {
+    "name": "સોસાયટી મેનેજમેન્ટ",
+    "description": "તમારી સોસાયટી માટે સુવિધાઓ",
+    "features": [
+      "સિક્યોરિટી ગાર્ડ",
+      "સાફ-સફાઈ",
+      "ઇવેન્ટ્સ"
+    ],
+    "beforeAfter": {
+      "before": "પહેલાં (Before)",
+      "after": "પછી (After)"
+    }
+  }
+}

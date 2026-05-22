@@ -1,0 +1,1434 @@
+{
+  "ac-repair": {
+    "name": "AC Repair & Diagnostics",
+    "description": "Expert repair, cooling fix, filter clean, and gas refill for Split & Window ACs.",
+    "features": [
+      "30-day warranty",
+      "Vetted & certified mechanics",
+      "No mess left behind",
+      "High-quality spare parts used"
+    ],
+    "beforeAfter": {
+      "before": "Choked filters, warm air blowing",
+      "after": "Ice-cold airflow, low noise levels"
+    }
+  },
+  "electrician-visit": {
+    "name": "General Electrical Work",
+    "description": "Fixing short circuits, switches, wiring faults, socket replacements, and lighting issues.",
+    "features": [
+      "Licensed electricians",
+      "Immediate safety isolation check",
+      "All small repair parts covered"
+    ],
+    "beforeAfter": {
+      "before": "Flickering lights, sparking board",
+      "after": "Neatly organized wiring & zero voltage drops"
+    }
+  },
+  "plumbing-fix": {
+    "name": "Plumbing Repairs & Leakage",
+    "description": "Fixing dripping taps, blockages, pipe leaks, and major sanitary fittings.",
+    "features": [
+      "High-durability sealing tapes",
+      "Pressure test check",
+      "Includes clean-up post repair"
+    ],
+    "beforeAfter": {
+      "before": "Leaking joint flooding washroom cabinet",
+      "after": "Double-sealed rustproof valve assembly"
+    }
+  },
+  "carpenter-visit": {
+    "name": "Carpentry Repair & Assembly",
+    "description": "Door repairs, hinge replacements, minor drawer slide fix, and lock repair.",
+    "features": [
+      "Stainless steel heavy-duty hinges",
+      "Smooth slide operations guaranteed",
+      "Noise reduction alignment"
+    ],
+    "beforeAfter": {
+      "before": "Screeching alignment-broken drawer",
+      "after": "Soft-close silent cabinet alignment"
+    }
+  },
+  "painter-pro": {
+    "name": "Wall Touch-ups & Painting",
+    "description": "Precision damping patch fix, wall scraping, primer coat, and quality touch-up paint.",
+    "features": [
+      "Premium low-odor paints used",
+      "Full wall masking for furniture protection",
+      "Zero stain guarantee"
+    ],
+    "beforeAfter": {
+      "before": "Dampness peel-off wall patches",
+      "after": "Smooth HSL-matched vibrant satin coat"
+    }
+  },
+  "car-wash": {
+    "name": "Eco-Friendly Premium Car Wash",
+    "description": "High-pressure foam spray, interior vacuuming, dashboard polish, and door jamb cleaning.",
+    "features": [
+      "PH-neutral shampoo used",
+      "Deep carpet vacuuming",
+      "Streak-free window wipe",
+      "Tire shine finish"
+    ],
+    "beforeAfter": {
+      "before": "Muddy tires and dust coated windshield",
+      "after": "Showroom-like high glossy paint reflection"
+    }
+  },
+  "bike-repair": {
+    "name": "Bike/Scooter Full Tune-up",
+    "description": "Engine oil change, carburetor cleanup, chain lubrication, brake adjustment, and wash.",
+    "features": [
+      "Authorized original parts only",
+      "Digital emissions checks",
+      "Free washing included"
+    ],
+    "beforeAfter": {
+      "before": "Rusty chain and sluggish acceleration",
+      "after": "Smooth high-rev gearshifts & clean chain"
+    }
+  },
+  "battery-jumpstart": {
+    "name": "Battery Jumpstart & Health Test",
+    "description": "On-demand battery recovery jump, alternator health check, and battery terminal cleaning.",
+    "features": [
+      "15-minute response in city",
+      "Advanced voltage load testing",
+      "Anti-corrosion terminal gel applied"
+    ],
+    "beforeAfter": {
+      "before": "Dead starter click noise",
+      "after": "Instantly firing engine and clean terminals"
+    }
+  },
+  "dent-paint": {
+    "name": "Denting & Painting Panel repair",
+    "description": "Denting correction, original paint matching, scratch removal, and clear gloss top coat.",
+    "features": [
+      "Computerized paint matching",
+      "Rustproofing base primer",
+      "Full panel finish warranty"
+    ],
+    "beforeAfter": {
+      "before": "Creased fender dent with paint chip",
+      "after": "Flawless aerodynamic panel alignment & shine"
+    }
+  },
+  "deep-clean": {
+    "name": "Full Home Deep Cleaning",
+    "description": "Intense sanitization, vacuuming, window scrubbing, kitchen grease removal, and toilet wash.",
+    "features": [
+      "Industrial grade single-disc scrubbers",
+      "Eco-friendly germicides",
+      "4-member professional crew"
+    ],
+    "beforeAfter": {
+      "before": "Dusty corners, greasy kitchen chimney hood",
+      "after": "Sparkling clean surfaces & allergen-free air"
+    }
+  },
+  "sofa-cleaning": {
+    "name": "Sofa & Carpet Shampooing",
+    "description": "Deep vacuum suction, stain lifting enzyme wash, fabric shampooing, and wet vacuum drying.",
+    "features": [
+      "Removes 99% dust mites and stains",
+      "High-pressure vacuum extraction",
+      "Safe on velvet and leather"
+    ],
+    "beforeAfter": {
+      "before": "Ink stains & dirty armrest shading",
+      "after": "Like-new fabric brightness with fresh fragrance"
+    }
+  },
+  "pest-control": {
+    "name": "Advanced Pest & Bug Control",
+    "description": "Odourless gel treatment for cockroaches, anti-termite barrier injection, and bedbug spray.",
+    "features": [
+      "WHO-approved non-toxic chemicals",
+      "Safe for children and pets",
+      "90-day pest recurrence warranty"
+    ],
+    "beforeAfter": {
+      "before": "Roach droppings inside kitchen drawers",
+      "after": "Pest-free sanitized shelves & bait grids"
+    }
+  },
+  "birthday-decor": {
+    "name": "Grand Birthday Theme Decor",
+    "description": "Custom balloon arches, LED lighting setup, character backdrops, and theme set-up.",
+    "features": [
+      "Over 10 custom themes available",
+      "Setup completed in under 3 hours",
+      "Clean post-event teardown included"
+    ],
+    "beforeAfter": {
+      "before": "Empty hall room with white walls",
+      "after": "Enchanting LED-studded fairy-tale balloon castle"
+    }
+  },
+  "catering-service": {
+    "name": "Premium Catering (Per Plate)",
+    "description": "Vast menu selections of starters, main course, and desserts cooked by top rating chefs.",
+    "features": [
+      "High-hygiene certified ingredients",
+      "Uniformed servers & live counters",
+      "FSSAI approved hygiene standards"
+    ],
+    "beforeAfter": {
+      "before": "Raw ingredients & layout checklist",
+      "after": "Gourmet live counters with rich dessert bars"
+    }
+  },
+  "wifi-setup": {
+    "name": "Smart Wi-Fi & Mesh Setup",
+    "description": "High-speed router configuration, dead-zone inspection, SSID channel optimization, and Mesh networking setup.",
+    "features": [
+      "Maximum bandwidth speed testing",
+      "Parental control setups included",
+      "Sleek cabling setup"
+    ],
+    "beforeAfter": {
+      "before": "Frequent buffering & drop zones in bedroom",
+      "after": "Uninterrupted 4K streaming Mesh system in all rooms"
+    }
+  },
+  "cctv-setup": {
+    "name": "Smart CCTV Security Install",
+    "description": "Outdoor/indoor HD CCTV mounting, DVR sync, cloud account configuration, and mobile live-view setup.",
+    "features": [
+      "Masked secure passwords",
+      "Night vision focus tuning",
+      "Clean conduit casing wiring"
+    ],
+    "beforeAfter": {
+      "before": "Blind spots outside entrance gate",
+      "after": "Live 1080p stream with motion sensor mobile alerts"
+    }
+  },
+  "smart-doorbell": {
+    "name": "Video Doorbell Installation",
+    "description": "Smart doorbell mounting, chime sync, Wi-Fi pairing, and cloud setup.",
+    "features": [
+      "Compatible with Alexa & Google Home",
+      "Two-way voice test verified",
+      "Tamper alarm activation"
+    ],
+    "beforeAfter": {
+      "before": "A basic mechanical chime with no vision",
+      "after": "Sleek camera doorbell with live call alert to phone"
+    }
+  },
+  "elder-care": {
+    "name": "Senior Citizen Care Attendant",
+    "description": "Compassionate assistance for seniors, including medicine logs, mobility support, and basic health metrics tracking.",
+    "features": [
+      "Verified background & medically trained attendants",
+      "Daily BP/Sugar log updates",
+      "Patience & empathy verified"
+    ],
+    "beforeAfter": {
+      "before": "Missed medicine logs & risk of slip-ups",
+      "after": "Organized health tracker and warm companionship"
+    }
+  },
+  "beauty-home": {
+    "name": "Salon & Beauty at Home",
+    "description": "Facials, hair spa, premium waxing, threading, and pedicure/manicure done at the convenience of home.",
+    "features": [
+      "100% disposable hygiene kits used",
+      "Premium organic brand products",
+      "Stress-relieving head massages"
+    ],
+    "beforeAfter": {
+      "before": "Stressful commute to local crowded parlor",
+      "after": "Relaxed salon experience with spa aesthetics at home"
+    }
+  },
+  "driver-demand": {
+    "name": "On-Demand Professional Driver",
+    "description": "Hire verified drivers for outstation trips, night drives, or daily city commutes in your own vehicle.",
+    "features": [
+      "Clean license history & zero-accident records",
+      "Professional etiquette",
+      "Emergency GPS route tracking"
+    ],
+    "beforeAfter": {
+      "before": "Exhausting highway drive during office rush",
+      "after": "Comfortable backseat ride with reliable transit"
+    }
+  },
+  "packers-helper": {
+    "name": "Packers & Movers Loading Helper",
+    "description": "Strong helper labor to safely pack, load, and shift heavy furniture & cardboard boxes.",
+    "features": [
+      "Equipped with heavy lifting belts",
+      "Bubble wrap packing assistance",
+      "Trained to stack items compactly"
+    ],
+    "beforeAfter": {
+      "before": "Heavy lifting backache & disorganized boxes",
+      "after": "Structured secure cardboard packing & quick loading"
+    }
+  },
+  "home-tuition": {
+    "name": "1-on-1 Academic Home Tutor",
+    "description": "Personalized tuition for primary to high school students in Mathematics, Science, and English.",
+    "features": [
+      "Highly qualified academic tutors",
+      "Weekly progression tests",
+      "Mock board papers check"
+    ],
+    "beforeAfter": {
+      "before": "Failing grades and anxiety over maths topics",
+      "after": "Concept clarity with excellent test scores"
+    }
+  },
+  "seniors-computer": {
+    "name": "Computer & Smartphone Help for Seniors",
+    "description": "Patient 1-on-1 coaching for senior citizens to comfortably navigate smartphones, online banking, and video calls.",
+    "features": [
+      "Very high patience curriculum",
+      "Simplified print-out guides",
+      "Cyber-security awareness modules"
+    ],
+    "beforeAfter": {
+      "before": "Anxiety using digital banking apps",
+      "after": "Seniors confidently doing video calls & utility bills payments"
+    }
+  },
+  "tenant-ready": {
+    "name": "Tenant-Ready Premium Package",
+    "description": "Complete package: Deep cleaning, basic electrical repair, plumbing check, door oiling, and paint touchups.",
+    "features": [
+      "Increases property rental value instantly",
+      "Detailed inspection certificate checklist",
+      "100% turnkey handover"
+    ],
+    "beforeAfter": {
+      "before": "Neglected, dirty apartment after lease-end",
+      "after": "Bright, sanitized, fully operational home ready for viewings"
+    }
+  },
+  "rental-inspection": {
+    "name": "Structural Rental Inspection",
+    "description": "Exhaustive check for seepage dampness, wall cracks, electrical load compliance, and plumbing wear.",
+    "features": [
+      "Thermal moisture scanner tech used",
+      "20-page digital PDF report",
+      "Detailed cost estimates for repairs"
+    ],
+    "beforeAfter": {
+      "before": "Hidden water leaks causing structural dampness",
+      "after": "Precise identified locations with leak prevention fix"
+    }
+  },
+  "waterproofing": {
+    "name": "Monsoon Roof Waterproofing Pack",
+    "description": "High-density elastomeric compound coat, surface crack filling, and drainage check to prevent monsoon leakage.",
+    "features": [
+      "3-year no-leakage warranty",
+      "Heavy UV resistance",
+      "Fast 4-hour curing process"
+    ],
+    "beforeAfter": {
+      "before": "Water damp patches peeling wall ceilings",
+      "after": "Indestructible dry rubberized leak barrier coating"
+    }
+  },
+  "diwali-prep": {
+    "name": "Diwali Festive Preparation Combo",
+    "description": "High pressure balcony cleaning, festive LED strings hanging, door brass polish, and deep window cleaning.",
+    "features": [
+      "Professional ladder climbers",
+      "LED test check verification",
+      "Vetted decoration styling"
+    ],
+    "beforeAfter": {
+      "before": "Drab, unlit dusty house balcony",
+      "after": "Gleaming polished brass gate with glowing fairy lights"
+    }
+  },
+  "furniture-assembly": {
+    "name": "IKEA-style Furniture Assembly",
+    "description": "Precision flat-pack assembly for beds, wardrobes, chairs, and custom modular desks.",
+    "features": [
+      "All magnetic tools provided",
+      "Leveling check verified",
+      "Sturdy joints guarantee"
+    ],
+    "beforeAfter": {
+      "before": "Boxes of wooden panels and screw bags",
+      "after": "Sturdy, perfectly leveled modular wardrobe cabinet"
+    }
+  },
+  "furniture-polish": {
+    "name": "Wood Polishing & Restoration",
+    "description": "Lacquer coating, deep wood polishing, scratch removal, and vintage touch-ups.",
+    "features": [
+      "Odorless premium lacquers",
+      "Deep scratch repair filler",
+      "Gloss or matte choices"
+    ],
+    "beforeAfter": {
+      "before": "Faded, scratched old teakwood table",
+      "after": "Mirror-like glassy wood polish finish"
+    }
+  },
+  "interior-design": {
+    "name": "Interior Design Consultation",
+    "description": "Professional space planning, custom color schemes, HSL palettes, and 2D floor plans.",
+    "features": [
+      "1-on-1 expert designer chat",
+      "High resolution CAD layouts",
+      "Full material estimation catalogs"
+    ],
+    "beforeAfter": {
+      "before": "Cluttered empty living room area",
+      "after": "Aesthetic, space-optimized designer rendering"
+    }
+  },
+  "wallpaper-install": {
+    "name": "Premium Wallpaper Installation",
+    "description": "Precision measurement, alignment, bubble-free rolling, and high-durability paste application.",
+    "features": [
+      "Seamless pattern matching",
+      "Zero mold adhesive coating",
+      "Clean edge finishing"
+    ],
+    "beforeAfter": {
+      "before": "Boring white cement peeling wall",
+      "after": "Stunning textured luxury floral wallpaper"
+    }
+  },
+  "plant-care": {
+    "name": "Plant Care & Garden Cleanup",
+    "description": "Pruning, weeding, organic manure mix, insect treatment, and seasonal soil optimization.",
+    "features": [
+      "Natural neem-oil pest sprays",
+      "Imported slow-release fertilizers",
+      "Trimming debris disposal"
+    ],
+    "beforeAfter": {
+      "before": "Overgrown weeds and dry leaf litter",
+      "after": "Lush, manicured flower beds with rich dark soil"
+    }
+  },
+  "lawn-mowing": {
+    "name": "Lawn Mowing & Edging",
+    "description": "Professional mechanical grass trimming, edging lines, and lawn aeration.",
+    "features": [
+      "Sharp rotary power mowers",
+      "Precise geometric border lining",
+      "Dead grass collection"
+    ],
+    "beforeAfter": {
+      "before": "Uneven, tall wild garden grass",
+      "after": "Perfect velvet green golf-lawn look"
+    }
+  },
+  "welding-gate-fix": {
+    "name": "Welding & Iron Gate Repairs",
+    "description": "Door hinge welding, grill adjustments, rusted rail replacement, and lock plate reinforcement.",
+    "features": [
+      "High-volt welding safety kit",
+      "Rustproof primer coating",
+      "Includes structural hinge testing"
+    ],
+    "beforeAfter": {
+      "before": "Sagging, squeaking heavy iron gate",
+      "after": "Double-welded robust gate swinging smoothly"
+    }
+  },
+  "full-home-shifting": {
+    "name": "Full Home Shifting service",
+    "description": "Heavy duty wrapping, carton packing, loading, logistics transit, and unloading support.",
+    "features": [
+      "Bubble wrapping for all electronics",
+      "Closed container transit truck",
+      "Damage protection SLA up to 10k"
+    ],
+    "beforeAfter": {
+      "before": "A messy apartment filled with loose items",
+      "after": "Neatly organized boxes arranged in new rooms"
+    }
+  },
+  "single-item-transport": {
+    "name": "Single Heavy Item Transport",
+    "description": "Safe transport for single heavy items like treadmills, refrigerators, double beds, or steel cupboards.",
+    "features": [
+      "Equipped with heavy piano straps",
+      "Mini-truck booking included",
+      "Scratchproof blanket wrapping"
+    ],
+    "beforeAfter": {
+      "before": "Heavy bulky treadmill blocked in hallway",
+      "after": "Treadmill safely set up in the new balcony gym"
+    }
+  },
+  "storage-vault": {
+    "name": "Digital Secure Storage Vault",
+    "description": "Rent monthly dry storage lockers, fully monitored with 24/7 CCTV and climate lock.",
+    "features": [
+      "Climate controlled moisture sealing",
+      "Individual padlock keys",
+      "Insured against fire & damage"
+    ],
+    "beforeAfter": {
+      "before": "Excess furniture rotting in balcony rain",
+      "after": "Moisture-free stacked secure storage crate"
+    }
+  },
+  "doctor-visit": {
+    "name": "General Doctor Home Visit",
+    "description": "Certified general physician diagnostic checkup, prescription, and patient status log.",
+    "features": [
+      "Registered medical practitioners (MBBS/MD)",
+      "Full diagnostics vital gear",
+      "Free follow-up chat support"
+    ],
+    "beforeAfter": {
+      "before": "Anxious feverish patient traveling to clinic",
+      "after": "Patient resting in home comfort with digital prescription"
+    }
+  },
+  "physiotherapy": {
+    "name": "Orthopaedic Physiotherapy Session",
+    "description": "Therapeutic movements, ultrasound therapy, joint mobilization, and post-surgery care.",
+    "features": [
+      "Certified clinical therapists (BPT/MPT)",
+      "Portable heat/tens devices",
+      "Custom recovery timeline blueprint"
+    ],
+    "beforeAfter": {
+      "before": "Stiff back joint with restricted movement",
+      "after": "Pain-free full range shoulder extension"
+    }
+  },
+  "lab-diagnostics": {
+    "name": "Lab Sample Collection at Home",
+    "description": "Professional phlebotomist blood/urine sample extraction and digital report processing.",
+    "features": [
+      "100% disposable vacuum needles",
+      "Chilled sample transport box",
+      "Verified reports under 12 hours"
+    ],
+    "beforeAfter": {
+      "before": "Anxious search for nearby diagnostic labs",
+      "after": "Blood report loaded securely in digital health vault"
+    }
+  },
+  "babysitting": {
+    "name": "Hourly Professional Babysitter",
+    "description": "Background checked child caretaker for child feeding, basic study play, and companion supervision.",
+    "features": [
+      "Infant safety first-aid trained",
+      "High patience verification trial",
+      "Constant activity reporting logs"
+    ],
+    "beforeAfter": {
+      "before": "Unattended toddlers creating kitchen mess",
+      "after": "Happy children reading picture books under care"
+    }
+  },
+  "special-needs-care": {
+    "name": "Special Caregiver Attendant",
+    "description": "Highly qualified nursing assistant for Alzheimer, dementia, or bedridden senior citizen support.",
+    "features": [
+      "Registered clinical caretakers",
+      "Bedsore treatment specialized",
+      "Emergency CPR protocols certified"
+    ],
+    "beforeAfter": {
+      "before": "Stressful unmanaged critical healthcare",
+      "after": "Structured vitals sheet & calm environment"
+    }
+  },
+  "pet-grooming": {
+    "name": "Premium Pet Grooming & Spa",
+    "description": "PH-neutral organic bath shampoo, nail trimming, ear sanitizing, tick removal, and styling.",
+    "features": [
+      "Calm-handling pet groomers",
+      "Odor-control conditioning coat",
+      "Flea & tick prevention spray"
+    ],
+    "beforeAfter": {
+      "before": "Dirty, smelly matted hair puppy dog",
+      "after": "Fluffy, sparkling clean pet with trimmed claws"
+    }
+  },
+  "vet-visit": {
+    "name": "Veterinary Doctor Home Checkup",
+    "description": "At-home pet immunization vaccines, general illness diagnostics, and diet plans.",
+    "features": [
+      "Licensed Veterinary Surgeons (BVSc)",
+      "At-home deworming included",
+      "Official vaccination booklet update"
+    ],
+    "beforeAfter": {
+      "before": "Anxious dog shaking in busy clinic waiting hall",
+      "after": "Pet comfortably vaccinated in owner's lap"
+    }
+  },
+  "home-chef": {
+    "name": "Gourmet Home Chef (Per Meal)",
+    "description": "Hire culinary experts to cook premium traditional Indian, Mughlai, or Continental meals in your kitchen.",
+    "features": [
+      "High-hygiene apron & gloves worn",
+      "Kitchen cleaning included post-cooking",
+      "Chef signature HSL spices used"
+    ],
+    "beforeAfter": {
+      "before": "Raw vegetables scattered on empty slab",
+      "after": "Stunning 4-course hot meal laid out beautifully"
+    }
+  },
+  "tiffin-subscription": {
+    "name": "Daily Tiffin Meal Plan Subscription",
+    "description": "Monthly delivery of healthy home-cooked lunch and dinner boxes in heat-retention packs.",
+    "features": [
+      "Low oil and zero MSG used",
+      "Vegetarian and High-Protein choices",
+      "Cancel/pause subscription in one-tap"
+    ],
+    "beforeAfter": {
+      "before": "Daily stress over kitchen vegetable groceries",
+      "after": "Hot brass-tiffin box delivered right to desk"
+    }
+  },
+  "airport-transfer": {
+    "name": "Guaranteed Airport Drop & Pick",
+    "description": "Sanitized premium sedan, flight tracking, punctual dispatcher, and toll handling.",
+    "features": [
+      "100% no-cancellation warranty",
+      "Flight delay buffer monitoring",
+      "Polite, English-speaking driver"
+    ],
+    "beforeAfter": {
+      "before": "Stressful waiting for dynamic ride cancellations",
+      "after": "Relaxing in spacious sedan reading news on way"
+    }
+  },
+  "outstation-chauffeur": {
+    "name": "Multi-Day Outstation Chauffeur",
+    "description": "Vetted expert highway driver for long-distance family travel in your vehicle.",
+    "features": [
+      "Night-driving experts",
+      "Basic mechanical emergency diagnostics",
+      "Clean traffic records only"
+    ],
+    "beforeAfter": {
+      "before": "Exhausted driver struggling on dark expressways",
+      "after": "Fresh family enjoying scenic spots while chauffeur drives"
+    }
+  },
+  "rwa-bulk-clean": {
+    "name": "RWA Lobby & Pathway Cleaning",
+    "description": "High pressure washing of society corridors, staircase, elevator lobbies, and shared parks.",
+    "features": [
+      "Industrial jet washers used",
+      "Scented germicide sanitizers",
+      "6-member expert crew"
+    ],
+    "beforeAfter": {
+      "before": "Dirty water stain corridors with moss",
+      "after": "Sparkling clean, lemon-scented shiny granite floor"
+    }
+  },
+  "society-security": {
+    "name": "Vetted Security Guard Roster",
+    "description": "12-hour guard placements for apartments, main gates, and office campuses.",
+    "features": [
+      "KYC verified & height audited guards",
+      "Biometric tracking system sync",
+      "Emergency fire isolation certified"
+    ],
+    "beforeAfter": {
+      "before": "Unattended building gate open to strays",
+      "after": "Uniformed smart security logging entries on tablet"
+    }
+  },
+  "geyser-repair": {
+    "name": "Geyser Installation & Maintenance",
+    "description": "Thermostat replacement, water scale descaling, heating element testing, and new geyser mounting.",
+    "features": [
+      "High-resistance replacement coils",
+      "Auto shutoff thermal test",
+      "Includes pipe leak audit"
+    ],
+    "beforeAfter": {
+      "before": "Freezing water flow and rust-colored leakage",
+      "after": "Instant high-pressure piping hot water stream"
+    }
+  },
+  "locksmith-pro": {
+    "name": "Emergency Locksmith & Key Making",
+    "description": "Non-destructive door opening, premium deadbolt installation, key duplication, and smart-lock sync.",
+    "features": [
+      "20-minute emergency arrival",
+      "Advanced brass master lock cylinders",
+      "Scratchless unlock guarantees"
+    ],
+    "beforeAfter": {
+      "before": "Broken key stuck in locked brass handle",
+      "after": "Perfect custom cut key with heavy brass lockset"
+    }
+  },
+  "appliance-install": {
+    "name": "Washing Machine & Appliance Install",
+    "description": "Inlet/outlet hose alignment, level auditing, stabilizer wiring, and fully automatic drum calibration.",
+    "features": [
+      "Anti-vibration rubber base pads",
+      "Water pressure balancing",
+      "Full operational guide demo"
+    ],
+    "beforeAfter": {
+      "before": "Shaking, unstable dryer creating loud thuds",
+      "after": "Silent spinning machine level aligned"
+    }
+  },
+  "chimney-service": {
+    "name": "Kitchen Chimney Deep Clean & Repair",
+    "description": "Baffle filter degreasing, motor carbon cleaning, exhaust duct inspection, and suction recovery.",
+    "features": [
+      "Caustic-free eco degreasers used",
+      "Suction pressure gauge testing",
+      "Exhaust mesh cleaning"
+    ],
+    "beforeAfter": {
+      "before": "Grease dripping from black chimney hood",
+      "after": "Spotless stainless steel vents and high-velocity suction"
+    }
+  },
+  "water-purifier": {
+    "name": "Water Purifier (RO) Filter Change",
+    "description": "Sediment, carbon, and RO membrane replacements, TDS calibration, and leakage troubleshooting.",
+    "features": [
+      "Certified food-grade membrane filters",
+      "Digital TDS level certification",
+      "Antibacterial post-carbon block"
+    ],
+    "beforeAfter": {
+      "before": "Cloudy tap water with high chemical TDS taste",
+      "after": "Crystal-clear drinking water with healthy TDS values"
+    }
+  },
+  "car-detailing": {
+    "name": "Premium Car Ceramic Detailing & Waxing",
+    "description": "Three-stage orbital paint correction, clay bar treatment, high-durability carnauba wax, and interior conditioning.",
+    "features": [
+      "9H ceramic shield liquid top coat",
+      "Swirl mark correction guarantee",
+      "UV protection shielding"
+    ],
+    "beforeAfter": {
+      "before": "Faded paint filled with micro scratch swirls",
+      "after": "Deep wet-look gloss surface reflection"
+    }
+  },
+  "bike-puncture": {
+    "name": "On-Demand Bike Puncture & Air Fill",
+    "description": "Mobile tubeless tire repair, alloy rim verification, nitrogen air pressure top-up, and valve core change.",
+    "features": [
+      "15-minute roadside assistance",
+      "Heavy duty cold vulcanizing plugs",
+      "Tire wear index diagnostics"
+    ],
+    "beforeAfter": {
+      "before": "Flat rear tire stranded on remote road",
+      "after": "High-pressure nitrogen filled robust tubeless tire"
+    }
+  },
+  "windshield-repair": {
+    "name": "Windshield Crack Repair & Treatment",
+    "description": "Precision vacuum resin injection to arrest bullseye/star cracks, scratch buffing, and hydrophobic rain coat.",
+    "features": [
+      "High-refractive optical resin used",
+      "Arrests crack spreading completely",
+      "Clear wiper glide finish"
+    ],
+    "beforeAfter": {
+      "before": "Spreading star-crack impeding driver view",
+      "after": "Imperceptible clear joint structure and rain-repellent coat"
+    }
+  },
+  "engine-coolant": {
+    "name": "Engine Fluid & Coolant Flush Service",
+    "description": "Radiator cleaning, high-performance synthetic engine oil check, brake fluid top-up, and coolant refill.",
+    "features": [
+      "OEM grade glycol coolants only",
+      "Complete radiator scale descaling",
+      "Fluid level indicator calibration"
+    ],
+    "beforeAfter": {
+      "before": "Overheating radiator blowing steam",
+      "after": "Stable cold engine temps even in heavy summer jams"
+    }
+  },
+  "water-tank-clean": {
+    "name": "Overhead Water Tank Vacuum Clean",
+    "description": "High-pressure jet wash, sediment vacuuming, sludge disposal, and food-grade antibacterial spray.",
+    "features": [
+      "Anti-algae disinfection treatments",
+      "TDS water sample audit",
+      "Submersible high-pressure mud pump"
+    ],
+    "beforeAfter": {
+      "before": "Thick brown mud silt lining plastic tank base",
+      "after": "Scrubbed clean white walls and pure silt-free water"
+    }
+  },
+  "bathroom-deep-clean": {
+    "name": "Intense Bathroom Stain & Descaling Clean",
+    "description": "Acid-free tile scrubbing, glass descaling, steel tap polishing, and intensive toilet disinfection.",
+    "features": [
+      "Nano polishing wax on steel taps",
+      "Removes heavy hard-water scaling",
+      "Anti-odor active drainage treatment"
+    ],
+    "beforeAfter": {
+      "before": "Hard water salt patches on glass partition",
+      "after": "Mirror-clear glass pane and gleaming chrome fixtures"
+    }
+  },
+  "kitchen-deep-clean": {
+    "name": "Kitchen Chimney & Slab Oil Scrubbing",
+    "description": "Removal of oil stains from walls, deep degreasing of shelves, kitchen sink descaling, and grout whitening.",
+    "features": [
+      "Hot steam extraction degreasing",
+      "FSSAI compliance clean standards",
+      "Pest barrier gel applications"
+    ],
+    "beforeAfter": {
+      "before": "Sticky yellow cooking oil film on cabinets",
+      "after": "Smooth dry sanitized work surfaces and white wall grout"
+    }
+  },
+  "fridge-cleaning": {
+    "name": "Refrigerator Deep Sanitization",
+    "description": "Removal of food debris, cleaning of rubber gaskets to arrest mold, shelf washing, and odor neutralization.",
+    "features": [
+      "Food-safe non-toxic disinfectants",
+      "Gasket restoration for airtight lock",
+      "Activated carbon odor absorber"
+    ],
+    "beforeAfter": {
+      "before": "Smelly spill spots and black mold on rubber strip",
+      "after": "Pure white airtight rubber seals and odorless fresh shelves"
+    }
+  },
+  "dj-setup": {
+    "name": "Professional DJ & Acoustic Audio Setup",
+    "description": "1000W RMS high-bass speakers, cordless microphones, LED consoles, and custom song mixes.",
+    "features": [
+      "Dual cordless vocal microphones",
+      "Pre-event genre alignment session",
+      "Bass-rich subwoofer setup included"
+    ],
+    "beforeAfter": {
+      "before": "Quiet backyard space with basic phone speaker",
+      "after": "Club-like vibrating acoustics with dynamic LED booth"
+    }
+  },
+  "photographer-pro": {
+    "name": "Event & Portrait Photography Studio",
+    "description": "High-res mirrorless cameras, prime lens configurations, studio strobe setups, and custom photo editing.",
+    "features": [
+      "Edited high-res cloud links in 48 hours",
+      "Includes studio strobe softboxes",
+      "Raw files copy handed instantly"
+    ],
+    "beforeAfter": {
+      "before": "Blurry low-light smartphone party snapshots",
+      "after": "Stunning magazine-grade color-graded memories"
+    }
+  },
+  "stage-lighting": {
+    "name": "Atmospheric Stage & Laser Light Install",
+    "description": "RGB par cans, high-velocity smoke machines, programmable laser beams, and safety mounting.",
+    "features": [
+      "Heavy-duty tripods with safety clamps",
+      "Smoke machine fluid included",
+      "Sound-synchronized laser patterns"
+    ],
+    "beforeAfter": {
+      "before": "Flat white halogen tube ambient room",
+      "after": "Pulsating colorful dance floor with thick foggy beam effects"
+    }
+  },
+  "anchor-emcee": {
+    "name": "Live Event Anchor & Host Performance",
+    "description": "Energetic host for birthdays, corporate meets, and interactive family icebreaker games.",
+    "features": [
+      "Bilingual fluent stage performance",
+      "Custom tailored engagement scripts",
+      "Includes props for kid games"
+    ],
+    "beforeAfter": {
+      "before": "Awkward silence with guests sitting apart",
+      "after": "Laughing engaged guests dancing and cheering in loops"
+    }
+  },
+  "smart-tv-setup": {
+    "name": "Smart TV Wall Mounting & Setup",
+    "description": "Level-matched heavy duty mounting, concrete drilling, cable conduit hiding, and app synchronizations.",
+    "features": [
+      "Premium heavy gauge carbon brackets",
+      "Spirit level bubble balance check",
+      "HDMI arc receiver sync"
+    ],
+    "beforeAfter": {
+      "before": "TV sitting dangerously on unstable wooden table",
+      "after": "Ultra slim flush mount floating TV look with zero visible wires"
+    }
+  },
+  "pc-tuneup": {
+    "name": "Laptop OS Setup, Tune-up & Malware Repair",
+    "description": "Operating system installation, registry optimization, deep virus cleans, and hardware thermal paste change.",
+    "features": [
+      "Includes licensed system tuner tools",
+      "Complete data backup guarantee",
+      "Fan dust extraction service"
+    ],
+    "beforeAfter": {
+      "before": "Overheating laptop taking 5 mins to boot",
+      "after": "Silently operating PC launching in under 12 seconds"
+    }
+  },
+  "printer-install": {
+    "name": "Wireless Printer Installation & Sync",
+    "description": "Setting up wireless print queues, mobile cloud printing configurations, and alignment tests.",
+    "features": [
+      "Multi-device smartphone print setup",
+      "Double-sided printing configurations",
+      "Printhead cleaning cycles run"
+    ],
+    "beforeAfter": {
+      "before": "Offline printer showing cryptic blinking red lights",
+      "after": "Instantly printing files from anywhere in the home"
+    }
+  },
+  "home-theater-sync": {
+    "name": "Surround Sound Home Theater Calibration",
+    "description": "Acoustic positioning check, cable splicing, equalizer level settings, and Bluetooth routing.",
+    "features": [
+      "5.1/7.1 speaker spatial tests",
+      "Hidden under-carpet wire casings",
+      "Dolby Atmos output validation"
+    ],
+    "beforeAfter": {
+      "before": "Tangled speakers lying in a pile on floor",
+      "after": "Cinematic spatial sound surround mapping"
+    }
+  },
+  "makeup-artist": {
+    "name": "Bridal & Party Makeup Home Styling",
+    "description": "Premium cosmetic brands applications, false lashes fitting, hairstyle setting, and drape adjustments.",
+    "features": [
+      "Premium international makeup kits only",
+      "Airbrush options available",
+      "Includes setting sprays for 12hr stay"
+    ],
+    "beforeAfter": {
+      "before": "Pale skin and dry locks before ceremony",
+      "after": "Radiant airbrush matte look with sleek high-bun hair styling"
+    }
+  },
+  "yoga-instructor": {
+    "name": "1-on-1 Personalized Home Yoga Coach",
+    "description": "Custom therapeutic stretch programs, breathing exercises (Pranayama), and meditation guidance.",
+    "features": [
+      "Certified Patanjali/Morarji yoga instructors",
+      "Body alignment correction focus",
+      "Stress levels track sheet"
+    ],
+    "beforeAfter": {
+      "before": "Stiff aching shoulders and stress breathing patterns",
+      "after": "Highly flexible spine posture and deep oxygenated breath"
+    }
+  },
+  "cook-for-day": {
+    "name": "Daily Meals Home Cook Placement",
+    "description": "Preparation of traditional everyday recipes (dal, sabzi, roti, rice) matching salt/spice limits.",
+    "features": [
+      "FSSAI approved cook hygiene training",
+      "Vegetable cleaning & sanitizing",
+      "Kitchen cleaning included"
+    ],
+    "beforeAfter": {
+      "before": "Hungry family returning to unwashed raw veggies",
+      "after": "Beautifully plated steaming hot chapatis and green curries"
+    }
+  },
+  "errand-boy": {
+    "name": "Local Errand Runner & Document Delivery",
+    "description": "Picking up medicines, government document deposits, grocery drops, and physical checks.",
+    "features": [
+      "GPS tracking shared in real-time",
+      "ID-verified courier runner",
+      "Sealed tamper-proof envelope packaging"
+    ],
+    "beforeAfter": {
+      "before": "Important dry-cleaning suit stuck across town",
+      "after": "Neatly hung suit delivered to home doorstep under 45 mins"
+    }
+  },
+  "laundry-pickup": {
+    "name": "Express Laundry & Premium Ironing Pickup",
+    "description": "Weight-based premium laundry washing, tumble drying, lint removal, and steam ironing combo.",
+    "features": [
+      "Antibacterial softeners used",
+      "Zero color running assurance",
+      "Crumple-free hanger packing"
+    ],
+    "beforeAfter": {
+      "before": "Piles of sweaty stained sports wear on chair",
+      "after": "Fragrant crisp clean shirts packed with soft collars"
+    }
+  },
+  "ironing-help": {
+    "name": "At-home Garment Pressing & Ironing",
+    "description": "Heavy steam iron specialist coming home to iron bulk cotton suits, shirts, and curtains.",
+    "features": [
+      "Heavy Teflon non-stick steam irons",
+      "Aesthetic crease formations",
+      "Delicate silk care setting guarantees"
+    ],
+    "beforeAfter": {
+      "before": "Deeply wrinkled linen kurtas and heavy curtains",
+      "after": "Laser straight crisp crease alignments"
+    }
+  },
+  "spoken-english": {
+    "name": "1-on-1 Spoken English & Accent Coach",
+    "description": "Confidence-building vocabulary sessions, voice modulation, mock interview practice, and accent tuning.",
+    "features": [
+      "TEFL/CELTA certified language trainers",
+      "Pre-recorded feedback checks",
+      "Executive business lexicon guides"
+    ],
+    "beforeAfter": {
+      "before": "Stuttering and low-confidence during introduction",
+      "after": "Highly fluent professional introduction with excellent pacing"
+    }
+  },
+  "coding-tutor": {
+    "name": "Python & Web Development Coding Tutor",
+    "description": "Learn logical loops, React frameworks, database SQL triggers, and deploy live Git projects.",
+    "features": [
+      "Ex-MNC tech leads as mentors",
+      "100% project-based building approach",
+      "Free resume push to startup partners"
+    ],
+    "beforeAfter": {
+      "before": "Confused with coding syntax and terminal errors",
+      "after": "Successfully deploying custom React web apps on server"
+    }
+  },
+  "resume-writing": {
+    "name": "Executive Resume & LinkedIn Makeover Coach",
+    "description": "ATS optimization, action verb integrations, metric-based descriptions, and LinkedIn profile tuning.",
+    "features": [
+      "Trained by senior HR recruiters",
+      "98%+ ATS software score targets",
+      "Professional corporate headshot tips"
+    ],
+    "beforeAfter": {
+      "before": "Cluttered 3-page generic PDF with zero hits",
+      "after": "Highly readable 1-page ATS star template"
+    }
+  },
+  "pest-pre-purchase": {
+    "name": "Pre-Purchase Property Pest & Quality Check",
+    "description": "Comprehensive dry-wood termite check, thermal scans for interior piping leaks, and slab inspection.",
+    "features": [
+      "Moisture measurement scan probes",
+      "Digital quality clearance certificates",
+      "Structural crack integrity mapping"
+    ],
+    "beforeAfter": {
+      "before": "Hidden wood rot behind bedroom wardrobe panels",
+      "after": "Detailed diagnostic moisture report with sealing guide"
+    }
+  },
+  "house-appraisal": {
+    "name": "Official Property Valuation & Rental Guidance",
+    "description": "Comparative market valuation models, carpet area check, local circle rate index matching, and rental estimates.",
+    "features": [
+      "Certified government valuer audits",
+      "Detailed neighborhood trend sheets",
+      "Legal compliance checklists"
+    ],
+    "beforeAfter": {
+      "before": "Ambiguous property cost guesses in old sector",
+      "after": "Verified valuation dossier signed by licensed valuer"
+    }
+  },
+  "key-management": {
+    "name": "Digital Key Holding & Periodic Inspections",
+    "description": "Secure custody of apartment keys, fortnightly ventilation rounds, utility meter checks, and safety checks.",
+    "features": [
+      "Biometric vault key tracking",
+      "High resolution video inspections",
+      "Instant structural leakage alerts"
+    ],
+    "beforeAfter": {
+      "before": "Dusty stagnant apartment smelling of mold",
+      "after": "Clean ventilated rooms with weekly status updates"
+    }
+  },
+  "air-purifier-service": {
+    "name": "Winter Air Purifier Filter Replacement",
+    "description": "HEPA & active carbon filters descaling, ionization chamber cleaning, fan dust sweep, and AQI calibration.",
+    "features": [
+      "True-HEPA Grade-13 replacements",
+      "AQI sensor cleaning with isopropyl alcohol",
+      "Includes PM2.5 baseline validation"
+    ],
+    "beforeAfter": {
+      "before": "Clogged red-light filter blowing stale dusty air",
+      "after": "AQI index dropping under 30 with silent airflow"
+    }
+  },
+  "christmas-tree-decor": {
+    "name": "Premium Christmas Tree & Lawn Lighting",
+    "description": "Setting up giant pine trees, fairy wire string wrapping, mistletoe arrangements, and lawn LED deer models.",
+    "features": [
+      "Flame-retardant electrical cabling",
+      "Over 50 premium ornaments included",
+      "Clean dismantling service post-NewYear"
+    ],
+    "beforeAfter": {
+      "before": "Dark, cold front yard space during winters",
+      "after": "Stunning glowing wonderland with a fully lit spruce pine"
+    }
+  },
+  "holi-color-clean": {
+    "name": "Post-Holi Wall Stain Scrubbing & Wash",
+    "description": "Chemical-free stain scrubbing from tiles, wooden main gates, floor patios, and wall washing.",
+    "features": [
+      "No-paint-peel scrub solvents used",
+      "High pressure floor water blasting",
+      "Neutralizer spray to arrest stains"
+    ],
+    "beforeAfter": {
+      "before": "Red and pink organic gulal stains on entrance marble",
+      "after": "Pristine sparkling white entrance patio layout"
+    }
+  },
+  "sofa-upholstery": {
+    "name": "Premium Sofa Fabric Upholstery Repair",
+    "description": "Foam padding replacement, heavy weave fabric stitching, webbing belt tightening, and armrest restoration.",
+    "features": [
+      "Over 200+ fabric premium textures",
+      "High-density memory foam padding",
+      "Anti-sag steel zig-zag springs"
+    ],
+    "beforeAfter": {
+      "before": "Sunken saggy sofa with torn beige threads",
+      "after": "Royal dark green velvet sofa with firm ergonomics"
+    }
+  },
+  "curtain-installation": {
+    "name": "Curtain Rod Mounting & Drape Steaming",
+    "description": "Precise drilling, bracket installations, heavy rod alignment, curtain ring insertion, and wrinkle steam iron.",
+    "features": [
+      "Heavy concrete anchor bolts used",
+      "Laser level alignment checks",
+      "Wrinkle extraction steam treatment"
+    ],
+    "beforeAfter": {
+      "before": "Wrinkled sheets hanging raw from nails on windows",
+      "after": "Crisp perfectly aligned floating double-layer drapes"
+    }
+  },
+  "modular-kitchen-fix": {
+    "name": "Modular Cabinet Soft-Close Tuning",
+    "description": "Damper installations, hydraulic cabinet strut replacement, misaligned drawers adjustment, and corner carousel tuning.",
+    "features": [
+      "Premium stainless steel hydraulic hinges",
+      "No-slam magnetic latches included",
+      "Height adjustment alignment check"
+    ],
+    "beforeAfter": {
+      "before": "Loud slamming drawer waking up kids in morning",
+      "after": "Silent soft closing modular drawer glide operations"
+    }
+  },
+  "drip-irrigation": {
+    "name": "Automatic Drip Irrigation Installation",
+    "description": "Setting up smart timers, pressure dialers, thin drip pipes routing, and micro nozzle fittings.",
+    "features": [
+      "Rain-sensor automatic bypass timers",
+      "Zero leak compression couplings",
+      "Roots hydration mapping"
+    ],
+    "beforeAfter": {
+      "before": "Dry dying potted plants due to busy office schedules",
+      "after": "Drip emitters watering plants every morning automatically"
+    }
+  },
+  "garden-design": {
+    "name": "Balcony Vertical Garden Design & Setup",
+    "description": "Installing iron frameworks, dynamic plastic pot pockets, coco-peat organic soil fill, and creepers setup.",
+    "features": [
+      "Heavy rustproof powder-coated grid frames",
+      "Includes 12 choice indoor ferns/moneyplants",
+      "Anti-wall-dampness plastic shields"
+    ],
+    "beforeAfter": {
+      "before": "Dull concrete balcony wall with pipes showing",
+      "after": "Lush green living plant tapestry masking walls"
+    }
+  },
+  "outdoor-lighting": {
+    "name": "Weatherproof Garden & Fountain LED Sync",
+    "description": "Warm LED spike lights grounding, waterproof wire joint casings, solar panel pairing, and tree spot lighting.",
+    "features": [
+      "IP68 certified waterproof LED housings",
+      "Automatic dusk-to-dawn sensor triggers",
+      "Low voltage shockproof transformers"
+    ],
+    "beforeAfter": {
+      "before": "Pitch dark backyard lawn during family dinner nights",
+      "after": "Stunning warm lit tree canopies and highlighted walking path"
+    }
+  },
+  "office-shifting": {
+    "name": "Corporate Office Equipment Relocation",
+    "description": "Server rack wrapping, modular desk dismantling, rolling chair stacks, file filing crate packaging, and assembly.",
+    "features": [
+      "Static-shield bubble wrapping for servers",
+      "Asset tagged color-coded packaging stickers",
+      "Overnight transitions to avoid downtime"
+    ],
+    "beforeAfter": {
+      "before": "Cluttered workstation screens and cables piling",
+      "after": "Fully functional office desks mapped in new hall"
+    }
+  },
+  "packing-supplies": {
+    "name": "Heavy-Duty Packing Supplies Bundle",
+    "description": "Direct delivery of 5-ply corrugated cardboard boxes, brown bubble rolls, tape dispensers, and marker pens.",
+    "features": [
+      "High load capacity corrugated boxes",
+      "Fragile item warning stickers bundle",
+      "Free delivery to room corner under 2 hours"
+    ],
+    "beforeAfter": {
+      "before": "Loose items scattered creating anxiety",
+      "after": "Stack of robust labeled boxes packed for transit"
+    }
+  },
+  "vehicle-transit": {
+    "name": "Inter-City Car & Bike Transit Carrier",
+    "description": "Insured loading onto closed hydraulic double-deck car carriers, transit GPS updates, and home delivery.",
+    "features": [
+      "Comprehensive transport insurance coverage",
+      "Detailed scratch inspection sheet audit",
+      "Closed trailer protection guarantees"
+    ],
+    "beforeAfter": {
+      "before": "Exhausting 800km drive through dusty highways",
+      "after": "Pristine car delivered safely to new society porch"
+    }
+  },
+  "nurse-home-care": {
+    "name": "Registered Nurse Home Care",
+    "description": "Injection administering, complex wound dressing shifts, bedridden catheterization, and ICU monitor logs.",
+    "features": [
+      "Registered clinical nurses (GNM/BSc Nursing)",
+      "Vitals tracker charts with doctor hotlines",
+      "Emergency resuscitation drills trained"
+    ],
+    "beforeAfter": {
+      "before": "Anxious self-treatment risks and high fever logs",
+      "after": "Peaceful patient on IV saline under nurse check"
+    }
+  },
+  "mental-wellbeing": {
+    "name": "Cognitive Behavior Counseling & Therapy",
+    "description": "Confidential 1-on-1 mental health therapy, stress mapping, anxiety tools, and depression coping logs.",
+    "features": [
+      "Licensed clinical psychologists (RCI registered)",
+      "100% HIPAA compliant private chats",
+      "Includes daily progress mood-logs"
+    ],
+    "beforeAfter": {
+      "before": "Heavy racing thoughts preventing focus",
+      "after": "Mindful breathing habits and peaceful positive self-talk"
+    }
+  },
+  "fitness-trainer": {
+    "name": "Personalized Home Strength Coach",
+    "description": "At-home calisthenics instruction, posture assessments, resistance bands routines, and weight-loss tracker.",
+    "features": [
+      "ACE/Gold's Gym certified fitness trainers",
+      "Detailed body fat index analysis scans",
+      "Custom weekly nutrition meal tables"
+    ],
+    "beforeAfter": {
+      "before": "Slouching sitting habits and quick breathing fatigue",
+      "after": "Corrected erect shoulder line with enhanced energy levels"
+    }
+  },
+  "newborn-nanny": {
+    "name": "Newborn Baby & Mother Specialist Nanny",
+    "description": "Gentle baby bathing cycles, bottle sanitizations, sleep schedule induction, and maternal support.",
+    "features": [
+      "Infant safety & CPR certified nannies",
+      "Postpartum nutrition support guidelines",
+      "High-hygiene routine verification checks"
+    ],
+    "beforeAfter": {
+      "before": "Exhausted new parents struggling with diaper runs",
+      "after": "Peacefully sleeping infant with structured feeding charts"
+    }
+  },
+  "seniors-activity-companion": {
+    "name": "Interactive Mind-Games & Walking Companion",
+    "description": "Daily garden walks support, chess/memory game interactions, audio-book reading, and warm tea chat.",
+    "features": [
+      "Highly polite bilingual companion staff",
+      "Emergency contact alert tracking",
+      "Active listening training certified"
+    ],
+    "beforeAfter": {
+      "before": "Lonely elderly sitting in dark living room space",
+      "after": "Laughing grandparents playing carrom board in park breeze"
+    }
+  },
+  "pet-walking": {
+    "name": "Daily Dog Walking & Obedience Training",
+    "description": "Paced leash walking, behavior correction (no-pull), socializing sessions, and paw cleaning post-walk.",
+    "features": [
+      "Professional leash control trainers",
+      "Real-time GPS walking routes shared",
+      "Treats reinforcement for good posture"
+    ],
+    "beforeAfter": {
+      "before": "Energetic dog chewing sofas due to trapped energy",
+      "after": "Happy tired puppy sleeping calmly post a 3km trot"
+    }
+  },
+  "pet-sitting": {
+    "name": "At-Home Overnight Pet Sitting Care",
+    "description": "In-home overnight pet caretaker for feeding loops, litter cleanup, playtime, and separation anxiety support.",
+    "features": [
+      "100% verified pet-loving attendants",
+      "Twice daily video status updates",
+      "Includes basic grooming brush sweep"
+    ],
+    "beforeAfter": {
+      "before": "Anxious whimpering dog left alone during weekends",
+      "after": "Cheerful golden retriever cuddling with companion sitting on rug"
+    }
+  },
+  "aquarium-cleaning": {
+    "name": "Professional Fish Tank Deep Cleaning",
+    "description": "Algae scrapings, water siphoning, pH audits, substrate vacuuming, filter media changes, and decorations.",
+    "features": [
+      "Chemical-free plant safe cleansers only",
+      "Water salinity & nitrates checks",
+      "Fish safe temporary transfer tanks"
+    ],
+    "beforeAfter": {
+      "before": "Green cloudy tank glass panels masking fish",
+      "after": "Crystal-clear transparent water with glowing corals"
+    }
+  },
+  "custom-cake": {
+    "name": "Custom Decorated Birthday/Anniversary Cake",
+    "description": "Customized fondant designs, multi-tier chocolate truffle cakes, custom name prints, and safe home delivery.",
+    "features": [
+      "Eggless options with zero extra costs",
+      "High-end Belgian chocolates used",
+      "Insured chilled transport container dispatches"
+    ],
+    "beforeAfter": {
+      "before": "Squashed local bakery cake with simple fonts",
+      "after": "Stunning 3-tier themed cake with handmade edible roses"
+    }
+  },
+  "banquet-catering": {
+    "name": "Banquet Buffet Cook & Catering Services",
+    "description": "Cook-on-site service for parties, custom layout displays, salad bar arrangements, and cleanups.",
+    "features": [
+      "FSSAI-certified live kitchen setup",
+      "Signature clay-oven tandoor counters",
+      "Eco-friendly biodegradable waste disposals"
+    ],
+    "beforeAfter": {
+      "before": "Stressful home kitchen filled with steaming pots",
+      "after": "Royal silver buffet serving hot tandoori platters"
+    }
+  },
+  "dietician-plan": {
+    "name": "Dietician Meal Prep Consultation",
+    "description": "Caloric density audits, micro-nutrient tables mapping, daily calorie limits, and healthy recipe logs.",
+    "features": [
+      "Qualified clinical dieticians (MSc Nutrition)",
+      "Diabetes and hypertension targeted diet plans",
+      "Weekly WhatsApp adjustments included"
+    ],
+    "beforeAfter": {
+      "before": "Bloated weight patterns and junk food reliance",
+      "after": "Highly planned nutritious organic veggie meals list"
+    }
+  },
+  "luxury-cab": {
+    "name": "Premium Luxury Chauffeur Cab Commute",
+    "description": "Book premium Mercedes/BMW cabs with suited chauffeurs, mineral water bottles, and newspapers.",
+    "features": [
+      "Vetted high-profile corporate drivers",
+      "Fragrant sanitized luxury car interiors",
+      "USB-C charging ports and in-car Wi-Fi"
+    ],
+    "beforeAfter": {
+      "before": "Damp local taxi smells with rattling doors",
+      "after": "Silent relaxing cabin with cold AC and leather seating"
+    }
+  },
+  "weekend-getaway-driver": {
+    "name": "Weekend Outstation Round-Trip Driver Pack",
+    "description": "Book elite drivers for 48 hours to drive your SUV through hilly terrain roads safely.",
+    "features": [
+      "Hilly terrain & heavy rain expert drivers",
+      "Polite, non-smoking, drug-screened staff",
+      "GPS continuous driving logs shared"
+    ],
+    "beforeAfter": {
+      "before": "Stressed father driving through hairpin curves at night",
+      "after": "Entire family singing carols while driver tracks maps"
+    }
+  },
+  "rwa-pest-spray": {
+    "name": "Society Common Area Mosquito & Fogging Drive",
+    "description": "Weekly fogging drives inside corridors, lifts, basements, and garden bushes to prevent Dengue.",
+    "features": [
+      "WHO recommended Pyrethrum spray mix",
+      "Zero residue odourless chemical filters",
+      "Covers up to 3 residential society blocks"
+    ],
+    "beforeAfter": {
+      "before": "Mosquito swarms gathering around parking lights",
+      "after": "Mosquito free corridors and sanitized basements"
+    }
+  },
+  "cctv-gate-sync": {
+    "name": "Society Gates Smart RFID Sync & Install",
+    "description": "Installing RFID scanners, syncing resident car windshield tags, and server registration.",
+    "features": [
+      "Heavy waterproof weather-shields on scanners",
+      "Includes 50 resident RFID windshield tags",
+      "Automatic database cloud logging integration"
+    ],
+    "beforeAfter": {
+      "before": "Manual gate register logs slowing down evening rush",
+      "after": "Gates opening automatically as RFID vehicles approach"
+    }
+  }
+}

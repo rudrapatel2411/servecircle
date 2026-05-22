@@ -1,0 +1,17 @@
+{
+  "name": "servecircle-root",
+  "version": "1.0.0",
+  "description": "ServeCircle Root Project",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.1"
+  }
+}
