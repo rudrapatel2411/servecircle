@@ -6,11 +6,13 @@ import {
   HiOutlineClock,
   HiOutlinePlayCircle,
   HiOutlineTrophy,
+  HiOutlineIdentification,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, fetchWorkerProfile } from './workerApi';
 import '../Dashboard.css';
+import './WorkerPages.css';
 
 const modules = [
   {
@@ -19,6 +21,7 @@ const modules = [
     category: 'Core',
     duration: '18 min',
     lessonCount: 5,
+    isGovt: true
   },
   {
     id: 'customer-comm',
@@ -26,6 +29,7 @@ const modules = [
     category: 'Soft Skills',
     duration: '22 min',
     lessonCount: 6,
+    isGovt: false
   },
   {
     id: 'home-repair-pro',
@@ -33,6 +37,7 @@ const modules = [
     category: 'Technical',
     duration: '32 min',
     lessonCount: 8,
+    isGovt: true
   },
   {
     id: 'service-photos',
@@ -40,6 +45,7 @@ const modules = [
     category: 'Quality',
     duration: '14 min',
     lessonCount: 4,
+    isGovt: false
   },
 ];
 
@@ -119,11 +125,11 @@ const WorkerTraining = () => {
   }
 
   return (
-    <div className="page-content">
+    <div className="page-content worker-page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('worker.training')}</h1>
-          <p className="page-subtitle">Skill-up modules, progress tracking, and pro badge readiness.</p>
+          <h1 className="page-title">{t('worker.training', 'Training & Certification')}</h1>
+          <p className="page-subtitle">Complete Govt. certified training modules and track your pro status.</p>
         </div>
       </div>
 
@@ -163,34 +169,41 @@ const WorkerTraining = () => {
         </div>
       )}
 
+      {/* NEW: First Job Initiative Callout */}
+      {completedJobs < 5 && (
+        <div className="card" style={{ background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', borderColor: '#f59e0b', color: '#b45309' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 8px 0', fontSize: '1.2rem', color: '#92400e' }}>
+            🎉 First Job Initiative: 0% Commission
+          </h3>
+          <p style={{ margin: 0, fontSize: '0.95rem' }}>
+            You have completed {completedJobs} out of 5 jobs. Your first 5 jobs on ServeCircle are completely commission-free! Keep up the great work and build your portfolio.
+          </p>
+        </div>
+      )}
+
       {loading && <div className="chart-placeholder">Loading training content...</div>}
 
       {!loading && (
         <>
           <div className="dash-section">
-            <h3 className="dash-section-title">Pro Badge Unlock</h3>
+            <h3 className="dash-section-title">Digital Certificate & Pro Badge</h3>
             <div className="card" style={{ maxWidth: 620 }}>
-              <p style={{ marginBottom: 8 }}>
-                Complete 50 successful jobs to unlock your ServeCircle Verified Pro badge.
+              <p style={{ marginBottom: 16 }}>
+                Complete 50 successful jobs to unlock your <strong style={{ color: '#7c3aed' }}>ServeCircle Verified Pro</strong> badge and official Digital Experience Certificate.
               </p>
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${badgeProgress}%` }} />
+                <div className="progress-fill" style={{ width: `${badgeProgress}%`, background: '#7c3aed' }} />
               </div>
-              <p style={{ marginTop: 10, color: 'var(--gray-500)', fontSize: '0.9rem' }}>
-                Status: {isProUnlocked ? 'Unlocked' : 'In progress'}
-              </p>
-            </div>
-          </div>
-
-          <div className="dash-section">
-            <h3 className="dash-section-title">Recommended for You</h3>
-            <div className="card">
-              <p style={{ marginBottom: 0 }}>
-                {recommendedModules
-                  .map((moduleId) => modules.find((module) => module.id === moduleId)?.title)
-                  .filter(Boolean)
-                  .join(' | ')}
-              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, color: 'var(--gray-500)', fontSize: '0.9rem' }}>
+                <span>Status: {isProUnlocked ? <strong style={{ color: '#10b981' }}>Unlocked!</strong> : 'In progress'}</span>
+                <span>{completedJobs} / 50 Jobs</span>
+              </div>
+              
+              {isProUnlocked && (
+                <button className="btn btn-primary" style={{ marginTop: '20px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                  <HiOutlineIdentification style={{ fontSize: '1.2rem' }} /> Download Digital Certificate
+                </button>
+              )}
             </div>
           </div>
 
@@ -200,20 +213,24 @@ const WorkerTraining = () => {
               {modules.map((module) => {
                 const done = watched.includes(module.id);
                 return (
-                  <div key={module.id} className="training-card">
-                    <div className="training-thumb">
+                  <div key={module.id} className="training-card" style={{ border: done ? '1px solid #10b981' : '1px solid var(--gray-200)' }}>
+                    <div className="training-thumb" style={{ background: done ? '#d1fae5' : '#f1f5f9', color: done ? '#10b981' : '#64748b' }}>
                       <HiOutlinePlayCircle />
                     </div>
                     <div className="training-info">
-                      <h4>{module.title}</h4>
+                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        {module.title}
+                        {module.isGovt && <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: '100px', fontSize: '0.7rem', fontWeight: 800 }}>Govt Certified (PMKVY)</span>}
+                      </h4>
                       <p>{module.category} | {module.lessonCount} lessons</p>
                       <div className="training-meta">
                         <span className="training-duration"><HiOutlineClock style={{ verticalAlign: 'middle' }} /> {module.duration}</span>
                         <button
                           className={done ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
                           onClick={() => toggleWatched(module.id)}
+                          style={done ? { borderColor: '#10b981', color: '#10b981' } : {}}
                         >
-                          {done ? 'Watched' : 'Mark Watched'}
+                          {done ? 'Watched' : 'Watch Now'}
                         </button>
                       </div>
                     </div>

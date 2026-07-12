@@ -5,12 +5,14 @@ import {
   HiOutlineBanknotes,
   HiOutlineClock,
   HiOutlineCurrencyRupee,
+  HiOutlineBolt
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs } from './workerApi';
 import { formatDate, formatInr } from './workerHelpers';
 import '../Dashboard.css';
+import './WorkerPages.css';
 
 const WorkerEarnings = () => {
   const { t } = useTranslation();
@@ -19,6 +21,7 @@ const WorkerEarnings = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [withdrawSuccess, setWithdrawSuccess] = useState(false);
 
   const loadJobs = async () => {
     if (!token) return;
@@ -94,15 +97,21 @@ const WorkerEarnings = () => {
     }));
   }, [completedJobs]);
 
+  const handleInstantWithdraw = () => {
+    if (pendingPayout <= 0) return;
+    setWithdrawSuccess(true);
+    setTimeout(() => setWithdrawSuccess(false), 5000);
+  };
+
   if (!isAuthenticated) {
     return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
   }
 
   return (
-    <div className="page-content">
+    <div className="page-content worker-page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('worker.earnings')}</h1>
+          <h1 className="page-title">{t('worker.earnings', 'Earnings')}</h1>
           <p className="page-subtitle">Track payouts, completed jobs, and estimated take-home.</p>
         </div>
       </div>
@@ -114,7 +123,7 @@ const WorkerEarnings = () => {
           </div>
           <div>
             <div className="stat-value">{formatInr(weeklyGross)}</div>
-            <div className="stat-label">{t('worker.weeklyEarnings')}</div>
+            <div className="stat-label">{t('worker.weeklyEarnings', 'Weekly Earnings')}</div>
           </div>
         </div>
         <div className="stat-card">
@@ -137,6 +146,12 @@ const WorkerEarnings = () => {
         </div>
       </div>
 
+      {withdrawSuccess && (
+        <div className="card" style={{ borderColor: '#86efac', background: '#f0fdf4', color: '#166534', padding: '16px' }}>
+          ✅ <strong>Success!</strong> Your instant withdrawal request of {formatInr(pendingPayout)} has been processed. The amount will reflect in your registered bank account within 2 hours.
+        </div>
+      )}
+
       {error && (
         <div className="card" style={{ marginBottom: 16, borderColor: '#fecaca', color: '#991b1b' }}>
           {error}
@@ -147,7 +162,18 @@ const WorkerEarnings = () => {
 
       {!loading && (
         <div className="dash-section">
-          <h3 className="dash-section-title">Earnings Breakdown</h3>
+          <div className="dash-section-header">
+            <h3 className="dash-section-title">Earnings Breakdown</h3>
+            <button 
+              className="btn btn-primary" 
+              style={{ background: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}
+              onClick={handleInstantWithdraw}
+              disabled={pendingPayout <= 0 || withdrawSuccess}
+            >
+              <HiOutlineBolt /> Instant Withdrawal
+            </button>
+          </div>
+          
           <div className="card" style={{ marginBottom: 16 }}>
             <p style={{ marginBottom: 10 }}>
               <strong>Gross earnings:</strong> {formatInr(grossEarnings)}
@@ -159,7 +185,7 @@ const WorkerEarnings = () => {
               <strong>Estimated take-home:</strong> {formatInr(estimatedTakeHome)}
             </p>
           </div>
-          <p className="page-subtitle">Fee percentage is estimated from PRD commission range (15%-25%).</p>
+          <p className="page-subtitle">Fee percentage is estimated from platform tier and zero-commission bonuses.</p>
         </div>
       )}
 
@@ -207,7 +233,11 @@ const WorkerEarnings = () => {
                   <td>{job.service}</td>
                   <td>{formatDate(job.scheduledDate)}</td>
                   <td><HiOutlineCurrencyRupee style={{ verticalAlign: 'middle' }} /> {formatInr(job.amount)}</td>
-                  <td>{job.paymentStatus}</td>
+                  <td>
+                    <span className={`badge ${job.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}`}>
+                      {job.paymentStatus}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>

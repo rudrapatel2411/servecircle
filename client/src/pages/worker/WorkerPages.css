@@ -1,0 +1,289 @@
+.worker-page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Worker Growth Stepper */
+.worker-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 32px 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.worker-stepper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  right: 40px;
+  height: 4px;
+  background: var(--gray-200);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.stepper-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 0 16px;
+}
+
+.stepper-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: white;
+  border: 3px solid var(--gray-300);
+  color: var(--gray-400);
+  transition: all 0.3s ease;
+}
+
+.stepper-item.completed .stepper-icon {
+  border-color: #10b981;
+  background: #10b981;
+  color: white;
+}
+
+.stepper-item.active .stepper-icon {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.stepper-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  text-align: center;
+}
+
+.stepper-sub {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: -8px;
+}
+
+/* Women Empowerment Card */
+.empowerment-card {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #f9a8d4;
+  position: relative;
+  overflow: hidden;
+}
+
+.empowerment-content {
+  position: relative;
+  z-index: 2;
+  max-width: 60%;
+}
+
+.empowerment-card h3 {
+  color: #831843;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empowerment-card p {
+  color: #9d174d;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.empowerment-tag {
+  display: inline-block;
+  background: #be185d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.empowerment-icon-bg {
+  position: absolute;
+  right: -20px;
+  bottom: -40px;
+  font-size: 10rem;
+  color: rgba(244, 114, 182, 0.2);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Call Floating Button */
+.call-floating-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 64px;
+  height: 64px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.call-floating-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.6);
+}
+
+/* Modal CSS */
+.sos-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.sos-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.sos-modal h2 {
+  color: #dc2626;
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sos-modal p {
+  color: var(--gray-600);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.sos-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sos-btn-group button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-police { background: #1d4ed8; color: white; }
+.btn-police:hover { background: #1e40af; }
+
+.btn-support { background: #ef4444; color: white; }
+.btn-support:hover { background: #dc2626; }
+
+.btn-cancel { background: #f1f5f9; color: var(--navy-800); }
+.btn-cancel:hover { background: #e2e8f0; }
+
+/* Dashboard layout tweaks */
+.worker-action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.worker-action-buttons button {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .worker-stepper {
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+  }
+  
+  .worker-stepper::before {
+    top: 24px;
+    bottom: 24px;
+    left: 48px;
+    right: auto;
+    width: 4px;
+    height: auto;
+    transform: none;
+  }
+
+  .stepper-item {
+    flex-direction: row;
+    width: 100%;
+    gap: 16px;
+    padding: 0;
+  }
+  
+  .stepper-label {
+    text-align: left;
+  }
+  
+  .empowerment-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .empowerment-content {
+    max-width: 100%;
+  }
+  
+  .empowerment-card h3 {
+    justify-content: center;
+  }
+}

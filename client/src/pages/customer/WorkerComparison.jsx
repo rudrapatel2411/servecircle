@@ -55,7 +55,16 @@ export const mockWorkersForService = (serviceName, basePrice) => [
 
 const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
   const { t } = useTranslation();
-  const workers = mockWorkersForService(service?.name || 'Home Service', service?.basePrice || 499);
+  const rawWorkers = mockWorkersForService(service?.name || t('bookingFlow.selectedService', 'Home Service'), service?.basePrice || 499);
+  
+  const workers = rawWorkers.map(w => ({
+    ...w,
+    name: t('workers.' + w.id + '.name', w.name),
+    specialty: t('workers.' + w.id + '.specialty', w.specialty),
+    speed: t('workers.' + w.id + '.speed', w.speed),
+    experience: t('workers.' + w.id + '.experience', w.experience),
+    recentJob: t('workers.' + w.id + '.recentJob', w.recentJob)
+  }));
 
   return (
     <div style={{
@@ -73,7 +82,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
           {t('workerComparison.title')}
         </h2>
         <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
-          {t('workerComparison.subtitle')} <strong style={{ color: 'white' }}>{service?.name || 'Selected Service'}</strong>
+          {t('workerComparison.subtitle')} <strong style={{ color: 'white' }}>{service?.name ? t(service.name) : t('bookingFlow.selectedService', 'Selected Service')}</strong>
         </p>
       </div>
 

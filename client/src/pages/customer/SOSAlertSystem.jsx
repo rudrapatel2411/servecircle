@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HiOutlineExclamationTriangle, HiOutlineMapPin, HiOutlinePhone, HiOutlineBellSnooze } from 'react-icons/hi2';
 
 const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [countdown, setCountdown] = useState(5);
   const [isTriggered, setIsTriggered] = useState(false);
   const [coords, setCoords] = useState({ lat: '12.9716° N', lng: '77.5946° E' }); // Mock Bangalore coords
-  const [dispatchStatus, setDispatchStatus] = useState('Resolving location...');
+  const [dispatchStatus, setDispatchStatus] = useState('statusResolving');
 
   useEffect(() => {
     let timer;
@@ -20,13 +22,13 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
 
   const triggerEmergency = () => {
     setIsTriggered(true);
-    setDispatchStatus('Locating Dispatch Unit...');
+    setDispatchStatus('statusLocating');
     // Simulate real-time dispatch progress steps
     setTimeout(() => {
-      setDispatchStatus('🚨 Emergency Signal Dispatched: ServeCircle Quick Response Unit (QRU) enroute.');
+      setDispatchStatus('statusDispatched');
     }, 1500);
     setTimeout(() => {
-      setDispatchStatus('🚨 Local Authorities alerted. QRU vehicle (KA-03-EM-8824) dispatched. ETA: 4 mins.');
+      setDispatchStatus('statusAlerted');
     }, 3500);
   };
 
@@ -34,6 +36,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
     setIsOpen(false);
     setCountdown(5);
     setIsTriggered(false);
+    setDispatchStatus('statusResolving');
   };
 
   return (
@@ -76,7 +79,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
           animation: 'ping 1.2s infinite'
         }} />
         <span style={{ fontSize: '1rem', marginBottom: '-2px' }}>🚨</span>
-        SOS
+        {t('sosAlert.floatingText', 'SOS')}
       </div>
 
       {/* SOS EXPANDED MODAL OVERLAY */}
@@ -126,10 +129,10 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                 </div>
 
                 <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 8px 0' }}>
-                  ServeCircle SafeGuard SOS
+                  {t('sosAlert.safeguardSos')}
                 </h2>
                 <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '24px' }}>
-                  Triggering emergency broadcast to **ServeCircle Emergency Response Center** & Local Patrol.
+                  {t('sosAlert.triggerEmergencyDesc')}
                 </p>
 
                 {/* Big Animated Countdown */}
@@ -161,7 +164,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                       boxShadow: '0 4px 15px rgba(239, 68, 68, 0.3)'
                     }}
                   >
-                    Trigger Immediately 🚨
+                    {t('sosAlert.triggerImmediately')}
                   </button>
                   <button
                     onClick={cancelCountdown}
@@ -176,7 +179,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                       cursor: 'pointer'
                     }}
                   >
-                    Cancel Alert
+                    {t('sosAlert.cancelAlert')}
                   </button>
                 </div>
               </div>
@@ -200,7 +203,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                 </div>
 
                 <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 8px 0' }}>
-                  EMERGENCY SIGNAL ACTIVE
+                  {t('sosAlert.emergencySignalActive')}
                 </h2>
                 <span style={{
                   background: 'rgba(239, 68, 68, 0.15)',
@@ -216,21 +219,49 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   ID: {bookingId}-SOS
                 </span>
 
-                {/* Geo Coordinates */}
+                {/* Visual Live Location Beacon */}
                 <div style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  padding: '14px',
+                  background: 'rgba(16, 185, 129, 0.06)',
+                  border: '1px solid rgba(16, 185, 129, 0.15)',
+                  borderRadius: '16px',
+                  padding: '16px',
                   marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
                   textAlign: 'left'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f87171', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase' }}>
-                    <HiOutlineMapPin /> Live GPS Broadcast Coordinates
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{
+                      position: 'absolute',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      background: 'rgba(16, 185, 129, 0.3)',
+                      animation: 'ping 1.5s infinite'
+                    }} />
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#10b981',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.2rem',
+                      zIndex: 2
+                    }}>
+                      <HiOutlineMapPin />
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontFamily: 'monospace', marginTop: '8px', color: '#cbd5e1' }}>
-                    <span>Latitude: {coords.lat}</span>
-                    <span>Longitude: {coords.lng}</span>
+                  <div>
+                    <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: 'white', margin: 0 }}>
+                      {t('sosAlert.gpsTrackingActive', 'Live Location Transmitting')}
+                    </h4>
+                    <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: '2px 0 0 0' }}>
+                      {t('sosAlert.homeAddressLabel', 'Verified Home Location • Ahmedabad, Gujarat')}
+                    </p>
                   </div>
                 </div>
 
@@ -247,7 +278,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   lineHeight: 1.5,
                   color: '#10b981'
                 }}>
-                  {dispatchStatus}
+                  {t('sosAlert.' + dispatchStatus, dispatchStatus)}
                 </div>
 
                 {/* Hotlines */}
@@ -269,7 +300,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                       gap: '8px'
                     }}
                   >
-                    <HiOutlinePhone /> Call Police (Dial 112)
+                    <HiOutlinePhone /> {t('sosAlert.callPolice')}
                   </a>
                   <button
                     onClick={cancelCountdown}
@@ -288,7 +319,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                       gap: '8px'
                     }}
                   >
-                    <HiOutlineBellSnooze /> False Alarm: Cancel Alert
+                    <HiOutlineBellSnooze /> {t('sosAlert.falseAlarm')}
                   </button>
                 </div>
               </div>

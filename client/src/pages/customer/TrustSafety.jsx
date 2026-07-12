@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   HiOutlineShieldCheck, HiOutlineCheckCircle, HiOutlineLockClosed,
   HiOutlineDocumentCheck, HiOutlineBuildingLibrary, HiOutlinePhone,
-  HiOutlineChatBubbleLeftRight, HiOutlineExclamationTriangle
+  HiOutlineChatBubbleLeftRight
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -71,10 +71,10 @@ const TrustSafety = () => {
       </div>
 
       <div className="dashboard-grid" style={{ gridTemplateColumns: '1.7fr 1.3fr', gap: '24px' }}>
-        
+
         {/* LEFT COLUMN: 5-TIER VERIFICATION PROCESS & PROTECTIONS */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
+
           {/* Background Check Verification Steps */}
           <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
@@ -89,7 +89,7 @@ const TrustSafety = () => {
               {verificationSteps.map((step, idx) => {
                 const isActive = activeStep === idx;
                 return (
-                  <div 
+                  <div
                     key={idx}
                     onClick={() => setActiveStep(idx)}
                     style={{
@@ -118,7 +118,7 @@ const TrustSafety = () => {
                       }}>
                         {idx + 1}
                       </span>
-                      
+
                       <div style={{ flex: 1 }}>
                         <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: isActive ? 'var(--primary-700)' : 'var(--navy-800)' }}>
                           {step.title}
@@ -147,7 +147,7 @@ const TrustSafety = () => {
             <h3 style={{ fontSize: '1.15rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>
               Three-Tier Protection Guarantee
             </h3>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {protections.map((p, i) => (
                 <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
@@ -169,73 +169,30 @@ const TrustSafety = () => {
 
         {/* RIGHT COLUMN: INTEGRATED SOS DETAILS & IMMEDIATE HELPDESK */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
-          {/* SOS Dispatch Emergency Panel */}
-          <div 
-            className="card animate-pulse" 
-            style={{ 
-              padding: '28px', 
-              border: '1.5px solid #fca5a5', 
-              background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-              color: '#991b1b',
-              textAlign: 'center'
-            }}
-          >
-            <div style={{ 
-              width: '60px', 
-              height: '60px', 
-              borderRadius: '50%', 
-              background: '#ef4444', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              margin: '0 auto 16px',
-              fontSize: '1.8rem',
-              boxShadow: '0 0 0 8px rgba(239, 68, 68, 0.15)'
-            }}>
-              <HiOutlineExclamationTriangle />
-            </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '6px' }}>24/7 SOS Safety Dispatch</h3>
-            <p style={{ fontSize: '0.8rem', lineHeight: 1.5, opacity: 0.9, margin: '0 10px 18px' }}>
-              Are you experiencing a safety concern, standard emergency, or misbehavior during an active home service? Tap the SOS dispatch hotline immediately.
-            </p>
 
-            <button 
-              className="btn" 
-              style={{ background: '#ef4444', color: 'white', border: 'none', width: '100%', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 800, fontSize: '0.9rem' }}
-              onClick={() => alert('🚨 SOS Alarm triggered! Your active coordinates have been dispatched to our nearby area manager and emergency safety contacts.')}
-            >
-              📞 SOS Emergency Callback
-            </button>
-            
-            <span style={{ fontSize: '0.7rem', opacity: 0.8, display: 'inline-block', marginTop: '10px' }}>
-              Immediate response guarantee: less than 60 seconds.
-            </span>
-          </div>
 
           {/* Helpdesk Support Panel */}
           <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
             <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>
               Need Help With a Booking?
             </h3>
-            
+
             <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '18px' }}>
               Our dedicated trust officers are available around the clock to support you with ongoing dispute resolutions or checking worker verification documents.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  padding: '12px', 
-                  border: '1.5px solid var(--gray-200)', 
-                  borderRadius: 'var(--radius-md)', 
-                  cursor: 'pointer' 
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px',
+                  border: '1.5px solid var(--gray-200)',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: 'pointer'
                 }}
                 onClick={() => alert('Opening live chat with Trust Officer...')}
               >
@@ -246,15 +203,15 @@ const TrustSafety = () => {
                 </div>
               </div>
 
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  padding: '12px', 
-                  border: '1.5px solid var(--gray-200)', 
-                  borderRadius: 'var(--radius-md)', 
-                  cursor: 'pointer' 
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px',
+                  border: '1.5px solid var(--gray-200)',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: 'pointer'
                 }}
                 onClick={() => alert('Dialing safety hotline +91 1800 247 7233...')}
               >

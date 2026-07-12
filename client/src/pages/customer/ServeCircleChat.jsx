@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { HiOutlinePhone, HiOutlinePaperAirplane, HiOutlineLockClosed, HiOutlineUserCircle } from 'react-icons/hi2';
 
 const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'worker', text: 'Namaste! I have confirmed your booking details and will arrive with my PMKVY-standard diagnostic kit.', time: '10:30 AM' },
-    { id: 2, sender: 'worker', text: 'Please ensure someone is available at the location. See you soon!', time: '10:31 AM' }
+    { id: 1, sender: 'worker', text: 'msg1', time: '10:30 AM' },
+    { id: 2, sender: 'worker', text: 'msg2', time: '10:31 AM' }
   ]);
   const [inputText, setInputText] = useState('');
   const [isCalling, setIsCalling] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
-  const [callStatus, setCallStatus] = useState('Ringing...');
+  const [callStatus, setCallStatus] = useState('ringing');
 
   const messagesEndRef = useRef(null);
 
@@ -23,13 +25,13 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
     if (isCalling) {
       interval = setInterval(() => {
         setCallDuration((prev) => prev + 1);
-        if (callStatus === 'Ringing...') {
-          setCallStatus('Connected (Secure Line)');
+        if (callStatus === 'ringing') {
+          setCallStatus('connected');
         }
       }, 1000);
     } else {
       setCallDuration(0);
-      setCallStatus('Ringing...');
+      setCallStatus('ringing');
     }
     return () => clearInterval(interval);
   }, [isCalling, callStatus]);
@@ -55,7 +57,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
         {
           id: Date.now() + 1,
           sender: 'worker',
-          text: 'Got it! I am packing the final materials and heading your way now.',
+          text: 'msgReply',
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -119,7 +121,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
           <div>
             <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>{workerName}</h4>
             <span style={{ fontSize: '0.7rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span> Online
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span> {t('secureChat.online')}
             </span>
           </div>
         </div>
@@ -142,7 +144,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
             cursor: 'pointer',
             transition: 'all 0.2s'
           }}
-          title="Call via Secure Proxy"
+          title={t('secureChat.maskedCall')}
         >
           <HiOutlinePhone />
         </button>
@@ -161,7 +163,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
         borderBottom: '1px solid rgba(16, 185, 129, 0.1)'
       }}>
         <HiOutlineLockClosed style={{ fontSize: '0.85rem' }} />
-        <span>ServeCircle Secure Proxy Active • Mobile Numbers Fully Masked</span>
+        <span>{t('secureChat.proxyActive')}</span>
       </div>
 
       {/* Messages Scroll Area */}
@@ -195,7 +197,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
                 lineHeight: 1.4,
                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)'
               }}>
-                {msg.text}
+                {t('secureChat.' + msg.text, msg.text)}
               </div>
               <span style={{ fontSize: '0.62rem', color: '#64748b', marginTop: '4px' }}>
                 {msg.time}
@@ -219,7 +221,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Send a secure message to your pro..."
+          placeholder={t('secureChat.placeholder')}
           style={{
             flex: 1,
             background: 'rgba(15, 23, 42, 0.6)',
@@ -302,7 +304,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
 
           <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 8px 0' }}>{workerName}</h3>
           <span style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '4px 12px', borderRadius: '50px' }}>
-            🔒 Masked Call: +91 99****0452
+            🔒 {t('secureChat.maskedCallLabel')}
           </span>
 
           <p style={{
@@ -312,7 +314,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
             fontSize: '0.9rem',
             letterSpacing: '0.5px'
           }}>
-            {callStatus}
+            {t('secureChat.' + callStatus, callStatus)}
           </p>
 
           {callDuration > 0 && (
@@ -341,7 +343,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
               gap: '8px'
             }}
           >
-            End Secure Call
+            {t('secureChat.endSecureCall')}
           </button>
         </div>
       )}

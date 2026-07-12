@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   HiOutlineEnvelope,
   HiOutlineUserGroup,
@@ -16,6 +17,7 @@ const initialMembers = [
 const roleOptions = ['Owner', 'Operations Manager', 'Accounting', 'Facility Supervisor', 'Viewer'];
 
 const B2BTeam = () => {
+  const { t } = useTranslation();
   const [members, setMembers] = useState(initialMembers);
   const [invite, setInvite] = useState({
     name: '',
@@ -44,40 +46,40 @@ const B2BTeam = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Team Accounts</h1>
-          <p className="page-subtitle">Control role-based access for operations and billing teams.</p>
+          <h1 className="page-title">{t('b2bExtended.teamTitle', 'Team Accounts')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.teamSubtitle', 'Control role-based access for operations and billing teams.')}</p>
         </div>
       </div>
 
       <div className="b2b-kpi-strip">
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Total Team Members</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.totalTeam', 'Total Team Members')}</span>
           <span className="b2b-kpi-value">{members.length}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Active Members</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.activeMembers', 'Active Members')}</span>
           <span className="b2b-kpi-value">{activeMembers}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Pending Invites</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.pendingInvites', 'Pending Invites')}</span>
           <span className="b2b-kpi-value">{members.filter((member) => member.status === 'pending').length}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Role Profiles</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.roleProfiles', 'Role Profiles')}</span>
           <span className="b2b-kpi-value">{roleOptions.length}</span>
         </div>
       </div>
 
       <div className="b2b-two-col">
         <section className="b2b-card">
-          <h3><HiOutlineUserGroup style={{ verticalAlign: 'middle' }} /> Current Team</h3>
+          <h3><HiOutlineUserGroup style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.currentTeam', 'Current Team')}</h3>
           <table className="data-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Location Scope</th>
-                <th>Status</th>
+                <th>{t('b2bExtended.nameLabel', 'Name')}</th>
+                <th>{t('b2bExtended.roleLabel', 'Role')}</th>
+                <th>{t('b2bExtended.locScope', 'Location Scope')}</th>
+                <th>{t('b2bExtended.status', 'Status')}</th>
               </tr>
             </thead>
             <tbody>
@@ -88,7 +90,7 @@ const B2BTeam = () => {
                     <div className="page-subtitle">{member.email}</div>
                   </td>
                   <td>{member.role}</td>
-                  <td>{member.location || 'All Assigned'}</td>
+                  <td>{member.location || t('b2bExtended.allAssigned', 'All Assigned')}</td>
                   <td>
                     <span className={`b2b-chip ${member.status === 'active' ? 'active' : 'pending'}`}>
                       {member.status}
@@ -101,17 +103,17 @@ const B2BTeam = () => {
         </section>
 
         <aside className="b2b-card">
-          <h3><HiOutlineUserPlus style={{ verticalAlign: 'middle' }} /> Invite New Member</h3>
+          <h3><HiOutlineUserPlus style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.inviteNew', 'Invite New Member')}</h3>
           <div className="input-group">
-            <label>Full Name</label>
+            <label>{t('b2bExtended.fullName', 'Full Name')}</label>
             <input className="input-field" value={invite.name} onChange={(event) => updateInvite('name', event.target.value)} placeholder="Member full name" />
           </div>
           <div className="input-group">
-            <label><HiOutlineEnvelope style={{ verticalAlign: 'middle' }} /> Email</label>
+            <label><HiOutlineEnvelope style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.emailLabel', 'Email')}</label>
             <input className="input-field" type="email" value={invite.email} onChange={(event) => updateInvite('email', event.target.value)} placeholder="member@company.com" />
           </div>
           <div className="input-group">
-            <label>Role</label>
+            <label>{t('b2bExtended.roleLabel', 'Role')}</label>
             <select className="input-field" value={invite.role} onChange={(event) => updateInvite('role', event.target.value)}>
               {roleOptions.map((role) => (
                 <option key={role}>{role}</option>
@@ -119,10 +121,10 @@ const B2BTeam = () => {
             </select>
           </div>
           <div className="input-group">
-            <label>Location Scope</label>
+            <label>{t('b2bExtended.locScope', 'Location Scope')}</label>
             <input className="input-field" value={invite.location} onChange={(event) => updateInvite('location', event.target.value)} placeholder="Example: Block A + Club House" />
           </div>
-          <button className="btn btn-primary" onClick={handleInvite}><HiOutlineUserPlus /> Send Invite</button>
+          <button className="btn btn-primary" onClick={handleInvite}><HiOutlineUserPlus /> {t('b2bExtended.btnSendInvite', 'Send Invite')}</button>
         </aside>
       </div>
     </div>

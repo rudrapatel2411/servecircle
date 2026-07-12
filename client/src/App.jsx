@@ -18,7 +18,6 @@ import ServiceDetail from './pages/customer/ServiceDetail';
 import EmergencyHub from './pages/customer/EmergencyHub';
 import EventsHub from './pages/customer/EventsHub';
 import MyHomeDashboard from './pages/customer/MyHomeDashboard';
-import BecomeAProHub from './pages/customer/BecomeAProHub';
 import TrustSafety from './pages/customer/TrustSafety';
 import BookingFlow from './pages/customer/BookingFlow';
 import BookingHistory from './pages/customer/BookingHistory';
@@ -42,6 +41,14 @@ import CleaningHygieneHub from './pages/customer/CleaningHygieneHub';
 import FurnitureDecorHub from './pages/customer/FurnitureDecorHub';
 import GardenOutdoorHub from './pages/customer/GardenOutdoorHub';
 import PostServiceReview from './pages/customer/PostServiceReview';
+import PackersDemo from './pages/customer/PackersDemo';
+import PetRelocationDemo from './pages/customer/PetRelocationDemo';
+import VehicleRelocationDemo from './pages/customer/VehicleRelocationDemo';
+import HealthWellnessDemo from './pages/customer/HealthWellnessDemo';
+import PetPremiumFlow from './pages/customer/PetPremiumFlow';
+import FoodPremiumFlow from './pages/customer/FoodPremiumFlow';
+import TravelPremiumFlow from './pages/customer/TravelPremiumFlow';
+import SocietyPremiumFlow from './pages/customer/SocietyPremiumFlow';
 
 /* Worker */
 import WorkerDashboard from './pages/worker/WorkerDashboard';
@@ -50,6 +57,7 @@ import WorkerSchedule from './pages/worker/WorkerSchedule';
 import WorkerEarnings from './pages/worker/WorkerEarnings';
 import WorkerTraining from './pages/worker/WorkerTraining';
 import WorkerProfile from './pages/worker/WorkerProfile';
+import BecomeAProHub from './pages/worker/BecomeAProHub';
 
 /* Admin */
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -91,7 +99,6 @@ function App() {
           <Route path="emergency" element={<EmergencyHub />} />
           <Route path="events" element={<EventsHub />} />
           <Route path="my-home" element={<MyHomeDashboard />} />
-          <Route path="become-a-pro" element={<BecomeAProHub />} />
           <Route path="trust-safety" element={<TrustSafety />} />
           <Route path="book" element={<BookingFlow />} />
           <Route path="bookings" element={<BookingHistory />} />
@@ -110,6 +117,14 @@ function App() {
           <Route path="food-kitchen" element={<FoodKitchenHub />} />
           <Route path="travel-commute" element={<TravelCommuteHub />} />
           <Route path="society-management" element={<SocietyManagementHub />} />
+          <Route path="packers-demo" element={<PackersDemo />} />
+          <Route path="pet-demo" element={<PetRelocationDemo />} />
+          <Route path="vehicle-demo" element={<VehicleRelocationDemo />} />
+          <Route path="health-demo" element={<HealthWellnessDemo />} />
+          <Route path="pet-flow" element={<PetPremiumFlow />} />
+          <Route path="food-flow" element={<FoodPremiumFlow />} />
+          <Route path="travel-flow" element={<TravelPremiumFlow />} />
+          <Route path="society-flow" element={<SocietyPremiumFlow />} />
         </Route>
 
         <Route path="/worker" element={<DashboardLayout panel="worker" />}>
@@ -119,6 +134,7 @@ function App() {
           <Route path="earnings" element={<WorkerEarnings />} />
           <Route path="training" element={<WorkerTraining />} />
           <Route path="profile" element={<WorkerProfile />} />
+          <Route path="become-a-pro" element={<BecomeAProHub />} />
         </Route>
 
         <Route path="/admin" element={<DashboardLayout panel="admin" />}>

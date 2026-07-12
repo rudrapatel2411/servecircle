@@ -5,7 +5,7 @@ import {
   HiOutlineVideoCamera, HiOutlineVideoCameraSlash, HiOutlineMicrophone,
   HiOutlinePhoneXMark, HiOutlineChatBubbleBottomCenterText,
   HiOutlineCalendar, HiOutlineClock,
-  HiOutlineCheckCircle, HiOutlinePaperAirplane, HiOutlineSpeakerWave
+  HiOutlinePaperAirplane, HiOutlineSpeakerWave
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -52,7 +52,7 @@ const VideoConsultation = () => {
   const [camActive, setCamActive] = useState(true);
   
   const [chatMessages, setChatMessages] = useState([
-    { sender: 'expert', text: 'Hello Rudra! Thanks for joining. How can I help you diagnose your home repair issue today?' }
+    { sender: 'expert', text: 'expertPrompt1' }
   ]);
   const [inputText, setInputText] = useState('');
   const chatEndRef = useRef(null);
@@ -65,7 +65,7 @@ const VideoConsultation = () => {
       consultant: consultants[1],
       date: 'Today',
       time: '5:00 PM',
-      status: 'Ready to Join'
+      status: 'readyToJoin'
     }
   ]);
 
@@ -78,7 +78,7 @@ const VideoConsultation = () => {
   const handleBook = (e) => {
     e.preventDefault();
     if (!selectedTimeSlot) {
-      alert('Please select a time slot!');
+      alert(t('videoConsultation.selectTimeAlert', 'Please select a time slot!'));
       return;
     }
 
@@ -87,12 +87,12 @@ const VideoConsultation = () => {
       consultant: selectedConsultant,
       date: 'Tomorrow',
       time: selectedTimeSlot,
-      status: 'Scheduled'
+      status: 'scheduled'
     };
 
     setBookedConsultations((prev) => [newBooking, ...prev]);
     setSelectedTimeSlot('');
-    alert(`🎉 Video consultation booked with ${selectedConsultant.name} for ${newBooking.date} at ${newBooking.time}.`);
+    alert(`🎉 ${t('videoConsultation.bookedSuccess', 'Video consultation successfully scheduled!')}`);
   };
 
   const startMockCall = (consultant) => {
@@ -101,7 +101,7 @@ const VideoConsultation = () => {
     setMicActive(true);
     setCamActive(true);
     setChatMessages([
-      { sender: 'expert', text: `Hello Rudra! Thanks for connecting. I am ${consultant.name}, your expert consultant. How can I assist you?` }
+      { sender: 'expert', text: 'expertReply1' }
     ]);
   };
 
@@ -120,14 +120,23 @@ const VideoConsultation = () => {
 
     // Trigger mock expert response after a delay
     setTimeout(() => {
-      let reply = "I understand. Based on what you described, that sounds like a standard issue. We can definitely route a priority worker to get this fixed.";
+      let reply = "expertReplyNormal";
       if (inputText.toLowerCase().includes('leak') || inputText.toLowerCase().includes('water')) {
-        reply = "That water leak requires immediate attention. I suggest shutting down the main valve first. I will recommend booking the priority Plumber service right away.";
+        reply = "expertReplyLeak";
       } else if (inputText.toLowerCase().includes('short') || inputText.toLowerCase().includes('wire') || inputText.toLowerCase().includes('spark')) {
-        reply = "Sparks mean an active short circuit. Please switch off the main circuit breaker. Let me recommend the Emergency Electrical service.";
+        reply = "expertReplyElectric";
       }
       setChatMessages((prev) => [...prev, { sender: 'expert', text: reply }]);
     }, 1500);
+  };
+
+  const getConsultantName = (c) => t('videoConsultation.expert' + c.id + 'Name', c.name);
+  const getConsultantSpecialty = (c) => t('videoConsultation.expert' + c.id + 'Specialty', c.specialty);
+  const getBookingDateLabel = (dateStr) => {
+    if (dateStr === 'Today') return t('videoConsultation.todayAvailable');
+    if (dateStr === 'Tomorrow') return t('videoConsultation.tomorrow');
+    if (dateStr === 'Day after tomorrow') return t('videoConsultation.dayAfterTomorrow');
+    return dateStr;
   };
 
   return (
@@ -144,7 +153,7 @@ const VideoConsultation = () => {
             <div className="page-header">
               <div>
                 <h1 className="page-title">{t('customer.videoConsultation')} 📹</h1>
-                <p className="page-subtitle">Video call our certified home experts to diagnose repairs and save costly unnecessary visits.</p>
+                <p className="page-subtitle">{t('videoConsultation.certifiedSubtitle')}</p>
               </div>
             </div>
 
@@ -152,11 +161,11 @@ const VideoConsultation = () => {
               
               {/* Consultant Booking Area */}
               <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
-                <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>Book a New Virtual consultation</h3>
+                <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>{t('videoConsultation.bookNewVirtual')}</h3>
                 
                 {/* Consultant Selector */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--gray-500)' }}>Choose an Expert Consultant</label>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--gray-500)' }}>{t('videoConsultation.chooseExpert')}</label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
                     {consultants.map((c) => (
                       <div
@@ -181,13 +190,13 @@ const VideoConsultation = () => {
                             display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700
                           }}>{c.avatar}</div>
                           <div>
-                            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)' }}>{c.name}</h4>
-                            <span style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{c.specialty}</span>
+                            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)' }}>{getConsultantName(c)}</h4>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{getConsultantSpecialty(c)}</span>
                           </div>
                         </div>
                         <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', marginTop: '14px', fontSize: '0.75rem', borderTop: '1px solid var(--gray-100)', paddingTop: '10px' }}>
-                          <span style={{ fontWeight: 600 }}>⭐ {c.rating} ({c.jobs} jobs)</span>
-                          <span style={{ color: 'var(--primary-700)', fontWeight: 700 }}>₹{c.fee} / call</span>
+                          <span style={{ fontWeight: 600 }}>⭐ {c.rating} ({c.jobs} {t('videoConsultation.jobs')})</span>
+                          <span style={{ color: 'var(--primary-700)', fontWeight: 700 }}>₹{c.fee} {t('videoConsultation.callPrice')}</span>
                         </div>
                       </div>
                     ))}
@@ -198,15 +207,15 @@ const VideoConsultation = () => {
                 <form onSubmit={handleBook}>
                   <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
                     <div className="input-group" style={{ marginBottom: 0 }}>
-                      <label><HiOutlineCalendar /> Consultation Date</label>
+                      <label><HiOutlineCalendar /> {t('videoConsultation.consultationDate')}</label>
                       <select className="input-field">
-                        <option>Today (Available)</option>
-                        <option>Tomorrow</option>
-                        <option>Day after tomorrow</option>
+                        <option value="Today">{t('videoConsultation.todayAvailable')}</option>
+                        <option value="Tomorrow">{t('videoConsultation.tomorrow')}</option>
+                        <option value="Day after tomorrow">{t('videoConsultation.dayAfterTomorrow')}</option>
                       </select>
                     </div>
                     <div className="input-group" style={{ marginBottom: 0 }}>
-                      <label><HiOutlineClock /> Available Time Slots</label>
+                      <label><HiOutlineClock /> {t('videoConsultation.availableTimeSlots')}</label>
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
                         {selectedConsultant.availableToday.map((slot) => (
                           <button
@@ -224,7 +233,7 @@ const VideoConsultation = () => {
                   </div>
 
                   <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px' }}>
-                    Book Call Slot • Paid Consultation (₹{selectedConsultant.fee})
+                    {t('videoConsultation.bookCallSlotPaid')} (₹{selectedConsultant.fee})
                   </button>
                 </form>
               </div>
@@ -232,10 +241,10 @@ const VideoConsultation = () => {
               {/* Consultation List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
-                  <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>My Consultations</h3>
+                  <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>{t('videoConsultation.myConsultations')}</h3>
                   
                   {bookedConsultations.length === 0 ? (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>No booked video calls.</p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>{t('videoConsultation.noBookedVideo')}</p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {bookedConsultations.map((bc) => (
@@ -245,30 +254,30 @@ const VideoConsultation = () => {
                           style={{
                             padding: '16px',
                             border: '1.5px solid var(--primary-200)',
-                            background: bc.status.includes('Ready') ? 'var(--primary-50)' : 'white'
+                            background: bc.status.includes('Ready') || bc.status === 'readyToJoin' ? 'var(--primary-50)' : 'white'
                           }}
                         >
                           <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                              <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{bc.consultant.name}</h4>
-                              <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>{bc.consultant.specialty}</p>
+                              <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{getConsultantName(bc.consultant)}</h4>
+                              <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>{getConsultantSpecialty(bc.consultant)}</p>
                               <div style={{ display: 'flex', gap: '10px', marginTop: '6px', fontSize: '0.75rem', color: 'var(--gray-600)' }}>
-                                <span>📅 {bc.date}</span>
+                                <span>📅 {getBookingDateLabel(bc.date)}</span>
                                 <span>⏰ {bc.time}</span>
                               </div>
                             </div>
                             <span style={{ fontSize: '0.7rem', fontWeight: 700, background: 'var(--primary-500)', color: 'white', padding: '3px 8px', borderRadius: 'var(--radius-full)' }}>
-                              {bc.status}
+                              {t('videoConsultation.' + bc.status, bc.status)}
                             </span>
                           </div>
 
-                          {bc.status.includes('Ready') && (
+                          {(bc.status.includes('Ready') || bc.status === 'readyToJoin') && (
                             <button
                               className="btn btn-primary btn-sm"
                               style={{ width: '100%', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                               onClick={() => startMockCall(bc.consultant)}
                             >
-                              <HiOutlineVideoCamera /> Join Consultation Room
+                              <HiOutlineVideoCamera /> {t('videoConsultation.joinConsultationRoom')}
                             </button>
                           )}
                         </div>
@@ -327,11 +336,11 @@ const VideoConsultation = () => {
                   
                   <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <HiOutlineSpeakerWave style={{ animation: 'pulse 1s infinite', color: 'var(--primary-400)' }} />
-                    <span>{activeCall.name} (Expert Consultant)</span>
+                    <span>{getConsultantName(activeCall)} ({t('videoConsultation.expertConsultant')})</span>
                   </div>
 
                   <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.5px' }}>
-                    LIVE pre-inspection
+                    {t('videoConsultation.livePreInspection')}
                   </div>
                 </div>
 
@@ -354,17 +363,17 @@ const VideoConsultation = () => {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: '1.8rem', fontWeight: 700, marginBottom: '8px'
                       }}>RU</div>
-                      <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Local Camera Preview active</p>
+                      <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{t('videoConsultation.localCameraPreview')}</p>
                     </div>
                   ) : (
                     <div style={{ textAlign: 'center', color: '#94a3b8' }}>
                       <HiOutlineVideoCameraSlash style={{ fontSize: '2.5rem', marginBottom: '10px' }} />
-                      <p style={{ fontSize: '0.8rem' }}>Your Camera is Off</p>
+                      <p style={{ fontSize: '0.8rem' }}>{t('videoConsultation.cameraOff')}</p>
                     </div>
                   )}
 
                   <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem' }}>
-                    Rudra (You) {micActive ? '🎙️' : '🔇'}
+                    Rudra ({t('videoConsultation.you')}) {micActive ? '🎙️' : '🔇'}
                   </div>
                 </div>
 
@@ -389,7 +398,7 @@ const VideoConsultation = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '1.25rem', transition: 'all 0.2s'
                   }}
-                  title={micActive ? 'Mute Mic' : 'Unmute Mic'}
+                  title={micActive ? t('videoConsultation.muteMic') : t('videoConsultation.unmuteMic')}
                 >
                   <HiOutlineMicrophone style={{ opacity: micActive ? 1 : 0.7 }} />
                 </button>
@@ -403,7 +412,7 @@ const VideoConsultation = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '1.25rem', transition: 'all 0.2s'
                   }}
-                  title={camActive ? 'Turn Camera Off' : 'Turn Camera On'}
+                  title={camActive ? t('videoConsultation.turnCameraOff') : t('videoConsultation.turnCameraOn')}
                 >
                   {camActive ? <HiOutlineVideoCamera /> : <HiOutlineVideoCameraSlash />}
                 </button>
@@ -418,7 +427,7 @@ const VideoConsultation = () => {
                     fontSize: '1.5rem', transition: 'all 0.2s',
                     boxShadow: '0 4px 10px rgba(239, 68, 68, 0.4)'
                   }}
-                  title="Hang Up Consultation"
+                  title={t('videoConsultation.hangUp')}
                 >
                   <HiOutlinePhoneXMark />
                 </button>
@@ -438,7 +447,7 @@ const VideoConsultation = () => {
             }}>
               <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#111827' }}>
                 <h4 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 800 }}>
-                  <HiOutlineChatBubbleBottomCenterText style={{ color: 'var(--primary-400)' }} /> In-Call Consultation Chat
+                  <HiOutlineChatBubbleBottomCenterText style={{ color: 'var(--primary-400)' }} /> {t('videoConsultation.inCallChat')}
                 </h4>
               </div>
 
@@ -458,7 +467,7 @@ const VideoConsultation = () => {
                       lineHeight: 1.4
                     }}
                   >
-                    {msg.text}
+                    {t('videoConsultation.' + msg.text, msg.text)}
                   </div>
                 ))}
                 <div ref={chatEndRef} />
@@ -468,7 +477,7 @@ const VideoConsultation = () => {
               <form onSubmit={sendMessage} style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '8px', background: '#111827' }}>
                 <input
                   type="text"
-                  placeholder="Type an issue, e.g. leak, wire..."
+                  placeholder={t('videoConsultation.chatPlaceholder')}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   style={{

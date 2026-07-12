@@ -21,6 +21,7 @@ import {
   getStatusBadgeClass,
 } from './workerHelpers';
 import '../Dashboard.css';
+import './WorkerPages.css';
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -93,10 +94,10 @@ const WorkerJobs = () => {
   }
 
   return (
-    <div className="page-content">
+    <div className="page-content worker-page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('worker.jobRequests')}</h1>
+          <h1 className="page-title">{t('worker.jobRequests', 'Job Requests')}</h1>
           <p className="page-subtitle">Accept, reject, start, and complete worker jobs.</p>
         </div>
         <button className="btn btn-outline" onClick={() => loadJobs(activeTab)}>
@@ -126,62 +127,72 @@ const WorkerJobs = () => {
 
       {!loading && jobs.length === 0 && <div className="card">No jobs found for this filter.</div>}
 
-      {!loading && jobs.map((job) => (
-        <div key={job._id} className="job-card">
-          <div className="job-info">
-            <h4>{job.service}</h4>
-            <div className="job-meta" style={{ flexWrap: 'wrap' }}>
-              <span><HiOutlineCalendarDays /> {formatDate(job.scheduledDate)}</span>
-              <span><HiOutlineClock /> {job.scheduledTime || 'Flexible'}</span>
-              <span><HiOutlineMapPin /> {job.address}</span>
-              <span><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
-              <span><HiOutlineUser /> {job.customer?.name || 'Customer'}</span>
-              <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
+      {!loading && jobs.map((job) => {
+        const isEmergency = job.service?.toLowerCase().includes('emergency') || job.service?.toLowerCase().includes('leak');
+
+        return (
+          <div key={job._id} className="job-card" style={isEmergency ? { borderLeft: '4px solid #ef4444' } : {}}>
+            <div className="job-info">
+              <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {job.service}
+                {isEmergency && <span style={{ background: '#fef2f2', color: '#ef4444', padding: '2px 8px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>🚨 EMERGENCY: 2x PAY</span>}
+              </h4>
+              <div className="job-meta" style={{ flexWrap: 'wrap' }}>
+                <span><HiOutlineCalendarDays /> {formatDate(job.scheduledDate)}</span>
+                <span><HiOutlineClock /> {job.scheduledTime || 'Flexible'}</span>
+                <span><HiOutlineMapPin /> {job.address}</span>
+                <span style={{ color: '#10b981', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
+                <span><HiOutlineUser /> {job.customer?.name || 'Customer'}</span>
+                <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
+              </div>
+            </div>
+
+            <div className="worker-action-buttons">
+              {job.status === 'pending' && (
+                <>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleRespond(job._id, 'accept')}
+                    disabled={actionLoading === `${job._id}-accept`}
+                  >
+                    {actionLoading === `${job._id}-accept` ? '...' : t('worker.accept', 'Accept')}
+                  </button>
+                  <button
+                    className="btn btn-outline"
+                    onClick={() => handleRespond(job._id, 'reject')}
+                    disabled={actionLoading === `${job._id}-reject`}
+                    style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                  >
+                    {actionLoading === `${job._id}-reject` ? '...' : t('worker.reject', 'Decline')}
+                  </button>
+                </>
+              )}
+
+              {job.status === 'confirmed' && (
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%' }}
+                  onClick={() => handleStatus(job._id, 'active')}
+                  disabled={actionLoading === `${job._id}-active`}
+                >
+                  {actionLoading === `${job._id}-active` ? 'Updating...' : 'Start Job'}
+                </button>
+              )}
+
+              {job.status === 'active' && (
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%' }}
+                  onClick={() => handleStatus(job._id, 'completed')}
+                  disabled={actionLoading === `${job._id}-completed`}
+                >
+                  {actionLoading === `${job._id}-completed` ? 'Updating...' : 'Mark Completed'}
+                </button>
+              )}
             </div>
           </div>
-
-          <div className="job-actions">
-            {job.status === 'pending' && (
-              <>
-                <button
-                  className="btn-accept"
-                  onClick={() => handleRespond(job._id, 'accept')}
-                  disabled={actionLoading === `${job._id}-accept`}
-                >
-                  {actionLoading === `${job._id}-accept` ? '...' : t('worker.accept')}
-                </button>
-                <button
-                  className="btn-reject"
-                  onClick={() => handleRespond(job._id, 'reject')}
-                  disabled={actionLoading === `${job._id}-reject`}
-                >
-                  {actionLoading === `${job._id}-reject` ? '...' : t('worker.reject')}
-                </button>
-              </>
-            )}
-
-            {job.status === 'confirmed' && (
-              <button
-                className="btn btn-primary"
-                onClick={() => handleStatus(job._id, 'active')}
-                disabled={actionLoading === `${job._id}-active`}
-              >
-                {actionLoading === `${job._id}-active` ? 'Updating...' : 'Start Job'}
-              </button>
-            )}
-
-            {job.status === 'active' && (
-              <button
-                className="btn btn-primary"
-                onClick={() => handleStatus(job._id, 'completed')}
-                disabled={actionLoading === `${job._id}-completed`}
-              >
-                {actionLoading === `${job._id}-completed` ? 'Updating...' : 'Mark Completed'}
-              </button>
-            )}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

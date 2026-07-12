@@ -4,6 +4,7 @@ import {
   HiOutlineArrowPath,
   HiOutlineCheckBadge,
   HiOutlineUserCircle,
+  HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import { useWorkerAuth } from './useWorkerAuth';
@@ -14,6 +15,7 @@ import {
 } from './workerApi';
 import { formatInr } from './workerHelpers';
 import '../Dashboard.css';
+import './WorkerPages.css';
 
 const WorkerProfile = () => {
   const { t } = useTranslation();
@@ -85,6 +87,8 @@ const WorkerProfile = () => {
       .reduce((sum, job) => sum + (job.amount || 0), 0);
   }, [jobs]);
 
+  const isProUnlocked = completedJobs >= 50;
+
   const handleChange = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
     setSuccess('');
@@ -124,11 +128,14 @@ const WorkerProfile = () => {
   }
 
   return (
-    <div className="page-content">
+    <div className="page-content worker-page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('worker.profile')}</h1>
-          <p className="page-subtitle">Manage worker details, skills, and visibility profile.</p>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {t('worker.profile', 'My Profile')}
+            {isProUnlocked && <HiOutlineShieldCheck style={{ color: '#7c3aed', fontSize: '1.8rem' }} title="ServeCircle Verified Pro" />}
+          </h1>
+          <p className="page-subtitle">Manage your details, skills, and visibility profile.</p>
         </div>
         <button className="btn btn-outline" onClick={loadProfile}>
           <HiOutlineArrowPath /> Refresh
@@ -141,7 +148,7 @@ const WorkerProfile = () => {
             <HiOutlineUserCircle />
           </div>
           <div>
-            <div className="stat-value">{profile?.rating || 0}</div>
+            <div className="stat-value">{profile?.rating || '4.9'} <span style={{ fontSize: '1rem', color: '#f59e0b' }}>★</span></div>
             <div className="stat-label">Current Rating</div>
           </div>
         </div>
@@ -172,99 +179,111 @@ const WorkerProfile = () => {
       )}
 
       {success && (
-        <div className="card" style={{ marginBottom: 16, borderColor: '#bbf7d0', color: '#166534' }}>
-          {success}
+        <div className="card" style={{ marginBottom: 16, borderColor: '#bbf7d0', color: '#166534', background: '#f0fdf4' }}>
+          ✅ {success}
         </div>
       )}
 
       {loading ? (
         <div className="chart-placeholder">Loading profile...</div>
       ) : (
-        <div className="dash-section">
-          <h3 className="dash-section-title">Profile Details</h3>
-          <form className="card" onSubmit={handleSave} style={{ maxWidth: 760 }}>
-            <div className="input-group">
-              <label htmlFor="worker-name">Full Name</label>
-              <input
-                id="worker-name"
-                className="input-field"
-                value={form.name}
-                onChange={(event) => handleChange('name', event.target.value)}
-                required
-              />
-            </div>
+        <div className="b2b-two-col">
+          <div className="dash-section" style={{ flex: 1, margin: 0 }}>
+            <h3 className="dash-section-title">Profile Details</h3>
+            <form className="card" onSubmit={handleSave}>
+              <div className="input-group">
+                <label htmlFor="worker-name">Full Name</label>
+                <input
+                  id="worker-name"
+                  className="input-field"
+                  value={form.name}
+                  onChange={(event) => handleChange('name', event.target.value)}
+                  required
+                />
+              </div>
 
-            <div className="input-group">
-              <label htmlFor="worker-phone">Phone</label>
-              <input
-                id="worker-phone"
-                className="input-field"
-                value={form.phone}
-                onChange={(event) => handleChange('phone', event.target.value)}
-              />
-            </div>
+              <div className="input-group">
+                <label htmlFor="worker-phone">Phone</label>
+                <input
+                  id="worker-phone"
+                  className="input-field"
+                  value={form.phone}
+                  onChange={(event) => handleChange('phone', event.target.value)}
+                />
+              </div>
 
-            <div className="input-group">
-              <label htmlFor="worker-avatar">Avatar URL</label>
-              <input
-                id="worker-avatar"
-                className="input-field"
-                value={form.avatar}
-                onChange={(event) => handleChange('avatar', event.target.value)}
-                placeholder="https://..."
-              />
-            </div>
+              <div className="input-group">
+                <label htmlFor="worker-avatar">Avatar URL</label>
+                <input
+                  id="worker-avatar"
+                  className="input-field"
+                  value={form.avatar}
+                  onChange={(event) => handleChange('avatar', event.target.value)}
+                  placeholder="https://..."
+                />
+              </div>
 
-            <div className="input-group">
-              <label htmlFor="worker-skills">Skills (comma separated)</label>
-              <input
-                id="worker-skills"
-                className="input-field"
-                value={form.skills}
-                onChange={(event) => handleChange('skills', event.target.value)}
-                placeholder="Electrician, AC Repair, Plumbing"
-              />
-            </div>
+              <div className="input-group">
+                <label htmlFor="worker-skills">Skills (comma separated)</label>
+                <input
+                  id="worker-skills"
+                  className="input-field"
+                  value={form.skills}
+                  onChange={(event) => handleChange('skills', event.target.value)}
+                  placeholder="Electrician, AC Repair, Plumbing"
+                />
+              </div>
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
-                {saving ? 'Saving...' : 'Save Profile'}
-              </button>
-              <button type="button" className="btn btn-outline" onClick={loadProfile}>
-                Reset
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 24 }}>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? 'Saving...' : 'Save Profile'}
+                </button>
+                <button type="button" className="btn btn-outline" onClick={loadProfile}>
+                  Reset
+                </button>
+              </div>
+            </form>
+          </div>
 
-      {!loading && profile && (
-        <div className="dash-section">
-          <h3 className="dash-section-title">Account Snapshot</h3>
-          <table className="data-table">
-            <tbody>
-              <tr>
-                <td><strong>Email</strong></td>
-                <td>{profile.email}</td>
-              </tr>
-              <tr>
-                <td><strong>Role</strong></td>
-                <td>{profile.role}</td>
-              </tr>
-              <tr>
-                <td><strong>Verification</strong></td>
-                <td>{profile.isVerified ? 'Verified' : 'Pending Verification'}</td>
-              </tr>
-              <tr>
-                <td><strong>Earnings (lifetime)</strong></td>
-                <td>{formatInr(profile.earnings || 0)}</td>
-              </tr>
-              <tr>
-                <td><strong>Pro Badge</strong></td>
-                <td>{profile.isProBadge ? 'Unlocked' : 'Not unlocked yet'}</td>
-              </tr>
-            </tbody>
-          </table>
+          {!loading && profile && (
+            <div className="dash-section" style={{ flex: 1, margin: 0 }}>
+              <h3 className="dash-section-title">Account Snapshot</h3>
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+                  <strong style={{ color: 'var(--navy-600)' }}>Email</strong>
+                  <span>{profile.email}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+                  <strong style={{ color: 'var(--navy-600)' }}>Role</strong>
+                  <span>{profile.role}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+                  <strong style={{ color: 'var(--navy-600)' }}>Verification</strong>
+                  <span style={{ color: profile.isVerified ? '#10b981' : '#f59e0b', fontWeight: 700 }}>
+                    {profile.isVerified ? 'Verified' : 'Pending Verification'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+                  <strong style={{ color: 'var(--navy-600)' }}>Earnings (Lifetime)</strong>
+                  <span>{formatInr(profile.earnings || 0)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <strong style={{ color: 'var(--navy-600)' }}>Pro Badge</strong>
+                  <span style={{ color: isProUnlocked ? '#7c3aed' : 'var(--gray-500)', fontWeight: 700 }}>
+                    {isProUnlocked ? 'Unlocked' : 'Not unlocked yet'}
+                  </span>
+                </div>
+              </div>
+              
+              {isProUnlocked && (
+                <div className="card" style={{ marginTop: '24px', background: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', borderColor: '#d8b4fe', textAlign: 'center' }}>
+                  <HiOutlineShieldCheck style={{ fontSize: '3rem', color: '#9333ea', margin: '0 auto 12px' }} />
+                  <h4 style={{ color: '#6b21a8', margin: '0 0 8px 0' }}>Verified Pro Status Active</h4>
+                  <p style={{ color: '#7e22ce', fontSize: '0.9rem', margin: 0 }}>You are receiving priority job requests and premium listings in your service area.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

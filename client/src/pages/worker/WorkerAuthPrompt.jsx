@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import '../Dashboard.css';
+import { useTranslation } from 'react-i18next';
 
 const WorkerAuthPrompt = ({ onSignIn, loading, error }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('ramesh@test.com');
   const [password, setPassword] = useState('test123');
   const [formError, setFormError] = useState('');
@@ -11,7 +13,7 @@ const WorkerAuthPrompt = ({ onSignIn, loading, error }) => {
     setFormError('');
 
     if (!email || !password) {
-      setFormError('Email and password are required');
+      setFormError(t('workerAuth.emailReq', 'Email and password are required'));
       return;
     }
 
@@ -26,20 +28,20 @@ const WorkerAuthPrompt = ({ onSignIn, loading, error }) => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Worker Panel</h1>
-          <p className="page-subtitle">Sign in to manage jobs, schedule, and earnings.</p>
+          <h1 className="page-title">{t('workerAuth.workerPanel', 'Worker Panel')}</h1>
+          <p className="page-subtitle">{t('workerAuth.workerSubtitle', 'Sign in to manage jobs, schedule, and earnings.')}</p>
         </div>
       </div>
 
       <div className="card" style={{ maxWidth: 520 }}>
-        <h3 style={{ marginBottom: 8 }}>Worker Login</h3>
+        <h3 style={{ marginBottom: 8 }}>{t('workerAuth.workerLogin', 'Worker Login')}</h3>
         <p style={{ color: 'var(--gray-500)', marginBottom: 18, fontSize: '0.9rem' }}>
-          Demo credentials are prefilled from the seeded database.
+          {t('workerAuth.demoCreds', 'Demo credentials are prefilled from the seeded database.')}
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="worker-email">Email</label>
+            <label htmlFor="worker-email">{t('workerAuth.emailLabel', 'Email')}</label>
             <input
               id="worker-email"
               className="input-field"
@@ -51,7 +53,7 @@ const WorkerAuthPrompt = ({ onSignIn, loading, error }) => {
           </div>
 
           <div className="input-group">
-            <label htmlFor="worker-password">Password</label>
+            <label htmlFor="worker-password">{t('workerAuth.passwordLabel', 'Password')}</label>
             <input
               id="worker-password"
               className="input-field"
@@ -69,7 +71,7 @@ const WorkerAuthPrompt = ({ onSignIn, loading, error }) => {
           )}
 
           <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign in as Worker'}
+            {loading ? t('workerAuth.signingIn', 'Signing in...') : t('workerAuth.signInWorker', 'Sign in as Worker')}
           </button>
         </form>
       </div>

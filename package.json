@@ -12,6 +12,7 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "@vitalets/google-translate-api": "^9.2.1"
+    "@vitalets/google-translate-api": "^9.2.1",
+    "leaflet": "^1.9.4"
   }
 }

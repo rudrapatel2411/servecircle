@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   HiOutlineCalendarDays,
   HiOutlineClock,
@@ -23,6 +24,7 @@ const previousRequests = [
 ];
 
 const B2BBooking = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     service: 'Deep Cleaning',
     scheduleType: 'weekly',
@@ -55,17 +57,17 @@ const B2BBooking = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Bulk Booking</h1>
-          <p className="page-subtitle">Create one request for multiple buildings or blocks.</p>
+          <h1 className="page-title">{t('b2bExtended.bookTitle', 'Bulk Booking')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.bookSubtitle', 'Create one request for multiple buildings or blocks.')}</p>
         </div>
       </div>
 
       <div className="b2b-two-col">
         <section className="b2b-card">
-          <h3>Create New Bulk Request</h3>
+          <h3>{t('b2bExtended.createNew', 'Create New Bulk Request')}</h3>
           <div className="b2b-form-grid">
             <div className="input-group">
-              <label>Service Type</label>
+              <label>{t('b2bExtended.serviceType', 'Service Type')}</label>
               <select className="input-field" value={form.service} onChange={(event) => update('service', event.target.value)}>
                 <option>Deep Cleaning</option>
                 <option>Pest Control</option>
@@ -74,7 +76,7 @@ const B2BBooking = () => {
               </select>
             </div>
             <div className="input-group">
-              <label>Schedule Frequency</label>
+              <label>{t('b2bExtended.scheduleFreq', 'Schedule Frequency')}</label>
               <select className="input-field" value={form.scheduleType} onChange={(event) => update('scheduleType', event.target.value)}>
                 <option value="one-time">One Time</option>
                 <option value="weekly">Weekly</option>
@@ -82,19 +84,19 @@ const B2BBooking = () => {
               </select>
             </div>
             <div className="input-group">
-              <label><HiOutlineCalendarDays style={{ verticalAlign: 'middle' }} /> Preferred Date</label>
+              <label><HiOutlineCalendarDays style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.preferredDate', 'Preferred Date')}</label>
               <input className="input-field" type="date" value={form.preferredDate} onChange={(event) => update('preferredDate', event.target.value)} />
             </div>
             <div className="input-group">
-              <label><HiOutlineClock style={{ verticalAlign: 'middle' }} /> Preferred Time</label>
+              <label><HiOutlineClock style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.preferredTime', 'Preferred Time')}</label>
               <input className="input-field" type="time" value={form.preferredTime} onChange={(event) => update('preferredTime', event.target.value)} />
             </div>
             <div className="input-group">
-              <label>Units / Blocks Count</label>
+              <label>{t('b2bExtended.unitsCount', 'Units / Blocks Count')}</label>
               <input className="input-field" type="number" min="1" value={form.quantity} onChange={(event) => update('quantity', Number(event.target.value))} />
             </div>
             <div className="input-group">
-              <label><HiOutlineMapPin style={{ verticalAlign: 'middle' }} /> Select Locations</label>
+              <label><HiOutlineMapPin style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.selectLocations', 'Select Locations')}</label>
               <div className="b2b-check-list">
                 {availableLocations.map((location) => (
                   <button
@@ -109,7 +111,7 @@ const B2BBooking = () => {
               </div>
             </div>
             <div className="input-group">
-              <label>Request Notes</label>
+              <label>{t('b2bExtended.requestNotes', 'Request Notes')}</label>
               <textarea
                 className="input-field"
                 rows={3}
@@ -119,24 +121,24 @@ const B2BBooking = () => {
               />
             </div>
           </div>
-          <button className="btn btn-primary"><HiOutlinePlusCircle /> Submit Bulk Request</button>
+          <button className="btn btn-primary"><HiOutlinePlusCircle /> {t('b2bExtended.submitBulk', 'Submit Bulk Request')}</button>
         </section>
 
         <aside className="b2b-card">
-          <h3>Request Summary</h3>
+          <h3>{t('b2bExtended.requestSummary', 'Request Summary')}</h3>
           <div className="confirm-summary">
-            <div className="confirm-row"><span className="confirm-label">Service</span><span className="confirm-value">{form.service}</span></div>
-            <div className="confirm-row"><span className="confirm-label">Frequency</span><span className="confirm-value">{form.scheduleType}</span></div>
-            <div className="confirm-row"><span className="confirm-label">Locations</span><span className="confirm-value">{selectedLocations.length}</span></div>
-            <div className="confirm-row"><span className="confirm-label">Units</span><span className="confirm-value">{form.quantity}</span></div>
-            <div className="confirm-row total"><span className="confirm-label">Est. Monthly Cost</span><span className="confirm-value">Rs {estimatedCost.toLocaleString('en-IN')}</span></div>
+            <div className="confirm-row"><span className="confirm-label">{t('b2bExtended.service', 'Service')}</span><span className="confirm-value">{form.service}</span></div>
+            <div className="confirm-row"><span className="confirm-label">{t('b2bExtended.frequency', 'Frequency')}</span><span className="confirm-value">{form.scheduleType}</span></div>
+            <div className="confirm-row"><span className="confirm-label">{t('b2bExtended.locations', 'Locations')}</span><span className="confirm-value">{selectedLocations.length}</span></div>
+            <div className="confirm-row"><span className="confirm-label">{t('b2bExtended.units', 'Units')}</span><span className="confirm-value">{form.quantity}</span></div>
+            <div className="confirm-row total"><span className="confirm-label">{t('b2bExtended.estMonthlyCost', 'Est. Monthly Cost')}</span><span className="confirm-value">Rs {estimatedCost.toLocaleString('en-IN')}</span></div>
           </div>
-          <p className="page-subtitle">Final invoice depends on actual site scope and SLA approval.</p>
+          <p className="page-subtitle">{t('b2bExtended.finalInvoiceNote', 'Final invoice depends on actual site scope and SLA approval.')}</p>
         </aside>
       </div>
 
       <div className="dash-section">
-        <h3 className="dash-section-title">Recent Bulk Requests</h3>
+        <h3 className="dash-section-title">{t('b2bExtended.recentBulk', 'Recent Bulk Requests')}</h3>
         <div className="b2b-card">
           {previousRequests.map((request) => (
             <div key={request.id} className="b2b-request-row">

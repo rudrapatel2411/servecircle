@@ -1,14 +1,24 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { HiOutlineArrowLeft, HiOutlineCalendarDays, HiOutlineCheckCircle, HiOutlineClock, HiOutlineChevronRight } from 'react-icons/hi2';
+import { useTranslation } from 'react-i18next';
+import { HiOutlineArrowLeft, HiOutlineCalendarDays, HiOutlineCheckCircle, HiOutlineClock, HiOutlineChevronRight, HiOutlineShieldCheck, HiOutlineFire } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
 const FoodKitchenHub = () => {
+  const { t } = useTranslation();
+
   // Tiffin Meal Builder state
   const [dietType, setDietType] = useState('veg'); // 'veg', 'non-veg', 'keto'
   const [duration, setDuration] = useState('monthly'); // 'weekly', 'monthly'
   const [isPaused, setIsPaused] = useState(false);
+  
+  // Interactive Calendar State
+  const [activeDays, setActiveDays] = useState({ mon: true, tue: true, wed: true, thu: true, fri: true, sat: false, sun: false });
+
+  const toggleDay = (day) => {
+    setActiveDays(prev => ({ ...prev, [day]: !prev[day] }));
+  };
 
   // Home Chef state
   const [cuisine, setCuisine] = useState('indian'); // 'indian', 'mughlai', 'continental'
@@ -44,7 +54,7 @@ const FoodKitchenHub = () => {
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> Back to Directory
+        <HiOutlineArrowLeft /> {t('foodKitchen.backToDirectory')}
       </Link>
 
       {/* Header */}
@@ -61,10 +71,10 @@ const FoodKitchenHub = () => {
           <span style={{ fontSize: '3rem' }}>🍳</span>
           <div>
             <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              ServeCircle Food & Culinary Hub 🥘
+              {t('foodKitchen.title')}
             </h1>
             <p className="page-subtitle" style={{ color: '#ffedd5', fontSize: '0.9rem', marginTop: '4px' }}>
-              Daily healthy tiffin subscriptions, professional home chefs on-demand, and custom designer cake artists.
+              {t('foodKitchen.subtitle')}
             </p>
           </div>
         </div>
@@ -90,33 +100,39 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              🍱 Tiffin Meal Plan Builder
+              {t('foodKitchen.tiffinTitle')}
             </h3>
-            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-              Build your daily lunch & dinner box plan, prepared in high-hygiene FSSAI-approved kitchens.
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
+              {t('foodKitchen.tiffinDesc')}
             </p>
+
+            {/* Macro Tags */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.65rem', background: '#fff7ed', color: '#c2410c', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}><HiOutlineFire /> High Protein (35g)</span>
+              <span style={{ fontSize: '0.65rem', background: '#ecfdf5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>{t('foodKitchenExt.lowCalorie')}</span>
+            </div>
 
             {/* Diet type */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-              {['veg', 'non-veg', 'keto'].map((t) => (
+              {['veg', 'non-veg', 'keto'].map((dt) => (
                 <button
-                  key={t}
-                  onClick={() => setDietType(t)}
+                  key={dt}
+                  onClick={() => setDietType(dt)}
                   style={{
                     flex: 1,
                     padding: '8px',
                     borderRadius: '8px',
                     border: '1.5px solid',
-                    borderColor: dietType === t ? '#ea580c' : 'var(--gray-200)',
-                    background: dietType === t ? 'rgba(234, 88, 12, 0.05)' : 'white',
-                    color: dietType === t ? '#ea580c' : 'var(--gray-700)',
+                    borderColor: dietType === dt ? '#ea580c' : 'var(--gray-200)',
+                    background: dietType === dt ? 'rgba(234, 88, 12, 0.05)' : 'white',
+                    color: dietType === dt ? '#ea580c' : 'var(--gray-700)',
                     fontWeight: 700,
                     textTransform: 'uppercase',
                     fontSize: '0.72rem',
                     cursor: 'pointer'
                   }}
                 >
-                  {t}
+                  {dt === 'veg' ? t('foodKitchen.veg') : dt === 'non-veg' ? t('foodKitchen.nonVeg') : t('foodKitchen.keto')}
                 </button>
               ))}
             </div>
@@ -140,9 +156,38 @@ const FoodKitchenHub = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  {dur === 'weekly' ? '7 Days (Weekly)' : '30 Days (Monthly - 10% Off)'}
+                  {dur === 'weekly' ? t('foodKitchen.weeklyTiffin') : t('foodKitchen.monthlyTiffin')}
                 </button>
               ))}
+            </div>
+
+            {/* Interactive Calendar */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '8px' }}>{t('foodKitchenExt.deliverySchedule')}</label>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                {Object.keys(activeDays).map(day => (
+                  <div
+                    key={day}
+                    onClick={() => toggleDay(day)}
+                    style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      padding: '8px 0',
+                      borderRadius: '8px',
+                      background: activeDays[day] ? '#ea580c' : '#f1f5f9',
+                      color: activeDays[day] ? 'white' : 'var(--gray-500)',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      textTransform: 'uppercase',
+                      border: '1px solid',
+                      borderColor: activeDays[day] ? '#ea580c' : 'var(--gray-300)'
+                    }}
+                  >
+                    {day.substring(0, 1)}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Subscription Switch */}
@@ -158,8 +203,8 @@ const FoodKitchenHub = () => {
               border: '1px solid var(--gray-200)'
             }}>
               <div>
-                <strong style={{ color: 'var(--navy-800)' }}>Pause Subscription</strong>
-                <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--gray-500)' }}>Pause meals anytime during travel.</span>
+                <strong style={{ color: 'var(--navy-800)' }}>{t('foodKitchen.pauseSub')}</strong>
+                <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--gray-500)' }}>{t('foodKitchen.pauseSubDesc')}</span>
               </div>
               <input
                 type="checkbox"
@@ -180,7 +225,7 @@ const FoodKitchenHub = () => {
             alignItems: 'center'
           }}>
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>Subscription Total</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.subTotal')}</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>
                 ₹{calculateTiffinPrice().toLocaleString()}
               </span>
@@ -190,7 +235,7 @@ const FoodKitchenHub = () => {
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
-              Subscribe Plan
+              {t('foodKitchen.subscribePlan')}
             </Link>
           </div>
         </div>
@@ -208,18 +253,28 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              👨🏼‍🍳 Gourmet Home Chef Roster
+              {t('foodKitchen.chefTitle')}
             </h3>
-            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-              Hire master culinary artists to prepare premium traditional Indian feasts, Mughlai biryanis, or fine Continental courses directly in your kitchen.
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '12px' }}>
+              {t('foodKitchen.chefDesc')}
             </p>
+
+            {/* FSSAI & Hygiene Badge */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.65rem', background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <HiOutlineShieldCheck size={14}/> 100% FSSAI Certified
+              </span>
+              <span style={{ fontSize: '0.65rem', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>
+                ⭐ 4.9 Hygiene Rating
+              </span>
+            </div>
 
             {/* Cuisine choice */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
               {[
-                { id: 'indian', name: 'Traditional Indian Feast 🥘', desc: 'Home-style authentic regional cuisines' },
-                { id: 'mughlai', name: 'Royal Mughlai Banquet 🍲', desc: 'Aromatic gravies, rich biryanis, and kebabs' },
-                { id: 'continental', name: 'Premium European Course 🥩', desc: 'Fine dining steaks, baked bakes, and rich pastas' }
+                { id: 'indian', name: t('foodKitchen.indianName', 'Traditional Indian Feast 🥘'), desc: t('foodKitchen.indianDesc', 'Home-style authentic regional cuisines') },
+                { id: 'mughlai', name: t('foodKitchen.mughlaiName', 'Royal Mughlai Banquet 🍲'), desc: t('foodKitchen.mughlaiDesc', 'Aromatic gravies, rich biryanis, and kebabs') },
+                { id: 'continental', name: t('foodKitchen.continentalName', 'Premium European Course 🥩'), desc: t('foodKitchen.continentalDesc', 'Fine dining steaks, baked bakes, and rich pastas') }
               ].map((c) => (
                 <div
                   key={c.id}
@@ -256,7 +311,7 @@ const FoodKitchenHub = () => {
             alignItems: 'center'
           }}>
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>Chef Booking Fee</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.chefFee')}</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>
                 ₹{calculateChefPrice().toLocaleString()}
               </span>
@@ -266,7 +321,7 @@ const FoodKitchenHub = () => {
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
-              Book Chef Slot
+              {t('foodKitchen.bookChefSlot')}
             </Link>
           </div>
         </div>
@@ -284,29 +339,29 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              🎂 Custom Designer Cake Studio
+              {t('foodKitchen.cakeTitle')}
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-              Upload theme reference photos and book top-rated pastry decorators to curate delicious showstoppers for weddings, anniversaries, and milestone events.
+              {t('foodKitchen.cakeDesc')}
             </p>
 
             {/* Cake Style Selection */}
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>Decorator Style</label>
+              <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>{t('foodKitchen.decoratorStyle')}</label>
               <select
                 value={cakeStyle}
                 onChange={(e) => setCakeStyle(e.target.value)}
                 style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.82rem' }}
               >
-                <option value="minimalist">Minimalist Korean Cream (₹1,499)</option>
-                <option value="fruit">Fresh Exotic Fruit Gateau (₹1,799)</option>
-                <option value="fondant">Luxury 3D Sculpted Fondant (₹2,999)</option>
+                <option value="minimalist">{t('foodKitchen.minimalistCake')}</option>
+                <option value="fruit">{t('foodKitchen.fruitCake')}</option>
+                <option value="fondant">{t('foodKitchen.fondantCake')}</option>
               </select>
             </div>
 
             {/* Photo Reference Upload simulator */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>Reference Photo / Drawing</label>
+              <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>{t('foodKitchen.refPhoto')}</label>
               <div style={{
                 border: '1.5px dashed var(--gray-300)',
                 borderRadius: '8px',
@@ -321,7 +376,7 @@ const FoodKitchenHub = () => {
                 ) : (
                   <div>
                     <span style={{ fontSize: '1.5rem', display: 'block' }}>📸</span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>Tap to upload reference blueprint</span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>{t('foodKitchen.tapToUpload')}</span>
                   </div>
                 )}
                 <input
@@ -344,7 +399,7 @@ const FoodKitchenHub = () => {
             alignItems: 'center'
           }}>
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>Consultation & Booking</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.consultationBooking')}</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>
                 ₹{cakeStyle === 'minimalist' ? '1,499' : cakeStyle === 'fruit' ? '1,799' : '2,999'}
               </span>
@@ -354,11 +409,106 @@ const FoodKitchenHub = () => {
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
-              Order Cake
+              {t('foodKitchen.orderCake')}
             </Link>
           </div>
         </div>
+      </div>
 
+      <div style={{ marginTop: '40px', marginBottom: '40px' }}>
+        <h2 style={{ fontSize: '1.6rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '20px', paddingLeft: '8px', borderLeft: '4px solid #ea580c' }}>
+          Premium Culinary Experiences
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '24px'
+        }}>
+        {/* BBQ & Grill Setup */}
+        <div style={{
+          background: 'white',
+          border: '1px solid var(--gray-200)',
+          borderRadius: 'var(--radius-xl)',
+          padding: '28px',
+          boxShadow: 'var(--shadow-sm)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              Backyard BBQ Setup 🍖
+            </h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
+              We bring the grill, coal, and marinated meats. Enjoy a live BBQ experience in your backyard.
+            </p>
+          </div>
+          <Link
+            to="/customer/food-flow?type=bbq"
+            className="btn btn-primary btn-sm"
+            style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
+          >
+            Configure BBQ Menu
+          </Link>
+        </div>
+
+        {/* Baking Masterclass */}
+        <div style={{
+          background: 'white',
+          border: '1px solid var(--gray-200)',
+          borderRadius: 'var(--radius-xl)',
+          padding: '28px',
+          boxShadow: 'var(--shadow-sm)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              In-Home Baking Class 🧁
+            </h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
+              Book a pastry chef for a 2-hour hands-on baking masterclass in your kitchen.
+            </p>
+          </div>
+          <Link
+            to="/customer/food-flow?type=baking"
+            className="btn btn-primary btn-sm"
+            style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
+          >
+            Book Masterclass
+          </Link>
+        </div>
+
+        {/* Kitchen Deep Clean & Pantry */}
+        <div style={{
+          background: 'white',
+          border: '1px solid var(--gray-200)',
+          borderRadius: 'var(--radius-xl)',
+          padding: '28px',
+          boxShadow: 'var(--shadow-sm)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              Kitchen & Pantry Clean 🧼
+            </h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
+              Deep cleaning of appliances and aesthetic organization of your pantry shelves.
+            </p>
+          </div>
+          <Link
+            to="/customer/food-flow?type=kitchen-clean"
+            className="btn btn-primary btn-sm"
+            style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
+          >
+            Customize Cleaning
+          </Link>
+        </div>
+
+        </div>
       </div>
     </div>
   );

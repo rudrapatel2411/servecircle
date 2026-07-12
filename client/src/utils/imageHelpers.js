@@ -1,66 +1,200 @@
-export const getServiceImage = (serviceId) => {
-  const imageMap = {
-    'ac-repair': 'photo-1621905251189-08b45d6a269e',
-    'electrician': 'photo-1621905252507-b35492cc74b4',
-    'plumb': 'photo-1585704032915-c3400ca199e7',
-    'carpent': 'photo-1505015920881-0f83c2f7c95e',
-    'paint': 'photo-1562259949-e8e7689d7828',
-    'car-wash': 'photo-1520340356584-f9917d1eea6f',
-    'bike': 'photo-1558981806-ec527fa84c39',
-    'jumpstart': 'photo-1563720223185-11003d516935',
-    'dent': 'photo-1605810230434-7631ac76ec81',
-    'clean': 'photo-1584622650111-993a426fbf0a',
-    'pest': 'photo-1594951474586-17b5e406dfec',
-    'decor': 'photo-1513694203232-719a280e022f',
-    'cater': 'photo-1555244162-803834f70033',
-    'wifi': 'photo-1544197150-b99a580bb7a8',
-    'cctv': 'photo-1557683316-973673baf926',
-    'doorbell': 'photo-1558002038-1055907df827',
-    'elder': 'photo-1576765608535-5f04d1e3f289',
-    'beauty': 'photo-1560066984-138dadb4c035',
-    'driver': 'photo-1449965408869-eaa3f722e40d',
-    'pack': 'photo-1600585154340-be6161a56a0c',
-    'tuit': 'photo-1427504494785-3a9ca7044f45',
-    'comput': 'photo-1531482615713-2afd69097998',
-    'tenant': 'photo-1560518883-ce09059eeffa',
-    'inspect': 'photo-1581578731548-c64695cc6952',
-    'waterproof': 'photo-1514525253161-7a46d19cd819',
-    'diwali': 'photo-1514525253161-7a46d19cd819',
-    'furnitur': 'photo-1538688525198-9b88f6f53126',
-    'plant': 'photo-1416879598555-33f6a27e1b76',
-    'lawn': 'photo-1558904541-efa843a96f0f',
-    'weld': 'photo-1504917595217-d4dc5ebe6122',
-    'doctor': 'photo-1579684385127-1ef15d508118',
-    'physio': 'photo-1576091160550-2173dba999ef',
-    'lab': 'photo-1579154204601-01588f351e67',
-    'baby': 'photo-1516627145497-ae6968895b74',
-    'pet': 'photo-1541599540903-216a46ca1dc0',
-    'chef': 'photo-1556910103-1c02745aae4d',
-    'tiffin': 'photo-1504674900247-0877df9cc836',
-    'airport': 'photo-1436491865332-7a61a3597d2b',
-    'security': 'photo-1518063071279-8d8a7071f1d1',
-    'geyser': 'photo-1585704032915-c3400ca199e7',
-    'locksmith': 'photo-1563223771-5fe4038fbfc9',
-    'appliance': 'photo-1584622650111-993a426fbf0a',
-    'chimney': 'photo-1584622650111-993a426fbf0a',
-    'garden': 'photo-1416879598555-33f6a27e1b76',
-    'irrigat': 'photo-1558904541-efa843a96f0f',
-    'outdoor': 'photo-1520188740392-802c0b78e357',
-    'gate': 'photo-1504917595217-d4dc5ebe6122'
-  };
 
-  for (const [key, photoId] of Object.entries(imageMap)) {
-    if (serviceId.toLowerCase().includes(key)) {
-      return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=400&q=80`;
-    }
+// Auto-generated robust dictionary of high-quality Unsplash images for common services
+const customImages = {
+  'smart-doorbell': '/smart-doorbell-uploaded.jpg',
+  'ac-repair': '/ac-repair-uploaded.png',
+  'electrician-visit': '/electrician-visit-uploaded.png',
+  'plumbing-fix': '/plumbing-fix-uploaded.png',
+  'carpenter-visit': '/carpenter-visit-uploaded.png',
+  'furniture-assembly': '/furniture-assembly-uploaded.jpg',
+  'painter-pro': '/painter-pro-uploaded.png',
+  'geyser-repair': '/geyser-repair-uploaded.png',
+  'locksmith-pro': '/locksmith-pro-uploaded.png',
+  'appliance-install': '/appliance-install-uploaded.png',
+  'chimney-service': '/chimney-service-uploaded.png',
+  'water-purifier': '/water-purifier-uploaded.png',
+  'car-wash': '/car-wash-uploaded.png',
+  'bike-repair': '/bike-repair-uploaded.jpg',
+  'battery-jumpstart': '/battery-jumpstart-uploaded.jpg',
+  'dent-paint': '/dent-paint-uploaded.jpg',
+  'car-detailing': '/car-detailing-uploaded.jpg',
+  'bike-puncture': '/bike-puncture-uploaded.jpg',
+  'windshield-repair': '/windshield-repair-uploaded.jpg',
+  'engine-coolant': '/engine-coolant-uploaded.jpg',
+  'deep-clean': 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=300&q=60',
+  'sofa-cleaning': '/sofa-cleaning-uploaded.jpg',
+  'pest-control': '/pest-control-uploaded.jpg',
+  'water-tank-clean': '/water-tank-clean-uploaded.jpg',
+  'bathroom-deep-clean': '/bathroom-clean-uploaded.jpg',
+  'kitchen-deep-clean': '/kitchen-clean-uploaded.jpg',
+  'fridge-cleaning': '/fridge-clean-uploaded.jpg',
+  'smart-tv-setup': '/smart-tv-setup-uploaded.jpg',
+  'wifi-setup': '/wifi-setup-uploaded.jpg',
+  'pc-tuneup': '/pc-tuneup-uploaded.jpg',
+  'printer-install': '/printer-install-uploaded.jpg',
+  'home-theater-sync': '/home-theater-sync-uploaded.jpg',
+  'beauty-home': '/beauty-home-uploaded.jpg',
+  'cook-for-day': '/cook-for-day-uploaded.jpg',
+  'yoga-instructor': '/yoga-instructor-uploaded.jpg',
+  'elder-care': '/elder-care-uploaded.jpg',
+  'makeup-artist': '/makeup-artist-uploaded.jpg',
+  'errand-boy': '/errand-boy-uploaded.jpg',
+  'driver-demand': '/driver-demand-uploaded.jpg',
+  'packers-helper': '/packers-helper-uploaded.jpg',
+  'ironing-help': '/ironing-help-uploaded.jpg',
+  'home-tuition': '/home-tuition-uploaded.jpg',
+  'coding-tutor': '/coding-tutor-uploaded.jpg',
+  'seniors-computer': '/seniors-computer-uploaded.jpg',
+  'resume-writing': '/resume-writing-uploaded.jpg',
+  'tenant-ready': '/tenant-ready-uploaded.jpg',
+  'pest-pre-purchase': '/pest-pre-purchase-uploaded.jpg',
+  'rental-inspection': '/rental-inspection-uploaded.jpg',
+  'key-management': '/key-management-uploaded.jpg',
+  'air-purifier-service': '/air-purifier-service-uploaded.jpg',
+  'diwali-prep': '/diwali-prep-uploaded.png',
+  'holi-color-clean': '/holi-color-clean-uploaded.jpg',
+  'waterproofing': '/waterproofing-uploaded.jpg',
+  'furniture-polish': '/furniture-polish-uploaded.jpg',
+  'interior-design': '/interior-design-uploaded.jpg',
+  'wallpaper-install': '/wallpaper-install-uploaded.jpg',
+  'sofa-upholstery': '/sofa-upholstery-uploaded.jpg',
+  'curtain-installation': '/curtain-installation-uploaded.jpg',
+  'plant-care': '/plant-care-uploaded.jpg',
+  'lawn-mowing': '/lawn-mowing-uploaded.jpg',
+  'welding-gate-fix': '/welding-gate-fix-uploaded.jpg',
+  'drip-irrigation': '/drip-irrigation-uploaded.jpg',
+  'garden-design': '/garden-design-uploaded.jpg',
+  'outdoor-lighting': '/outdoor-lighting-uploaded.jpg',
+};
+
+const portfolioImages = {
+  'ac-repair': {
+    before: 'https://images.unsplash.com/photo-1505015920881-0f83c2f7c95e?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581141849291-1125c7b692b5?auto=format&fit=crop&w=300&q=60'
+  },
+  'electrician-visit': {
+    before: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=300&q=60'
+  },
+  'plumbing-fix': {
+    before: 'https://images.unsplash.com/photo-1607472586893-edb57cb3b4e1?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=300&q=60'
+  },
+  'carpenter-visit': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'painter-pro': {
+    before: 'https://images.unsplash.com/photo-1599696773539-65a8e0cb20ec?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=300&q=60'
+  },
+  'geyser-repair': {
+    before: 'https://images.unsplash.com/photo-1607472586893-edb57cb3b4e1?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=300&q=60'
+  },
+  'locksmith-pro': {
+    before: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=300&q=60'
+  },
+  'appliance-install': {
+    before: 'https://images.unsplash.com/photo-1505015920881-0f83c2f7c95e?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581141849291-1125c7b692b5?auto=format&fit=crop&w=300&q=60'
+  },
+  'chimney-service': {
+    before: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=300&q=60'
+  },
+  'water-purifier': {
+    before: 'https://images.unsplash.com/photo-1607472586893-edb57cb3b4e1?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=300&q=60'
+  },
+  'car-wash': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'bike-repair': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'battery-jumpstart': {
+    before: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b6?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=300&q=60'
+  },
+  'dent-paint': {
+    before: 'https://images.unsplash.com/photo-1599696773539-65a8e0cb20ec?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=300&q=60'
+  },
+  'car-detailing': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'bike-puncture': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'windshield-repair': {
+    before: 'https://images.unsplash.com/photo-1505015920881-0f83c2f7c95e?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581141849291-1125c7b692b5?auto=format&fit=crop&w=300&q=60'
+  },
+  'engine-coolant': {
+    before: 'https://images.unsplash.com/photo-1605557202138-09794bfeb559?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?auto=format&fit=crop&w=300&q=60'
+  },
+  'deep-clean': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  },
+  'sofa-cleaning': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  },
+  'pest-control': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  },
+  'water-tank-clean': {
+    before: 'https://images.unsplash.com/photo-1607472586893-edb57cb3b4e1?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=300&q=60'
+  },
+  'bathroom-deep-clean': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  },
+  'kitchen-deep-clean': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  },
+  'fridge-cleaning': {
+    before: 'https://images.unsplash.com/photo-1594833215918-639a04f9ea4d?auto=format&fit=crop&w=300&q=60',
+    after: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60'
+  }
+};
+
+export const getServiceImage = (serviceId) => {
+  if (customImages[serviceId]) {
+    return customImages[serviceId];
   }
 
-  const fallbacks = [
-    'photo-1581578731548-c64695cc6952',
-    'photo-1584622650111-993a426fbf0a',
-    'photo-1531482615713-2afd69097998',
-    'photo-1580674285054-bed31e145f59'
-  ];
-  const hash = serviceId.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-  return `https://images.unsplash.com/${fallbacks[hash % fallbacks.length]}?auto=format&fit=crop&w=400&q=80`;
+  const cleanName = serviceId.replace(/-/g, ' ');
+  const prompt = `${cleanName} service being performed by a professional, highly detailed real life photography`;
+  const encodedPrompt = encodeURIComponent(prompt);
+  const hash = Math.abs(serviceId.split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0)) + 42;
+
+  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=400&nologo=true&seed=${hash}`;
+};
+
+export const getFallbackImage = (serviceId) => {
+  if (customImages[serviceId]) return customImages[serviceId];
+  // No more placeholders, use a generic high quality splash image
+  return 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=300&q=60';
+};
+
+export const getPortfolioBeforeImage = (serviceId) => {
+  if (portfolioImages[serviceId]?.before) return portfolioImages[serviceId].before.replace('w=300', 'w=800');
+  return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=60';
+};
+
+export const getPortfolioAfterImage = (serviceId) => {
+  if (portfolioImages[serviceId]?.after) return portfolioImages[serviceId].after.replace('w=300', 'w=800');
+  return 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=60';
 };

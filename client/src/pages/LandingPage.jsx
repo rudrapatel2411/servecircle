@@ -72,9 +72,9 @@ const LandingPage = () => {
               <Link to="/worker" className="btn btn-outline btn-lg">{t('hero.ctaSecondary')}</Link>
             </div>
             <div className="hero-trust animate-fade-in-up stagger-4">
-              <div className="trust-item"><HiOutlineShieldCheck /> Verified Workers</div>
-              <div className="trust-item"><HiOutlineClock /> 30-min Response</div>
-              <div className="trust-item"><HiOutlineChatBubbleLeftRight /> 24/7 Support</div>
+              <div className="trust-item"><HiOutlineShieldCheck /> {t('landing.verifiedWorkers')}</div>
+              <div className="trust-item"><HiOutlineClock /> {t('landing.response30Min')}</div>
+              <div className="trust-item"><HiOutlineChatBubbleLeftRight /> {t('landing.support247')}</div>
             </div>
           </div>
         </div>
@@ -219,7 +219,7 @@ const LandingPage = () => {
       <section className="cta-section">
         <div className="container">
           <div className="cta-card">
-            <h2>Ready to get started?</h2>
+            <h2>{t('landing.readyToGetStarted')}</h2>
             <p>{t('hero.tagline')}</p>
             <div className="cta-actions">
               <Link to="/register" className="btn btn-primary btn-lg">{t('nav.register')}</Link>
@@ -244,10 +244,10 @@ const LandingPage = () => {
             </div>
             <div className="footer-col">
               <h4>{t('footer.services')}</h4>
-              <a href="#services">Home Repairs</a>
-              <a href="#services">Vehicle Services</a>
-              <a href="#services">Cleaning</a>
-              <a href="#services">Events</a>
+              <a href="#services">{t('categories.homeRepairs')}</a>
+              <a href="#services">{t('categories.vehicleServices')}</a>
+              <a href="#services">{t('categories.cleaning')}</a>
+              <a href="#services">{t('categories.events')}</a>
             </div>
             <div className="footer-col">
               <h4>{t('footer.company')}</h4>

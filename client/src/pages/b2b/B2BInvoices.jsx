@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBanknotes,
   HiOutlineDocumentArrowDown,
@@ -14,6 +15,7 @@ const invoiceRows = [
 ];
 
 const B2BInvoices = () => {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredRows = useMemo(
@@ -35,17 +37,17 @@ const B2BInvoices = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Invoices</h1>
-          <p className="page-subtitle">Monitor invoice status, due dates, and payment movement.</p>
+          <h1 className="page-title">{t('b2bExtended.invTitle', 'Invoices')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.invSubtitle', 'Monitor invoice status, due dates, and payment movement.')}</p>
         </div>
       </div>
 
       <div className="tabs-bar">
         {[
-          { key: 'all', label: 'All' },
-          { key: 'sent', label: 'Sent' },
-          { key: 'paid', label: 'Paid' },
-          { key: 'overdue', label: 'Overdue' },
+          { key: 'all', label: t('b2bExtended.tabAll', 'All') },
+          { key: 'sent', label: t('b2bExtended.tabSent', 'Sent') },
+          { key: 'paid', label: t('b2bExtended.tabPaid', 'Paid') },
+          { key: 'overdue', label: t('b2bExtended.tabOverdue', 'Overdue') },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -59,34 +61,34 @@ const B2BInvoices = () => {
 
       <div className="b2b-kpi-strip">
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Pending Receivables</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.pendingReceivables', 'Pending Receivables')}</span>
           <span className="b2b-kpi-value">Rs {sentAmount.toLocaleString('en-IN')}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Paid Amount</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.paidAmount', 'Paid Amount')}</span>
           <span className="b2b-kpi-value">Rs {paidAmount.toLocaleString('en-IN')}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Overdue Bills</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.overdueBills', 'Overdue Bills')}</span>
           <span className="b2b-kpi-value">{invoiceRows.filter((row) => row.status === 'overdue').length}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Total Invoices</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.totalInvoices', 'Total Invoices')}</span>
           <span className="b2b-kpi-value">{invoiceRows.length}</span>
         </div>
       </div>
 
       <div className="b2b-card">
-        <h3><HiOutlineReceiptPercent style={{ verticalAlign: 'middle' }} /> Invoice Ledger</h3>
+        <h3><HiOutlineReceiptPercent style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.invoiceLedger', 'Invoice Ledger')}</h3>
         <table className="data-table">
           <thead>
             <tr>
-              <th>Invoice</th>
-              <th>Cycle</th>
-              <th>Contract</th>
-              <th>Due Date</th>
-              <th>Amount</th>
-              <th>Status</th>
+              <th>{t('b2bExtended.invoice', 'Invoice')}</th>
+              <th>{t('b2bExtended.cycle', 'Cycle')}</th>
+              <th>{t('b2bExtended.contract', 'Contract')}</th>
+              <th>{t('b2bExtended.dueDate', 'Due Date')}</th>
+              <th>{t('b2bExtended.amount', 'Amount')}</th>
+              <th>{t('b2bExtended.status', 'Status')}</th>
               <th></th>
             </tr>
           </thead>
@@ -104,7 +106,7 @@ const B2BInvoices = () => {
                   </span>
                 </td>
                 <td>
-                  <button className="b2b-mini-btn"><HiOutlineDocumentArrowDown style={{ verticalAlign: 'middle' }} /> PDF</button>
+                  <button className="b2b-mini-btn"><HiOutlineDocumentArrowDown style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.btnPdf', 'PDF')}</button>
                 </td>
               </tr>
             ))}

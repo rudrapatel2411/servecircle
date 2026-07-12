@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   HiOutlineCalendarDays,
   HiOutlineDocumentText,
@@ -41,6 +42,7 @@ const contracts = [
 ];
 
 const B2BContracts = () => {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredContracts = useMemo(
@@ -54,17 +56,17 @@ const B2BContracts = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Contracts</h1>
-          <p className="page-subtitle">Track SLAs, renewal windows, and active contract value.</p>
+          <h1 className="page-title">{t('b2bExtended.conTitle', 'Contracts')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.conSubtitle', 'Track SLAs, renewal windows, and active contract value.')}</p>
         </div>
       </div>
 
       <div className="tabs-bar">
         {[
-          { key: 'all', label: 'All' },
-          { key: 'active', label: 'Active' },
-          { key: 'renewal_due', label: 'Renewal Due' },
-          { key: 'expired', label: 'Expired' },
+          { key: 'all', label: t('b2bExtended.tabAll', 'All') },
+          { key: 'active', label: t('b2bExtended.tabActive', 'Active') },
+          { key: 'renewal_due', label: t('b2bExtended.tabRenewal', 'Renewal Due') },
+          { key: 'expired', label: t('b2bExtended.tabExpired', 'Expired') },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -78,19 +80,19 @@ const B2BContracts = () => {
 
       <div className="b2b-kpi-strip">
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Visible Contracts</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.visibleContracts', 'Visible Contracts')}</span>
           <span className="b2b-kpi-value">{filteredContracts.length}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Total Contract Value</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.totalContractValue', 'Total Contract Value')}</span>
           <span className="b2b-kpi-value">Rs {totalValue.toLocaleString('en-IN')}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Active Sites</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.activeSites', 'Active Sites')}</span>
           <span className="b2b-kpi-value">{filteredContracts.reduce((sum, contract) => sum + contract.locations, 0)}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Renewals Needed</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.renewalsNeeded', 'Renewals Needed')}</span>
           <span className="b2b-kpi-value">{filteredContracts.filter((contract) => contract.status === 'renewal_due').length}</span>
         </div>
       </div>
@@ -104,7 +106,7 @@ const B2BContracts = () => {
                 <h3 style={{ marginTop: 4 }}>{contract.name}</h3>
               </div>
               <span className={`b2b-chip ${contract.status === 'active' ? 'active' : contract.status === 'renewal_due' ? 'pending' : 'completed'}`}>
-                {contract.status === 'renewal_due' ? 'renewal due' : contract.status}
+                {contract.status === 'renewal_due' ? t('b2bExtended.renewalDue', 'renewal due') : contract.status}
               </span>
             </div>
             <div className="b2b-contract-value">Rs {contract.value.toLocaleString('en-IN')}</div>

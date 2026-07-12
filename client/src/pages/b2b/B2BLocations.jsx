@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBuildingOffice2,
   HiOutlineMapPin,
@@ -14,6 +15,7 @@ const initialLocations = [
 ];
 
 const B2BLocations = () => {
+  const { t } = useTranslation();
   const [locations, setLocations] = useState(initialLocations);
   const [form, setForm] = useState({ name: '', address: '', manager: '', units: 1 });
 
@@ -37,45 +39,45 @@ const B2BLocations = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Locations</h1>
-          <p className="page-subtitle">Manage buildings, blocks, and operational points.</p>
+          <h1 className="page-title">{t('b2bExtended.locTitle', 'Locations')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.locSubtitle', 'Manage buildings, blocks, and operational points.')}</p>
         </div>
       </div>
 
       <div className="b2b-kpi-strip">
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Total Locations</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.totalLocations', 'Total Locations')}</span>
           <span className="b2b-kpi-value">{locations.length}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Total Units</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.units', 'Total Units')}</span>
           <span className="b2b-kpi-value">{totalUnits}</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Primary City</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.primaryCity', 'Primary City')}</span>
           <span className="b2b-kpi-value">Ahmedabad</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Coverage Type</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.coverageType', 'Coverage Type')}</span>
           <span className="b2b-kpi-value">Residential + Shared</span>
         </div>
       </div>
 
       <div className="b2b-two-col">
         <section className="b2b-card">
-          <h3>Registered Locations</h3>
+          <h3>{t('b2bExtended.registeredLocations', 'Registered Locations')}</h3>
           <div className="b2b-location-grid">
             {locations.map((location) => (
               <div key={location.id} className="b2b-location-card">
                 <div className="b2b-location-title">{location.name}</div>
                 <p className="b2b-location-text">{location.address}</p>
                 <div className="b2b-meta-list">
-                  <span><HiOutlineBuildingOffice2 /> Manager: {location.manager || 'Unassigned'}</span>
-                  <span><HiOutlineMapPin /> Units: {location.units}</span>
+                  <span><HiOutlineBuildingOffice2 /> {t('b2bExtended.managerPrefix', 'Manager: ')}{location.manager || t('b2bExtended.managerUnassigned', 'Unassigned')}</span>
+                  <span><HiOutlineMapPin /> {t('b2bExtended.unitsPrefix', 'Units: ')}{location.units}</span>
                 </div>
                 <div className="b2b-mini-actions">
-                  <button className="b2b-mini-btn">Edit</button>
-                  <button className="b2b-mini-btn">Deactivate</button>
+                  <button className="b2b-mini-btn">{t('b2bExtended.btnEdit', 'Edit')}</button>
+                  <button className="b2b-mini-btn">{t('b2bExtended.btnDeactivate', 'Deactivate')}</button>
                 </div>
               </div>
             ))}
@@ -83,24 +85,24 @@ const B2BLocations = () => {
         </section>
 
         <aside className="b2b-card">
-          <h3>Add New Location</h3>
+          <h3>{t('b2bExtended.addNewLocation', 'Add New Location')}</h3>
           <div className="input-group">
-            <label>Location Name</label>
+            <label>{t('b2bExtended.locNameLabel', 'Location Name')}</label>
             <input className="input-field" value={form.name} onChange={(event) => update('name', event.target.value)} placeholder="Block D / Tower 2 / Branch Name" />
           </div>
           <div className="input-group">
-            <label>Address</label>
+            <label>{t('b2bExtended.addressLabel', 'Address')}</label>
             <textarea className="input-field" rows={3} value={form.address} onChange={(event) => update('address', event.target.value)} placeholder="Full location address" />
           </div>
           <div className="input-group">
-            <label>Location Manager</label>
+            <label>{t('b2bExtended.locManagerLabel', 'Location Manager')}</label>
             <input className="input-field" value={form.manager} onChange={(event) => update('manager', event.target.value)} placeholder="Manager name" />
           </div>
           <div className="input-group">
-            <label>Units / Floors Covered</label>
+            <label>{t('b2bExtended.unitsCovered', 'Units / Floors Covered')}</label>
             <input className="input-field" type="number" min="1" value={form.units} onChange={(event) => update('units', event.target.value)} />
           </div>
-          <button className="btn btn-primary" onClick={handleAdd}><HiOutlinePlusCircle /> Add Location</button>
+          <button className="btn btn-primary" onClick={handleAdd}><HiOutlinePlusCircle /> {t('b2bExtended.btnAddLoc', 'Add Location')}</button>
         </aside>
       </div>
     </div>

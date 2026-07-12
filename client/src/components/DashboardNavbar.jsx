@@ -1,6 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineBell, HiOutlineMagnifyingGlass, HiXMark } from 'react-icons/hi2';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  HiOutlineBell,
+  HiOutlineMagnifyingGlass,
+  HiXMark,
+  HiOutlineShieldCheck,
+  HiOutlineWallet,
+  HiOutlineCalendarDays,
+  HiOutlineStar,
+  HiOutlineUser,
+  HiOutlineArrowRightOnRectangle,
+} from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
 import { socket } from '../socket';
 import './DashboardNavbar.css';
@@ -10,6 +21,10 @@ const DashboardNavbar = ({ panel }) => {
   const [notifications, setNotifications] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
+  
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (panel === 'admin') {
@@ -30,6 +45,41 @@ const DashboardNavbar = ({ panel }) => {
     }
   }, [panel]);
 
+  // Click outside close
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const getProfileInitials = () => {
+    if (panel === 'admin') return 'A';
+    if (panel === 'worker') return 'R'; // Ramesh
+    if (panel === 'b2b') return 'G'; // Green Valley
+    return 'R'; // Rudra
+  };
+
+  const getUserDetails = () => {
+    switch (panel) {
+      case 'admin':
+        return { name: 'System Admin', email: 'admin@servecircle.in' };
+      case 'worker':
+        return { name: 'Ramesh Kumar', email: 'ramesh@test.com' };
+      case 'b2b':
+        return { name: 'Green Valley Manager', email: 'gv@test.com' };
+      default:
+        return { name: 'Rudra Shah', email: 'rudra@test.com' };
+    }
+  };
+
+  const user = getUserDetails();
+
   return (
     <header className="dash-navbar">
       <div className="dash-navbar-search">
@@ -42,8 +92,99 @@ const DashboardNavbar = ({ panel }) => {
           <HiOutlineBell />
           {notifications.length > 0 && <span className="notif-dot" style={{ background: 'var(--danger)' }} />}
         </button>
-        <div className="dash-avatar">
-          <span>{panel === 'admin' ? 'A' : 'U'}</span>
+
+        {/* Profile Dropdown Container */}
+        <div className="dash-profile-container" ref={dropdownRef}>
+          <button 
+            className="dash-avatar-btn" 
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            aria-label="Toggle profile menu"
+          >
+            <div className="dash-avatar">
+              <span>{getProfileInitials()}</span>
+            </div>
+          </button>
+
+          {isProfileOpen && (
+            <div className="dash-profile-dropdown animate-fade-in">
+              <div className="dropdown-user-info">
+                <div className="dropdown-avatar">
+                  <span>{getProfileInitials()}</span>
+                </div>
+                <div className="user-details">
+                  <h4 className="user-name">{user.name}</h4>
+                  <span className="user-email">{user.email}</span>
+                  <span className="user-badge">{panel}</span>
+                </div>
+              </div>
+              
+              <div className="dropdown-divider" />
+
+              <div className="dropdown-links">
+                {panel === 'customer' && (
+                  <>
+                    <Link 
+                      to="/customer/my-home" 
+                      className="dropdown-link" 
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#10b981' }} />
+                      <span>{t('customer.myHome')}</span>
+                    </Link>
+                    
+                    <Link 
+                      to="/customer/bookings" 
+                      className="dropdown-link" 
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineCalendarDays className="dropdown-link-icon" />
+                      <span>{t('customer.myBookings')}</span>
+                    </Link>
+
+                    <Link 
+                      to="/customer/wallet" 
+                      className="dropdown-link" 
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineWallet className="dropdown-link-icon" />
+                      <span>{t('customer.wallet')}</span>
+                    </Link>
+
+                    <Link 
+                      to="/customer/subscriptions" 
+                      className="dropdown-link" 
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineStar className="dropdown-link-icon" />
+                      <span>{t('customer.subscriptions')}</span>
+                    </Link>
+                  </>
+                )}
+
+                {panel === 'worker' && (
+                  <Link 
+                    to="/worker/profile" 
+                    className="dropdown-link" 
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    <HiOutlineUser className="dropdown-link-icon" />
+                    <span>{t('worker.profile')}</span>
+                  </Link>
+                )}
+
+                <button 
+                  className="dropdown-link logout-btn" 
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    navigate('/login');
+                  }}
+                >
+                  <HiOutlineArrowRightOnRectangle className="dropdown-link-icon text-danger" />
+                  <span className="text-danger">Log Out</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

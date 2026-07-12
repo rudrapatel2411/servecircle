@@ -9,6 +9,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
+import { getServiceImage } from '../../utils/imageHelpers';
 
 const ServiceDetail = () => {
   const { category, serviceId } = useParams();
@@ -18,8 +19,7 @@ const ServiceDetail = () => {
   const service = servicesRegistry.find((s) => s.id === serviceId);
   const [activeTier, setActiveTier] = useState('standard'); // 'standard' or 'premium'
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
-  const [selectedDate, setSelectedDate] = useState('Today');
-  const [portfolioView, setPortfolioView] = useState('after'); // 'before' or 'after'
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (msg) => {
@@ -75,7 +75,7 @@ const ServiceDetail = () => {
       {/* Custom Toast Notification */}
       {toastMessage && (
         <div style={{
-          position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 9999,
+          position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 100000,
           background: 'white', borderLeft: '4px solid var(--danger, #ef4444)',
           padding: '16px 24px', borderRadius: 'var(--radius-md)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
           display: 'flex', alignItems: 'center', gap: '12px',
@@ -94,9 +94,9 @@ const ServiceDetail = () => {
       }}>
         <HiOutlineArrowLeft /> {t('serviceDetail.backTo')} {categoryName.toUpperCase()}
       </Link>
-
+ 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-
+ 
         {/* TOP SECTION: Grid for Cards 1, 2 (Left) and Card 3 (Right) */}
         <div className="dashboard-grid" style={{ gridTemplateColumns: '1.4fr 1fr', gap: '28px' }}>
           
@@ -106,7 +106,7 @@ const ServiceDetail = () => {
             {/* CARD 1: Main Info */}
             <div className="card" style={{ 
               padding: '28px', border: '1px solid var(--gray-200)',
-              background: `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)), url("${getBackgroundImage(category)}")`,
+              background: `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)), url("${getServiceImage(service.id)}")`,
               backgroundSize: 'cover', backgroundPosition: 'center'
             }}>
               <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
@@ -128,7 +128,7 @@ const ServiceDetail = () => {
               <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: '12px', lineHeight: 1.5 }}>
                 {t(service.descKey)}
               </p>
-
+ 
               <div style={{ marginTop: '24px' }}>
                 <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '12px' }}>
                   {t('serviceDetail.whatIsIncluded')}
@@ -143,88 +143,60 @@ const ServiceDetail = () => {
                 </div>
               </div>
             </div>
-
-            {/* CARD 2: Portfolio / Trust Builder */}
+ 
+            {/* NEW: Trust & Safety / How It Works Card */}
             <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)', background: 'white' }}>
-              <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <HiOutlineSparkles style={{ color: 'var(--primary-500)' }} /> {t('serviceDetail.workPortfolio')}
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HiOutlineShieldCheck style={{ color: 'var(--primary-500)', fontSize: '1.4rem' }} /> ServeCircle Promise & Process
               </h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginBottom: '18px' }}>
-                {t('serviceDetail.portfolioDesc')}
-              </p>
-
-              <div style={{
-                background: 'var(--navy-800)',
-                borderRadius: 'var(--radius-lg)',
-                height: '240px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-                border: '2px solid var(--primary-100)'
-              }}>
-                {/* Inner content representing state */}
-                <div style={{ padding: '24px', textAlign: 'center', zIndex: 2 }}>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                    background: portfolioView === 'before' ? 'var(--danger)' : 'var(--primary-500)',
-                    padding: '4px 12px',
-                    borderRadius: 'var(--radius-full)',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                  }}>
-                    {portfolioView === 'before' ? t('serviceDetail.beforeState') : t('serviceDetail.afterState')}
-                  </span>
-                  <h4 style={{ fontSize: '1.2rem', fontWeight: 850, color: 'white', marginTop: '14px' }}>
-                    {portfolioView === 'before' ? t(`${service.beforeAfterKey}.before`) : t(`${service.beforeAfterKey}.after`)}
-                  </h4>
-                  <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginTop: '8px' }}>
-                    {t('serviceDetail.clickTabs')}
-                  </p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ background: 'var(--primary-50)', padding: '10px', borderRadius: '50%', color: 'var(--primary-600)' }}>
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                  </div>
+                  <div>
+                    <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px' }}>Verified Professionals</h5>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', lineHeight: 1.4 }}>100% background checked and skilled experts only.</p>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ background: 'var(--primary-50)', padding: '10px', borderRadius: '50%', color: 'var(--primary-600)' }}>
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div>
+                    <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px' }}>On-Time Arrival</h5>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', lineHeight: 1.4 }}>Strict adherence to your selected time slot.</p>
+                  </div>
                 </div>
 
-                {/* Decorative background grids */}
-                <div style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0, opacity: 0.1, background: 'linear-gradient(45deg, #10b981 25%, transparent 25%), linear-gradient(-45deg, #10b981 25%, transparent 25%)', backgroundSize: '20px 20px' }} />
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ background: 'var(--primary-50)', padding: '10px', borderRadius: '50%', color: 'var(--primary-600)' }}>
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14.121 15.536c-1.171 1.952-3.07 1.952-4.242 0-1.172-1.953-1.172-5.119 0-7.072 1.171-1.952 3.07-1.952 4.242 0M8 10.5h4m-4 3h4m9-1.5a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <div>
+                    <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px' }}>Transparent Pricing</h5>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', lineHeight: 1.4 }}>No hidden charges. You pay what you see.</p>
+                  </div>
+                </div>
               </div>
 
-              {/* Switch Toggle */}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '14px' }}>
-                <button
-                  onClick={() => setPortfolioView('before')}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: 'var(--radius-md)',
-                    border: portfolioView === 'before' ? '2px solid var(--danger)' : '1px solid var(--gray-200)',
-                    background: portfolioView === 'before' ? 'var(--danger-50)' : 'white',
-                    color: portfolioView === 'before' ? 'var(--danger-700)' : 'var(--gray-500)',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
-                    transition: 'all 0.15s'
-                  }}
-                >
-                  {t('serviceDetail.showBefore')}
-                </button>
-                <button
-                  onClick={() => setPortfolioView('after')}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: 'var(--radius-md)',
-                    border: portfolioView === 'after' ? '2px solid var(--primary-500)' : '1px solid var(--gray-200)',
-                    background: portfolioView === 'after' ? 'var(--primary-50)' : 'white',
-                    color: portfolioView === 'after' ? 'var(--primary-700)' : 'var(--gray-500)',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
-                    transition: 'all 0.15s'
-                  }}
-                >
-                  {t('serviceDetail.showAfter')}
-                </button>
+              {/* Simple Timeline */}
+              <div style={{ background: 'var(--gray-50)', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-100)' }}>
+                <h5 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--gray-600)', textTransform: 'uppercase', marginBottom: '16px' }}>How it works</h5>
+                <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: '12px', left: '10%', right: '10%', height: '2px', background: 'var(--primary-200)', zIndex: 1 }}></div>
+                  
+                  {['Book', 'Assign', 'Service', 'Relax'].map((step, idx) => (
+                    <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, gap: '8px', background: 'var(--gray-50)', padding: '0 10px' }}>
+                      <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'var(--primary-500)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800, border: '4px solid var(--gray-50)' }}>
+                        {idx + 1}
+                      </div>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-700)' }}>{step}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -323,33 +295,27 @@ const ServiceDetail = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
                   <div className="input-group" style={{ marginBottom: 0 }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 700 }}><HiOutlineCalendar /> {t('serviceDetail.chooseDate')}</label>
-                    <select
+                    <input
+                      type="date"
+                      required
                       className="input-field"
+                      min={new Date().toISOString().split('T')[0]}
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      style={{ fontSize: '0.8rem' }}
-                    >
-                      <option value="Today">{t('serviceDetail.todayAvailable')}</option>
-                      <option value="Tomorrow">{t('serviceDetail.tomorrow')}</option>
-                      <option value="Day after tomorrow">{t('serviceDetail.dayAfterTomorrow')}</option>
-                    </select>
+                      style={{ fontSize: '0.8rem', padding: '10px' }}
+                    />
                   </div>
 
                   <div className="input-group" style={{ marginBottom: 0 }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 700 }}><HiOutlineClock /> {t('serviceDetail.selectTimeSlot')}</label>
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
-                      {['9:00 AM', '11:30 AM', '2:00 PM', '4:30 PM', '7:00 PM'].map((slot) => (
-                        <button
-                          type="button"
-                          key={slot}
-                          onClick={() => setSelectedTimeSlot(slot)}
-                          className={`time-slot ${selectedTimeSlot === slot ? 'selected' : ''}`}
-                          style={{ padding: '6px 10px', fontSize: '0.75rem' }}
-                        >
-                          {slot}
-                        </button>
-                      ))}
-                    </div>
+                    <input
+                      type="time"
+                      required
+                      className="input-field"
+                      value={selectedTimeSlot}
+                      onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                      style={{ fontSize: '0.8rem', padding: '10px', marginTop: '6px', width: '100%' }}
+                    />
                   </div>
                 </div>
 

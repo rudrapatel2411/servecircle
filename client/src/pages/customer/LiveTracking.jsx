@@ -1,325 +1,290 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  HiOutlineMapPin, HiOutlinePhone, HiOutlineChatBubbleLeftRight,
-  HiOutlineClock, HiOutlineShieldCheck, HiOutlineExclamationTriangle,
-  HiOutlinePhoneArrowUpRight, HiOutlineXMark
+  HiOutlinePhone, HiOutlineChatBubbleLeftRight,
+  HiOutlineClock, HiOutlineShieldCheck
 } from 'react-icons/hi2';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
 const LiveTracking = () => {
   const { t } = useTranslation();
-  
-  const [eta, setEta] = useState(14);
-  const [workerPos, setWorkerPos] = useState({ x: 10, y: 80 }); // start coordinates in percentage on mock map
-  const [activeStep, setActiveStep] = useState(1); // 0: Dispatched, 1: Arriving, 2: Arrived, 3: Job Started, 4: Finished
-  const [sosActive, setSosActive] = useState(false);
-  const [mockAlertSent, setMockAlertSent] = useState(false);
+  const [searchParams] = useSearchParams();
 
-  // Animate mock worker approaching along a path
+  // Dynamic parameters from checkout / bookings
+  const bookingId = searchParams.get('bookingId') || 'SC-2839';
+  const serviceName = searchParams.get('service') || 'AC Servicing';
+  const workerName = searchParams.get('worker') || 'Ramesh Kumar';
+  const price = searchParams.get('price') || '499';
+
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const [eta, setEta] = useState(15);
+  const [activeStep, setActiveStep] = useState(0); // 0: Dispatched, 1: Arriving, 2: Arrived, 3: Job Started, 4: Finished
+
+  const [currentStatusText, setCurrentStatusText] = useState('Professional is dispatched and preparing tools.');
+  
+  // New Expert Features
+  const [otpVisible, setOtpVisible] = useState(false);
+  const startOTP = '8492';
+  
+  // Leaflet refs
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
+  const workerMarkerRef = useRef(null);
+  const polylineRef = useRef(null);
+  const animationFrameRef = useRef(null);
+
+  // Default User location (fallback)
+  const defaultUserPos = [12.9226343, 77.6253457]; // [lat, lng]
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setWorkerPos((prev) => {
-        // Move worker towards home icon (centered at x: 85, y: 25)
-        const targetX = 85;
-        const targetY = 25;
+    window.scrollTo(0, 0);
+    
+    const initMap = async (userLat, userLng) => {
+      if (mapRef.current) return;
+      
+      // Initialize map
+      mapRef.current = L.map(mapContainerRef.current, {
+        zoomControl: false,
+        attributionControl: false
+      }).setView([userLat, userLng], 14);
+      
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         attribution: '© OpenStreetMap contributors',
+      }).addTo(mapRef.current);
+      
+      // Add custom styles to make it premium
+      const mapContainer = tileLayer.getContainer();
+      if (mapContainer) {
+        mapContainer.style.filter = 'grayscale(0.3) sepia(0.1) contrast(1.15) brightness(1.05)';
+      }
+
+      // Define Hub somewhat nearby (e.g., offset by 0.03 deg)
+      const hubLat = userLat - 0.03;
+      const hubLng = userLng - 0.03;
+
+      // Custom DivIcons
+      const createPremiumIcon = (emoji, color1, color2, isWorker = false) => L.divIcon({
+        className: 'custom-div-icon',
+        html: `<div style="
+          width: ${isWorker ? '52px' : '48px'}; 
+          height: ${isWorker ? '52px' : '48px'}; 
+          border-radius: 50%;
+          background: linear-gradient(135deg, ${color1}, ${color2}); 
+          border: 3px solid white;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+          font-size: ${isWorker ? '1.4rem' : '1.2rem'};
+          ${isWorker ? 'animation: pulse 1.5s infinite;' : ''}
+        ">
+          ${emoji}
+        </div>
+        ${!isWorker ? `<span style="font-size: 0.75rem; font-weight: 800; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); color: var(--navy-900); display: inline-block; margin-top: 6px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">${emoji === '🏢' ? 'Hub' : 'Your Location'}</span>` : ''}
+        `,
+        iconSize: isWorker ? [52, 52] : [48, 48],
+        iconAnchor: isWorker ? [26, 26] : [24, 24],
+      });
+
+      const hubIcon = createPremiumIcon('🏢', '#cbd5e1', '#94a3b8');
+      const homeIcon = createPremiumIcon('🏠', 'var(--navy-700)', 'var(--navy-900)');
+      const workerIcon = createPremiumIcon('👷', '#60a5fa', '#2563eb', true);
+
+      // Add Hub and Home markers
+      L.marker([hubLat, hubLng], { icon: hubIcon }).addTo(mapRef.current);
+      L.marker([userLat, userLng], { icon: homeIcon }).addTo(mapRef.current);
+      workerMarkerRef.current = L.marker([hubLat, hubLng], { icon: workerIcon, zIndexOffset: 1000 }).addTo(mapRef.current);
+
+      // Fetch OSRM route
+      try {
+        const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${hubLng},${hubLat};${userLng},${userLat}?geometries=geojson`);
+        const data = await response.json();
         
-        const dx = targetX - prev.x;
-        const dy = targetY - prev.y;
-        
-        // Calculate remaining distance
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 2) {
-          clearInterval(timer);
-          setActiveStep(2); // Arrived!
-          setEta(0);
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          // OSRM returns [lng, lat], Leaflet needs [lat, lng]
+          const coordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
           
-          // Simulate job progressing
-          setTimeout(() => setActiveStep(3), 3000); // Job Started
-          setTimeout(() => setActiveStep(4), 6000); // Finished
-          
-          return { x: targetX, y: targetY };
+          polylineRef.current = L.polyline(coordinates, {
+            color: '#2563eb',
+            weight: 5,
+            opacity: 0.8,
+            dashArray: '10, 10',
+            lineCap: 'round',
+            lineJoin: 'round'
+          }).addTo(mapRef.current);
+
+          mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [50, 50] });
+
+          // Start animation
+          animateWorker(coordinates);
+        }
+      } catch (error) {
+        console.error("Error fetching OSRM route:", error);
+      }
+    };
+
+    const animateWorker = (pathCoords) => {
+      let startTime = null;
+      const duration = 15000; // 15 seconds to travel the whole path
+      
+      const step = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        
+        // Find current position on path
+        const totalPoints = pathCoords.length;
+        const exactIdx = progress * (totalPoints - 1);
+        const lowerIdx = Math.floor(exactIdx);
+        const upperIdx = Math.ceil(exactIdx);
+        const weight = exactIdx - lowerIdx;
+        
+        if (lowerIdx >= totalPoints - 1) {
+           workerMarkerRef.current.setLatLng(pathCoords[totalPoints - 1]);
+           // Arrived
+           setActiveStep(2);
+           setEta(0);
+           setCurrentStatusText('Arrived at your doorstep! 🚪');
+           setOtpVisible(true);
+           
+           // Simulate job progression after arrival
+           setTimeout(() => {
+             setActiveStep(3); // Job Started
+             setCurrentStatusText('Job in progress... 🛠️');
+             setTimeout(() => {
+               setActiveStep(4); // Finished
+               setCurrentStatusText('Job completed successfully! 🎉');
+               setOtpVisible(false);
+             }, 4000);
+           }, 4000);
+           return;
         }
         
-        // Progressive ETA reduction
-        setEta((currentEta) => Math.max(1, Math.round(distance / 5)));
+        // Interpolate between coords
+        const p1 = pathCoords[lowerIdx];
+        const p2 = pathCoords[upperIdx];
+        const currentLat = p1[0] + (p2[0] - p1[0]) * weight;
+        const currentLng = p1[1] + (p2[1] - p1[1]) * weight;
         
-        return {
-          x: prev.x + (dx / distance) * 2.5,
-          y: prev.y + (dy / distance) * 2.5
-        };
-      });
-    }, 1000);
+        workerMarkerRef.current.setLatLng([currentLat, currentLng]);
+        
+        // Update ETA and Active Step dynamically based on progress
+        const remainingTimeMinutes = Math.max(0, Math.ceil((1 - progress) * 15)); // Mock 15 mins total
+        setEta(remainingTimeMinutes);
+        
+        if (progress > 0 && progress < 0.95) {
+           setActiveStep(1); // Arriving
+           if (progress < 0.33) setCurrentStatusText('Worker is on the way: Dispatched from Hub');
+           else if (progress < 0.66) setCurrentStatusText('Worker is on the way: En route via Main Avenue');
+           else setCurrentStatusText('Worker is on the way: Approaching your sector');
+        }
+        
+        animationFrameRef.current = requestAnimationFrame(step);
+      };
+      
+      animationFrameRef.current = requestAnimationFrame(step);
+    };
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          initMap(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn("Geolocation denied or failed, using default map.");
+          initMap(defaultUserPos[0], defaultUserPos[1]);
+        }
+      );
+    } else {
+      initMap(defaultUserPos[0], defaultUserPos[1]);
+    }
     
-    return () => clearInterval(timer);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
   }, []);
 
-  const triggerSos = () => {
-    setSosActive(true);
-    setMockAlertSent(false);
-  };
-
-  const sendMockSosAlert = () => {
-    setMockAlertSent(true);
-    setTimeout(() => {
-      alert('🚨 Mock alert successfully dispatched to ServeCircle Safety Response HQ! A safety officer is monitoring this session live.');
-    }, 300);
-  };
-
   return (
-    <div className="page-content" style={{ minHeight: '92vh', position: 'relative' }}>
-      
-      {/* Immersive SOS Safety Alert Modal */}
-      <AnimatePresence>
-        {sosActive && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              background: 'rgba(15, 23, 42, 0.95)',
-              zIndex: 9999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px'
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="card"
-              style={{
-                width: '100%',
-                maxWidth: '520px',
-                background: '#1e293b',
-                border: '2.5px solid var(--danger)',
-                padding: '32px',
-                color: 'white',
-                textAlign: 'center',
-                boxShadow: '0 0 40px rgba(239,68,68,0.3)',
-                position: 'relative'
-              }}
-            >
-              <button
-                onClick={() => setSosActive(false)}
-                style={{
-                  position: 'absolute', top: '16px', right: '16px',
-                  background: 'none', border: 'none', color: '#94a3b8',
-                  cursor: 'pointer', fontSize: '1.5rem'
-                }}
-              >
-                <HiOutlineXMark />
-              </button>
+    <div className="page-content" style={{ minHeight: 'calc(100vh - 128px)', display: 'flex', flexDirection: 'column', paddingBottom: '12px' }}>
 
-              <div style={{
-                width: '80px', height: '80px', borderRadius: '50%',
-                background: 'rgba(239, 68, 68, 0.1)', border: '3px solid var(--danger)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 20px',
-                animation: 'pulse 1.2s infinite'
-              }}>
-                <HiOutlineExclamationTriangle style={{ fontSize: '2.5rem', color: 'var(--danger)' }} />
-              </div>
-
-              <h2 style={{ fontSize: '1.6rem', color: '#fca5a5', fontWeight: 900, marginBottom: '8px' }}>
-                SOS SAFETY ALARM
-              </h2>
-              <p style={{ fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.5, marginBottom: '24px' }}>
-                Do you feel unsafe? Activating the SOS mode will instantly notify the ServeCircle Emergency Response HQ and transmit your live location details.
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' }}>
-                <button
-                  onClick={sendMockSosAlert}
-                  className="btn btn-primary"
-                  style={{
-                    background: 'var(--danger)', borderColor: 'var(--danger)',
-                    padding: '14px', width: '100%', fontSize: '1rem', fontWeight: 700,
-                    boxShadow: '0 4px 12px rgba(239,68,68,0.3)'
-                  }}
-                  disabled={mockAlertSent}
-                >
-                  {mockAlertSent ? '✓ Emergency Alert Transmitted' : '🚨 Trigger Safety Alert Now'}
-                </button>
-
-                <a
-                  href="tel:100"
-                  className="btn btn-outline"
-                  style={{
-                    borderColor: '#cbd5e1', color: 'white',
-                    padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                  }}
-                >
-                  <HiOutlinePhoneArrowUpRight /> Call National Emergency Police (100)
-                </a>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '18px' }}>
-                <button
-                  className="btn btn-sm btn-outline"
-                  style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94a3b8' }}
-                  onClick={() => setSosActive(false)}
-                >
-                  All Safe - Cancel Alert
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="page-header" style={{ marginBottom: '24px' }}>
+      <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0 }}>
         <div>
-          <h1 className="page-title">{t('liveTracking.title')} 📍</h1>
-          <p className="page-subtitle">{t('liveTracking.subtitle')}</p>
+          <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
+          <p className="page-subtitle" style={{ fontSize: '0.85rem' }}>{t('liveTracking.subtitle', 'Watch your service expert arrive in real-time.')}</p>
         </div>
       </div>
 
-      <div className="dashboard-grid" style={{ gridTemplateColumns: '1.4fr 0.8fr', gap: '24px' }}>
+      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.8fr', gap: '20px', flex: 1, marginBottom: '10px' }}>
         
-        {/* Left Side: Mock Live Map */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Left Side: Map & Progress (Takes 100% height and scales) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0, height: '100%' }}>
           
-          {/* Map canvas container */}
+          {/* Map canvas container - flex-grow to take remaining screen space */}
           <div className="card" style={{
-            height: '420px',
-            border: '1px solid var(--gray-200)',
+            flex: 1,
+            minHeight: '350px',
+            border: '2px solid rgba(255,255,255,0.4)',
             position: 'relative',
-            background: '#e0f2fe',
+            background: '#e2e8f0',
             overflow: 'hidden',
-            borderRadius: 'var(--radius-xl)'
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)'
           }}>
             
-            {/* Elegant vector layout details: roads and parks */}
-            {/* Road grid lines */}
-            <div style={{ position: 'absolute', top: '100px', left: 0, width: '100%', height: '30px', background: '#f1f5f9', borderTop: '2px solid #cbd5e1', borderBottom: '2px solid #cbd5e1' }} />
-            <div style={{ position: 'absolute', top: 0, left: '30%', width: '35px', height: '100%', background: '#f1f5f9', borderLeft: '2px solid #cbd5e1', borderRight: '2px solid #cbd5e1' }} />
-            <div style={{ position: 'absolute', top: 0, left: '80%', width: '35px', height: '100%', background: '#f1f5f9', borderLeft: '2px solid #cbd5e1', borderRight: '2px solid #cbd5e1' }} />
-            <div style={{ position: 'absolute', top: '280px', left: 0, width: '100%', height: '30px', background: '#f1f5f9', borderTop: '2px solid #cbd5e1', borderBottom: '2px solid #cbd5e1' }} />
+            {/* Real Map Container for Leaflet */}
+            <div ref={mapContainerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }} />
+            
+            {/* Vignette Overlay to make map look premium */}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'radial-gradient(circle, transparent 30%, rgba(15,23,42,0.15) 120%)', zIndex: 2, pointerEvents: 'none' }} />
 
-            {/* Park zones */}
-            <div style={{ position: 'absolute', top: '20px', left: '40px', width: '120px', height: '60px', background: '#dcfce7', borderRadius: 'var(--radius-md)', border: '1px dashed #86efac', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#15803d', fontSize: '0.65rem', fontWeight: 600 }}>
-              🌳 Victoria Park
-            </div>
-            <div style={{ position: 'absolute', top: '330px', left: '400px', width: '140px', height: '70px', background: '#dcfce7', borderRadius: 'var(--radius-md)', border: '1px dashed #86efac', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#15803d', fontSize: '0.65rem', fontWeight: 600 }}>
-              ⛲ Lake View Gardens
-            </div>
-
-            {/* Target Home Icon */}
+            {/* Floating Top Status Panel (Glassmorphism) */}
             <div style={{
-              position: 'absolute',
-              top: '25%',
-              left: '85%',
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
-              zIndex: 10
+              position: 'absolute', top: '20px', left: '20px',
+              background: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '12px 20px', border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '14px', zIndex: 30
             }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '50%',
-                background: 'var(--navy-800)', border: '2px solid white',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: 'var(--shadow-md)'
-              }}>
-                🏠
+              <div style={{ background: 'var(--primary-50)', padding: '8px', borderRadius: '50%', display: 'flex' }}>
+                <HiOutlineClock style={{ fontSize: '1.5rem', color: 'var(--primary-600)' }} />
               </div>
-              <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'white', padding: '2px 6px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--gray-200)', color: 'var(--navy-800)', display: 'block', marginTop: '4px', whiteSpace: 'nowrap' }}>
-                Your Home
-              </span>
-            </div>
-
-            {/* Worker Approaching Icon (Animated Position) */}
-            <div style={{
-              position: 'absolute',
-              top: `${workerPos.y}%`,
-              left: `${workerPos.x}%`,
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
-              zIndex: 20,
-              transition: 'top 1s linear, left 1s linear'
-            }}>
-              <div style={{
-                width: '44px', height: '44px', borderRadius: '50%',
-                background: 'var(--gradient-primary)', border: '2.5px solid white',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 10px rgba(16,185,129,0.4)',
-                animation: 'pulse 1.5s infinite'
-              }}>
-                👷
-              </div>
-              <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'var(--gradient-dark)', color: 'white', padding: '2px 8px', borderRadius: 'var(--radius-sm)', display: 'block', marginTop: '4px', whiteSpace: 'nowrap' }}>
-                {eta === 0 ? 'Arrived' : t('liveTracking.approaching')}
-              </span>
-            </div>
-
-            {/* Floating Top Info Overlay */}
-            <div style={{
-              position: 'absolute',
-              top: '16px',
-              left: '16px',
-              background: 'white',
-              borderRadius: 'var(--radius-md)',
-              padding: '12px 18px',
-              border: '1px solid var(--gray-200)',
-              boxShadow: 'var(--shadow-md)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              zIndex: 30
-            }}>
-              <HiOutlineClock style={{ fontSize: '1.5rem', color: 'var(--primary-600)' }} />
               <div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800 }}>{t('liveTracking.status')}</span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-900)' }}>
-                  {eta === 0 ? t('liveTracking.arrivedDoorstep') : t('liveTracking.approaching')} ({eta} mins)
+                <span style={{ fontSize: '0.65rem', color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 800 }}>Live Update</span>
+                <span style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--navy-900)', display: 'block', letterSpacing: '-0.02em' }}>
+                  {eta === 0 ? 'Arrived at Doorstep' : `Arriving in ${eta} mins`}
                 </span>
               </div>
             </div>
 
-            {/* Prominent Red SOS safety button */}
-            <button
-              onClick={triggerSos}
-              style={{
-                position: 'absolute',
-                bottom: '16px',
-                right: '16px',
-                background: 'var(--danger)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-                zIndex: 30,
-                animation: 'pulse 1.5s infinite'
-              }}
-              title="Click in case of any security concerns"
-            >
-              🚨
-              <span style={{ fontSize: '0.55rem', fontWeight: 900, marginTop: '2px' }}>SOS</span>
-            </button>
-            
           </div>
 
-          {/* Service Progress tracker timeline */}
-          <div className="card" style={{ marginTop: '24px', padding: '24px', background: 'white' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '24px' }}>{t('liveTracking.serviceSessionStatus')}</h3>
+          {/* Service Progress tracker timeline - compact padding */}
+          <div className="card" style={{ padding: '16px 20px', background: 'white', border: '1px solid var(--gray-200)', flexShrink: 0 }}>
+            <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
+              Service Status updates
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', marginBottom: '16px', fontWeight: 600 }}>
+              📢 {currentStatusText}
+            </p>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
               <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '2px', background: 'var(--navy-100)', zIndex: 0 }} />
@@ -331,17 +296,17 @@ const LiveTracking = () => {
                 return (
                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
                     <div style={{
-                      width: '32px', height: '32px', borderRadius: '50%',
+                      width: '26px', height: '26px', borderRadius: '50%',
                       background: isPassed ? 'var(--primary-500)' : '#e2e8f0',
                       color: isPassed ? 'white' : '#94a3b8',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontWeight: 700, fontSize: '0.8rem', zIndex: 2,
+                      fontWeight: 700, fontSize: '0.75rem', zIndex: 2,
                       border: isActive ? '3px solid var(--primary-100)' : 'none'
                     }}>
                       {isPassed ? '✓' : idx + 1}
                     </div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--navy-900)' : 'var(--navy-400)', marginTop: '12px' }}>
-                      {t(`liveTracking.${step.toLowerCase().replace(' ', '')}`)}
+                    <div style={{ fontSize: '0.68rem', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--navy-900)' : 'var(--navy-400)', marginTop: '8px' }}>
+                      {step}
                     </div>
                   </div>
                 );
@@ -349,15 +314,35 @@ const LiveTracking = () => {
             </div>
             
             <AnimatePresence>
-              {activeStep === 4 && (
+              {activeStep >= 2 && activeStep < 4 && otpVisible && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '24px', textAlign: 'center' }}
+                  style={{ marginTop: '16px', padding: '12px', background: '#fef2f2', border: '1px dashed #ef4444', borderRadius: '8px', textAlign: 'center' }}
                 >
-                  <a href="/customer/review/SC-10294" className="btn btn-primary" style={{ width: '100%', padding: '16px', fontSize: '1.1rem' }}>
-                    Service Complete — Proceed to Review & Pay
-                  </a>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c' }}>🔐 SHARE SECURE START OTP</span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>{startOTP}</div>
+                  <p style={{ fontSize: '0.7rem', color: '#7f1d1d', margin: 0 }}>Do not share this OTP until the professional has arrived and you are ready to begin.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+
+
+            <AnimatePresence>
+              {activeStep === 4 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ marginTop: '16px', textAlign: 'center' }}
+                >
+                  <Link 
+                    to={`/customer/review/${bookingId}?service=${encodeURIComponent(serviceName)}&worker=${encodeURIComponent(workerName)}`} 
+                    className="btn btn-primary" 
+                    style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800 }}
+                  >
+                    🎉 Service Complete — Proceed to Review & Rating
+                  </Link>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -365,62 +350,62 @@ const LiveTracking = () => {
 
         </div>
 
-        {/* Right Side: Professional Details */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        {/* Right Side: Professional Details (Tightly scaled, flexbox layout to prevent overflow) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0, height: '100%' }}>
           
-          <div className="card" style={{ padding: '32px 24px', textAlign: 'center', marginBottom: '24px', background: 'white' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {t('liveTracking.assignedProfessional')}
+          <div className="card" style={{ padding: '24px 20px', textAlign: 'center', background: 'white', flex: 1.2, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0, border: '1px solid var(--gray-200)' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Assigned Professional
             </span>   
             <div style={{
-              width: '80px', height: '80px', borderRadius: '50%',
+              width: '64px', height: '64px', borderRadius: '50%',
               background: '#334155', color: 'white',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '2rem', fontWeight: 800, margin: '16px auto 12px'
+              fontSize: '1.6rem', fontWeight: 800, margin: '12px auto 8px'
             }}>
-              RK
+              {getInitials(workerName)}
             </div>
 
-            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)' }}>Ramesh Kumar</h4>
-            <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)', background: 'var(--gray-100)', padding: '3px 8px', borderRadius: 'var(--radius-full)' }}>
-              AC Specialist & Electrician
-            </span>
-
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', margin: '18px 0', fontSize: '0.85rem' }}>
-              <span>⭐ <strong>4.8</strong> (210 reviews)</span>
-              <span>💼 <strong>Pro</strong> (2,400+ jobs)</span>
+            <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-800)', margin: '4px 0' }}>{workerName}</h4>
+            <div style={{ margin: '4px 0' }}>
+              <span style={{ fontSize: '0.7rem', color: 'var(--primary-700)', background: 'var(--primary-50)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                Verified Specialist
+              </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-              <a
-                href="tel:+919876543210"
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', margin: '8px 0', fontSize: '0.78rem', color: 'var(--navy-600)' }}>
+              <span>⭐ <strong>4.9</strong> (180+)</span>
+              <span>💼 <strong>Pro</strong> (1,500+)</span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <button
                 className="btn btn-outline"
-                style={{ flex: 1, padding: '12px', fontSize: '0.85rem' }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert('📞 Simulating masked secure phone call to +91 98765 43210 (Customer call mask active).');
+                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
+                onClick={() => {
+                  alert(`📞 Masked calling initiated with ${workerName}. Your phone number remains private.`);
                 }}
               >
-                <HiOutlinePhone /> {t('liveTracking.callWorker')}
-              </a>
+                <HiOutlinePhone /> Call
+              </button>
               <button
                 className="btn btn-primary"
-                style={{ flex: 1, padding: '12px', fontSize: '0.85rem' }}
-                onClick={() => alert('💬 secure Chat channel initiated with Ramesh Kumar.')}
+                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
+                onClick={() => alert(`💬 Secure chat session started with ${workerName}.`)}
               >
-                <HiOutlineChatBubbleLeftRight /> {t('liveTracking.secureChat')}
+                <HiOutlineChatBubbleLeftRight /> Chat
               </button>
             </div>
           </div>
 
-          <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <HiOutlineShieldCheck style={{ color: 'var(--primary-500)', fontSize: '1.2rem' }} /> {t('liveTracking.verifiedSafetyShield')}
+          <div className="card" style={{ padding: '16px 20px', border: '1px solid var(--gray-200)', background: 'white', flex: 0.8, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0 }}>
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+              <HiOutlineShieldCheck style={{ color: 'var(--primary-500)', fontSize: '1.1rem' }} /> Safety Shield Active
             </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.75rem', color: 'var(--navy-600)' }}>
-              <li><strong style={{ color: 'var(--navy-800)' }}>{t('liveTracking.kycCompleted')}</strong> Ramesh has successfully completed background checks and registered an active ITI electrical certificate.</li>
-              <li><strong style={{ color: 'var(--navy-800)' }}>{t('liveTracking.liveSessionLogs')}</strong> Your active tracking and coordinates are logged securely at the dispatcher center.</li>
-              <li><strong style={{ color: 'var(--navy-800)' }}>{t('liveTracking.warrantyCover')}</strong> Booking remains fully insured by ServeCircle damage cover of up to ₹10,000.</li>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.7rem', color: 'var(--navy-600)' }}>
+              <li><strong style={{ color: 'var(--navy-800)' }}>KYC Verification:</strong> Vetted via national criminal databases.</li>
+              <li><strong style={{ color: 'var(--navy-800)' }}>Secure Transit Logs:</strong> Coordinates are tracked live at headquarters.</li>
+              <li><strong style={{ color: 'var(--navy-800)' }}>Insurance Assured:</strong> Session covered up to ₹10,000 for damages.</li>
             </ul>
           </div>
 

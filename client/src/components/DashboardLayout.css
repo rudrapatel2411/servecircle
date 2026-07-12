@@ -1,10 +1,10 @@
 .dashboard-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--gray-50);
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .dashboard-main {
@@ -12,7 +12,9 @@
   margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   min-width: 0; /* Prevents flex children from blowing out the width */
 }
 

@@ -13,20 +13,20 @@ const B2BDashboard = () => {
   const { t } = useTranslation();
 
   const stats = [
-    { icon: <HiOutlineDocumentText />, value: '3', label: t('b2b.activeContracts'), color: '#3b82f6', bg: '#dbeafe' },
-    { icon: <HiOutlineMapPin />, value: '8', label: t('b2b.totalLocations'), color: '#10b981', bg: '#d1fae5' },
-    { icon: <HiOutlineUserGroup />, value: '12', label: t('b2b.teamMembers'), color: '#8b5cf6', bg: '#ede9fe' },
-    { icon: <HiOutlineReceiptPercent />, value: 'Rs 1,25,000', label: t('b2b.pendingInvoices'), color: '#f59e0b', bg: '#fef3c7' },
+    { icon: <HiOutlineDocumentText />, value: '3', label: t('b2b.activeContracts', 'Active Contracts'), color: '#3b82f6', bg: '#dbeafe' },
+    { icon: <HiOutlineMapPin />, value: '8', label: t('b2b.totalLocations', 'Total Locations'), color: '#10b981', bg: '#d1fae5' },
+    { icon: <HiOutlineUserGroup />, value: '12', label: t('b2b.teamMembers', 'Team Members'), color: '#8b5cf6', bg: '#ede9fe' },
+    { icon: <HiOutlineReceiptPercent />, value: 'Rs 1,25,000', label: t('b2b.pendingInvoices', 'Pending Invoices'), color: '#f59e0b', bg: '#fef3c7' },
   ];
 
   return (
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">B2B Partner Dashboard</h1>
-          <p className="page-subtitle">Manage your enterprise service contracts and team.</p>
+          <h1 className="page-title">{t('b2bExtended.dashTitle', 'B2B Partner Dashboard')}</h1>
+          <p className="page-subtitle">{t('b2bExtended.dashSubtitle', 'Manage your enterprise service contracts and team.')}</p>
         </div>
-        <button className="btn btn-primary">{t('b2b.bulkBooking')}</button>
+        <button className="btn btn-primary">{t('b2b.bulkBooking', 'Bulk Booking')}</button>
       </div>
 
       <div className="dashboard-grid">
@@ -43,33 +43,33 @@ const B2BDashboard = () => {
 
       <div className="b2b-kpi-strip">
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Avg. SLA Compliance</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.avgSla', 'Avg. SLA Compliance')}</span>
           <span className="b2b-kpi-value">96%</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Open Requests</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.openRequests', 'Open Requests')}</span>
           <span className="b2b-kpi-value">5</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Upcoming Renewals</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.upcomingRenewals', 'Upcoming Renewals')}</span>
           <span className="b2b-kpi-value">1</span>
         </div>
         <div className="b2b-kpi">
-          <span className="b2b-kpi-label">Quarter Spend</span>
+          <span className="b2b-kpi-label">{t('b2bExtended.quarterSpend', 'Quarter Spend')}</span>
           <span className="b2b-kpi-value">Rs 2,34,800</span>
         </div>
       </div>
 
       <div className="dash-section">
-        <h3 className="dash-section-title">{t('b2b.contracts')}</h3>
+        <h3 className="dash-section-title">{t('b2b.contracts', 'Contracts')}</h3>
         <table className="data-table">
           <thead>
             <tr>
-              <th>Partner</th>
-              <th>Contract Type</th>
-              <th>Locations</th>
-              <th>Expires</th>
-              <th>Status</th>
+              <th>{t('b2bExtended.partner', 'Partner')}</th>
+              <th>{t('b2bExtended.contractType', 'Contract Type')}</th>
+              <th>{t('b2b.locations', 'Locations')}</th>
+              <th>{t('b2bExtended.expires', 'Expires')}</th>
+              <th>{t('b2bExtended.status', 'Status')}</th>
             </tr>
           </thead>
           <tbody>

@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import DashboardNavbar from './DashboardNavbar';
+import CallMeBackWidget from './CallMeBackWidget';
+import WorkerCallWidget from './WorkerCallWidget';
 import './DashboardLayout.css';
 
 const DashboardLayout = ({ panel }) => {
@@ -13,6 +15,8 @@ const DashboardLayout = ({ panel }) => {
           <Outlet />
         </main>
       </div>
+      {panel === 'customer' && <CallMeBackWidget />}
+      {panel === 'worker' && <WorkerCallWidget />}
     </div>
   );
 };
