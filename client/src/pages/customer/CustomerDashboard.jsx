@@ -74,18 +74,7 @@ const CustomerDashboard = () => {
   return (
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-      {/* Handcrafted Welcome Banner Card */}
-      <div className="welcome-banner-card animate-fade-in-up" style={{ marginBottom: 0 }}>
-        <div className="welcome-banner-text">
-          <h2>{getGreeting()}, Rudra! 👋</h2>
-          <p>
-            Your property looks in excellent shape. You have **Gold member benefits** active, giving you 5% cashback on all bookings today.
-          </p>
-        </div>
-        <Link to="/customer/services" className="btn btn-primary" style={{ textTransform: 'none' }}>
-          {t('common.bookNow')} <HiOutlineArrowUpRight style={{ fontSize: '1.2rem' }} />
-        </Link>
-      </div>
+
 
       {/* 1. User Bookings & Stats (Grid spanning full screen width) */}
       <div className="stats-container">

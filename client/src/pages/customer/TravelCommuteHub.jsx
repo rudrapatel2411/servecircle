@@ -28,36 +28,15 @@ const TravelCommuteHub = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('travelCommute.backToDirectory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #10b981',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>🚗</span>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('travelCommute.title')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#ccfbf1', fontSize: '0.9rem', marginTop: '4px' }}>
-              {t('travelCommute.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       <div style={{
         display: 'grid',

@@ -1,0 +1,179 @@
+/* ==========================================================================
+   Global Service Search (General Services)
+   ========================================================================== */
+
+/* Full-screen backdrop that blurs the background */
+.global-search-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 850;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.global-search-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Wrapper for the search component */
+.global-search-wrapper {
+  position: relative;
+  z-index: 860; /* Above the backdrop */
+  width: 100%;
+  max-width: 680px;
+  margin: 24px auto 0;
+  padding: 0 20px;
+}
+
+/* Search input container */
+.global-search-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 100px;
+  padding: 12px 24px;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.global-search-container.focused {
+  border-color: var(--primary-500);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 4px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.global-search-icon {
+  font-size: 1.4rem;
+  color: var(--gray-400);
+  flex-shrink: 0;
+  transition: color var(--transition-base);
+}
+
+.global-search-container.focused .global-search-icon {
+  color: var(--primary-500);
+}
+
+.global-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
+  color: var(--navy-900);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.global-search-input::placeholder {
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+.global-search-clear {
+  background: var(--gray-100);
+  border: none;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+}
+
+.global-search-clear:hover {
+  background: var(--gray-200);
+  color: var(--navy-800);
+}
+
+/* Dropdown Results */
+.global-search-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 20px;
+  right: 20px;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.global-search-list {
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+}
+
+.global-search-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.global-search-item:hover {
+  background: var(--gray-50);
+}
+
+.global-search-item-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.global-search-item-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.global-search-item-name {
+  font-weight: 700;
+  color: var(--navy-800);
+  font-size: 0.95rem;
+}
+
+.global-search-item-cat {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.global-search-empty {
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.global-search-empty p {
+  font-weight: 700;
+  color: var(--navy-800);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.global-search-empty span {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}

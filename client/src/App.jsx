@@ -13,6 +13,9 @@ import ImpactDetail from './pages/ImpactDetail';
 /* Customer */
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import BrowseServices from './pages/customer/BrowseServices';
+import GeneralServicesPage from './pages/customer/GeneralServicesPage';
+import RepairServicesComingSoon from './pages/customer/RepairServicesComingSoon';
+import CleaningServicesComingSoon from './pages/customer/CleaningServicesComingSoon';
 import CategoryHub from './pages/customer/CategoryHub';
 import ServiceDetail from './pages/customer/ServiceDetail';
 import EmergencyHub from './pages/customer/EmergencyHub';
@@ -88,7 +91,26 @@ function App() {
 
         <Route path="/customer" element={<DashboardLayout panel="customer" />}>
           <Route index element={<CustomerDashboard />} />
+
+          {/* Primary top-nav destinations */}
           <Route path="services" element={<BrowseServices />} />
+          <Route path="events" element={<EventsHub />} />
+          <Route path="emergency" element={<EmergencyHub />} />
+
+          {/* General Services hub + Coming Soon placeholders */}
+          <Route path="general-services" element={<GeneralServicesPage />} />
+          <Route path="general-services/repair-services" element={<RepairServicesComingSoon />} />
+          <Route path="general-services/cleaning-services" element={<CleaningServicesComingSoon />} />
+
+          {/* General Services category pages (existing routes preserved) */}
+          <Route path="travel-commute" element={<TravelCommuteHub />} />
+          <Route path="food-kitchen" element={<FoodKitchenHub />} />
+          <Route path="pet-services" element={<PetHub />} />
+          <Route path="health-wellness" element={<HealthWellnessHub />} />
+          <Route path="society-management" element={<SocietyManagementHub />} />
+          <Route path="relocation" element={<RelocationHub />} />
+
+          {/* Legacy category routes under services */}
           <Route path="services/home-repairs" element={<HomeRepairsHub />} />
           <Route path="services/vehicle-services" element={<VehicleServicesHub />} />
           <Route path="services/cleaning" element={<CleaningHygieneHub />} />
@@ -96,8 +118,8 @@ function App() {
           <Route path="services/garden-outdoor" element={<GardenOutdoorHub />} />
           <Route path="services/:category" element={<CategoryHub />} />
           <Route path="services/:category/:serviceId" element={<ServiceDetail />} />
-          <Route path="emergency" element={<EmergencyHub />} />
-          <Route path="events" element={<EventsHub />} />
+
+          {/* Account & tools */}
           <Route path="my-home" element={<MyHomeDashboard />} />
           <Route path="trust-safety" element={<TrustSafety />} />
           <Route path="book" element={<BookingFlow />} />
@@ -111,12 +133,8 @@ function App() {
           <Route path="group-booking" element={<GroupBooking />} />
           <Route path="live-tracking" element={<LiveTracking />} />
           <Route path="review/:bookingId" element={<PostServiceReview />} />
-          <Route path="relocation" element={<RelocationHub />} />
-          <Route path="health-wellness" element={<HealthWellnessHub />} />
-          <Route path="pet-services" element={<PetHub />} />
-          <Route path="food-kitchen" element={<FoodKitchenHub />} />
-          <Route path="travel-commute" element={<TravelCommuteHub />} />
-          <Route path="society-management" element={<SocietyManagementHub />} />
+
+          {/* Demo & premium flows */}
           <Route path="packers-demo" element={<PackersDemo />} />
           <Route path="pet-demo" element={<PetRelocationDemo />} />
           <Route path="vehicle-demo" element={<VehicleRelocationDemo />} />

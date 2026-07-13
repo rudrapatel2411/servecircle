@@ -21,43 +21,15 @@ const SocietyManagementHub = () => {
     <div className="page-content" style={{ minHeight: '92vh', background: '#f8fafc', paddingBottom: '60px' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('societyManagement.backToDirectory', 'Back to Directory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #3b82f6',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '16px',
-            borderRadius: '16px',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <HiOutlineHomeModern style={{ fontSize: '2.5rem', color: '#60a5fa' }} />
-          </div>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('societyManagement.title', 'ServeCircle Society & RWA Portals 🤝')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '0.95rem', marginTop: '8px', maxWidth: '600px', lineHeight: '1.5' }}>
-              {t('societyManagement.subtitle', 'Exclusive maintenance, security, and cleaning solutions designed for residential societies with heavy group discounts.')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       {/* Live Trackers & Dues Section */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', marginBottom: '40px' }}>

@@ -18,15 +18,7 @@ const CleaningHygieneHub = () => {
         <HiOutlineArrowLeft /> {t('common.viewAll', 'Back to Directory')}
       </Link>
 
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #047857 0%, #059669 100%)', borderRadius: 'var(--radius-xl)', padding: '36px 30px', color: 'white', marginBottom: '32px', borderLeft: '5px solid #10b981', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>✨</span>
-          <div>
-            <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>{t('categories.cleaning')}</h1>
-            <p style={{ color: '#a7f3d0', fontSize: '0.9rem', marginTop: '4px' }}>{t('categories.cleaningDesc')}</p>
-          </div>
-        </div>
-      </div>
+
 
       <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
         {categoryServices.map((service) => (

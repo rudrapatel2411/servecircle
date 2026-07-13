@@ -151,31 +151,7 @@ const BrowseServices = () => {
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
-      {/* ===== HERO STRATEGIC DISPLAY ===== */}
-      <div className="page-header" style={{
-        background: 'var(--gradient-primary, linear-gradient(135deg, #0f172a 0%, #1e293b 100%))',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        position: 'relative',
-        overflow: 'hidden',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <h1 className="page-title" style={{ color: 'white', fontSize: '2.25rem', fontWeight: 900, letterSpacing: '-0.5px' }}>
-            {t('browseServices.title', 'Choose Your Funnel & Services 🚀')}
-          </h1>
-          <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '1rem', marginTop: '6px', maxWidth: '600px' }}>
-            {t('browseServices.subtitle', 'Access top-tier verified professionals, emergency instant dispatches, seasonal maintenance bundles, and our unique AI smart diagnostic tools.')}
-          </p>
-        </div>
-        <div style={{
-          position: 'absolute', right: '-50px', bottom: '-50px',
-          width: '200px', height: '200px', borderRadius: '50%',
-          background: 'rgba(16, 185, 129, 0.08)', filter: 'blur(30px)'
-        }} />
-      </div>
+
 
       {/* ===== SEARCH BANNER ===== */}
       <div style={{ position: 'relative', marginBottom: '32px' }}>

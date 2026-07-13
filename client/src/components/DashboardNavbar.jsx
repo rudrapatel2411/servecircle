@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   HiOutlineBell,
   HiOutlineMagnifyingGlass,
@@ -11,6 +11,14 @@ import {
   HiOutlineStar,
   HiOutlineUser,
   HiOutlineArrowRightOnRectangle,
+  HiOutlineBolt,
+  HiOutlineSparkles,
+  HiOutlineSquares2X2,
+  HiOutlineViewColumns,
+  HiOutlineHome,
+  HiOutlineMagnifyingGlass as HiSearch,
+  HiBars3,
+  HiXMark as HiClose,
 } from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
 import { socket } from '../socket';
@@ -21,8 +29,8 @@ const DashboardNavbar = ({ panel }) => {
   const [notifications, setNotifications] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
-  
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -80,12 +88,89 @@ const DashboardNavbar = ({ panel }) => {
 
   const user = getUserDetails();
 
+  const customerTopNavLinks = [
+    {
+      path: '/customer',
+      label: 'Dashboard',
+      icon: <HiOutlineHome />,
+      end: true,
+    },
+    {
+      path: '/customer/services',
+      label: 'Browse Services',
+      icon: <HiSearch />,
+      end: false,
+    },
+    {
+      path: '/customer/general-services',
+      label: 'General Services',
+      icon: <HiOutlineSquares2X2 />,
+      end: false,
+    },
+    {
+      path: '/customer/events',
+      label: 'Events Hub',
+      icon: <HiOutlineSparkles />,
+      end: false,
+    },
+    {
+      path: '/customer/emergency',
+      label: 'Emergency 24/7',
+      icon: <HiOutlineBolt />,
+      end: false,
+      isEmergency: true,
+    },
+  ];
+
   return (
     <header className="dash-navbar">
-      <div className="dash-navbar-search">
-        <HiOutlineMagnifyingGlass />
-        <input type="text" placeholder={t('common.search')} className="dash-search-input" />
-      </div>
+      {/* ===== BRAND LOGO ===== */}
+      <NavLink to={panel === 'customer' ? '/customer' : `/${panel}`} className="dash-brand">
+        <div className="dash-brand-icon">SC</div>
+        <span className="dash-brand-text">ServeCircle</span>
+      </NavLink>
+
+      {/* ===== CUSTOMER TOP NAV (centered) ===== */}
+      {panel === 'customer' && (
+        <>
+          <nav className="customer-top-nav">
+            {customerTopNavLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.end}
+                className={({ isActive }) =>
+                  `customer-top-nav-link${isActive ? ' customer-top-nav-link--active' : ''}${link.isEmergency ? ' customer-top-nav-link--emergency' : ''}`
+                }
+              >
+                <span className="customer-top-nav-icon">{link.icon}</span>
+                <span className="customer-top-nav-label">{link.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="dash-mobile-menu-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation"
+          >
+            {isMobileMenuOpen ? <HiClose /> : <HiBars3 />}
+          </button>
+        </>
+      )}
+
+      {/* ===== NON-CUSTOMER PANEL TITLE ===== */}
+      {panel !== 'customer' && (
+        <div className="dash-panel-title">
+          <span className="dash-panel-badge">{panel}</span>
+          <span className="dash-panel-label">
+            {panel === 'worker' ? 'Worker Panel' : panel === 'admin' ? 'Admin Panel' : 'B2B Panel'}
+          </span>
+        </div>
+      )}
+
+      {/* ===== RIGHT ACTIONS (no search — moved into pages) ===== */}
       <div className="dash-navbar-actions">
         <LanguageToggle />
         <button className="dash-icon-btn" aria-label={t('common.notifications')}>
@@ -93,10 +178,10 @@ const DashboardNavbar = ({ panel }) => {
           {notifications.length > 0 && <span className="notif-dot" style={{ background: 'var(--danger)' }} />}
         </button>
 
-        {/* Profile Dropdown Container */}
+        {/* Profile Dropdown */}
         <div className="dash-profile-container" ref={dropdownRef}>
-          <button 
-            className="dash-avatar-btn" 
+          <button
+            className="dash-avatar-btn"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             aria-label="Toggle profile menu"
           >
@@ -117,42 +202,42 @@ const DashboardNavbar = ({ panel }) => {
                   <span className="user-badge">{panel}</span>
                 </div>
               </div>
-              
+
               <div className="dropdown-divider" />
 
               <div className="dropdown-links">
                 {panel === 'customer' && (
                   <>
-                    <Link 
-                      to="/customer/my-home" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/my-home"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#10b981' }} />
                       <span>{t('customer.myHome')}</span>
                     </Link>
-                    
-                    <Link 
-                      to="/customer/bookings" 
-                      className="dropdown-link" 
+
+                    <Link
+                      to="/customer/bookings"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineCalendarDays className="dropdown-link-icon" />
                       <span>{t('customer.myBookings')}</span>
                     </Link>
 
-                    <Link 
-                      to="/customer/wallet" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/wallet"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineWallet className="dropdown-link-icon" />
                       <span>{t('customer.wallet')}</span>
                     </Link>
 
-                    <Link 
-                      to="/customer/subscriptions" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/subscriptions"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineStar className="dropdown-link-icon" />
@@ -162,9 +247,9 @@ const DashboardNavbar = ({ panel }) => {
                 )}
 
                 {panel === 'worker' && (
-                  <Link 
-                    to="/worker/profile" 
-                    className="dropdown-link" 
+                  <Link
+                    to="/worker/profile"
+                    className="dropdown-link"
                     onClick={() => setIsProfileOpen(false)}
                   >
                     <HiOutlineUser className="dropdown-link-icon" />
@@ -172,8 +257,8 @@ const DashboardNavbar = ({ panel }) => {
                   </Link>
                 )}
 
-                <button 
-                  className="dropdown-link logout-btn" 
+                <button
+                  className="dropdown-link logout-btn"
                   onClick={() => {
                     setIsProfileOpen(false);
                     navigate('/login');
@@ -188,6 +273,27 @@ const DashboardNavbar = ({ panel }) => {
         </div>
       </div>
 
+      {/* ===== MOBILE DROPDOWN NAV ===== */}
+      {panel === 'customer' && isMobileMenuOpen && (
+        <div className="customer-mobile-nav animate-fade-in">
+          {customerTopNavLinks.map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              end={link.end}
+              className={({ isActive }) =>
+                `customer-mobile-nav-link${isActive ? ' customer-mobile-nav-link--active' : ''}${link.isEmergency ? ' customer-mobile-nav-link--emergency' : ''}`
+              }
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="customer-top-nav-icon">{link.icon}</span>
+              <span>{link.label}</span>
+            </NavLink>
+          ))}
+        </div>
+      )}
+
+      {/* Toast */}
       {showToast && latestToast && (
         <div className="toast-notification animate-slide-in-left" style={{ position: 'fixed', bottom: '24px', right: '24px', background: 'white', borderLeft: '4px solid var(--primary-500)', boxShadow: 'var(--shadow-lg)', padding: '16px 24px', borderRadius: 'var(--radius-md)', zIndex: 9999, display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
           <div>

@@ -1,11 +1,7 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineHome,
-  HiOutlineMagnifyingGlass,
-  HiOutlineCalendarDays,
-  HiOutlineWallet,
-  HiOutlineStar,
   HiOutlineBriefcase,
   HiOutlineClipboardDocumentList,
   HiOutlineBanknotes,
@@ -22,32 +18,31 @@ import {
   HiOutlineMapPin,
   HiOutlineUserGroup,
   HiOutlineReceiptPercent,
-  HiOutlineChatBubbleLeftRight,
-  HiOutlineCpuChip,
-  HiOutlineShieldCheck,
-  HiOutlineVideoCamera,
-  HiOutlineMap,
-  HiOutlineBolt,
-  HiOutlineSparkles,
-  HiOutlineCheckBadge,
+  HiOutlineWrench,
   HiOutlineTruck,
+  HiOutlineSparkles,
   HiOutlineHeart,
+  HiOutlineMap,
+  HiOutlineClock,
+  HiOutlineShieldCheck,
 } from 'react-icons/hi2';
+import { generalServicesData } from '../data/generalServicesData';
 import './Sidebar.css';
 
+/* =====================================================
+   GENERAL SERVICES CATEGORY MENU (customer panel)
+   ===================================================== */
+const generalServicesCategories = generalServicesData.map(c => ({
+  path: c.path,
+  icon: c.icon,
+  label: c.label,
+  color: c.color,
+  comingSoon: c.comingSoon
+}));
+/* =====================================================
+   NON-CUSTOMER PANEL SIDEBARS
+   ===================================================== */
 const sidebarConfig = {
-  customer: [
-    { path: '/customer', icon: <HiOutlineHome />, labelKey: 'customer.dashboard', end: true },
-    { path: '/customer/services', icon: <HiOutlineMagnifyingGlass />, labelKey: 'customer.browseServices' },
-    { path: '/customer/emergency', icon: <HiOutlineBolt style={{ color: '#ef4444' }} />, labelKey: 'customer.emergencyHub' },
-    { path: '/customer/events', icon: <HiOutlineSparkles style={{ color: '#eab308' }} />, labelKey: 'customer.eventsHub' },
-    { path: '/customer/relocation', icon: <HiOutlineTruck style={{ color: '#a855f7' }} />, labelKey: 'categories.relocation' },
-    { path: '/customer/health-wellness', icon: <HiOutlineHeart style={{ color: '#f43f5e' }} />, labelKey: 'categories.healthWellness' },
-    { path: '/customer/pet-services', icon: <HiOutlineSparkles style={{ color: '#3b82f6' }} />, labelKey: 'categories.petServices' },
-    { path: '/customer/food-kitchen', icon: <HiOutlineBuildingOffice2 style={{ color: '#10b981' }} />, labelKey: 'categories.foodKitchen' },
-    { path: '/customer/travel-commute', icon: <HiOutlineMap style={{ color: '#06b6d4' }} />, labelKey: 'categories.travelCommute' },
-    { path: '/customer/society-management', icon: <HiOutlineUserGroup style={{ color: '#84cc16' }} />, labelKey: 'categories.societyManagement' },
-  ],
   worker: [
     { path: '/worker', icon: <HiOutlineHome />, labelKey: 'worker.dashboard', end: true },
     { path: '/worker/jobs', icon: <HiOutlineBriefcase />, labelKey: 'worker.jobRequests' },
@@ -59,7 +54,7 @@ const sidebarConfig = {
   ],
   admin: [
     { path: '/admin', icon: <HiOutlineHome />, labelKey: 'admin.dashboard', end: true },
-    { path: '/admin/bookings', icon: <HiOutlineCalendarDays />, labelKey: 'admin.bookings' },
+    { path: '/admin/bookings', icon: <HiOutlineClipboardDocumentList />, labelKey: 'admin.bookings' },
     { path: '/admin/workers', icon: <HiOutlineUsers />, labelKey: 'admin.workers' },
     { path: '/admin/analytics', icon: <HiOutlineChartBar />, labelKey: 'admin.analytics' },
     { path: '/admin/coupons', icon: <HiOutlineTicket />, labelKey: 'admin.coupons' },
@@ -78,16 +73,95 @@ const sidebarConfig = {
 };
 
 const panelLabels = {
-  customer: { icon: 'CU', label: 'Customer Panel' },
   worker: { icon: 'WK', label: 'Worker Panel' },
   admin: { icon: 'AD', label: 'Admin Panel' },
   b2b: { icon: 'B2', label: 'B2B Panel' },
 };
 
+/* =====================================================
+   GENERAL SERVICES CATEGORY SIDEBAR
+   ===================================================== */
+const GeneralServicesSidebar = () => {
+  const location = useLocation();
+
+  return (
+    <aside className="sidebar sidebar--category">
+      <div className="sidebar-header">
+        <div className="category-sidebar-title">
+          <span className="category-sidebar-icon">🛍️</span>
+          <div>
+            <div className="category-sidebar-heading">General Services</div>
+            <div className="category-sidebar-sub">Choose a category</div>
+          </div>
+        </div>
+
+      </div>
+
+      <nav className="sidebar-nav">
+        <div className="category-nav-label">Categories</div>
+        {generalServicesCategories.map((cat) => {
+          const isActive = location.pathname.startsWith(cat.path) ||
+            (cat.path === '/customer/travel-commute' && location.pathname === '/customer/travel-commute') ||
+            (cat.path === '/customer/food-kitchen' && location.pathname === '/customer/food-kitchen') ||
+            (cat.path === '/customer/pet-services' && location.pathname === '/customer/pet-services') ||
+            (cat.path === '/customer/health-wellness' && location.pathname === '/customer/health-wellness') ||
+            (cat.path === '/customer/society-management' && location.pathname === '/customer/society-management');
+
+          if (cat.comingSoon) {
+            return (
+              <div
+                key={cat.path}
+                className={`category-sidebar-link category-sidebar-link--disabled`}
+                title="Coming Soon"
+              >
+                <span className="category-sidebar-link-icon" style={{ color: cat.color }}>
+                  {cat.icon}
+                </span>
+                <span className="category-sidebar-link-text">{cat.label}</span>
+                <span className="category-coming-soon-badge">Soon</span>
+              </div>
+            );
+          }
+
+          return (
+            <NavLink
+              key={cat.path}
+              to={cat.path}
+              end
+              className={({ isActive: navActive }) =>
+                `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
+              }
+            >
+              <span className="category-sidebar-link-icon" style={{ color: cat.color }}>
+                {cat.icon}
+              </span>
+              <span className="category-sidebar-link-text">{cat.label}</span>
+            </NavLink>
+          );
+        })}
+      </nav>
+
+      <div className="sidebar-footer">
+        <NavLink to="/customer/general-services" className="category-back-link">
+          ← Back to All Categories
+        </NavLink>
+      </div>
+    </aside>
+  );
+};
+
+/* =====================================================
+   STANDARD SIDEBAR (worker / admin / b2b)
+   ===================================================== */
 const Sidebar = ({ panel }) => {
   const { t } = useTranslation();
   const links = sidebarConfig[panel] || [];
   const panelInfo = panelLabels[panel];
+
+  // Customer panel: sidebar rendered conditionally by DashboardLayout, not here
+  if (panel === 'customer') {
+    return <GeneralServicesSidebar />;
+  }
 
   return (
     <aside className="sidebar">

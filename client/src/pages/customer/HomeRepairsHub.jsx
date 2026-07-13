@@ -18,15 +18,7 @@ const HomeRepairsHub = () => {
         <HiOutlineArrowLeft /> {t('common.viewAll', 'Back to Directory')}
       </Link>
 
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', borderRadius: 'var(--radius-xl)', padding: '36px 30px', color: 'white', marginBottom: '32px', borderLeft: '5px solid #3b82f6', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>🔧</span>
-          <div>
-            <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>{t('categories.homeRepairs')}</h1>
-            <p style={{ color: '#bfdbfe', fontSize: '0.9rem', marginTop: '4px' }}>{t('categories.homeRepairsDesc')}</p>
-          </div>
-        </div>
-      </div>
+
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800 }}>Available Services</h3>

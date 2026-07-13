@@ -8,6 +8,10 @@ const CallMeBackWidget = () => {
   const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const [isRequested, setIsRequested] = useState(() => {
+    return localStorage.getItem('callRequested') === 'true';
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!phone || phone.length < 10) {
@@ -18,10 +22,12 @@ const CallMeBackWidget = () => {
     setTimeout(() => {
       alert(t('callMeBack.successCallbackAlert', '🎉 Call request received! Our support agent is dialing your number right now.'));
       setIsOpen(false);
-      setPhone('');
-      setSubmitted(false);
+      setIsRequested(true);
+      localStorage.setItem('callRequested', 'true');
     }, 1000);
   };
+
+  if (isRequested) return null;
 
   return (
     <>
