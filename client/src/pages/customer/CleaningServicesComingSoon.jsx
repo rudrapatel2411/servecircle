@@ -108,7 +108,7 @@ const CleaningServicesComingSoon = () => {
         <div className="cs-alt-grid">
           {[
             { path: '/customer/health-wellness', emoji: '💊', label: 'Health & Wellness', color: '#f43f5e' },
-            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#10b981' },
+            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#3b7dc1' },
             { path: '/customer/pet-services', emoji: '🐾', label: 'Pet Services', color: '#ec4899' },
             { path: '/customer/society-management', emoji: '🏘️', label: 'Society Management', color: '#84cc16' },
           ].map((alt) => (

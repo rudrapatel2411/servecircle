@@ -66,7 +66,7 @@ const PostServiceReview = () => {
         <div className="card" style={{ padding: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
             {isSellingService ? (
-               <HiOutlineCurrencyRupee style={{ fontSize: '2.5rem', color: '#10b981' }} />
+               <HiOutlineCurrencyRupee style={{ fontSize: '2.5rem', color: '#3b7dc1' }} />
             ) : (
                <HiOutlineDocumentText style={{ fontSize: '2rem', color: 'var(--primary-600)' }} />
             )}
@@ -85,7 +85,7 @@ const PostServiceReview = () => {
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed var(--navy-200)', fontSize: '0.9rem' }}>
                   <span style={{ color: 'var(--navy-600)' }}>Scrap Evaluation Value</span>
-                  <span style={{ fontWeight: 800, color: '#10b981' }}>+ ₹{scrapValue}</span>
+                  <span style={{ fontWeight: 800, color: '#3b7dc1' }}>+ ₹{scrapValue}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '2px solid var(--navy-200)', fontSize: '0.9rem' }}>
                   <span style={{ color: 'var(--navy-600)' }}>Platform Convenience Fee</span>
@@ -171,7 +171,7 @@ const PostServiceReview = () => {
               
               <div style={{ position: 'relative', zIndex: 1 }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <HiOutlineHeart style={{ color: tip > 0 ? '#10b981' : 'var(--danger)', fontSize: tip > 0 ? '1.4rem' : '1.2rem', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)', transform: tip > 0 ? 'scale(1.2)' : 'scale(1)' }} /> 
+                  <HiOutlineHeart style={{ color: tip > 0 ? '#3b7dc1' : 'var(--danger)', fontSize: tip > 0 ? '1.4rem' : '1.2rem', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)', transform: tip > 0 ? 'scale(1.2)' : 'scale(1)' }} /> 
                   {tip > 0 ? `Thank you for tipping ₹${tip}! 🎉` : t('postReview.addTip', 'Add a tip for the professional')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginBottom: '16px' }}>100% of your tip goes directly to {worker}.</p>
@@ -198,7 +198,7 @@ const PostServiceReview = () => {
                       onClick={() => handleTip(amt)}
                       style={{ 
                         flex: 1, padding: '10px', cursor: 'pointer',
-                        background: tip === amt ? '#10b981' : 'white',
+                        background: tip === amt ? '#3b7dc1' : 'white',
                         color: tip === amt ? 'white' : 'var(--navy-700)',
                         border: tip === amt ? 'none' : '1px solid var(--gray-300)',
                         borderRadius: '8px',

@@ -70,9 +70,9 @@ const SmartInventoryScanner = ({ onNext }) => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', paddingTop: '16px', borderTop: '1px dashed #334155' }}>
             <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>{t('packersFlow.finalPrice', 'Instant Final Price')}</span>
-            <span style={{ fontWeight: 900, fontSize: '1.4rem', color: '#10b981' }}>₹18,000</span>
+            <span style={{ fontWeight: 900, fontSize: '1.4rem', color: '#3b7dc1' }}>₹18,000</span>
           </div>
-          <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '16px', background: '#10b981', border: 'none', borderRadius: '12px', fontSize: '1.1rem' }}>
+          <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '16px', background: '#3b7dc1', border: 'none', borderRadius: '12px', fontSize: '1.1rem' }}>
             {t('packersFlow.confirmProceed', 'Confirm & Proceed')} <HiOutlineChevronRight />
           </button>
         </motion.div>
@@ -236,14 +236,14 @@ const DamageClaimAI = ({ onNext }) => {
 
       {status === 'approved' && (
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', padding: '32px' }}>
-          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 16px', boxShadow: '0 10px 20px rgba(16, 185, 129, 0.3)' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#3b7dc1', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 16px', boxShadow: '0 10px 20px rgba(59, 125, 193, 0.3)' }}>
             <HiOutlineShieldCheck />
           </div>
           <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#166534', marginBottom: '8px' }}>{t('packersFlow.claimApproved', 'Claim Approved Instantly!')}</h3>
           <p style={{ color: '#15803d', fontSize: '0.9rem', marginBottom: '24px' }}>{t('packersFlow.aiVerifiedMsg', 'AI verified a new minor scratch on the Sofa edge.')}</p>
           <div style={{ background: 'white', padding: '16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', border: '1px dashed #86efac' }}>
              <span style={{ fontWeight: 800, color: '#166534' }}>{t('packersFlow.compensationCredited', 'Compensation Credited')}</span>
-             <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#10b981' }}>+ ₹850</span>
+             <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#3b7dc1' }}>+ ₹850</span>
           </div>
           <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '14px', background: '#166534', border: 'none' }}>
             {t('packersFlow.awesomeProceed', 'Awesome, Proceed')} <HiOutlineChevronRight />

@@ -175,7 +175,7 @@ const HealthWellnessHub = () => {
                 />
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {sp.name} <HiOutlineShieldCheck style={{ color: '#10b981', fontSize: '1.1rem' }} title="Verified Medical License" />
+                    {sp.name} <HiOutlineShieldCheck style={{ color: '#3b7dc1', fontSize: '1.1rem' }} title="Verified Medical License" />
                   </h4>
                   <span style={{ fontSize: '0.72rem', color: '#3b82f6', fontWeight: 650, display: 'block', marginTop: '2px' }}>
                     {sp.degree}
@@ -297,8 +297,8 @@ const HealthWellnessHub = () => {
                         width: '10px',
                         height: '10px',
                         borderRadius: '50%',
-                        background: isActive ? '#10b981' : 'var(--gray-300)',
-                        boxShadow: isActive ? '0 0 6px #10b981' : 'none'
+                        background: isActive ? '#3b7dc1' : 'var(--gray-300)',
+                        boxShadow: isActive ? '0 0 6px #3b7dc1' : 'none'
                       }} />
                       <div style={{ fontSize: '0.78rem', fontWeight: isActive ? 800 : 500, color: isActive ? 'var(--navy-800)' : 'var(--gray-400)' }}>
                         {step.label}
@@ -345,9 +345,9 @@ const HealthWellnessHub = () => {
               
               {/* Doctor Review Call-to-Action */}
               {labStep === 4 && (
-                <div className="animate-fade-in-up" style={{ marginTop: '12px', background: '#ecfdf5', padding: '12px', borderRadius: '8px', border: '1px solid #6ee7b7', textAlign: 'center' }}>
-                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#047857', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
-                  <button className="btn btn-primary btn-sm" style={{ background: '#10b981', borderColor: '#10b981', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => alert('Scheduling free doctor call...')}>
+                <div className="animate-fade-in-up" style={{ marginTop: '12px', background: '#f0f5fa', padding: '12px', borderRadius: '8px', border: '1px solid #94bce0', textAlign: 'center' }}>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#224c82', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
+                  <button className="btn btn-primary btn-sm" style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => alert('Scheduling free doctor call...')}>
                     📞 Schedule Free Doctor Call
                   </button>
                 </div>
@@ -391,7 +391,7 @@ const HealthWellnessHub = () => {
           flexDirection: 'column'
         }}>
           <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#10b981', fontSize: '1.4rem' }}>💊</span> Express Pharmacy
+            <span style={{ color: '#3b7dc1', fontSize: '1.4rem' }}>💊</span> Express Pharmacy
           </h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
             Upload your prescription for 30-minute doorstep medicine delivery.
@@ -413,7 +413,7 @@ const HealthWellnessHub = () => {
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
-            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.background = '#f0fdf4'; }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#3b7dc1'; e.currentTarget.style.background = '#f0fdf4'; }}
             onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--gray-300)'; e.currentTarget.style.background = '#f8fafc'; }}
             onClick={() => alert('Opening File Picker for Prescription...')}
             >
@@ -494,7 +494,7 @@ const HealthWellnessHub = () => {
           <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>👵🦴</div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
-          <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#10b981', background: '#10b981', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#3b7dc1', background: '#3b7dc1', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
             Consult & Subscribe
           </Link>
         </div>

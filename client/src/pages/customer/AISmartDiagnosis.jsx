@@ -243,7 +243,7 @@ const AISmartDiagnosis = () => {
                   {/* Holographic animated scanning circle */}
                   <div className="scanning-circle" style={{
                     width: '100%', height: '100%', borderRadius: '50%',
-                    border: '4px solid rgba(16, 185, 129, 0.1)',
+                    border: '4px solid rgba(59, 125, 193, 0.1)',
                     borderTopColor: 'var(--primary-500)',
                     animation: 'spin 1.5s linear infinite'
                   }} />

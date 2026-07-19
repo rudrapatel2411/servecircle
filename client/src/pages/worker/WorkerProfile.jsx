@@ -162,7 +162,7 @@ const WorkerProfile = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#d1fae5', color: '#047857' }}>
+          <div className="stat-icon" style={{ background: '#e1ebf5', color: '#224c82' }}>
             <HiOutlineCheckBadge />
           </div>
           <div>
@@ -259,7 +259,7 @@ const WorkerProfile = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
                   <strong style={{ color: 'var(--navy-600)' }}>Verification</strong>
-                  <span style={{ color: profile.isVerified ? '#10b981' : '#f59e0b', fontWeight: 700 }}>
+                  <span style={{ color: profile.isVerified ? '#3b7dc1' : '#f59e0b', fontWeight: 700 }}>
                     {profile.isVerified ? 'Verified' : 'Pending Verification'}
                   </span>
                 </div>

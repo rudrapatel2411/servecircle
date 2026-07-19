@@ -108,7 +108,7 @@ const RepairServicesComingSoon = () => {
         <div className="cs-alt-grid">
           {[
             { path: '/customer/travel-commute', emoji: '🚗', label: 'Travel & Commute', color: '#06b6d4' },
-            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#10b981' },
+            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#3b7dc1' },
             { path: '/customer/pet-services', emoji: '🐾', label: 'Pet Services', color: '#ec4899' },
             { path: '/customer/health-wellness', emoji: '💊', label: 'Health & Wellness', color: '#f43f5e' },
           ].map((alt) => (

@@ -14,7 +14,7 @@ const B2BDashboard = () => {
 
   const stats = [
     { icon: <HiOutlineDocumentText />, value: '3', label: t('b2b.activeContracts', 'Active Contracts'), color: '#3b82f6', bg: '#dbeafe' },
-    { icon: <HiOutlineMapPin />, value: '8', label: t('b2b.totalLocations', 'Total Locations'), color: '#10b981', bg: '#d1fae5' },
+    { icon: <HiOutlineMapPin />, value: '8', label: t('b2b.totalLocations', 'Total Locations'), color: '#3b7dc1', bg: '#e1ebf5' },
     { icon: <HiOutlineUserGroup />, value: '12', label: t('b2b.teamMembers', 'Team Members'), color: '#8b5cf6', bg: '#ede9fe' },
     { icon: <HiOutlineReceiptPercent />, value: 'Rs 1,25,000', label: t('b2b.pendingInvoices', 'Pending Invoices'), color: '#f59e0b', bg: '#fef3c7' },
   ];

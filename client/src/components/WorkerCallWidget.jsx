@@ -9,7 +9,7 @@ const CallModal = ({ onClose }) => {
         <p>Start a video consultation with the customer or contact ServeCircle support.</p>
         <div className="sos-btn-group">
           <button className="btn-police" style={{ background: '#2563eb' }}>Start Video Call with Customer</button>
-          <button className="btn-support" style={{ background: '#10b981' }}>Call Platform Support</button>
+          <button className="btn-support" style={{ background: '#3b7dc1' }}>Call Platform Support</button>
           <button className="btn-cancel" onClick={onClose}>Cancel</button>
         </div>
       </div>

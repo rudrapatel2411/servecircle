@@ -40,7 +40,7 @@ const BecomeAProHub = () => {
     {
       title: 'Zero Onboarding Fees',
       desc: 'No hidden registration charges. Join our circle completely free and start receiving jobs.',
-      icon: <HiOutlineCheckCircle style={{ color: '#10b981' }} />
+      icon: <HiOutlineCheckCircle style={{ color: '#3b7dc1' }} />
     },
     {
       title: 'First 5 Jobs: 0% Commission',
@@ -170,14 +170,14 @@ const BecomeAProHub = () => {
             <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '20px' }}>Submit your application today. Our local manager will call within 24 hours.</p>
 
             {registered ? (
-              <div style={{ textAlign: 'center', padding: '30px 20px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ textAlign: 'center', padding: '30px 20px', background: '#f0f5fa', border: '1px solid #c2d7ea', borderRadius: 'var(--radius-md)' }}>
                 <span style={{ fontSize: '3rem' }}>🎉</span>
                 <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#065f46', marginTop: '12px' }}>Application Registered!</h4>
-                <p style={{ fontSize: '0.8rem', color: '#047857', marginTop: '6px', lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.8rem', color: '#224c82', marginTop: '6px', lineHeight: 1.5 }}>
                   Thank you, <strong>{formData.fullName}</strong>. Your candidate ID is <strong>SC-PRO-{Math.floor(Math.random() * 90000) + 10000}</strong>. 
                   Our local verification officer will contact you on <strong>{formData.phone}</strong> for document checks and setting up your PMKVY training.
                 </p>
-                <button className="btn btn-primary" onClick={() => setRegistered(false)} style={{ background: '#10b981', marginTop: '16px', fontSize: '0.8rem' }}>
+                <button className="btn btn-primary" onClick={() => setRegistered(false)} style={{ background: '#3b7dc1', marginTop: '16px', fontSize: '0.8rem' }}>
                   Register Another Candidate
                 </button>
               </div>

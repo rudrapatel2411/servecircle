@@ -91,11 +91,11 @@ const TravelPremiumFlow = () => {
       case 'school-commute': return { 
         title: t('travelFlow.schoolTitle', 'Kids Safe Commute'), 
         icon: <HiOutlineAcademicCap size={40} color="white" />,
-        gradient: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
-        color: '#10b981',
-        bgSoft: '#ecfdf5',
-        borderActive: '#10b981',
-        shadowActive: '0 4px 14px rgba(16, 185, 129, 0.15)'
+        gradient: 'linear-gradient(135deg, #3b7dc1 0%, #224c82 100%)',
+        color: '#3b7dc1',
+        bgSoft: '#f0f5fa',
+        borderActive: '#3b7dc1',
+        shadowActive: '0 4px 14px rgba(59, 125, 193, 0.15)'
       };
       case 'corporate-carpool': return { 
         title: t('travelFlow.carpoolTitle', 'Corporate Carpool Match'), 

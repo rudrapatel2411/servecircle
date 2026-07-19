@@ -72,7 +72,7 @@ const WorkerDashboard = () => {
 
   const stats = [
     { icon: <HiOutlineBriefcase />, value: String(todayJobs.length), label: t('worker.todayJobs', 'Today\'s Jobs'), color: '#3b82f6', bg: '#dbeafe' },
-    { icon: <HiOutlineBanknotes />, value: formatInr(weeklyEarnings), label: t('worker.weeklyEarnings', 'Weekly Earnings'), color: '#10b981', bg: '#d1fae5' },
+    { icon: <HiOutlineBanknotes />, value: formatInr(weeklyEarnings), label: t('worker.weeklyEarnings', 'Weekly Earnings'), color: '#3b7dc1', bg: '#e1ebf5' },
     { icon: <HiOutlineClipboardDocumentCheck />, value: String(pendingJobs.length), label: t('worker.pendingRequests', 'Pending Requests'), color: '#f59e0b', bg: '#fef3c7' },
     { icon: <HiOutlineTrophy />, value: `${completedJobs.length}/50`, label: t('worker.proBadge', 'Pro Badge'), color: '#8b5cf6', bg: '#ede9fe' },
   ];
@@ -200,7 +200,7 @@ const WorkerDashboard = () => {
               <div className="job-meta">
                 <span><HiOutlineMapPin /> {job.address}</span>
                 <span><HiOutlineClock /> {job.scheduledTime || 'Flexible'}</span>
-                <span style={{ color: '#10b981', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
+                <span style={{ color: '#3b7dc1', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
               </div>
             </div>
             <div className="worker-action-buttons">

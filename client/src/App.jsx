@@ -14,8 +14,7 @@ import ImpactDetail from './pages/ImpactDetail';
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import BrowseServices from './pages/customer/BrowseServices';
 import GeneralServicesPage from './pages/customer/GeneralServicesPage';
-import RepairServicesComingSoon from './pages/customer/RepairServicesComingSoon';
-import CleaningServicesComingSoon from './pages/customer/CleaningServicesComingSoon';
+// RepairServicesComingSoon and CleaningServicesComingSoon replaced by real Hubs
 import CategoryHub from './pages/customer/CategoryHub';
 import ServiceDetail from './pages/customer/ServiceDetail';
 import EmergencyHub from './pages/customer/EmergencyHub';
@@ -97,10 +96,10 @@ function App() {
           <Route path="events" element={<EventsHub />} />
           <Route path="emergency" element={<EmergencyHub />} />
 
-          {/* General Services hub + Coming Soon placeholders */}
+          {/* General Services hub + sub-category pages */}
           <Route path="general-services" element={<GeneralServicesPage />} />
-          <Route path="general-services/repair-services" element={<RepairServicesComingSoon />} />
-          <Route path="general-services/cleaning-services" element={<CleaningServicesComingSoon />} />
+          <Route path="general-services/repair-services" element={<HomeRepairsHub />} />
+          <Route path="general-services/cleaning-services" element={<CleaningHygieneHub />} />
 
           {/* General Services category pages (existing routes preserved) */}
           <Route path="travel-commute" element={<TravelCommuteHub />} />

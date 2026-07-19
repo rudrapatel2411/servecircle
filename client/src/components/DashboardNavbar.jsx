@@ -30,7 +30,6 @@ const DashboardNavbar = ({ panel }) => {
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -149,14 +148,6 @@ const DashboardNavbar = ({ panel }) => {
             ))}
           </nav>
 
-          {/* Mobile menu toggle */}
-          <button
-            className="dash-mobile-menu-btn"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle navigation"
-          >
-            {isMobileMenuOpen ? <HiClose /> : <HiBars3 />}
-          </button>
         </>
       )}
 
@@ -170,9 +161,8 @@ const DashboardNavbar = ({ panel }) => {
         </div>
       )}
 
-      {/* ===== RIGHT ACTIONS (no search — moved into pages) ===== */}
+      {/* ===== RIGHT ACTIONS ===== */}
       <div className="dash-navbar-actions">
-        <LanguageToggle />
         <button className="dash-icon-btn" aria-label={t('common.notifications')}>
           <HiOutlineBell />
           {notifications.length > 0 && <span className="notif-dot" style={{ background: 'var(--danger)' }} />}
@@ -205,7 +195,13 @@ const DashboardNavbar = ({ panel }) => {
 
               <div className="dropdown-divider" />
 
-              <div className="dropdown-links">
+              <div className="dropdown-links" style={{ paddingBottom: '8px' }}>
+                {/* Language Toggle in Profile Menu */}
+                <div style={{ padding: '4px 12px', display: 'flex', justifyContent: 'center' }}>
+                  <LanguageToggle />
+                </div>
+                <div className="dropdown-divider" style={{ margin: '8px 0' }} />
+
                 {panel === 'customer' && (
                   <>
                     <Link
@@ -213,7 +209,7 @@ const DashboardNavbar = ({ panel }) => {
                       className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
-                      <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#10b981' }} />
+                      <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#3b7dc1' }} />
                       <span>{t('customer.myHome')}</span>
                     </Link>
 
@@ -272,26 +268,6 @@ const DashboardNavbar = ({ panel }) => {
           )}
         </div>
       </div>
-
-      {/* ===== MOBILE DROPDOWN NAV ===== */}
-      {panel === 'customer' && isMobileMenuOpen && (
-        <div className="customer-mobile-nav animate-fade-in">
-          {customerTopNavLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              end={link.end}
-              className={({ isActive }) =>
-                `customer-mobile-nav-link${isActive ? ' customer-mobile-nav-link--active' : ''}${link.isEmergency ? ' customer-mobile-nav-link--emergency' : ''}`
-              }
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="customer-top-nav-icon">{link.icon}</span>
-              <span>{link.label}</span>
-            </NavLink>
-          ))}
-        </div>
-      )}
 
       {/* Toast */}
       {showToast && latestToast && (

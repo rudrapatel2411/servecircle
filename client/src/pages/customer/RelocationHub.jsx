@@ -309,10 +309,10 @@ const RelocationHub = () => {
             {/* Trust List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
               <span style={{ fontSize: '0.78rem', color: 'var(--navy-700)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HiOutlineShieldCheck style={{ color: '#10b981' }} /> {t('relocation.insuredCover')}
+                <HiOutlineShieldCheck style={{ color: '#3b7dc1' }} /> {t('relocation.insuredCover')}
               </span>
               <span style={{ fontSize: '0.78rem', color: 'var(--navy-700)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HiOutlineSparkles style={{ color: '#10b981' }} /> {t('relocation.treatedVault')}
+                <HiOutlineSparkles style={{ color: '#3b7dc1' }} /> {t('relocation.treatedVault')}
               </span>
             </div>
           </div>

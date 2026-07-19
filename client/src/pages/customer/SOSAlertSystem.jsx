@@ -189,9 +189,9 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   width: '80px',
                   height: '80px',
                   borderRadius: '50%',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '2px solid #10b981',
-                  color: '#10b981',
+                  background: 'rgba(59, 125, 193, 0.1)',
+                  border: '2px solid #3b7dc1',
+                  color: '#3b7dc1',
                   fontSize: '2.5rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -221,8 +221,8 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
 
                 {/* Visual Live Location Beacon */}
                 <div style={{
-                  background: 'rgba(16, 185, 129, 0.06)',
-                  border: '1px solid rgba(16, 185, 129, 0.15)',
+                  background: 'rgba(59, 125, 193, 0.06)',
+                  border: '1px solid rgba(59, 125, 193, 0.15)',
                   borderRadius: '16px',
                   padding: '16px',
                   marginBottom: '20px',
@@ -237,14 +237,14 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '50%',
-                      background: 'rgba(16, 185, 129, 0.3)',
+                      background: 'rgba(59, 125, 193, 0.3)',
                       animation: 'ping 1.5s infinite'
                     }} />
                     <div style={{
                       width: '36px',
                       height: '36px',
                       borderRadius: '50%',
-                      background: '#10b981',
+                      background: '#3b7dc1',
                       color: 'white',
                       display: 'flex',
                       alignItems: 'center',
@@ -276,7 +276,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   textAlign: 'left',
                   fontSize: '0.8rem',
                   lineHeight: 1.5,
-                  color: '#10b981'
+                  color: '#3b7dc1'
                 }}>
                   {t('sosAlert.' + dispatchStatus, dispatchStatus)}
                 </div>
@@ -305,7 +305,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   <button
                     onClick={cancelCountdown}
                     style={{
-                      background: '#10b981',
+                      background: '#3b7dc1',
                       color: 'white',
                       border: 'none',
                       borderRadius: '12px',

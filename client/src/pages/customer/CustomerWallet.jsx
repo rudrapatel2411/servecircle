@@ -18,7 +18,7 @@ const mockTransactions = [
 ];
 
 const typeConfig = {
-  topup: { icon: <HiOutlineArrowUpCircle />, color: '#10b981', label: 'Top-up' },
+  topup: { icon: <HiOutlineArrowUpCircle />, color: '#3b7dc1', label: 'Top-up' },
   payment: { icon: <HiOutlineArrowDownCircle />, color: '#ef4444', label: 'Payment' },
   bonus: { icon: <HiOutlineGift />, color: '#8b5cf6', label: 'Bonus' },
   refund: { icon: <HiOutlineBanknotes />, color: '#3b82f6', label: 'Refund' },
@@ -316,7 +316,7 @@ const CustomerWallet = () => {
                   <span className={`txn-amount ${txn.amount >= 0 ? 'plus' : 'minus'}`} style={{
                     fontSize: '1rem',
                     fontWeight: 900,
-                    color: txn.amount >= 0 ? '#10b981' : '#ef4444'
+                    color: txn.amount >= 0 ? '#3b7dc1' : '#ef4444'
                   }}>
                     {txn.amount >= 0 ? '+' : ''}₹{Math.abs(txn.amount)}
                   </span>

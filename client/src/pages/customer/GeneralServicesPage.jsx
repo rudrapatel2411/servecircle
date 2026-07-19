@@ -41,7 +41,7 @@ const GeneralServicesPage = () => {
           {categories.map((cat) => (
             cat.comingSoon ? (
               <div key={cat.id} className="gs-category-card gs-category-card--coming-soon">
-                <div className="gs-category-card-top" style={{ background: cat.gradient }}>
+                <div className="gs-category-card-top" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
                   <div className="gs-category-emoji">{cat.emoji}</div>
                   <span className="gs-coming-soon-pill">
                     <HiOutlineClock />
@@ -63,7 +63,7 @@ const GeneralServicesPage = () => {
               </div>
             ) : (
               <Link key={cat.id} to={cat.path} className="gs-category-card">
-                <div className="gs-category-card-top" style={{ background: cat.gradient }}>
+                <div className="gs-category-card-top" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
                   <div className="gs-category-emoji">{cat.emoji}</div>
                   <span className="gs-live-pill">
                     <span className="gs-live-dot" />
@@ -75,7 +75,7 @@ const GeneralServicesPage = () => {
                   <p className="gs-category-desc">{cat.description}</p>
                   <div className="gs-category-services">
                     {cat.services.map((s, i) => (
-                      <span key={i} className="gs-service-tag" style={{ background: cat.bg, color: cat.color }}>{s}</span>
+                      <span key={i} className="gs-service-tag">{s}</span>
                     ))}
                   </div>
                   <div className="gs-category-footer">

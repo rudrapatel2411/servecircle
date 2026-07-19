@@ -1,27 +1,30 @@
 /* ==========================================================================
-   DashboardLayout — Multi-mode layout system
+   DashboardLayout — Emerald Neomorphism
    Modes:
-     1. Customer (standard pages)  → no sidebar, full-width content
-     2. Customer (general services) → category sidebar (240px) + content
-     3. Worker / Admin / B2B       → standard left sidebar (260px) + content
+     1. Customer (standard pages)      → no sidebar, full-width content
+     2. Customer (general services)    → category sidebar (240px) + content
+     3. Worker / Admin / B2B           → standard left sidebar (260px) + content
    ========================================================================== */
 
-/* ===== ROOT CONTAINER ===== */
+/* ── Root Container ── */
 .dashboard-layout {
   display: flex;
   height: 100vh;
-  background: var(--gray-50);
+  /* Pattern inherited from body via background-attachment:fixed */
+  background-color: var(--neo-bg);
+  background-image: var(--bg-pattern-image);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
   width: 100%;
   max-width: 100vw;
   overflow: hidden;
 }
 
-/* With standard sidebar (non-customer panels) */
 .dashboard-layout--with-sidebar {
   /* Standard sidebar is fixed, main area offsets */
 }
 
-/* ===== MAIN AREA ===== */
+/* ── Main Area ── */
 .dashboard-main {
   flex: 1;
   display: flex;
@@ -31,12 +34,11 @@
   min-width: 0;
 }
 
-/* Offset for the standard fixed sidebar (worker/admin/b2b) */
 .dashboard-main--offset {
   margin-left: var(--sidebar-width);
 }
 
-/* ===== CONTENT ROW (navbar excluded) ===== */
+/* ── Content Row (navbar excluded) ── */
 .dashboard-content-row {
   flex: 1;
   display: flex;
@@ -44,12 +46,14 @@
   min-height: 0;
 }
 
-/* When category sidebar is present */
 .dashboard-content-row--with-category {
   /* sidebar + content sit side by side */
 }
 
-/* ===== PAGE CONTENT AREA ===== */
+/* ── Page Content Area ──
+   IMPORTANT: background must be transparent so the pattern
+   on .dashboard-layout (fixed) shows through.
+*/
 .dashboard-content {
   flex: 1;
   padding: 28px 36px;
@@ -57,14 +61,14 @@
   overflow-x: hidden;
   min-width: 0;
   height: 100%;
+  background: transparent;   /* ← lets body/layout pattern show through */
 }
 
-/* Slight padding reduction when category sidebar is present */
 .dashboard-content--with-category {
   padding: 28px 32px;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ── Responsive ── */
 @media (max-width: 1100px) {
   .dashboard-content {
     padding: 24px 28px;
@@ -81,15 +85,13 @@
   }
 
   .dashboard-content {
-    padding: 16px;
+    padding: 16px 16px 80px 16px;
   }
 
   .dashboard-content--with-category {
-    padding: 16px;
+    padding: 16px 16px 80px 16px;
   }
 
-  /* Category sidebar on mobile becomes a horizontal strip
-     handled by sidebar--category responsive rules in Sidebar.css */
   .dashboard-content-row--with-category {
     flex-direction: column;
   }

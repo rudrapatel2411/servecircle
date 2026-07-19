@@ -199,7 +199,7 @@ const installCustomAlert = () => {
     if (msgStr.includes('🎉') || msgStr.toLowerCase().includes('success') || msgStr.toLowerCase().includes('complete')) {
       emoji = '🎉';
       title = 'Action Completed!';
-      themeColor = 'rgba(16, 185, 129, 0.2)'; // Green
+      themeColor = 'rgba(59, 125, 193, 0.2)'; // Green
     } else if (msgStr.includes('🚨') || msgStr.toLowerCase().includes('sos') || msgStr.toLowerCase().includes('alarm')) {
       emoji = '🚨';
       title = 'Safety Alert Dispatch';
@@ -237,8 +237,8 @@ const installCustomAlert = () => {
 
     // Apply specific gradient to button based on type
     if (themeColor.includes('16, 185, 129')) {
-      btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-      btn.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.35)';
+      btn.style.background = 'linear-gradient(135deg, #3b7dc1 0%, #2960a0 100%)';
+      btn.style.boxShadow = '0 8px 24px rgba(59, 125, 193, 0.35)';
     } else if (themeColor.includes('239, 68, 68')) {
       btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
       btn.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.35)';

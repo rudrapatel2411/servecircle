@@ -358,7 +358,7 @@ const TravelCommuteHub = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ background: '#10b981', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+              <span style={{ background: '#3b7dc1', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
                 <HiOutlineShieldCheck size={24} />
               </span>
               {t('travelCommuteExt.safetyShield')}

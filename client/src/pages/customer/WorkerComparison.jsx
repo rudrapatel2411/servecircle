@@ -130,7 +130,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
                   {t('workerComparison.topChoice')}
                 </span>
               )}
-              {isSelected && <HiOutlineCheckCircle style={{ color: '#10b981', fontSize: '1.2rem', position: 'absolute', top: '38px', right: '16px' }} />}
+              {isSelected && <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.2rem', position: 'absolute', top: '38px', right: '16px' }} />}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -143,7 +143,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span><HiOutlineClock style={{ verticalAlign: 'text-bottom', color: '#f97316' }} /> {t('workerComparison.responseTime')}</span>
-                  <span style={{ color: '#10b981', fontWeight: 700 }}>{w.speed}</span>
+                  <span style={{ color: '#3b7dc1', fontWeight: 700 }}>{w.speed}</span>
                 </div>
               </div>
 
@@ -166,7 +166,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
                   type="button"
                   onClick={() => onSelectWorker(w)}
                   style={{
-                    background: isSelected ? '#10b981' : 'transparent',
+                    background: isSelected ? '#3b7dc1' : 'transparent',
                     color: 'white',
                     border: isSelected ? 'none' : '1px solid #3b82f6',
                     borderRadius: '8px',

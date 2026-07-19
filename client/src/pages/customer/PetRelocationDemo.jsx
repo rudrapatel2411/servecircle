@@ -160,7 +160,7 @@ const PetRelocationDemo = () => {
               <button 
                 className="btn" 
                 onClick={() => setPetData({...petData, hasVaccination: true})}
-                style={{ background: petData.hasVaccination ? '#10b981' : 'white', color: petData.hasVaccination ? 'white' : '#0ea5e9', border: `1px solid ${petData.hasVaccination ? '#10b981' : '#38bdf8'}` }}
+                style={{ background: petData.hasVaccination ? '#3b7dc1' : 'white', color: petData.hasVaccination ? 'white' : '#0ea5e9', border: `1px solid ${petData.hasVaccination ? '#3b7dc1' : '#38bdf8'}` }}
               >
                 {petData.hasVaccination ? <><HiOutlineCheckCircle /> Uploaded</> : <><HiOutlineCamera /> Upload</>}
               </button>
@@ -258,19 +258,19 @@ const PetRelocationDemo = () => {
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '16px' }}>Journey Timeline</h4>
               
               <div style={{ borderLeft: '2px solid #e2e8f0', marginLeft: '12px', paddingLeft: '24px', position: 'relative' }}>
-                <div style={{ position: 'absolute', left: '-7px', top: '0', width: '12px', height: '12px', borderRadius: '50%', background: '#10b981', border: '2px solid white' }}></div>
+                <div style={{ position: 'absolute', left: '-7px', top: '0', width: '12px', height: '12px', borderRadius: '50%', background: '#3b7dc1', border: '2px solid white' }}></div>
                 <div style={{ marginBottom: '20px' }}>
                   <h5 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Pickup from Home</h5>
                   <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>9:00 AM - {petData.name} settled in the carrier.</p>
                 </div>
 
-                <div style={{ position: 'absolute', left: '-7px', top: '50%', width: '12px', height: '12px', borderRadius: '50%', background: trackingProgress > 30 ? '#10b981' : '#cbd5e1', border: '2px solid white', transition: 'all 0.5s' }}></div>
+                <div style={{ position: 'absolute', left: '-7px', top: '50%', width: '12px', height: '12px', borderRadius: '50%', background: trackingProgress > 30 ? '#3b7dc1' : '#cbd5e1', border: '2px solid white', transition: 'all 0.5s' }}></div>
                 <div style={{ marginBottom: '20px', opacity: trackingProgress > 30 ? 1 : 0.4, transition: 'all 0.5s' }}>
                   <h5 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Bio-Break & Water</h5>
                   <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>10:30 AM - Stopped at Lonavala bypass.</p>
                 </div>
 
-                <div style={{ position: 'absolute', left: '-7px', bottom: '0', width: '12px', height: '12px', borderRadius: '50%', background: trackingProgress > 80 ? '#10b981' : '#cbd5e1', border: '2px solid white', transition: 'all 0.5s' }}></div>
+                <div style={{ position: 'absolute', left: '-7px', bottom: '0', width: '12px', height: '12px', borderRadius: '50%', background: trackingProgress > 80 ? '#3b7dc1' : '#cbd5e1', border: '2px solid white', transition: 'all 0.5s' }}></div>
                 <div style={{ opacity: trackingProgress > 80 ? 1 : 0.4, transition: 'all 0.5s' }}>
                   <h5 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Arrival</h5>
                   <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0 }}>Approaching destination.</p>

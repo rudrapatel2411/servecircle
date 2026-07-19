@@ -120,8 +120,8 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
           )}
           <div>
             <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>{workerName}</h4>
-            <span style={{ fontSize: '0.7rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span> {t('secureChat.online')}
+            <span style={{ fontSize: '0.7rem', color: '#3b7dc1', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b7dc1' }}></span> {t('secureChat.online')}
             </span>
           </div>
         </div>
@@ -134,8 +134,8 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
             width: '40px',
             height: '40px',
             borderRadius: '50%',
-            background: 'rgba(16, 185, 129, 0.1)',
-            color: '#10b981',
+            background: 'rgba(59, 125, 193, 0.1)',
+            color: '#3b7dc1',
             border: 'none',
             display: 'flex',
             alignItems: 'center',
@@ -152,15 +152,15 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
 
       {/* Trust Badge Bar */}
       <div style={{
-        background: 'rgba(16, 185, 129, 0.08)',
-        color: '#34d399',
+        background: 'rgba(59, 125, 193, 0.08)',
+        color: '#609cd2',
         fontSize: '0.72rem',
         padding: '8px 16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: '6px',
-        borderBottom: '1px solid rgba(16, 185, 129, 0.1)'
+        borderBottom: '1px solid rgba(59, 125, 193, 0.1)'
       }}>
         <HiOutlineLockClosed style={{ fontSize: '0.85rem' }} />
         <span>{t('secureChat.proxyActive')}</span>
@@ -275,7 +275,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
             width: '120px',
             height: '120px',
             borderRadius: '50%',
-            background: 'rgba(16, 185, 129, 0.15)',
+            background: 'rgba(59, 125, 193, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -286,7 +286,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
               width: '100%',
               height: '100%',
               borderRadius: '50%',
-              border: '2px solid #10b981',
+              border: '2px solid #3b7dc1',
               animation: 'ping 1.5s infinite'
             }} />
             {workerAvatar ? (
@@ -296,7 +296,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
                 style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover' }}
               />
             ) : (
-              <div style={{ fontSize: '3rem', color: '#10b981' }}>
+              <div style={{ fontSize: '3rem', color: '#3b7dc1' }}>
                 <HiOutlinePhone />
               </div>
             )}
@@ -308,7 +308,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
           </span>
 
           <p style={{
-            color: '#10b981',
+            color: '#3b7dc1',
             fontWeight: 700,
             marginTop: '24px',
             fontSize: '0.9rem',

@@ -1,15 +1,15 @@
 /* ==========================================================================
-   Global Service Search (General Services)
+   Global Service Search — Emerald Neomorphism
    ========================================================================== */
 
-/* Full-screen backdrop that blurs the background */
+/* Full-screen backdrop */
 .global-search-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.3);
+  background: rgba(19, 78, 74, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 850;
@@ -23,33 +23,34 @@
   pointer-events: auto;
 }
 
-/* Wrapper for the search component */
+/* Wrapper */
 .global-search-wrapper {
   position: relative;
-  z-index: 860; /* Above the backdrop */
+  z-index: 860;
   width: 100%;
   max-width: 680px;
   margin: 24px auto 0;
   padding: 0 20px;
 }
 
-/* Search input container */
+/* Search input container — Neomorphic pill */
 .global-search-container {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: white;
-  border: 1.5px solid var(--gray-200);
+  background: var(--neo-bg);
+  border: none;
   border-radius: 100px;
-  padding: 12px 24px;
+  padding: 14px 24px;
   transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .global-search-container.focused {
-  border-color: var(--primary-500);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 4px rgba(99, 102, 241, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 8px 8px 20px var(--neo-dark),
+              -8px -8px 20px var(--neo-light),
+              0 0 0 3px rgba(59, 125, 193, 0.2);
+  transform: translateY(-3px);
 }
 
 .global-search-icon {
@@ -80,22 +81,27 @@
 }
 
 .global-search-clear {
-  background: var(--gray-100);
+  background: var(--neo-bg);
   border: none;
   color: var(--gray-500);
   cursor: pointer;
-  font-size: 1.2rem;
-  padding: 4px;
+  font-size: 1.1rem;
+  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
 
 .global-search-clear:hover {
-  background: var(--gray-200);
-  color: var(--navy-800);
+  box-shadow: var(--shadow-md);
+  color: var(--primary-600);
+}
+
+.global-search-clear:active {
+  box-shadow: var(--shadow-inset);
 }
 
 /* Dropdown Results */
@@ -104,10 +110,10 @@
   top: calc(100% + 12px);
   left: 20px;
   right: 20px;
-  background: white;
+  background: var(--neo-bg);
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-xl);
+  border: none;
   overflow: hidden;
   max-height: 400px;
   overflow-y: auto;
@@ -125,11 +131,11 @@
   gap: 16px;
   padding: 12px 20px;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .global-search-item:hover {
-  background: var(--gray-50);
+  background: var(--primary-50);
 }
 
 .global-search-item-icon {
@@ -141,6 +147,8 @@
   border-radius: var(--radius-md);
   font-size: 1.4rem;
   flex-shrink: 0;
+  background: var(--neo-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .global-search-item-text {
@@ -156,8 +164,8 @@
 
 .global-search-item-cat {
   font-size: 0.75rem;
-  color: var(--gray-500);
-  font-weight: 500;
+  color: var(--primary-500);
+  font-weight: 600;
   margin-top: 2px;
 }
 

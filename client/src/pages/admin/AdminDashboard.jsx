@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const { t } = useTranslation();
 
   const stats = [
-    { icon: <HiOutlineBanknotes />, value: '₹4,82,500', label: t('admin.totalRevenue'), color: '#10b981', bg: '#d1fae5' },
+    { icon: <HiOutlineBanknotes />, value: '₹4,82,500', label: t('admin.totalRevenue'), color: '#3b7dc1', bg: '#e1ebf5' },
     { icon: <HiOutlineUsers />, value: '12,450', label: t('admin.activeUsers'), color: '#3b82f6', bg: '#dbeafe' },
     { icon: <HiOutlineShieldCheck />, value: '18', label: t('admin.pendingVerifications'), color: '#f59e0b', bg: '#fef3c7' },
     { icon: <HiOutlineExclamationTriangle />, value: '7', label: t('admin.openComplaints'), color: '#ef4444', bg: '#fee2e2' },

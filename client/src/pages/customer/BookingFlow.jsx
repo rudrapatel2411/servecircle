@@ -612,7 +612,7 @@ const BookingFlow = () => {
                   {[
                     { id: 'UPI', label: 'UPI', subtext: 'GPay, PhonePe, Paytm', icon: <HiOutlineDevicePhoneMobile />, color: '#8b5cf6' },
                     { id: 'Card', label: 'Card', subtext: 'Credit or Debit', icon: <HiOutlineCreditCard />, color: '#3b82f6' },
-                    { id: 'Wallet', label: 'Wallet', subtext: 'ServeCircle Pay', icon: <HiOutlineWallet />, color: '#10b981' },
+                    { id: 'Wallet', label: 'Wallet', subtext: 'ServeCircle Pay', icon: <HiOutlineWallet />, color: '#3b7dc1' },
                     { id: 'Cash', label: 'Cash', subtext: 'Pay after service', icon: <HiOutlineBanknotes />, color: '#f59e0b' }
                   ].map(method => {
                     const isSelected = paymentMethod === method.id;
@@ -708,7 +708,7 @@ const BookingFlow = () => {
                     <span style={{ fontWeight: 600 }}>₹{trustSafetyFee}</span>
                   </div>
                   {appliedCoupon && (
-                    <div className="animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: '#10b981', fontWeight: 700 }}>
+                    <div className="animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: '#3b7dc1', fontWeight: 700 }}>
                       <span>Coupon ({appliedCoupon.code})</span>
                       <span>- ₹{discountAmount}</span>
                     </div>
@@ -730,7 +730,7 @@ const BookingFlow = () => {
                 {appliedCoupon ? (
                   <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ background: '#10b981', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
+                      <span style={{ background: '#3b7dc1', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
                         {appliedCoupon.code}
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--gray-700)', fontWeight: 700 }}>Applied!</span>
@@ -800,7 +800,7 @@ const BookingFlow = () => {
                   if (price === 0 || isSellingService) setPaymentMethod('Cash');
                   handleConfirmBooking();
                 }} 
-                style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800, boxShadow: 'var(--shadow-md)', background: isSellingService ? '#10b981' : undefined, borderColor: isSellingService ? '#10b981' : undefined }}
+                style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800, boxShadow: 'var(--shadow-md)', background: isSellingService ? '#3b7dc1' : undefined, borderColor: isSellingService ? '#3b7dc1' : undefined }}
               >
                 {isSellingService ? 'Schedule Evaluation Visit →' : (price === 0 ? 'Schedule Free Visit →' : 'Pay & Confirm Booking →')}
               </button>

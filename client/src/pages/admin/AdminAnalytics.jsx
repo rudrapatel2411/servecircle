@@ -25,7 +25,7 @@ const topServices = [
 
 const userGrowth = [
   { label: 'Total Customers', value: '12,450', change: '+18%', icon: <HiOutlineUsers />, color: '#3b82f6' },
-  { label: 'Active Workers', value: '2,340', change: '+12%', icon: <HiOutlineUsers />, color: '#10b981' },
+  { label: 'Active Workers', value: '2,340', change: '+12%', icon: <HiOutlineUsers />, color: '#3b7dc1' },
   { label: 'B2B Partners', value: '45', change: '+8%', icon: <HiOutlineUsers />, color: '#8b5cf6' },
   { label: 'Monthly Revenue', value: '₹82,500', change: '+21%', icon: <HiOutlineBanknotes />, color: '#f59e0b' },
 ];
@@ -104,7 +104,7 @@ const AdminAnalytics = () => {
           <h3 className="dash-section-title"><HiOutlineCalendarDays style={{ verticalAlign: 'middle' }} /> Booking Status</h3>
           <div className="status-breakdown">
             {[
-              { label: 'Completed', value: 485, pct: 65, color: '#10b981' },
+              { label: 'Completed', value: 485, pct: 65, color: '#3b7dc1' },
               { label: 'Active', value: 120, pct: 16, color: '#3b82f6' },
               { label: 'Pending', value: 95, pct: 13, color: '#f59e0b' },
               { label: 'Cancelled', value: 45, pct: 6, color: '#ef4444' },

@@ -104,7 +104,7 @@ const WorkerSchedule = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#d1fae5', color: '#047857' }}>
+          <div className="stat-icon" style={{ background: '#e1ebf5', color: '#224c82' }}>
             <HiOutlineCalendarDays />
           </div>
           <div>

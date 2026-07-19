@@ -382,7 +382,7 @@ const MyHomeDashboard = () => {
       const expiringSoon = diffDays <= 90;
       return { 
         label: expiringSoon ? `Expiring Soon (${diffDays} days)` : `Active (${diffDays} days left)`, 
-        color: expiringSoon ? '#f59e0b' : '#10b981', 
+        color: expiringSoon ? '#f59e0b' : '#3b7dc1', 
         isExpired: false, 
         expiringSoon 
       };
@@ -479,12 +479,12 @@ const MyHomeDashboard = () => {
               <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>Order #SC-89241</span>
             </div>
             <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Complete Home Relocation</h4>
-            <p style={{ color: '#cbd5e1', margin: '4px 0 0 0', fontSize: '0.85rem' }}>Expert assigned: Rajesh Kumar. OTP to start: <strong style={{ color: '#10b981', letterSpacing: '1px' }}>4521</strong></p>
+            <p style={{ color: '#cbd5e1', margin: '4px 0 0 0', fontSize: '0.85rem' }}>Expert assigned: Rajesh Kumar. OTP to start: <strong style={{ color: '#3b7dc1', letterSpacing: '1px' }}>4521</strong></p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>View Details</button>
-          <button className="btn btn-primary" style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)', cursor: 'pointer' }} onClick={openTrackingMap}>Track Partner 📍</button>
+          <button className="btn btn-primary" style={{ background: '#3b7dc1', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(59, 125, 193, 0.3)', cursor: 'pointer' }} onClick={openTrackingMap}>Track Partner 📍</button>
         </div>
       </div>
 
@@ -532,7 +532,7 @@ const MyHomeDashboard = () => {
               <div style={{
                 width: '100%', height: '100%', borderRadius: '50%',
                 border: '12px solid rgba(255, 255, 255, 0.1)',
-                borderTopColor: currentScore >= 80 ? '#10b981' : currentScore >= 60 ? '#f59e0b' : '#ef4444',
+                borderTopColor: currentScore >= 80 ? '#3b7dc1' : currentScore >= 60 ? '#f59e0b' : '#ef4444',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
                 position: 'relative', transition: 'all 0.5s ease'
               }}>
@@ -573,18 +573,18 @@ const MyHomeDashboard = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               
               {/* Alert 1 */}
-              <div style={{ padding: '14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ padding: '14px', background: '#f0f5fa', border: '1px solid #c2d7ea', borderRadius: 'var(--radius-md)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <span style={{ fontSize: '0.7rem', background: '#34d399', color: 'white', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700, textTransform: 'uppercase' }}>Recommended</span>
+                    <span style={{ fontSize: '0.7rem', background: '#609cd2', color: 'white', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700, textTransform: 'uppercase' }}>Recommended</span>
                     <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#065f46', marginTop: '4px' }}>Monsoon AC & Leak Proofing</h4>
                   </div>
                   <span style={{ fontSize: '1.3rem' }}>⛈️</span>
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#047857' }}>
+                <p style={{ fontSize: '0.75rem', color: '#224c82' }}>
                   Prevent AC water dripping and wall dampness. Includes structural check of external compressor bracket.
                 </p>
-                <Link to="/customer/services/festive-seasonal/waterproofing" className="btn btn-primary btn-sm" style={{ background: '#10b981', alignSelf: 'flex-start', padding: '4px 10px', fontSize: '0.75rem', marginTop: '4px' }}>
+                <Link to="/customer/services/festive-seasonal/waterproofing" className="btn btn-primary btn-sm" style={{ background: '#3b7dc1', alignSelf: 'flex-start', padding: '4px 10px', fontSize: '0.75rem', marginTop: '4px' }}>
                   Book Monsoon Prep
                 </Link>
               </div>
@@ -1310,11 +1310,11 @@ const MyHomeDashboard = () => {
               }}>
                 <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&auto=format&fit=crop&q=80" alt="Partner" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--gray-200)' }} />
                 <div style={{ flex: 1, minWidth: '200px' }}>
-                  <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>Rajesh Kumar <HiOutlineCheckCircle style={{ color: '#10b981' }} /></h4>
+                  <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>Rajesh Kumar <HiOutlineCheckCircle style={{ color: '#3b7dc1' }} /></h4>
                   <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--gray-500)' }}>Relocation Expert • 4.9 ★ (120+ Jobs)</p>
                   <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: 'var(--navy-600)', fontWeight: 700 }}>Current Location: Koramangala 4th Block</p>
                 </div>
-                <button className="btn btn-primary" style={{ background: '#10b981', borderColor: '#10b981', padding: '10px 20px', fontSize: '0.85rem' }} onClick={() => alert('Calling Partner...')}>
+                <button className="btn btn-primary" style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '10px 20px', fontSize: '0.85rem' }} onClick={() => alert('Calling Partner...')}>
                   📞 Call Partner
                 </button>
               </div>

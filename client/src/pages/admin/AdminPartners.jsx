@@ -15,7 +15,7 @@ const mockPartners = [
   { id: 5, name: 'Skill India Foundation', type: 'ngo', contact: 'Meera Patel', email: 'contact@skillindia.org', phone: '9876500100', desc: 'Training and placement for ITI graduates.', partnership: 'training', status: 'pending', city: 'Gujarat', since: '' },
 ];
 
-const typeColors = { government: '#3b82f6', ngo: '#10b981', corporate: '#8b5cf6', society: '#f59e0b', other: '#6b7280' };
+const typeColors = { government: '#3b82f6', ngo: '#3b7dc1', corporate: '#8b5cf6', society: '#f59e0b', other: '#6b7280' };
 
 const AdminPartners = () => {
   const { t } = useTranslation();

@@ -129,7 +129,7 @@ const RegisterPage = () => {
               <p className="auth-role-text">{t('auth.benefit1Desc', 'Get verified professionals at your doorstep instantly or schedule for later.')}</p>
             </div>
             <div className="auth-role-card">
-              <div className="auth-role-head"><span className="auth-role-name" style={{ color: '#10b981' }}>{t('auth.benefit2Title', 'Secure & Verified')}</span><HiOutlineShieldCheck style={{ color: '#10b981' }} /></div>
+              <div className="auth-role-head"><span className="auth-role-name" style={{ color: '#3b7dc1' }}>{t('auth.benefit2Title', 'Secure & Verified')}</span><HiOutlineShieldCheck style={{ color: '#3b7dc1' }} /></div>
               <p className="auth-role-text">{t('auth.benefit2Desc', 'Every service provider undergoes a strict police verification and background check.')}</p>
             </div>
             <div className="auth-role-card">

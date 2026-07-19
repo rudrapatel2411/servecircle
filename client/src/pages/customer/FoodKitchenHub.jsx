@@ -88,7 +88,7 @@ const FoodKitchenHub = () => {
             {/* Macro Tags */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.65rem', background: '#fff7ed', color: '#c2410c', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}><HiOutlineFire /> High Protein (35g)</span>
-              <span style={{ fontSize: '0.65rem', background: '#ecfdf5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>{t('foodKitchenExt.lowCalorie')}</span>
+              <span style={{ fontSize: '0.65rem', background: '#f0f5fa', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>{t('foodKitchenExt.lowCalorie')}</span>
             </div>
 
             {/* Diet type */}

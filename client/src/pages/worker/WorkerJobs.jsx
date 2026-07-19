@@ -141,7 +141,7 @@ const WorkerJobs = () => {
                 <span><HiOutlineCalendarDays /> {formatDate(job.scheduledDate)}</span>
                 <span><HiOutlineClock /> {job.scheduledTime || 'Flexible'}</span>
                 <span><HiOutlineMapPin /> {job.address}</span>
-                <span style={{ color: '#10b981', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
+                <span style={{ color: '#3b7dc1', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
                 <span><HiOutlineUser /> {job.customer?.name || 'Customer'}</span>
                 <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
               </div>

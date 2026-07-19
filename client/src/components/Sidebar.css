@@ -1,16 +1,18 @@
 /* ==========================================================================
-   Sidebar — Standard (worker/admin/b2b) + General Services Category Menu
+   Sidebar — Emerald Neomorphism
+   Standard (worker/admin/b2b) + Category Menu (customer)
    ========================================================================== */
 
-/* ===== STANDARD SIDEBAR (worker/admin/b2b) ===== */
+/* ===== STANDARD SIDEBAR ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: var(--sidebar-width);
   height: 100vh;
-  background: white;
-  border-right: 1px solid var(--gray-200);
+  background: var(--card-bg);
+  box-shadow: 4px 0 24px rgba(59, 125, 193, 0.10),
+              1px 0 0 rgba(59, 125, 193, 0.06);
   display: flex;
   flex-direction: column;
   z-index: 900;
@@ -21,7 +23,7 @@
 
 .sidebar-header {
   padding: 20px;
-  border-bottom: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--primary-100);
 }
 
 .sidebar-logo {
@@ -37,11 +39,12 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--primary-50);
+  background: var(--neo-bg);
   border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary-700);
+  box-shadow: var(--shadow-inset);
 }
 
 .sidebar-nav {
@@ -60,20 +63,23 @@
   border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--gray-600);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all var(--transition-fast);
 }
 
 .sidebar-link:hover {
-  background: var(--gray-50);
-  color: var(--gray-800);
+  background: var(--primary-50);
+  color: var(--primary-700);
+  transform: translateX(2px);
 }
 
 .sidebar-link-active {
-  background: var(--primary-50) !important;
-  color: var(--primary-700) !important;
-  font-weight: 600;
+  background: var(--gradient-primary) !important;
+  color: white !important;
+  font-weight: 700;
+  box-shadow: 4px 4px 10px rgba(59, 125, 193, 0.3),
+              -2px -2px 6px rgba(255, 255, 255, 0.7) !important;
 }
 
 .sidebar-link-icon {
@@ -85,20 +91,19 @@
 
 .sidebar-footer {
   padding: 12px;
-  border-top: 1px solid var(--gray-100);
+  border-top: 1px solid var(--primary-100);
 }
 
-/* ===== CATEGORY SIDEBAR (customer — General Services) ===== */
+/* ===== CATEGORY SIDEBAR (Customer — General Services) ===== */
 .sidebar--category {
-  /* Inherits .sidebar base, but positioned within the layout flow
-     rather than fixed — DashboardLayout handles positioning */
   position: sticky;
-  top: 64px; /* below the navbar */
+  top: 64px;
   height: calc(100vh - 64px);
   width: 240px;
   min-width: 240px;
-  background: white;
-  border-right: 1px solid var(--gray-200);
+  background: var(--card-bg);
+  box-shadow: 4px 0 20px rgba(59, 125, 193, 0.08),
+              1px 0 0 rgba(59, 125, 193, 0.05);
   display: flex;
   flex-direction: column;
   z-index: 100;
@@ -121,7 +126,7 @@
 .category-sidebar-heading {
   font-size: 0.95rem;
   font-weight: 800;
-  color: var(--navy-900);
+  color: var(--text-primary);
   font-family: var(--font-heading);
   letter-spacing: -0.02em;
 }
@@ -134,11 +139,11 @@
 }
 
 .category-nav-label {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--gray-400);
+  letter-spacing: 0.1em;
+  color: var(--primary-400);
   padding: 4px 14px 8px 14px;
 }
 
@@ -157,8 +162,15 @@
 }
 
 .category-sidebar-link:hover {
-  background: var(--gray-50);
-  color: var(--navy-800);
+  background: var(--primary-50);
+  color: var(--primary-700);
+  transform: translateX(2px);
+}
+
+.category-sidebar-link.active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 4px 4px 10px rgba(59, 125, 193, 0.28);
 }
 
 .category-sidebar-link--active {
@@ -169,12 +181,13 @@
 
 .category-sidebar-link--disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .category-sidebar-link--disabled:hover {
   background: transparent !important;
   color: var(--gray-600) !important;
+  transform: none !important;
 }
 
 .category-sidebar-link-icon {
@@ -194,8 +207,8 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: var(--gray-100);
-  color: var(--gray-500);
+  background: var(--accent-100);
+  color: var(--accent-700);
   padding: 2px 6px;
   border-radius: var(--radius-full);
   flex-shrink: 0;
@@ -222,24 +235,25 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--gray-50);
-  border: 1.5px solid var(--gray-200);
+  background: var(--neo-bg);
+  border: none;
   border-radius: var(--radius-md);
   padding: 8px 10px;
   margin-top: 12px;
-  transition: border-color var(--transition-fast);
+  box-shadow: var(--shadow-inset);
+  transition: box-shadow var(--transition-fast);
 }
 
 .category-sidebar-search:focus-within {
-  border-color: var(--primary-400);
-  background: white;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+  box-shadow: inset 2px 2px 6px var(--neo-dark),
+              inset -2px -2px 6px var(--neo-light),
+              0 0 0 3px rgba(59, 125, 193, 0.15);
 }
 
 .category-search-icon {
   width: 14px;
   height: 14px;
-  color: var(--gray-400);
+  color: var(--primary-400);
   flex-shrink: 0;
   stroke: currentColor;
 }
@@ -271,7 +285,7 @@
 }
 
 .category-search-clear:hover {
-  color: var(--gray-600);
+  color: var(--primary-600);
 }
 
 .category-search-empty {
@@ -287,9 +301,11 @@
   .sidebar {
     transform: translateX(-100%);
   }
+
   .sidebar.sidebar-open {
     transform: translateX(0);
   }
+
   .sidebar--category {
     position: fixed;
     top: 64px;
@@ -297,9 +313,10 @@
     width: 220px;
     transform: translateX(-100%);
     z-index: 500;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 6px 0 24px rgba(59, 125, 193, 0.15);
     transition: transform var(--transition-base);
   }
+
   .sidebar--category.sidebar-open {
     transform: translateX(0);
   }

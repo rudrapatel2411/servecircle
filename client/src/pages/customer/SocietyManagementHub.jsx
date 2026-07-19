@@ -37,7 +37,7 @@ const SocietyManagementHub = () => {
         {/* Live Staff Tracker */}
         <div className="card" style={{ background: 'white', padding: '28px', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--gray-200)' }}>
           <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-             <HiOutlineCheckCircle style={{ color: '#10b981', fontSize: '1.5rem' }}/> {t('societyManagement.liveStaffTracker', 'Live Staff Tracker')}
+             <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.5rem' }}/> {t('societyManagement.liveStaffTracker', 'Live Staff Tracker')}
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ padding: '12px', borderRadius: '12px', border: '1px solid #bbf7d0', background: '#f0fdf4', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -214,7 +214,7 @@ const SocietyManagementHub = () => {
 
       {/* Premium Society Experiences */}
       <div style={{ marginTop: '60px', marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #10b981' }}>
+        <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #3b7dc1' }}>
           {t('societyManagement.premiumExperiences', 'Premium Society Experiences')}
         </h2>
         <div style={{
