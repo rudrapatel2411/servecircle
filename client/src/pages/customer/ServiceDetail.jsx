@@ -308,14 +308,19 @@ const ServiceDetail = () => {
 
                   <div className="input-group" style={{ marginBottom: 0 }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 700 }}><HiOutlineClock /> {t('serviceDetail.selectTimeSlot')}</label>
-                    <input
-                      type="time"
+                    <select
                       required
                       className="input-field"
                       value={selectedTimeSlot}
                       onChange={(e) => setSelectedTimeSlot(e.target.value)}
                       style={{ fontSize: '0.8rem', padding: '10px', marginTop: '6px', width: '100%' }}
-                    />
+                    >
+                      <option value="" disabled>Select a slot</option>
+                      <option value="Morning (09:00 AM - 12:00 PM)">Morning (09:00 AM - 12:00 PM)</option>
+                      <option value="Afternoon (12:00 PM - 04:00 PM)">Afternoon (12:00 PM - 04:00 PM)</option>
+                      <option value="Evening (04:00 PM - 08:00 PM)">Evening (04:00 PM - 08:00 PM)</option>
+                      <option value="Flexible (Anytime)">Flexible (Anytime)</option>
+                    </select>
                   </div>
                 </div>
 

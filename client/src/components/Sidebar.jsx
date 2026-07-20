@@ -66,14 +66,20 @@ const sidebarConfig = {
     { path: '/admin/complaints', icon: <HiOutlineExclamationTriangle />, labelKey: 'admin.complaints' },
     { path: '/admin/partners', icon: <HiOutlineBuildingOffice2 />, labelKey: 'admin.partners' },
     { path: '/admin/notifications', icon: <HiOutlineBell />, labelKey: 'admin.notifications' },
+    { path: '/admin/b2b', icon: <HiOutlineDocumentText style={{ color: '#8b5cf6' }} />, labelKey: 'admin.b2bPortal' },
+    { path: '/admin/b2b/contracts', icon: <HiOutlineDocumentText />, labelKey: 'b2b.contracts' },
+    { path: '/admin/b2b/locations', icon: <HiOutlineMapPin />, labelKey: 'b2b.locations' },
+    { path: '/admin/b2b/invoices', icon: <HiOutlineReceiptPercent />, labelKey: 'b2b.invoices' },
   ],
   b2b: [
     { path: '/b2b', icon: <HiOutlineHome />, labelKey: 'b2b.dashboard', end: true },
-    { path: '/b2b/booking', icon: <HiOutlineReceiptPercent />, labelKey: 'b2b.bulkBooking' },
-    { path: '/b2b/contracts', icon: <HiOutlineDocumentText />, labelKey: 'b2b.contracts' },
-    { path: '/b2b/locations', icon: <HiOutlineMapPin />, labelKey: 'b2b.locations' },
+    { path: '/b2b/services', icon: <HiOutlineMagnifyingGlass />, labelKey: 'b2b.bookServices' },
+    { path: '/b2b/contracts', icon: <HiOutlineDocumentText />, labelKey: 'b2b.myContracts' },
+    { path: '/b2b/locations', icon: <HiOutlineMapPin />, labelKey: 'b2b.myBlocks' },
     { path: '/b2b/team', icon: <HiOutlineUserGroup />, labelKey: 'b2b.teamAccounts' },
     { path: '/b2b/invoices', icon: <HiOutlineReceiptPercent />, labelKey: 'b2b.invoices' },
+    { path: '/b2b/history', icon: <HiOutlineCalendarDays />, labelKey: 'b2b.serviceHistory' },
+    { path: '/b2b/support', icon: <HiOutlineChatBubbleLeftRight />, labelKey: 'b2b.support' },
   ],
 };
 
@@ -81,7 +87,7 @@ const panelLabels = {
   customer: { icon: 'CU', label: 'Customer Panel' },
   worker: { icon: 'WK', label: 'Worker Panel' },
   admin: { icon: 'AD', label: 'Admin Panel' },
-  b2b: { icon: 'B2', label: 'B2B Panel' },
+  b2b: { icon: 'B2', label: 'B2B Client Portal' },
 };
 
 const Sidebar = ({ panel }) => {

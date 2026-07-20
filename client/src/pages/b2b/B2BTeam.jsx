@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   HiOutlineEnvelope,
   HiOutlineUserGroup,
@@ -9,22 +10,31 @@ import '../Dashboard.css';
 import './B2BPages.css';
 
 const initialMembers = [
-  { id: 1, name: 'Rudra Shah', email: 'rudra@greenvalley.in', role: 'Owner', location: 'All Locations', status: 'active' },
-  { id: 2, name: 'Priya Desai', email: 'priya@greenvalley.in', role: 'Operations Manager', location: 'Block A, Block B', status: 'active' },
-  { id: 3, name: 'Amit Patel', email: 'amit@greenvalley.in', role: 'Accounting', location: 'Club House', status: 'pending' },
+  { id: 1, name: 'Rudra Shah', email: 'rudra@greenvalley.in', role: 'Admin', location: 'All Locations', status: 'active' },
+  { id: 2, name: 'Priya Desai', email: 'priya@greenvalley.in', role: 'HR Manager', location: 'Block A, Block B', status: 'active' },
+  { id: 3, name: 'Amit Patel', email: 'amit@greenvalley.in', role: 'Finance Manager', location: 'Club House', status: 'pending' },
 ];
 
-const roleOptions = ['Owner', 'Operations Manager', 'Accounting', 'Facility Supervisor', 'Viewer'];
+const roleOptions = ['Admin', 'HR Manager', 'Finance Manager', 'Operations', 'Viewer'];
 
 const B2BTeam = () => {
   const { t } = useTranslation();
-  const [members, setMembers] = useState(initialMembers);
+  const navigate = useNavigate();
+  const [members, setMembers] = useState(() => {
+    const saved = localStorage.getItem('b2bTeamMembers');
+    if (saved) return JSON.parse(saved);
+    return initialMembers;
+  });
   const [invite, setInvite] = useState({
     name: '',
     email: '',
     role: roleOptions[1],
     location: '',
   });
+
+  useEffect(() => {
+    localStorage.setItem('b2bTeamMembers', JSON.stringify(members));
+  }, [members]);
 
   const updateInvite = (key, value) => setInvite((current) => ({ ...current, [key]: value }));
 
@@ -35,6 +45,7 @@ const B2BTeam = () => {
       { id: Date.now(), ...invite, status: 'pending' },
     ]));
     setInvite({ name: '', email: '', role: roleOptions[1], location: '' });
+    alert(`Invite sent successfully to ${invite.email}`);
   };
 
   const activeMembers = useMemo(
@@ -52,19 +63,19 @@ const B2BTeam = () => {
       </div>
 
       <div className="b2b-kpi-strip">
-        <div className="b2b-kpi">
+        <div className="b2b-kpi hover-lift" style={{ cursor: 'pointer' }} onClick={() => navigate('/b2b/team')}>
           <span className="b2b-kpi-label">{t('b2bExtended.totalTeam', 'Total Team Members')}</span>
           <span className="b2b-kpi-value">{members.length}</span>
         </div>
-        <div className="b2b-kpi">
+        <div className="b2b-kpi hover-lift" style={{ cursor: 'pointer' }} onClick={() => navigate('/b2b/team')}>
           <span className="b2b-kpi-label">{t('b2bExtended.activeMembers', 'Active Members')}</span>
           <span className="b2b-kpi-value">{activeMembers}</span>
         </div>
-        <div className="b2b-kpi">
+        <div className="b2b-kpi hover-lift" style={{ cursor: 'pointer' }} onClick={() => navigate('/b2b/team')}>
           <span className="b2b-kpi-label">{t('b2bExtended.pendingInvites', 'Pending Invites')}</span>
           <span className="b2b-kpi-value">{members.filter((member) => member.status === 'pending').length}</span>
         </div>
-        <div className="b2b-kpi">
+        <div className="b2b-kpi hover-lift" style={{ cursor: 'pointer' }} onClick={() => navigate('/b2b/team')}>
           <span className="b2b-kpi-label">{t('b2bExtended.roleProfiles', 'Role Profiles')}</span>
           <span className="b2b-kpi-value">{roleOptions.length}</span>
         </div>
@@ -73,33 +84,35 @@ const B2BTeam = () => {
       <div className="b2b-two-col">
         <section className="b2b-card">
           <h3><HiOutlineUserGroup style={{ verticalAlign: 'middle' }} /> {t('b2bExtended.currentTeam', 'Current Team')}</h3>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>{t('b2bExtended.nameLabel', 'Name')}</th>
-                <th>{t('b2bExtended.roleLabel', 'Role')}</th>
-                <th>{t('b2bExtended.locScope', 'Location Scope')}</th>
-                <th>{t('b2bExtended.status', 'Status')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map((member) => (
-                <tr key={member.id}>
-                  <td>
-                    <strong>{member.name}</strong>
-                    <div className="page-subtitle">{member.email}</div>
-                  </td>
-                  <td>{member.role}</td>
-                  <td>{member.location || t('b2bExtended.allAssigned', 'All Assigned')}</td>
-                  <td>
-                    <span className={`b2b-chip ${member.status === 'active' ? 'active' : 'pending'}`}>
-                      {member.status}
-                    </span>
-                  </td>
+          <div className="table-responsive-wrapper">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>{t('b2bExtended.nameLabel', 'Name')}</th>
+                  <th>{t('b2bExtended.roleLabel', 'Role')}</th>
+                  <th>{t('b2bExtended.locScope', 'Location Scope')}</th>
+                  <th>{t('b2bExtended.status', 'Status')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {members.map((member) => (
+                  <tr key={member.id}>
+                    <td>
+                      <strong>{member.name}</strong>
+                      <div className="page-subtitle">{member.email}</div>
+                    </td>
+                    <td>{member.role}</td>
+                    <td>{member.location || t('b2bExtended.allAssigned', 'All Assigned')}</td>
+                    <td>
+                      <span className={`b2b-chip ${member.status === 'active' ? 'active' : 'pending'}`}>
+                        {member.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <aside className="b2b-card">

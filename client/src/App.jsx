@@ -1,4 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import i18next from 'i18next';
+
+// Global override for Number formatting to support localized digits
+const originalToLocaleString = Number.prototype.toLocaleString;
+Number.prototype.toLocaleString = function (locales, options) {
+  const lang = i18next.language || 'en';
+  const numSystem = lang === 'hi' ? 'deva' : lang === 'gu' ? 'gujr' : 'latn';
+  const resolvedLocales = locales || (lang === 'hi' ? 'hi-IN' : lang === 'gu' ? 'gu-IN' : 'en-IN');
+  const resolvedOptions = { ...options, numberingSystem: numSystem };
+  return originalToLocaleString.call(this, resolvedLocales, resolvedOptions);
+};
 
 /* Layouts */
 import Navbar from './components/Navbar';
@@ -69,13 +80,22 @@ import AdminComplaints from './pages/admin/AdminComplaints';
 import AdminPartners from './pages/admin/AdminPartners';
 import AdminNotifications from './pages/admin/AdminNotifications';
 
-/* B2B */
+/* B2B (Admin - Multi-Client View) */
 import B2BDashboard from './pages/b2b/B2BDashboard';
 import B2BBooking from './pages/b2b/B2BBooking';
 import B2BContracts from './pages/b2b/B2BContracts';
 import B2BLocations from './pages/b2b/B2BLocations';
 import B2BTeam from './pages/b2b/B2BTeam';
 import B2BInvoices from './pages/b2b/B2BInvoices';
+
+/* B2B Client Portal (Single Society/Building View) */
+import B2BClientDashboard from './pages/b2b/B2BClientDashboard';
+import B2BClientServices from './pages/b2b/B2BClientServices';
+import B2BClientContracts from './pages/b2b/B2BClientContracts';
+import B2BClientLocations from './pages/b2b/B2BClientLocations';
+import B2BClientInvoices from './pages/b2b/B2BClientInvoices';
+import B2BClientHistory from './pages/b2b/B2BClientHistory';
+import B2BClientSupport from './pages/b2b/B2BClientSupport';
 
 function App() {
   return (
@@ -146,15 +166,23 @@ function App() {
           <Route path="complaints" element={<AdminComplaints />} />
           <Route path="partners" element={<AdminPartners />} />
           <Route path="notifications" element={<AdminNotifications />} />
+          <Route path="b2b" element={<B2BDashboard />} />
+          <Route path="b2b/booking" element={<B2BBooking />} />
+          <Route path="b2b/contracts" element={<B2BContracts />} />
+          <Route path="b2b/locations" element={<B2BLocations />} />
+          <Route path="b2b/team" element={<B2BTeam />} />
+          <Route path="b2b/invoices" element={<B2BInvoices />} />
         </Route>
 
         <Route path="/b2b" element={<DashboardLayout panel="b2b" />}>
-          <Route index element={<B2BDashboard />} />
-          <Route path="booking" element={<B2BBooking />} />
-          <Route path="contracts" element={<B2BContracts />} />
-          <Route path="locations" element={<B2BLocations />} />
+          <Route index element={<B2BClientDashboard />} />
+          <Route path="services" element={<B2BClientServices />} />
+          <Route path="contracts" element={<B2BClientContracts />} />
+          <Route path="locations" element={<B2BClientLocations />} />
           <Route path="team" element={<B2BTeam />} />
-          <Route path="invoices" element={<B2BInvoices />} />
+          <Route path="invoices" element={<B2BClientInvoices />} />
+          <Route path="history" element={<B2BClientHistory />} />
+          <Route path="support" element={<B2BClientSupport />} />
         </Route>
       </Routes>
     </BrowserRouter>

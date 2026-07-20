@@ -516,12 +516,17 @@ const BookingFlow = () => {
                     </div>
                     <div>
                       <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '4px' }}>Time Slot</label>
-                      <input 
-                        type="time"
+                      <select
                         value={formData.time} 
                         onChange={(e) => setFormData(prev => ({...prev, time: e.target.value}))}
                         style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--gray-300)', fontSize: '0.8rem' }}
-                      />
+                      >
+                        <option value="" disabled>Select a slot</option>
+                        <option value="Morning (09:00 AM - 12:00 PM)">Morning (09:00 AM - 12:00 PM)</option>
+                        <option value="Afternoon (12:00 PM - 04:00 PM)">Afternoon (12:00 PM - 04:00 PM)</option>
+                        <option value="Evening (04:00 PM - 08:00 PM)">Evening (04:00 PM - 08:00 PM)</option>
+                        <option value="Flexible (Anytime)">Flexible (Anytime)</option>
+                      </select>
                     </div>
                     <div style={{ gridColumn: 'span 2', textAlign: 'right' }}>
                       <button 

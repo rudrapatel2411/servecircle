@@ -7,6 +7,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
+import PdfViewerModal from '../../components/PdfViewerModal';
 
 const EventsHub = () => {
   const { t } = useTranslation();
@@ -166,6 +167,9 @@ const EventsHub = () => {
 
   const [guestsCount, setGuestsCount] = useState(25);
   
+  // PDF Quote state
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+
   // Custom theme description & budget states
   const [customThemeDesc, setCustomThemeDesc] = useState('');
   const [customThemePrice, setCustomThemePrice] = useState('0');
@@ -1089,7 +1093,7 @@ const EventsHub = () => {
             <div className="print-hide" style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => setPdfModalOpen(true)}
                 className="btn btn-outline"
                 style={{ flex: 1, padding: '10px', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', gap: '6px' }}
               >
@@ -1443,7 +1447,55 @@ const EventsHub = () => {
           </div>
         </div>
       )}
-
+      
+      <PdfViewerModal 
+        isOpen={pdfModalOpen} 
+        onClose={() => setPdfModalOpen(false)} 
+        fileName="Event_Quote.pdf" 
+        pdfContent={
+          <div style={{ padding: '20px', background: '#fafafa', border: '1px solid #ddd', borderRadius: '8px' }}>
+            <h3 style={{ borderBottom: '2px solid #ccc', paddingBottom: '10px' }}>Official Event Quote</h3>
+            <p><strong>Prepared for:</strong> Valued Customer</p>
+            <p><strong>Occasion / Theme:</strong> {selectedTheme?.name || 'Custom Theme'}</p>
+            <p><strong>Expected Guests:</strong> {guestsCount}</p>
+            
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+              <thead>
+                <tr style={{ background: '#eee', textAlign: 'left' }}>
+                  <th style={{ padding: '8px', border: '1px solid #ccc' }}>Service / Component</th>
+                  <th style={{ padding: '8px', border: '1px solid #ccc' }}>Cost Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Base Theme Decor</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{decorPrice}</td>
+                </tr>
+                {includeCatering && (
+                  <tr>
+                    <td style={{ padding: '8px', border: '1px solid #ccc' }}>Premium Catering</td>
+                    <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{cateringCost}</td>
+                  </tr>
+                )}
+                {includeDJ && (
+                  <tr>
+                    <td style={{ padding: '8px', border: '1px solid #ccc' }}>DJ Sound System</td>
+                    <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{djCost}</td>
+                  </tr>
+                )}
+                <tr style={{ fontWeight: 'bold' }}>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Total Estimated Cost</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{totalEstimate}</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#666' }}>
+              * This quote is valid for 15 days from the date of issue. Actual costs may vary slightly based on specific venue requirements.
+            </p>
+          </div>
+        }
+      />
     </div>
   );
 };

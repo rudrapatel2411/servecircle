@@ -4,12 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { HiOutlineArrowLeft, HiOutlineShieldCheck, HiOutlineStar, HiOutlineUserCircle, HiOutlineClock, HiOutlineDocumentText } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
+import PdfViewerModal from '../../components/PdfViewerModal';
 
 const HealthWellnessHub = () => {
   const { t } = useTranslation();
   const [selectedSpecialist, setSelectedSpecialist] = useState(null); // default null to show category grid
   const [labPackage, setLabPackage] = useState('full-body'); 
   const [labStep, setLabStep] = useState(0); 
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
 
   const specialists = {
     physician: [
@@ -358,7 +360,7 @@ const HealthWellnessHub = () => {
               {labStep >= 3 && (
                 <div className="animate-fade-in-up" style={{ marginTop: '16px', background: '#e0f2fe', padding: '12px', borderRadius: '8px', border: '1px dashed #7dd3fc', textAlign: 'center' }}>
                   <span style={{ display: 'block', fontSize: '0.75rem', color: '#0369a1', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.resultsReady')}</span>
-                  <button className="btn btn-primary btn-sm" style={{ background: '#0284c7', borderColor: '#0284c7', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => alert('Downloading PDF Report...')}>
+                  <button className="btn btn-primary btn-sm" style={{ background: '#0284c7', borderColor: '#0284c7', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => setPdfModalOpen(true)}>
                     📥 Download PDF Report
                   </button>
                 </div>
@@ -520,6 +522,56 @@ const HealthWellnessHub = () => {
           </Link>
         </div>
       </div>
+
+      <PdfViewerModal 
+        isOpen={pdfModalOpen} 
+        onClose={() => setPdfModalOpen(false)} 
+        fileName="Lab_Report.pdf" 
+        pdfContent={
+          <div style={{ padding: '20px', background: '#fafafa', border: '1px solid #ddd', borderRadius: '8px' }}>
+            <h3 style={{ borderBottom: '2px solid #ccc', paddingBottom: '10px' }}>Clinical Laboratory Report</h3>
+            <p><strong>Patient Name:</strong> Guest User</p>
+            <p><strong>Test Package:</strong> {labPackage === 'full-body' ? 'Comprehensive Full Body Checkup' : labPackage === 'diabetic' ? 'Advanced Diabetic Profile' : 'Cardiac Health Screening'}</p>
+            <p><strong>Collection Mode:</strong> Home Sample Collection</p>
+            
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+              <thead>
+                <tr style={{ background: '#eee', textAlign: 'left' }}>
+                  <th style={{ padding: '8px', border: '1px solid #ccc' }}>Test Parameter</th>
+                  <th style={{ padding: '8px', border: '1px solid #ccc' }}>Result</th>
+                  <th style={{ padding: '8px', border: '1px solid #ccc' }}>Normal Range</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Fasting Blood Sugar</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold' }}>98 mg/dL</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>70 - 100 mg/dL</td>
+                </tr>
+                <tr>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Total Cholesterol</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold', color: 'orange' }}>210 mg/dL</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>{"< 200 mg/dL"}</td>
+                </tr>
+                <tr>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Hemoglobin (Hb)</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold' }}>14.2 g/dL</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>13.8 - 17.2 g/dL</td>
+                </tr>
+                <tr>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>Vitamin D (25-OH)</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold', color: 'red' }}>18 ng/mL</td>
+                  <td style={{ padding: '8px', border: '1px solid #ccc' }}>30 - 100 ng/mL</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#666' }}>
+              * Please consult with your physician for clinical correlation and diagnosis. This report is electronically generated and requires no physical signature.
+            </p>
+          </div>
+        }
+      />
     </div>
   );
 };
