@@ -51,7 +51,7 @@ const modules = [
 
 const WorkerTraining = () => {
   const { t } = useTranslation();
-  const { token, isAuthenticated, signIn, authError, authLoading } = useWorkerAuth();
+  const { token, user, isAuthenticated, signIn, authError, authLoading, workerStatus } = useWorkerAuth();
 
   const [profile, setProfile] = useState(null);
   const [jobs, setJobs] = useState([]);
@@ -121,7 +121,7 @@ const WorkerTraining = () => {
   };
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (

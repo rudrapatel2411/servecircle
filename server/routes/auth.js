@@ -15,7 +15,7 @@ const PUBLIC_ROLES = ['customer', 'worker', 'b2b'];
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, phone, password, role, skills, companyName, idProof } = req.body;
+    const { name, email, phone, password, role, skills, serviceCategory, city, experience, companyName } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required' });
@@ -24,10 +24,6 @@ router.post('/register', async (req, res) => {
     const normalizedRole = role || 'customer';
     if (!PUBLIC_ROLES.includes(normalizedRole)) {
       return res.status(403).json({ message: 'This role cannot be self-registered' });
-    }
-
-    if (normalizedRole === 'worker' && !idProof) {
-      return res.status(400).json({ message: 'ID proof is required for worker registration' });
     }
 
     if (normalizedRole === 'b2b' && !companyName) {
@@ -40,7 +36,10 @@ router.post('/register', async (req, res) => {
     const userData = { name, email, phone, password, role: normalizedRole };
     if (normalizedRole === 'worker') {
       userData.skills = skills || [];
-      userData.idProof = idProof;
+      userData.serviceCategory = serviceCategory || '';
+      userData.city = city || '';
+      userData.experience = experience || 'Fresher';
+      userData.workerStatus = 'pending_interview'; // Always starts here
     }
     if (normalizedRole === 'b2b') {
       userData.companyName = companyName;
@@ -57,6 +56,7 @@ router.post('/register', async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
+        workerStatus: user.workerStatus,
         subscription: user.subscription,
         walletBalance: user.walletBalance,
         avatar: user.avatar,
@@ -92,6 +92,14 @@ router.post('/login', async (req, res) => {
         email: user.email,
         phone: user.phone,
         role: user.role,
+        workerStatus: user.workerStatus || null,
+        skills: user.skills || [],
+        serviceCategory: user.serviceCategory || null,
+        city: user.city || null,
+        experience: user.experience || null,
+        completedJobs: user.completedJobs || 0,
+        shadowJobsDone: user.shadowJobsDone || 0,
+        rating: user.rating || 0,
         subscription: user.subscription,
         walletBalance: user.walletBalance,
         avatar: user.avatar,

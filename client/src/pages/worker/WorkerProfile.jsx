@@ -21,7 +21,9 @@ const WorkerProfile = () => {
   const { t } = useTranslation();
   const {
     token,
+    user,
     isAuthenticated,
+    workerStatus,
     signIn,
     authError,
     authLoading,
@@ -124,7 +126,7 @@ const WorkerProfile = () => {
   };
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (

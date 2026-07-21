@@ -94,17 +94,50 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// GET workers pending verification (admin)
+// GET workers pending verification (admin) — filter by workerStatus
 router.get('/workers/pending', protect, authorize('admin'), async (req, res) => {
   try {
-    const workers = await User.find({ role: 'worker', isVerified: false }).select('-password').sort('-createdAt');
+    const { status } = req.query; // e.g. pending_interview, interview_done, approved_rookie etc.
+    const query = { role: 'worker' };
+    if (status) query.workerStatus = status;
+    const workers = await User.find(query).select('-password').sort('-createdAt');
     res.json(workers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// PUT verify worker (admin)
+// PATCH update workerStatus (admin approval/rejection)
+router.patch('/:id/worker-status', protect, authorize('admin'), async (req, res) => {
+  try {
+    const validStatuses = ['pending_interview', 'interview_done', 'approved_rookie', 'approved_junior', 'approved_senior', 'rejected'];
+    const { workerStatus, workerAdminNote } = req.body;
+
+    if (!validStatuses.includes(workerStatus)) {
+      return res.status(400).json({ message: 'Invalid workerStatus value' });
+    }
+
+    const updates = { workerStatus };
+    if (workerAdminNote !== undefined) updates.workerAdminNote = workerAdminNote;
+    // Mark isVerified = true when approved
+    if (['approved_rookie', 'approved_junior', 'approved_senior'].includes(workerStatus)) {
+      updates.isVerified = true;
+    }
+
+    const worker = await User.findOneAndUpdate(
+      { _id: req.params.id, role: 'worker' },
+      updates,
+      { new: true }
+    ).select('-password');
+
+    if (!worker) return res.status(404).json({ message: 'Worker not found' });
+    res.json(worker);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PUT verify worker (admin) - legacy route kept for compatibility
 router.put('/:id/verify', protect, authorize('admin'), async (req, res) => {
   try {
     const { isVerified } = req.body;

@@ -8,6 +8,7 @@ import DashboardLayout from './components/DashboardLayout';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import WorkerRegister from './pages/auth/WorkerRegister';
 import ImpactDetail from './pages/ImpactDetail';
 
 /* Customer */
@@ -43,6 +44,7 @@ import CleaningHygieneHub from './pages/customer/CleaningHygieneHub';
 import FurnitureDecorHub from './pages/customer/FurnitureDecorHub';
 import GardenOutdoorHub from './pages/customer/GardenOutdoorHub';
 import PostServiceReview from './pages/customer/PostServiceReview';
+import OrderedServices from './pages/customer/OrderedServices';
 import PackersDemo from './pages/customer/PackersDemo';
 import PetRelocationDemo from './pages/customer/PetRelocationDemo';
 import VehicleRelocationDemo from './pages/customer/VehicleRelocationDemo';
@@ -87,6 +89,7 @@ function App() {
         <Route path="/about/:id" element={<><Navbar /><ImpactDetail /></>} />
         <Route path="/login" element={<><Navbar /><LoginPage /></>} />
         <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
+        <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
 
         <Route path="/customer" element={<DashboardLayout panel="customer" />}>
           <Route index element={<CustomerDashboard />} />
@@ -132,6 +135,7 @@ function App() {
           <Route path="group-booking" element={<GroupBooking />} />
           <Route path="live-tracking" element={<LiveTracking />} />
           <Route path="review/:bookingId" element={<PostServiceReview />} />
+          <Route path="ordered-services" element={<OrderedServices />} />
 
           {/* Demo & premium flows */}
           <Route path="packers-demo" element={<PackersDemo />} />

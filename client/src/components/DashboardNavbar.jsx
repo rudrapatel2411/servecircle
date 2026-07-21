@@ -214,12 +214,21 @@ const DashboardNavbar = ({ panel }) => {
                     </Link>
 
                     <Link
+                      to="/customer/ordered-services"
+                      className="dropdown-link"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineSparkles className="dropdown-link-icon" style={{ color: '#d97706' }} />
+                      <span>Ordered Services (Live)</span>
+                    </Link>
+
+                    <Link
                       to="/customer/bookings"
                       className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineCalendarDays className="dropdown-link-icon" />
-                      <span>{t('customer.myBookings')}</span>
+                      <span>{t('customer.myBookings', 'Booking History')}</span>
                     </Link>
 
                     <Link

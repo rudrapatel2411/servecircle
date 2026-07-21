@@ -4,6 +4,7 @@ import {
   HiOutlineCalendarDays, HiOutlineClock, HiOutlineMapPin,
   HiOutlineCurrencyRupee, HiOutlineStar, HiOutlineEye
 } from 'react-icons/hi2';
+import { Link } from 'react-router-dom';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -123,7 +124,7 @@ const BookingHistory = () => {
                   </div>
                   {booking.status === 'active' && (
                     <div className="booking-actions">
-                      <button className="btn btn-sm btn-outline">Track Worker 📍</button>
+                      <Link to="/customer/ordered-services" className="btn btn-sm btn-outline">Track Live 📍</Link>
                       <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: '#fecaca' }}>Cancel</button>
                     </div>
                   )}
