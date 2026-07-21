@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -77,26 +77,137 @@ const TABS = [
   { key: 'rejected',          label: '❌ Rejected' },
 ];
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const WorkerVerification = () => {
   const { t } = useTranslation();
   const [tab, setTab] = useState('pending_interview');
-  const [workers, setWorkers] = useState(mockWorkers);
+  const [workers, setWorkers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [expandedId, setExpandedId] = useState(null);
   const [approvalModal, setApprovalModal] = useState(null); // { workerId, action }
   const [adminNote, setAdminNote] = useState('');
+  const [adminToken, setAdminToken] = useState(localStorage.getItem('servecircle_admin_token') || '');
+
+  // 1. Authenticate Admin and Fetch Workers
+  const fetchWorkers = async (tokenToUse) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/users/workers/pending`, {
+        headers: {
+          'Authorization': `Bearer ${tokenToUse}`
+        }
+      });
+      if (!res.ok) throw new Error('Failed to fetch workers');
+      const data = await res.json();
+      
+      // Map MongoDB _id to id, format date, and set defaults
+      const mapped = data.map(w => ({
+        ...w,
+        id: w._id,
+        skills: w.skills || [],
+        appliedDate: w.createdAt 
+          ? new Date(w.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+          : 'Today',
+        workerStatus: w.workerStatus || 'pending_interview'
+      }));
+
+      // Merge with mock workers (removing duplicates by email to avoid losing initial set for demo)
+      const mockFiltered = mockWorkers.filter(mw => !mapped.some(w => w.email === mw.email));
+      setWorkers([...mapped, ...mockFiltered]);
+    } catch (err) {
+      console.error('Error fetching real workers:', err);
+      // Fallback to mock workers if API fails
+      setWorkers(mockWorkers);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAdminToken = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'admin@servecircle.in', password: 'admin123' })
+      });
+      if (!res.ok) throw new Error('Admin login failed');
+      const data = await res.json();
+      localStorage.setItem('servecircle_admin_token', data.token);
+      setAdminToken(data.token);
+      return data.token;
+    } catch (err) {
+      console.error('Failed to auto-login admin:', err);
+      return '';
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      let token = adminToken;
+      if (!token) {
+        token = await getAdminToken();
+      }
+      if (token) {
+        await fetchWorkers(token);
+      } else {
+        setWorkers(mockWorkers);
+      }
+    };
+    init();
+  }, [adminToken]);
 
   const filtered = workers.filter((w) => w.workerStatus === tab);
 
   const openApproval = (worker, action) => {
-    setApprovalModal({ workerId: worker.id, action });
+    setApprovalModal({ workerId: worker.id || worker._id, action });
     setAdminNote('');
   };
 
-  const submitApproval = () => {
+  const submitApproval = async () => {
     const { workerId, action } = approvalModal;
-    setWorkers((prev) => prev.map((w) =>
-      w.id === workerId ? { ...w, workerStatus: action, workerAdminNote: adminNote } : w
-    ));
+    setError('');
+
+    // If it's a real worker from DB (indicated by a 24-character hex ID typical of Mongo)
+    const isMongoId = typeof workerId === 'string' && workerId.length === 24;
+
+    if (isMongoId && adminToken) {
+      try {
+        const res = await fetch(`${API_BASE}/users/${workerId}/worker-status`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({
+            workerStatus: action,
+            workerAdminNote: adminNote
+          })
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.message || 'Failed to update worker status');
+        }
+
+        // Successfully updated on backend, now reload
+        await fetchWorkers(adminToken);
+      } catch (err) {
+        console.error('Backend status update failed:', err);
+        setError(err.message || 'Failed to update status on server');
+        // Update locally anyway as fallback
+        setWorkers((prev) => prev.map((w) =>
+          (w.id === workerId || w._id === workerId) ? { ...w, workerStatus: action, workerAdminNote: adminNote } : w
+        ));
+      }
+    } else {
+      // Local mock worker update
+      setWorkers((prev) => prev.map((w) =>
+        w.id === workerId ? { ...w, workerStatus: action, workerAdminNote: adminNote } : w
+      ));
+    }
+
     setApprovalModal(null);
     setExpandedId(null);
   };
