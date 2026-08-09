@@ -9,13 +9,13 @@ import '../Dashboard.css';
 import './CustomerPages.css';
 
 const mockBookings = [
-  { id: '#SC-2841', service: 'AC Servicing', category: 'Home Repairs', worker: 'Ramesh Kumar', workerPhone: '9876500001', date: '14 May 2026', time: '10:00 AM', address: 'Satellite, Ahmedabad', amount: 500, status: 'completed', paymentStatus: 'paid', rating: 5 },
-  { id: '#SC-2840', service: 'Deep Cleaning', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', workerPhone: '9876500002', date: '15 May 2026', time: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', amount: 1200, status: 'active', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2839', service: 'Plumbing Fix', category: 'Home Repairs', worker: 'Ajay Patel', workerPhone: '9876500003', date: '10 May 2026', time: '11:00 AM', address: 'Satellite, Ahmedabad', amount: 350, status: 'completed', paymentStatus: 'paid', rating: 4 },
-  { id: '#SC-2838', service: 'Electrical Wiring', category: 'Home Repairs', worker: 'Ramesh Kumar', workerPhone: '9876500001', date: '16 May 2026', time: '4:30 PM', address: 'SG Highway, Ahmedabad', amount: 600, status: 'pending', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2836', service: 'Car Washing', category: 'Vehicle Services', worker: 'Deepak Singh', workerPhone: '9876500004', date: '12 May 2026', time: '7:00 AM', address: 'Vastrapur, Ahmedabad', amount: 250, status: 'completed', paymentStatus: 'paid', rating: 4 },
-  { id: '#SC-2835', service: 'Birthday Party', category: 'Events', worker: 'Pending Assignment', workerPhone: '', date: '20 May 2026', time: '5:00 PM', address: 'Thaltej, Ahmedabad', amount: 5000, status: 'pending', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2830', service: 'Pest Control', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', workerPhone: '9876500002', date: '5 May 2026', time: '9:00 AM', address: 'Bopal, Ahmedabad', amount: 900, status: 'cancelled', paymentStatus: 'refunded', rating: null },
+  { id: '#SC-2841', service: 'AC Servicing', category: 'Home Repairs', worker: 'Ramesh Kumar', date: '14 May 2026', time: '10:00 AM', address: 'Satellite, Ahmedabad', amount: 500, status: 'completed', paymentStatus: 'paid', rating: 5 },
+  { id: '#SC-2840', service: 'Deep Cleaning', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', date: '15 May 2026', time: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', amount: 1200, status: 'active', paymentStatus: 'pending', rating: null },
+  { id: '#SC-2839', service: 'Plumbing Fix', category: 'Home Repairs', worker: 'Ajay Patel', date: '10 May 2026', time: '11:00 AM', address: 'Satellite, Ahmedabad', amount: 350, status: 'completed', paymentStatus: 'paid', rating: 4 },
+  { id: '#SC-2838', service: 'Electrical Wiring', category: 'Home Repairs', worker: 'Ramesh Kumar', date: '16 May 2026', time: '4:30 PM', address: 'SG Highway, Ahmedabad', amount: 600, status: 'pending', paymentStatus: 'pending', rating: null },
+  { id: '#SC-2836', service: 'Car Washing', category: 'Vehicle Services', worker: 'Deepak Singh', date: '12 May 2026', time: '7:00 AM', address: 'Vastrapur, Ahmedabad', amount: 250, status: 'completed', paymentStatus: 'paid', rating: 4 },
+  { id: '#SC-2835', service: 'Birthday Party', category: 'Events', worker: 'Pending Assignment', date: '20 May 2026', time: '5:00 PM', address: 'Thaltej, Ahmedabad', amount: 5000, status: 'pending', paymentStatus: 'pending', rating: null },
+  { id: '#SC-2830', service: 'Pest Control', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', date: '5 May 2026', time: '9:00 AM', address: 'Bopal, Ahmedabad', amount: 900, status: 'cancelled', paymentStatus: 'refunded', rating: null },
 ];
 
 const statusConfig = {

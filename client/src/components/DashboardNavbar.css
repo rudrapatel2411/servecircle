@@ -98,6 +98,11 @@
   left: 50%;
   transform: translateX(-50%);
   height: 100%;
+  /* Prevent overflow on narrow viewports before mobile breakpoint */
+  max-width: calc(100vw - 300px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 1;
 }
 
 .customer-top-nav::-webkit-scrollbar {
@@ -193,6 +198,10 @@
   box-shadow: var(--shadow-inset);
 }
 
+.dash-ai-btn {
+  color: var(--primary-700);
+}
+
 .notif-dot {
   position: absolute;
   top: 8px;
@@ -253,6 +262,8 @@
   flex-direction: column;
   gap: 12px;
   z-index: 1000;
+  /* Prevent going off-screen on narrow devices */
+  max-width: calc(100vw - 24px);
 }
 
 .dropdown-user-info {
@@ -391,9 +402,20 @@
   }
 }
 
+@media (max-width: 900px) {
+  /* Hide labels at tablet to give more room before breakpoint */
+  .customer-top-nav-label {
+    display: none;
+  }
+
+  .customer-top-nav-link {
+    padding: 7px 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .dash-navbar {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 
   /* Make brand icon smaller */
@@ -407,10 +429,15 @@
   .dash-brand-text {
     display: block;
     font-size: 0.85rem;
+    /* Prevent brand text from wrapping */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
   }
 
   .dash-brand {
-    margin-right: 8px;
+    margin-right: 4px;
   }
 
   /* Bottom Navigation Bar for Mobile */
@@ -420,29 +447,37 @@
     left: 0;
     right: 0;
     top: auto;
-    height: 64px;
+    height: calc(var(--bottom-nav-height) + var(--safe-bottom));
     transform: none; /* Reset transform */
     background: var(--card-bg);
     box-shadow: 0 -4px 20px rgba(59, 125, 193, 0.1);
     display: flex;
     justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    z-index: 999; /* Ensure it stays above other content */
+    align-items: flex-start;
+    /* Shift items up within the taller bar, safe area space goes to bottom */
+    padding: 0 4px;
+    padding-bottom: var(--safe-bottom);
+    z-index: 999;
     border-top: 1px solid var(--primary-50);
+    /* Reset overflow from desktop rule */
+    max-width: 100%;
+    overflow: visible;
   }
 
   .customer-top-nav-link {
     flex-direction: column;
-    padding: 8px 12px;
-    gap: 4px;
+    flex: 1;
+    padding: 10px 6px 8px;
+    gap: 3px;
     border-radius: var(--radius-lg);
-    background: transparent !important; /* Remove background pill on mobile */
+    background: transparent !important;
     box-shadow: none !important;
+    /* Ensure touch targets are large enough */
+    min-height: 44px;
   }
 
   .customer-top-nav-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .customer-top-nav-label {
@@ -454,5 +489,33 @@
     color: var(--primary-600);
     transform: scale(1.1);
     transition: all 0.2s;
+  }
+
+  /* Reduce navbar action button sizes on mobile */
+  .dash-icon-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  /* Profile dropdown: ensure it doesn't go off-screen */
+  .dash-profile-dropdown {
+    right: -4px;
+    width: min(280px, calc(100vw - 16px));
+  }
+}
+
+@media (max-width: 360px) {
+  .dash-navbar {
+    padding: 0 8px;
+  }
+
+  .dash-brand-text {
+    display: none; /* Hide brand text on very small phones to save space */
+  }
+
+  .dash-icon-btn {
+    width: 30px;
+    height: 30px;
   }
 }

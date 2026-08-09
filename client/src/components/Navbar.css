@@ -135,10 +135,12 @@
     background: rgba(237, 247, 243, 0.97);
     backdrop-filter: blur(20px);
     flex-direction: column;
-    padding: 16px;
+    padding: 8px 12px 16px;
     box-shadow: 0 8px 24px rgba(59, 125, 193, 0.12);
     border-bottom: 1px solid var(--primary-100);
-    gap: 4px;
+    gap: 2px;
+    /* Prevent overflow on mobile */
+    overflow: hidden;
   }
 
   .navbar-links-open {
@@ -148,13 +150,36 @@
   .navbar-links a {
     width: 100%;
     padding: 12px 16px;
+    /* Ensure minimum tap target height */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-md);
   }
 
   .navbar-toggle {
     display: block;
+    /* Increase touch target */
+    min-width: 40px;
+    min-height: 40px;
   }
 
+  /* Hide CTA buttons, but keep smaller elements like language toggle visible */
   .navbar-actions .btn {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-inner {
+    gap: 8px;
+  }
+
+  .logo-text {
+    /* Allow hiding logo text on very small phones to save space */
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

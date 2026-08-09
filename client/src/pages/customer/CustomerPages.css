@@ -52,7 +52,9 @@
 
 /* Services Grid */
 .services-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 20px;
 }
 .service-card {
   background: var(--card-bg); border: none; border-radius: var(--radius-lg);
@@ -289,7 +291,7 @@
   background: var(--gradient-primary); color: white; padding: 4px 14px;
   border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600;
 }
-.plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.plans-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 20px; }
 .plan-card {
   background: white; border: 2px solid var(--gray-200); border-radius: var(--radius-xl); padding: 28px;
   position: relative; transition: all var(--transition-base); cursor: pointer; display: flex; flex-direction: column;
@@ -390,7 +392,7 @@
 /* Premium Directory Categories Styles */
 .category-directories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: 24px;
 }
 
@@ -400,7 +402,8 @@
   border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  height: 380px;
+  min-height: 340px;
+  height: auto;
   position: relative;
   overflow: hidden;
   text-decoration: none;
@@ -507,7 +510,7 @@
 /* ==== Category Directories Grid & Cards (BrowseServices) ==== */
 .category-directories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -515,7 +518,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 220px;
+  min-height: 200px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   text-decoration: none;
@@ -759,7 +762,7 @@
 /* Category cards grid */
 .gs-categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -1455,4 +1458,178 @@
   h1 { font-size: 1.5rem !important; }
   h2 { font-size: 1.3rem !important; }
   h3 { font-size: 1.1rem !important; }
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS ADDITIONS — appended by mobile UX audit
+   ========================================================================== */
+
+/* Fix category directories grid overflow on mobile */
+@media (max-width: 768px) {
+  .category-directories-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .gs-categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Booking nav: allow wrapping */
+  .booking-nav {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Confirm summary: wrap long values */
+  .confirm-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .confirm-value {
+    word-break: break-word;
+  }
+
+  /* Selected service card: stack on mobile */
+  .selected-service-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Wallet stats row: wrap */
+  .wallet-stats-row {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Wallet amount: reduce further */
+  .wallet-amount {
+    font-size: 1.75rem;
+  }
+
+  .wallet-balance-card {
+    padding: 24px;
+  }
+
+  /* Transaction items */
+  .transaction-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  /* Review card: stack meta */
+  .review-card-top {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .review-meta {
+    text-align: left;
+  }
+
+  /* Current plan banner: stack */
+  .current-plan-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  /* Hub search bar: full width */
+  .hub-search-bar {
+    max-width: 100%;
+  }
+
+  /* CS hero: reduce padding */
+  .cs-hero {
+    padding: 28px 16px;
+  }
+
+  /* GS hero: reduce padding */
+  .gs-hero {
+    padding: 24px 16px;
+  }
+
+  .gs-hero-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* === 480px breakpoint === */
+@media (max-width: 480px) {
+  /* Wallet */
+  .quick-amounts {
+    gap: 8px;
+  }
+
+  .quick-amount-btn {
+    padding: 8px 14px;
+    font-size: 0.88rem;
+  }
+
+  /* Booking form */
+  .booking-form-card {
+    padding: 16px 12px;
+  }
+
+  /* Success actions */
+  .success-details {
+    padding: 16px;
+    width: 100%;
+  }
+
+  .success-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .success-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* === 360px / very small phones === */
+@media (max-width: 360px) {
+  .category-tab {
+    padding: 7px 12px;
+    font-size: 0.8rem;
+  }
+
+  .wallet-amount {
+    font-size: 1.5rem;
+  }
+
+  .step-number {
+    width: 26px;
+    height: 26px;
+    font-size: 0.75rem;
+  }
+
+  .plan-card {
+    padding: 20px 16px;
+  }
+
+  .coupon-input-row {
+    flex-direction: column;
+  }
+
+  .cs-alt-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(120px, 100%), 1fr));
+    gap: 8px;
+  }
+
+  .time-slot {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .booking-form-card {
+    padding: 14px 10px;
+  }
 }

@@ -42,10 +42,50 @@ const userSchema = new mongoose.Schema({
   companyName: { type: String },
   locations: [{ name: String, address: String }],
 
+  // Trust & Safety Worker Verification fields
+  workerIdCode: { type: String, index: { sparse: true } },
+  qrToken: { type: String, index: { sparse: true } },
+  qrActive: { type: Boolean, default: true },
+  qrGeneratedAt: { type: Date, default: null },
+  certificates: [String],
+  languages: [String],
+
   // Subscription
   subscription: { type: String, enum: ['basic', 'silver', 'gold', 'platinum'], default: 'basic' },
   walletBalance: { type: Number, default: 0 },
+
+  // New fields for core foundation
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+    },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      default: undefined,
+    },
+  },
+
+  availability: [{
+    day: { type: String }, // e.g., 'Monday'
+    startTime: { type: String }, // '09:00'
+    endTime: { type: String },   // '17:00'
+  }],
+  lastAssignedAt: { type: Date, default: null },
+  isDeleted:  { type: Boolean, default: false },
+  deletedAt:  { type: Date, default: null },
 }, { timestamps: true });
+
+userSchema.index({ location: '2dsphere' });
+userSchema.index({ role: 1, isVerified: 1, workerStatus: 1, serviceCategory: 1 });
+userSchema.index({ isDeleted: 1 });
+
+
+// Soft‑delete filter for queries
+userSchema.pre(/^find/, function (next) {
+  this.where({ isDeleted: false });
+  next();
+});
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

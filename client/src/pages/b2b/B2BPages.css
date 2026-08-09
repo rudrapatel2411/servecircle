@@ -144,7 +144,7 @@
 
 .b2b-contract-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
   gap: 16px;
 }
 
@@ -199,7 +199,7 @@
 
 .b2b-location-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr));
   gap: 14px;
 }
 
@@ -265,5 +265,66 @@
 
   .b2b-kpi-strip {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS ADDITIONS — B2B Pages
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  /* B2B contract grid: 1 col */
+  .b2b-contract-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* B2B location grid: 1 col */
+  .b2b-location-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Confirm row: wrap value */
+  .confirm-row {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .confirm-value {
+    word-break: break-word;
+    text-align: left;
+  }
+
+  /* B2B mini actions: wrap */
+  .b2b-mini-actions {
+    flex-wrap: wrap;
+  }
+
+  /* KPI strip: 1 col on very small */
+  .b2b-kpi-strip {
+    grid-template-columns: 1fr;
+  }
+
+  /* B2B check list: wrap nicely */
+  .b2b-check-list {
+    gap: 6px;
+  }
+
+  .b2b-check-item {
+    font-size: 0.78rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .b2b-kpi-value {
+    font-size: 1rem;
+  }
+
+  .b2b-card {
+    padding: 14px;
+  }
+
+  .b2b-contract-card {
+    padding: 14px;
   }
 }

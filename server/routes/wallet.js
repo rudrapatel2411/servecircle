@@ -1,13 +1,19 @@
-import express from 'express';
+﻿import express from 'express';
 import WalletTransaction from '../models/WalletTransaction.js';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { StatusCodes } from 'http-status-codes';
+import { validateWalletTopup } from '../middleware/validation.js';
 
 const router = express.Router();
 
 // GET wallet balance & transactions
-router.get('/', protect, async (req, res) => {
-  try {
+router.get(
+  '/',
+  protect,
+  asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).select('walletBalance');
     const { page = 1, limit = 20 } = req.query;
 
@@ -25,20 +31,19 @@ router.get('/', protect, async (req, res) => {
       page: parseInt(page),
       pages: Math.ceil(total / limit),
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // POST top-up wallet
-router.post('/topup', protect, async (req, res) => {
-  try {
+router.post(
+  '/topup',
+  protect,
+  validateWalletTopup,
+  asyncHandler(async (req, res) => {
     const { amount, paymentMethod } = req.body;
-    if (!amount || amount <= 0) return res.status(400).json({ message: 'Invalid amount' });
 
     const user = await User.findById(req.user._id);
     const newBalance = user.walletBalance + amount;
-
     user.walletBalance = newBalance;
     await user.save();
 
@@ -51,21 +56,21 @@ router.post('/topup', protect, async (req, res) => {
       paymentMethod: paymentMethod || 'UPI',
     });
 
-    res.status(201).json({ balance: newBalance, transaction });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+    res.status(StatusCodes.CREATED).json({ balance: newBalance, transaction });
+  })
+);
 
-// POST pay from wallet (deduct balance)
-router.post('/pay', protect, async (req, res) => {
-  try {
+// POST pay from wallet
+router.post(
+  '/pay',
+  protect,
+  validateWalletTopup,
+  asyncHandler(async (req, res) => {
     const { amount, description, bookingId } = req.body;
-    if (!amount || amount <= 0) return res.status(400).json({ message: 'Invalid amount' });
 
     const user = await User.findById(req.user._id);
     if (user.walletBalance < amount) {
-      return res.status(400).json({ message: 'Insufficient wallet balance' });
+      throw new AppError('Insufficient wallet balance', StatusCodes.BAD_REQUEST);
     }
 
     const newBalance = user.walletBalance - amount;
@@ -82,16 +87,16 @@ router.post('/pay', protect, async (req, res) => {
     });
 
     res.json({ balance: newBalance, transaction });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // POST refund to wallet
-router.post('/refund', protect, async (req, res) => {
-  try {
+router.post(
+  '/refund',
+  protect,
+  validateWalletTopup,
+  asyncHandler(async (req, res) => {
     const { amount, description, bookingId } = req.body;
-    if (!amount || amount <= 0) return res.status(400).json({ message: 'Invalid amount' });
 
     const user = await User.findById(req.user._id);
     const newBalance = user.walletBalance + amount;
@@ -108,9 +113,7 @@ router.post('/refund', protect, async (req, res) => {
     });
 
     res.json({ balance: newBalance, transaction });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 export default router;

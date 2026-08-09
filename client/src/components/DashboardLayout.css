@@ -84,15 +84,51 @@
     margin-left: 0;
   }
 
+  /* Customer panel: add bottom padding for the fixed bottom nav
+     (64px) + safe-area-inset-bottom (iOS home indicator) + breathing room */
   .dashboard-content {
-    padding: 16px 16px 80px 16px;
+    padding: 16px 16px calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px) 16px;
   }
 
   .dashboard-content--with-category {
-    padding: 16px 16px 80px 16px;
+    padding: 16px 16px calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px) 16px;
   }
 
   .dashboard-content-row--with-category {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content,
+  .dashboard-content--with-category {
+    padding: 12px 12px calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px) 12px;
+  }
+}
+
+/* ── Sidebar Overlay (mobile) ──
+   When sidebar is open on mobile, a translucent backdrop appears behind it.
+   Toggle .sidebar-overlay-visible from JS via the same sidebar toggle button.
+*/
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 899; /* Just below sidebar z-index: 900 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+  }
+
+  .sidebar-overlay.sidebar-overlay-visible {
+    opacity: 1;
+    pointer-events: auto;
   }
 }

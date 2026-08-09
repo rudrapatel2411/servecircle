@@ -716,3 +716,152 @@
   .categories-grid { grid-template-columns: 1fr; }
   .cta-card        { padding: 40px 24px; }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS ADDITIONS — Landing Page
+   ========================================================================== */
+
+/* 430px: hero circle just fits */
+@media (max-width: 430px) {
+  .hero-circle {
+    width: 280px;
+    height: 280px;
+  }
+
+  .hero-circle-inner {
+    width: 90px;
+    height: 90px;
+  }
+
+  .hero-circle-text {
+    font-size: 1.6rem;
+  }
+
+  .orbit-item {
+    width: 38px;
+    height: 38px;
+    font-size: 1.05rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 8vw, 3rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* 375px: tight fit */
+@media (max-width: 375px) {
+  .hero-circle {
+    width: 240px;
+    height: 240px;
+  }
+
+  .hero-circle-inner {
+    width: 76px;
+    height: 76px;
+  }
+
+  .hero-circle-text {
+    font-size: 1.4rem;
+  }
+
+  .orbit-item {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+}
+
+/* 320px: minimum safe size */
+@media (max-width: 320px) {
+  .hero-circle {
+    width: 200px;
+    height: 200px;
+  }
+
+  .hero-circle-inner {
+    width: 64px;
+    height: 64px;
+  }
+
+  .hero-circle-text {
+    font-size: 1.2rem;
+  }
+
+  .orbit-item {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* Hero actions: stack on tiny screens */
+@media (max-width: 360px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats-grid {
+    gap: 16px;
+  }
+
+  .stat-number {
+    font-size: 1.6rem;
+  }
+
+  /* CTA card: reduce padding */
+  .cta-card {
+    padding: 32px 16px;
+  }
+
+  .cta-card h2 {
+    font-size: 1.5rem;
+  }
+
+  /* Footer bottom text */
+  .footer-bottom {
+    font-size: 0.75rem;
+    padding: 16px 0;
+  }
+}
+
+/* Category cards: maintain min 2-col at 480px */
+@media (max-width: 480px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .category-card {
+    padding: 20px 14px;
+  }
+
+  .category-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 1.4rem;
+  }
+
+  .category-name {
+    font-size: 0.9rem;
+  }
+
+  /* Step cards: reduce padding */
+  .step-card {
+    padding: 28px 20px;
+  }
+}

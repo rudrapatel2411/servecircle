@@ -300,6 +300,9 @@
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
+    /* When sidebar overlaps content, allow scrolling within it */
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .sidebar.sidebar-open {
@@ -311,13 +314,23 @@
     top: 64px;
     left: 0;
     width: 220px;
+    /* Fill remaining height minus bottom nav + safe area */
+    height: calc(100dvh - 64px - var(--bottom-nav-height) - var(--safe-bottom));
     transform: translateX(-100%);
     z-index: 500;
     box-shadow: 6px 0 24px rgba(59, 125, 193, 0.15);
     transition: transform var(--transition-base);
+    overflow-y: auto;
   }
 
   .sidebar--category.sidebar-open {
     transform: translateX(0);
+  }
+}
+
+@media (max-width: 360px) {
+  /* Narrow sidebar for very small screens */
+  .sidebar--category {
+    width: 200px;
   }
 }

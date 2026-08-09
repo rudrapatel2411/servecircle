@@ -2,6 +2,11 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { StatusCodes } from 'http-status-codes';
+import { validateRegister, validateLogin } from '../middleware/validation.js';
+import { logEvent, logActivity, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -13,25 +18,24 @@ if (!JWT_SECRET) {
 const PUBLIC_ROLES = ['customer', 'worker', 'b2b'];
 
 // Register
-router.post('/register', async (req, res) => {
-  try {
-    const { name, email, phone, password, role, skills, serviceCategory, city, experience, companyName } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required' });
-    }
+router.post(
+  '/register',
+  validateRegister,
+  asyncHandler(async (req, res) => {
+    const {
+      name, email, phone, password, role,
+      skills, serviceCategory, city, experience, companyName,
+    } = req.body;
 
     const normalizedRole = role || 'customer';
     if (!PUBLIC_ROLES.includes(normalizedRole)) {
-      return res.status(403).json({ message: 'This role cannot be self-registered' });
-    }
-
-    if (normalizedRole === 'b2b' && !companyName) {
-      return res.status(400).json({ message: 'Company name is required for B2B registration' });
+      throw new AppError('This role cannot be self-registered', StatusCodes.FORBIDDEN);
     }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'User already exists with this email' });
+    if (existingUser) {
+      throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
+    }
 
     const userData = { name, email, phone, password, role: normalizedRole };
     if (normalizedRole === 'worker') {
@@ -39,7 +43,7 @@ router.post('/register', async (req, res) => {
       userData.serviceCategory = serviceCategory || '';
       userData.city = city || '';
       userData.experience = experience || 'Fresher';
-      userData.workerStatus = 'pending_interview'; // Always starts here
+      userData.workerStatus = 'pending_interview';
     }
     if (normalizedRole === 'b2b') {
       userData.companyName = companyName;
@@ -48,7 +52,10 @@ router.post('/register', async (req, res) => {
     const user = await User.create(userData);
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
-    res.status(201).json({
+    // Phase 2: log registration event
+    logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { name: user.name, email: user.email, role: user.role }, ...req.reqCtx });
+
+    res.status(StatusCodes.CREATED).json({
       token,
       user: {
         id: user._id,
@@ -62,27 +69,27 @@ router.post('/register', async (req, res) => {
         avatar: user.avatar,
       },
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // Login
-router.post('/login', async (req, res) => {
-  try {
+router.post(
+  '/login',
+  validateLogin,
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
-
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid email or password' });
+    if (!user) throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
 
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
+    if (!isMatch) throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
 
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+
+    // Phase 2: log login event
+    logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { email: user.email }, ...req.reqCtx });
+    logActivity({ userId: user._id, role: user.role, action: 'LOGIN', module: 'auth', ...req.reqCtx });
 
     res.json({
       token,
@@ -107,23 +114,25 @@ router.post('/login', async (req, res) => {
         companyName: user.companyName,
       },
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
-// Verify token (check if still valid)
-router.get('/verify', protect, (req, res) => {
-  res.json({
-    valid: true,
-    user: {
-      id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-      role: req.user.role,
-      subscription: req.user.subscription,
-    },
-  });
-});
+// Verify token
+router.get(
+  '/verify',
+  protect,
+  asyncHandler(async (req, res) => {
+    res.json({
+      valid: true,
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role,
+        subscription: req.user.subscription,
+      },
+    });
+  })
+);
 
 export default router;

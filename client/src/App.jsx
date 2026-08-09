@@ -22,12 +22,14 @@ import EmergencyHub from './pages/customer/EmergencyHub';
 import EventsHub from './pages/customer/EventsHub';
 import MyHomeDashboard from './pages/customer/MyHomeDashboard';
 import TrustSafety from './pages/customer/TrustSafety';
+import SecureWorkerVerification from './pages/customer/SecureWorkerVerification';
 import BookingFlow from './pages/customer/BookingFlow';
 import BookingHistory from './pages/customer/BookingHistory';
 import CustomerWallet from './pages/customer/CustomerWallet';
 import CustomerSubscriptions from './pages/customer/CustomerSubscriptions';
 import CustomerReviews from './pages/customer/CustomerReviews';
 import AISmartDiagnosis from './pages/customer/AISmartDiagnosis';
+import CustomerAIChat from './pages/customer/CustomerAIChat';
 import HomeFixrWarranty from './pages/customer/HomeFixrWarranty';
 import VideoConsultation from './pages/customer/VideoConsultation';
 import GroupBooking from './pages/customer/GroupBooking';
@@ -130,12 +132,14 @@ function App() {
           <Route path="subscriptions" element={<CustomerSubscriptions />} />
           <Route path="reviews" element={<CustomerReviews />} />
           <Route path="ai-diagnosis" element={<AISmartDiagnosis />} />
+          <Route path="ai-chat" element={<CustomerAIChat />} />
           <Route path="homefixr" element={<HomeFixrWarranty />} />
           <Route path="video-consultation" element={<VideoConsultation />} />
           <Route path="group-booking" element={<GroupBooking />} />
           <Route path="live-tracking" element={<LiveTracking />} />
           <Route path="review/:bookingId" element={<PostServiceReview />} />
           <Route path="ordered-services" element={<OrderedServices />} />
+          <Route path="verify-worker" element={<SecureWorkerVerification />} />
 
           {/* Demo & premium flows */}
           <Route path="packers-demo" element={<PackersDemo />} />

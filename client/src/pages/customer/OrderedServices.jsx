@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineMapPin,
@@ -12,7 +12,10 @@ import {
   HiOutlineArrowTopRightOnSquare,
   HiOutlineStar,
   HiOutlineAcademicCap,
+  HiOutlineQrCode,
+  HiOutlineEyeSlash,
 } from 'react-icons/hi2';
+import WorkerVerifyModal from '../../components/WorkerVerifyModal';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -35,7 +38,6 @@ const mockOrders = [
       rating: 4.9,
       jobsSolved: 1240,
       initials: 'RK',
-      phone: '+91 98765 00001',
     },
     trainee: {
       name: 'Karan Patel',
@@ -62,7 +64,6 @@ const mockOrders = [
       rating: 4.7,
       jobsSolved: 312,
       initials: 'SM',
-      phone: '+91 98765 00002',
     },
     trainee: null,
   },
@@ -83,7 +84,6 @@ const mockOrders = [
       rating: 4.8,
       jobsSolved: 892,
       initials: 'AP',
-      phone: '+91 98765 00003',
     },
     trainee: null,
   },
@@ -108,10 +108,17 @@ const steps = ['Searching', 'Confirmed', 'En Route', 'Active', 'Completed'];
 const stepKeys = ['pending', 'confirmed', 'en-route', 'active', 'completed'];
 
 const OrderedServices = () => {
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('active');
   const [expandedId, setExpandedId] = useState('#SC-2841');
   const [endOtpInput, setEndOtpInput] = useState({});
   const [endOtpError, setEndOtpError] = useState({});
+
+  // Trust & Safety QR Verification status tracker per booking
+  const [verifiedBookings, setVerifiedBookings] = useState({
+    '#SC-2841': searchParams.get('verified') === 'true',
+  });
+  const [verifyModalBookingId, setVerifyModalBookingId] = useState(null);
 
   const activeOrders = activeTab === 'all' ? mockOrders
     : activeTab === 'active' ? mockOrders.filter((o) => !['completed', 'cancelled', 'cant-resolve'].includes(o.status))
@@ -129,6 +136,18 @@ const OrderedServices = () => {
 
   return (
     <div className="page-content">
+      {/* Worker Verify Modal */}
+      <WorkerVerifyModal
+        isOpen={Boolean(verifyModalBookingId)}
+        onClose={() => setVerifyModalBookingId(null)}
+        bookingId={verifyModalBookingId}
+        onVerificationSuccess={(data) => {
+          if (verifyModalBookingId) {
+            setVerifiedBookings((prev) => ({ ...prev, [verifyModalBookingId]: true }));
+          }
+        }}
+      />
+
       <div className="page-header">
         <div>
           <h1 className="page-title">Ordered Services 📦</h1>
@@ -258,22 +277,45 @@ const OrderedServices = () => {
                         </div>
                       )}
 
-                      {/* ── Start OTP for En-Route ─────────── */}
+                      {/* ── Trust & Safety QR Verification & OTP Section ─────────── */}
                       {order.status === 'en-route' && (
-                        <div style={{
-                          background: '#fef2f2', border: '1px dashed #ef4444',
-                          borderRadius: '10px', padding: '14px 16px',
-                          marginBottom: '16px', textAlign: 'center',
-                        }}>
-                          <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                            🔐 Share This Start OTP With Worker
-                          </div>
-                          <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#991b1b', letterSpacing: '10px', margin: '8px 0' }}>
-                            {order.startOtp}
-                          </div>
-                          <p style={{ fontSize: '0.72rem', color: '#7f1d1d', margin: 0 }}>
-                            Share only when the worker has arrived and you have verified their identity.
-                          </p>
+                        <div style={{ marginBottom: '16px' }}>
+                          {!verifiedBookings[order.id] ? (
+                            <div style={{
+                              background: '#eff6ff', border: '1.5px dashed #3b82f6',
+                              borderRadius: '14px', padding: '16px', textAlign: 'center',
+                            }}>
+                              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+                                🛡️ Secure Worker Verification Required
+                              </div>
+                              <p style={{ fontSize: '0.78rem', color: '#1d4ed8', margin: '0 0 12px' }}>
+                                Verify worker's ServeCircle physical ID Card QR code before releasing the Start OTP.
+                              </p>
+                              <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => setVerifyModalBookingId(order.id)}
+                                style={{ background: '#2563eb', padding: '10px 20px', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                              >
+                                <HiOutlineQrCode style={{ fontSize: '1.2rem' }} /> Verify Worker ID (Scan QR)
+                              </button>
+                            </div>
+                          ) : (
+                            <div style={{
+                              background: '#fef2f2', border: '1px dashed #ef4444',
+                              borderRadius: '10px', padding: '14px 16px', textAlign: 'center',
+                            }}>
+                              <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                                <HiOutlineCheckCircle style={{ color: '#16a34a', fontSize: '1rem' }} /> Worker Identity Verified · Share Start OTP
+                              </div>
+                              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#991b1b', letterSpacing: '10px', margin: '8px 0' }}>
+                                {order.startOtp}
+                              </div>
+                              <p style={{ fontSize: '0.72rem', color: '#7f1d1d', margin: 0 }}>
+                                Worker identity verified live via physical QR ID Card.
+                              </p>
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -321,15 +363,20 @@ const OrderedServices = () => {
                         </div>
                       )}
 
-                      {/* ── Worker & Trainee Panel ─────────── */}
+                      {/* ── Worker Privacy & Verification Panel ─────────── */}
                       {order.status !== 'pending' && (
                         <div>
-                          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
-                            🛡️ Verify Identity Before Letting In
+                          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span>🛡️ Assigned Worker Details</span>
+                            {!verifiedBookings[order.id] && (
+                              <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <HiOutlineEyeSlash /> Contact & Personal Details Hidden Before QR Scan
+                              </span>
+                            )}
                           </div>
                           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
 
-                            {/* Senior Worker Card */}
+                            {/* Worker Card — Privacy Filter Applied Before Verification */}
                             <div style={{
                               flex: 1, minWidth: '180px', background: '#f8fafc',
                               border: '2px solid #e2e8f0', borderRadius: '12px',
@@ -337,7 +384,7 @@ const OrderedServices = () => {
                             }}>
                               <div style={{
                                 width: '56px', height: '56px', borderRadius: '50%',
-                                background: 'var(--primary-700)', color: 'white',
+                                background: verifiedBookings[order.id] ? 'var(--primary-700)' : '#475569', color: 'white',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '1.3rem', fontWeight: 800, margin: '0 auto 10px',
                                 border: '3px solid var(--primary-200)',
@@ -345,30 +392,41 @@ const OrderedServices = () => {
                                 {order.worker.initials}
                               </div>
                               <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--navy-900)' }}>{order.worker.name}</div>
-                              <div style={{ background: workerTier.bg, color: workerTier.color, fontSize: '0.68rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px', display: 'inline-block', margin: '4px 0' }}>
-                                {workerTier.emoji} {order.worker.tier}
+
+                              {/* Allowed Pre-Verification Info ONLY */}
+                              <div style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.68rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px', display: 'inline-block', margin: '4px 0' }}>
+                                ServeCircle Verified Worker
                               </div>
                               <div style={{ fontSize: '0.75rem', color: 'var(--navy-500)', marginTop: '4px', display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
                                 <span>⭐ {order.worker.rating}</span>
-                                <span>💼 {order.worker.jobsSolved}+ jobs</span>
+                                <span>💼 3+ Yrs Exp</span>
+                                <span>⏱️ ETA: {order.time}</span>
                               </div>
-                              {(order.status === 'en-route' || order.status === 'active') && (
-                                <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
-                                  <button
-                                    className="btn btn-outline"
-                                    style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
-                                    onClick={() => alert(`📞 Calling ${order.worker.name}...`)}
-                                  >
-                                    <HiOutlinePhone /> Call
-                                  </button>
-                                  <button
-                                    className="btn btn-primary"
-                                    style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
-                                    onClick={() => alert(`💬 Chat opened with ${order.worker.name}`)}
-                                  >
-                                    <HiOutlineChatBubbleLeftRight />
-                                  </button>
+
+                              {/* Hide Phone / Contact / Photo before verification */}
+                              {!verifiedBookings[order.id] ? (
+                                <div style={{ marginTop: '10px', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px', fontSize: '0.72rem', color: '#64748b' }}>
+                                  🔒 Scan physical ID Card QR upon worker arrival to unlock contact & full verification profile.
                                 </div>
+                              ) : (
+                                (order.status === 'en-route' || order.status === 'active') && (
+                                  <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
+                                    <button
+                                      className="btn btn-outline"
+                                      style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
+                                      onClick={() => alert(`📞 Calling ${order.worker.name}...`)}
+                                    >
+                                      <HiOutlinePhone /> Call
+                                    </button>
+                                    <button
+                                      className="btn btn-primary"
+                                      style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
+                                      onClick={() => alert(`💬 Chat opened with ${order.worker.name}`)}
+                                    >
+                                      <HiOutlineChatBubbleLeftRight />
+                                    </button>
+                                  </div>
+                                )
                               )}
                             </div>
 

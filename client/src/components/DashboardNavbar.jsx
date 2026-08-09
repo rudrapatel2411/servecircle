@@ -19,8 +19,11 @@ import {
   HiOutlineMagnifyingGlass as HiSearch,
   HiBars3,
   HiXMark as HiClose,
+  HiOutlineQrCode,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
+import WorkerVerifyModal from './WorkerVerifyModal';
 import { socket } from '../socket';
 import './DashboardNavbar.css';
 
@@ -30,6 +33,7 @@ const DashboardNavbar = ({ panel }) => {
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -163,6 +167,17 @@ const DashboardNavbar = ({ panel }) => {
 
       {/* ===== RIGHT ACTIONS ===== */}
       <div className="dash-navbar-actions">
+        {panel === 'customer' && (
+          <button
+            className="dash-icon-btn dash-ai-btn"
+            aria-label="Open ServeCircle AI Assistant"
+            title="ServeCircle AI"
+            onClick={() => navigate('/customer/ai-chat')}
+          >
+            <HiOutlineChatBubbleLeftRight />
+          </button>
+        )}
+
         <button className="dash-icon-btn" aria-label={t('common.notifications')}>
           <HiOutlineBell />
           {notifications.length > 0 && <span className="notif-dot" style={{ background: 'var(--danger)' }} />}
@@ -201,6 +216,25 @@ const DashboardNavbar = ({ panel }) => {
                   <LanguageToggle />
                 </div>
                 <div className="dropdown-divider" style={{ margin: '8px 0' }} />
+
+                {/* Trust & Safety: Verify -> Verify Worker for ALL ROLES */}
+                <button
+                  className="dropdown-link"
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsVerifyModalOpen(true);
+                  }}
+                  style={{
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    margin: '4px 0',
+                  }}
+                >
+                  <HiOutlineQrCode className="dropdown-link-icon" style={{ color: '#2563eb' }} />
+                  <span>Verify Worker</span>
+                </button>
 
                 {panel === 'customer' && (
                   <>
@@ -277,6 +311,11 @@ const DashboardNavbar = ({ panel }) => {
           )}
         </div>
       </div>
+
+      <WorkerVerifyModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      />
 
       {/* Toast */}
       {showToast && latestToast && (

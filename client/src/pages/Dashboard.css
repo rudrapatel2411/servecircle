@@ -172,8 +172,9 @@
 /* ── Stat Cards — Neomorphic ── */
 .stats-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  /* 160px min prevents overflow even on 320px (with 2 cols = 160px each) */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
   margin-bottom: 32px;
 }
 
@@ -632,6 +633,15 @@
   padding: 5px;
   margin-bottom: 28px;
   box-shadow: var(--shadow-inset);
+  /* Allow horizontal scroll on very small screens */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-btn {
@@ -680,7 +690,7 @@
 /* ── Training Cards ── */
 .training-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 24px;
 }
 
@@ -798,6 +808,7 @@
 .job-actions {
   display: flex;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 /* Accept/Reject Buttons */
@@ -852,6 +863,10 @@
     align-items: flex-start;
   }
 
+  .page-title {
+    font-size: 1.5rem;
+  }
+
   .job-card {
     flex-direction: column;
     align-items: flex-start;
@@ -866,6 +881,11 @@
     flex: 1;
   }
 
+  .job-meta {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
   .welcome-banner-card {
     padding: 22px;
     gap: 16px;
@@ -877,5 +897,78 @@
 
   .welcome-banner-text p {
     font-size: 0.85rem;
+  }
+
+  /* Stat cards: reduce padding on mobile */
+  .stat-card {
+    padding: 18px 16px;
+    gap: 14px;
+  }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+  }
+
+  /* Tab buttons: compact on mobile */
+  .tab-btn {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  /* Express carousel: reduce card width on small screens */
+  .express-card {
+    flex: 0 0 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .stat-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+  }
+
+  .express-card {
+    flex: 0 0 200px;
+  }
+}
+
+@media (max-width: 360px) {
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+
+  .welcome-banner-text h2 {
+    font-size: 1.35rem;
   }
 }

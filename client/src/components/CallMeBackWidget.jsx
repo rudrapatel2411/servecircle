@@ -34,11 +34,8 @@ const CallMeBackWidget = () => {
       {/* Floating Button with HSL pulse animation */}
       <div
         onClick={() => setIsOpen(true)}
+        className="call-me-back-float"
         style={{
-          position: 'fixed',
-          bottom: '30px',
-          left: '30px',
-          zIndex: 1000,
           background: 'linear-gradient(135deg, #3b7dc1 0%, #2960a0 100%)',
           color: 'white',
           width: '60px',

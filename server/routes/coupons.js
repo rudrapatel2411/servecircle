@@ -1,12 +1,18 @@
-import express from 'express';
+﻿import express from 'express';
 import Coupon from '../models/Coupon.js';
 import { protect, authorize } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { StatusCodes } from 'http-status-codes';
 
 const router = express.Router();
 
 // GET all coupons (admin)
-router.get('/', protect, authorize('admin'), async (req, res) => {
-  try {
+router.get(
+  '/',
+  protect,
+  authorize('admin'),
+  asyncHandler(async (req, res) => {
     const { active } = req.query;
     const query = {};
     if (active === 'true') query.isActive = true;
@@ -14,31 +20,35 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
 
     const coupons = await Coupon.find(query).sort('-createdAt');
     res.json(coupons);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // POST validate coupon (customer)
-router.post('/validate', protect, async (req, res) => {
-  try {
+router.post(
+  '/validate',
+  protect,
+  asyncHandler(async (req, res) => {
     const { code, orderAmount, category } = req.body;
     const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
 
-    if (!coupon) return res.status(404).json({ message: 'Coupon not found or inactive' });
+    if (!coupon) throw new AppError('Coupon not found or inactive', StatusCodes.NOT_FOUND);
 
     const now = new Date();
     if (now < coupon.validFrom || now > coupon.validUntil) {
-      return res.status(400).json({ message: 'Coupon has expired or is not yet valid' });
+      throw new AppError('Coupon has expired or is not yet valid', StatusCodes.BAD_REQUEST);
     }
     if (coupon.usedCount >= coupon.usageLimit) {
-      return res.status(400).json({ message: 'Coupon usage limit reached' });
+      throw new AppError('Coupon usage limit reached', StatusCodes.BAD_REQUEST);
     }
     if (orderAmount < coupon.minOrderAmount) {
-      return res.status(400).json({ message: `Minimum order amount is ₹${coupon.minOrderAmount}` });
+      throw new AppError(`Minimum order amount is \u20B9${coupon.minOrderAmount}`, StatusCodes.BAD_REQUEST);
     }
-    if (coupon.applicableCategories.length > 0 && category && !coupon.applicableCategories.includes(category)) {
-      return res.status(400).json({ message: 'Coupon not applicable for this service category' });
+    if (
+      coupon.applicableCategories.length > 0 &&
+      category &&
+      !coupon.applicableCategories.includes(category)
+    ) {
+      throw new AppError('Coupon not applicable for this service category', StatusCodes.BAD_REQUEST);
     }
 
     let discount = 0;
@@ -50,42 +60,45 @@ router.post('/validate', protect, async (req, res) => {
     }
 
     res.json({ valid: true, discount, finalAmount: orderAmount - discount, coupon });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // POST create coupon (admin)
-router.post('/', protect, authorize('admin'), async (req, res) => {
-  try {
-    const coupon = await Coupon.create({ ...req.body, createdBy: req.user._id });
-    res.status(201).json(coupon);
-  } catch (err) {
-    if (err.code === 11000) return res.status(400).json({ message: 'Coupon code already exists' });
-    res.status(500).json({ message: err.message });
-  }
-});
+router.post(
+  '/',
+  protect,
+  authorize('admin'),
+  asyncHandler(async (req, res) => {
+    const coupon = await Coupon.create({ ...req.body, createdBy: req.user._id }).catch((err) => {
+      if (err.code === 11000) throw new AppError('Coupon code already exists', StatusCodes.BAD_REQUEST);
+      throw err;
+    });
+    res.status(StatusCodes.CREATED).json(coupon);
+  })
+);
 
 // PUT update coupon (admin)
-router.put('/:id', protect, authorize('admin'), async (req, res) => {
-  try {
+router.put(
+  '/:id',
+  protect,
+  authorize('admin'),
+  asyncHandler(async (req, res) => {
     const coupon = await Coupon.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!coupon) return res.status(404).json({ message: 'Coupon not found' });
+    if (!coupon) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
     res.json(coupon);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 // DELETE coupon (admin)
-router.delete('/:id', protect, authorize('admin'), async (req, res) => {
-  try {
+router.delete(
+  '/:id',
+  protect,
+  authorize('admin'),
+  asyncHandler(async (req, res) => {
     const coupon = await Coupon.findByIdAndDelete(req.params.id);
-    if (!coupon) return res.status(404).json({ message: 'Coupon not found' });
+    if (!coupon) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
     res.json({ message: 'Coupon deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  })
+);
 
 export default router;

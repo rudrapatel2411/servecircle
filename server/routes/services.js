@@ -1,92 +1,136 @@
+/**
+ * routes/services.js — Phase 1 Batch 6
+ *
+ * Pattern: Request → Validation → serviceService → Response
+ * Replaces static arrays & hardcoded constants with MongoDB Service model.
+ */
+
 import express from 'express';
+import { protect, authorize } from '../middleware/auth.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import {
+  validateMongoIdParam,
+  validateCreateService,
+  validateUpdateService,
+} from '../middleware/validation.js';
+import {
+  getAllServices,
+  getServiceById,
+  getServicesByCategory,
+  searchServices,
+  createService,
+  updateService,
+  deleteService,
+  toggleServiceStatus,
+} from '../services/serviceService.js';
+import { StatusCodes } from 'http-status-codes';
+import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
+import { captureSnapshot } from '../services/historyService.js';
+
 
 const router = express.Router();
 
-// Static services data (will later come from DB)
-const services = [
-  {
-    id: 1, category: 'Home Repairs', icon: '🔧',
-    items: [
-      { name: 'Electrical Work', desc: 'Wiring, switches, fans, lights', worker: 'Electrician', price: 300 },
-      { name: 'Plumbing', desc: 'Pipe repair, tap fix, leakage', worker: 'Plumber', price: 350 },
-      { name: 'Carpentry', desc: 'Door/window repair, furniture fix', worker: 'Carpenter', price: 400 },
-      { name: 'AC & Appliance Repair', desc: 'AC service, fridge, washing machine', worker: 'Technician', price: 500 },
-      { name: 'Painting', desc: 'Wall painting, waterproofing', worker: 'Painter', price: 600 },
-    ],
-  },
-  {
-    id: 2, category: 'Vehicle Services', icon: '🚗',
-    items: [
-      { name: 'Car Repair', desc: 'Engine, brakes, suspension', worker: 'Mechanic', price: 800 },
-      { name: 'Bike Repair', desc: 'Engine, chain, brakes', worker: 'Mechanic', price: 400 },
-      { name: 'Car/Bike Washing', desc: 'Exterior, interior, foam wash', worker: 'Washer', price: 250 },
-      { name: 'Puncture Repair', desc: 'On-spot tyre puncture fix', worker: 'Tyre Tech', price: 150 },
-    ],
-  },
-  {
-    id: 3, category: 'Cleaning & Hygiene', icon: '🧹',
-    items: [
-      { name: 'Home Deep Cleaning', desc: 'Full house thorough cleaning', worker: 'Cleaning Staff', price: 1200 },
-      { name: 'Pest Control', desc: 'Cockroach, termite, mosquito', worker: 'Pest Expert', price: 900 },
-      { name: 'Sofa/Carpet Cleaning', desc: 'Shampoo wash, steam clean', worker: 'Specialist', price: 600 },
-      { name: 'Water Tank Cleaning', desc: 'Tank emptying, sanitizing', worker: 'Cleaner', price: 800 },
-    ],
-  },
-  {
-    id: 4, category: 'Events & Celebrations', icon: '🎉',
-    items: [
-      { name: 'Birthday Party', desc: 'Theme decoration, cake, photographer', worker: 'Event Team', price: 5000 },
-      { name: 'Griha Pravesh', desc: 'Pooja setup, flowers, catering', worker: 'Event Planner', price: 8000 },
-      { name: 'Diwali Decoration', desc: 'Lights, rangoli, diyas', worker: 'Decorator', price: 3000 },
-      { name: 'Photography', desc: 'Event photos, reels, video', worker: 'Photographer', price: 2000 },
-    ],
-  },
-  {
-    id: 5, category: 'Furniture & Decor', icon: '🪑',
-    items: [
-      { name: 'Furniture Assembly', desc: 'Flat-pack assembly, IKEA style', worker: 'Carpenter', price: 500 },
-      { name: 'Furniture Polish', desc: 'Wood polish, refinishing', worker: 'Polish Expert', price: 700 },
-      { name: 'Interior Consultation', desc: 'Room layout, decor advice', worker: 'Designer', price: 1500 },
-    ],
-  },
-  {
-    id: 6, category: 'Garden & Outdoor', icon: '🪴',
-    items: [
-      { name: 'Plant Care', desc: 'Watering, pruning, fertilizing', worker: 'Gardener', price: 300 },
-      { name: 'Garden Setup', desc: 'New garden design, soil prep', worker: 'Gardener', price: 2000 },
-      { name: 'Gate/Grill Repair', desc: 'Welding, painting, fixing', worker: 'Welder', price: 600 },
-    ],
-  },
-  {
-    id: 7, category: 'Emergency 24/7', icon: '⚡',
-    items: [
-      { name: 'Water Leakage', desc: 'Burst pipe, flood control', worker: 'Emergency Plumber', price: 700 },
-      { name: 'Electrical Emergency', desc: 'Short circuit, power failure', worker: 'Emergency Electrician', price: 600 },
-      { name: 'Lock Break-in Fix', desc: 'Lock jam, key stuck', worker: 'Locksmith', price: 500 },
-      { name: 'Vehicle Breakdown', desc: 'On-road breakdown, tow', worker: 'Mechanic', price: 1000 },
-    ],
-  },
-  {
-    id: 8, category: 'Employment', icon: '💼',
-    items: [
-      { name: 'Skilled Workers', desc: 'Electrician, Plumber, AC Tech', worker: 'ITI/Diploma', price: 0 },
-      { name: 'Women at Home', desc: 'Tailoring, Beauty, Cooking, Tuition', worker: 'Home-based', price: 0 },
-      { name: 'Graduates', desc: 'Tuition, IT Help, Photography', worker: 'Students', price: 0 },
-      { name: 'Daily Wage', desc: 'Shifting, Cleaning, Delivery', worker: 'Workers', price: 0 },
-    ],
-  },
-];
+// ─────────────────────────────────────────────
+// PUBLIC / CUSTOMER READ-ONLY ROUTES
+// ─────────────────────────────────────────────
 
-// GET all services
-router.get('/', (req, res) => {
-  res.json(services);
-});
+// GET /services — Get all services (paginated & filtered)
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    const result = await getAllServices(req.query);
+    res.json(result);
+  })
+);
 
-// GET services by category
-router.get('/:categoryId', (req, res) => {
-  const category = services.find((s) => s.id === parseInt(req.params.categoryId));
-  if (!category) return res.status(404).json({ message: 'Category not found' });
-  res.json(category);
-});
+// GET /services/search — Search services using MongoDB text index
+router.get(
+  '/search',
+  asyncHandler(async (req, res) => {
+    const { q } = req.query;
+    const services = await searchServices(q);
+    res.json(services);
+  })
+);
+
+// GET /services/category/:category — Get services by category name
+router.get(
+  '/category/:category',
+  asyncHandler(async (req, res) => {
+    const services = await getServicesByCategory(req.params.category);
+    res.json(services);
+  })
+);
+
+// GET /services/:id — Get service by MongoDB ID
+router.get(
+  '/:id',
+  validateMongoIdParam('id'),
+  asyncHandler(async (req, res) => {
+    const service = await getServiceById(req.params.id);
+    res.json(service);
+  })
+);
+
+// ─────────────────────────────────────────────
+// ADMIN CRUD ROUTES (Role: Admin Only)
+// ─────────────────────────────────────────────
+
+// POST /services — Create a new service
+router.post(
+  '/',
+  protect,
+  authorize('admin'),
+  validateCreateService,
+  asyncHandler(async (req, res) => {
+    const service = await createService(req.body);
+    logEvent({ eventType: EVENT_TYPES.SERVICE_CREATED, entityType: ENTITY_TYPES.SERVICE, entityId: service._id, actorId: req.user._id, actorRole: 'admin', metadata: { name: service.name, category: service.category }, ...req.reqCtx });
+    captureSnapshot({ collection: 'services', documentId: service._id, before: {}, after: service.toObject ? service.toObject() : service, changedBy: req.user._id, changedByRole: 'admin', changeReason: EVENT_TYPES.SERVICE_CREATED });
+    res.status(StatusCodes.CREATED).json(service);
+  })
+);
+
+
+// PUT /services/:id — Update a service
+router.put(
+  '/:id',
+  protect,
+  authorize('admin'),
+  validateUpdateService,
+  asyncHandler(async (req, res) => {
+    const service = await updateService(req.params.id, req.body);
+    logEvent({ eventType: EVENT_TYPES.SERVICE_UPDATED, entityType: ENTITY_TYPES.SERVICE, entityId: service._id, actorId: req.user._id, actorRole: 'admin', metadata: { name: service.name }, ...req.reqCtx });
+    res.json(service);
+  })
+);
+
+
+// DELETE /services/:id — Soft delete a service
+router.delete(
+  '/:id',
+  protect,
+  authorize('admin'),
+  validateMongoIdParam('id'),
+  asyncHandler(async (req, res) => {
+    const service = await deleteService(req.params.id);
+    logEvent({ eventType: EVENT_TYPES.SERVICE_DELETED, entityType: ENTITY_TYPES.SERVICE, entityId: service._id, actorId: req.user._id, actorRole: 'admin', ...req.reqCtx });
+    res.json({ message: 'Service deleted successfully', service });
+  })
+);
+
+
+// PATCH /services/:id/toggle — Enable / Disable a service
+router.patch(
+  '/:id/toggle',
+  protect,
+  authorize('admin'),
+  validateMongoIdParam('id'),
+  asyncHandler(async (req, res) => {
+    const service = await toggleServiceStatus(req.params.id);
+    logEvent({ eventType: EVENT_TYPES.SERVICE_TOGGLED, entityType: ENTITY_TYPES.SERVICE, entityId: service._id, actorId: req.user._id, actorRole: 'admin', metadata: { isActive: service.isActive }, ...req.reqCtx });
+    res.json(service);
+  })
+);
+
 
 export default router;

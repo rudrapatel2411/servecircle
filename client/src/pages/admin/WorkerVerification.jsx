@@ -6,7 +6,8 @@ import {
   HiOutlinePhone, HiOutlineEnvelope, HiOutlineStar,
   HiOutlineMapPin, HiOutlineAcademicCap, HiOutlineBriefcase,
   HiOutlineTrophy, HiOutlineClipboardDocumentCheck,
-  HiOutlineCalendarDays,
+  HiOutlineCalendarDays, HiOutlineQrCode, HiOutlineArrowDownTray,
+  HiOutlineEye, HiOutlineArrowPath, HiXMark,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
@@ -89,6 +90,78 @@ const WorkerVerification = () => {
   const [approvalModal, setApprovalModal] = useState(null); // { workerId, action }
   const [adminNote, setAdminNote] = useState('');
   const [adminToken, setAdminToken] = useState(localStorage.getItem('servecircle_admin_token') || '');
+  const [previewCardWorker, setPreviewCardWorker] = useState(null);
+
+  const handleRegenerateQr = async (worker) => {
+    try {
+      const isMongoId = typeof worker.id === 'string' && worker.id.length === 24;
+      if (isMongoId && adminToken) {
+        const res = await fetch(`${API_BASE}/admin/worker/${worker.id}/regenerate-qr`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${adminToken}` },
+        });
+        if (!res.ok) throw new Error('Failed to regenerate QR');
+        const data = await res.json();
+        alert(`✅ QR Code regenerated for ${worker.name}. New QR Token: ${data.qrCodeData}`);
+        fetchWorkers(adminToken);
+      } else {
+        const newQr = `SCQR-${Math.random().toString(36).substring(2, 10)}`;
+        setWorkers((prev) => prev.map((w) => (w.id === worker.id ? { ...w, qrToken: newQr, qrActive: true } : w)));
+        alert(`✅ QR Code regenerated for ${worker.name}. New QR Token: ${newQr}`);
+      }
+    } catch (err) {
+      alert(err.message || 'Error regenerating QR');
+    }
+  };
+
+  const handleDownloadIdCardData = async (worker) => {
+    const workerIdCode = worker.workerIdCode || `SC-W-${(worker.id || '').toString().slice(-4).toUpperCase() || '1001'}`;
+    const cardData = {
+      brand: 'ServeCircle',
+      logoUrl: 'https://servecircle.in/logo.png',
+      workerName: worker.name,
+      workerId: workerIdCode,
+      role: worker.serviceCategory || 'Service Professional',
+      qrCodeData: worker.qrToken || `SCQR-DEMO-${workerIdCode}`,
+      qrActive: worker.qrActive !== false,
+      disclaimer: 'Permanent ServeCircle ID Card. No sensitive personal information printed.',
+      specs: {
+        format: 'CR-80 ISO Standard ID Card',
+        resolution: '300 DPI CMYK',
+        printedFields: ['ServeCircle Logo', 'Worker Name', 'Worker ID', 'Worker Role', 'QR Code'],
+        hiddenPrivacyFields: ['Photo', 'Phone', 'Email', 'Address', 'Aadhaar', 'PAN', 'Bank Details'],
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(cardData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ServeCircle_ID_Card_${workerIdCode}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleToggleQr = async (worker) => {
+    const newStatus = worker.qrActive === false ? true : false;
+    try {
+      const isMongoId = typeof worker.id === 'string' && worker.id.length === 24;
+      if (isMongoId && adminToken) {
+        await fetch(`${API_BASE}/admin/worker/${worker.id}/toggle-qr`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify({ qrActive: newStatus }),
+        });
+      }
+      setWorkers((prev) => prev.map((w) => (w.id === worker.id ? { ...w, qrActive: newStatus } : w)));
+      alert(`QR Code ${newStatus ? 'reactivated' : 'deactivated'} for ${worker.name}.`);
+    } catch (err) {
+      alert('Error updating QR status');
+    }
+  };
 
   // 1. Authenticate Admin and Fetch Workers
   const fetchWorkers = async (tokenToUse) => {
@@ -344,47 +417,85 @@ const WorkerVerification = () => {
                       )}
                     </div>
 
-                    {/* Action Buttons based on status */}
-                    <div className="vc-actions" style={{ marginTop: '12px', flexWrap: 'wrap', gap: '8px' }}>
-                      {worker.workerStatus === 'pending_interview' && (
-                        <>
-                          <button className="btn btn-sm btn-outline" style={{ color: '#2563eb', borderColor: '#bfdbfe' }} onClick={() => openApproval(worker, 'interview_done')}>
-                            <HiOutlineClipboardDocumentCheck /> Mark Interview Done
-                          </button>
-                          <button className="btn btn-sm btn-outline" style={{ color: '#dc2626', borderColor: '#fecaca' }} onClick={() => openApproval(worker, 'rejected')}>
-                            <HiOutlineXCircle /> Reject
-                          </button>
-                        </>
-                      )}
-                      {worker.workerStatus === 'interview_done' && (
-                        <>
-                          <button className="btn btn-sm btn-primary" style={{ background: '#7c3aed' }} onClick={() => openApproval(worker, 'approved_rookie')}>
-                            <HiOutlineAcademicCap /> Approve as Rookie
-                          </button>
+                      {/* Trust & Safety: Admin Permanent ID Card Management Actions */}
+                      <div style={{
+                        marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed #e2e8f0',
+                        display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center',
+                      }}>
+                        <button
+                          className="btn btn-sm btn-outline"
+                          style={{ color: '#1e3a5f', borderColor: '#cbd5e1' }}
+                          onClick={() => setPreviewCardWorker(worker)}
+                        >
+                          <HiOutlineEye /> Preview ID Card
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline"
+                          style={{ color: '#0284c7', borderColor: '#bae6fd' }}
+                          onClick={() => handleRegenerateQr(worker)}
+                        >
+                          <HiOutlineArrowPath /> Regenerate QR
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline"
+                          style={{ color: '#16a34a', borderColor: '#bbf7d0' }}
+                          onClick={() => handleDownloadIdCardData(worker)}
+                        >
+                          <HiOutlineArrowDownTray /> Download Printable ID Card
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline"
+                          style={{
+                            color: worker.qrActive === false ? '#16a34a' : '#dc2626',
+                            borderColor: worker.qrActive === false ? '#bbf7d0' : '#fecaca',
+                          }}
+                          onClick={() => handleToggleQr(worker)}
+                        >
+                          {worker.qrActive === false ? 'Reactivate QR' : 'Deactivate QR'}
+                        </button>
+                      </div>
+
+                      {/* Action Buttons based on status */}
+                      <div className="vc-actions" style={{ marginTop: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                        {worker.workerStatus === 'pending_interview' && (
+                          <>
+                            <button className="btn btn-sm btn-outline" style={{ color: '#2563eb', borderColor: '#bfdbfe' }} onClick={() => openApproval(worker, 'interview_done')}>
+                              <HiOutlineClipboardDocumentCheck /> Mark Interview Done
+                            </button>
+                            <button className="btn btn-sm btn-outline" style={{ color: '#dc2626', borderColor: '#fecaca' }} onClick={() => openApproval(worker, 'rejected')}>
+                              <HiOutlineXCircle /> Reject
+                            </button>
+                          </>
+                        )}
+                        {worker.workerStatus === 'interview_done' && (
+                          <>
+                            <button className="btn btn-sm btn-primary" style={{ background: '#7c3aed' }} onClick={() => openApproval(worker, 'approved_rookie')}>
+                              <HiOutlineAcademicCap /> Approve as Rookie
+                            </button>
+                            <button className="btn btn-sm btn-primary" onClick={() => openApproval(worker, 'approved_junior')}>
+                              <HiOutlineBriefcase /> Approve as Junior (Experienced)
+                            </button>
+                            <button className="btn btn-sm btn-outline" style={{ color: '#dc2626', borderColor: '#fecaca' }} onClick={() => openApproval(worker, 'rejected')}>
+                              <HiOutlineXCircle /> Reject
+                            </button>
+                          </>
+                        )}
+                        {worker.workerStatus === 'approved_rookie' && (
                           <button className="btn btn-sm btn-primary" onClick={() => openApproval(worker, 'approved_junior')}>
-                            <HiOutlineBriefcase /> Approve as Junior (Experienced)
+                            <HiOutlineBriefcase /> Upgrade to Junior Pro
                           </button>
-                          <button className="btn btn-sm btn-outline" style={{ color: '#dc2626', borderColor: '#fecaca' }} onClick={() => openApproval(worker, 'rejected')}>
-                            <HiOutlineXCircle /> Reject
+                        )}
+                        {worker.workerStatus === 'approved_junior' && (
+                          <button className="btn btn-sm btn-primary" style={{ background: '#16a34a' }} onClick={() => openApproval(worker, 'approved_senior')}>
+                            <HiOutlineTrophy /> Upgrade to Senior Pro
                           </button>
-                        </>
-                      )}
-                      {worker.workerStatus === 'approved_rookie' && (
-                        <button className="btn btn-sm btn-primary" onClick={() => openApproval(worker, 'approved_junior')}>
-                          <HiOutlineBriefcase /> Upgrade to Junior Pro
-                        </button>
-                      )}
-                      {worker.workerStatus === 'approved_junior' && (
-                        <button className="btn btn-sm btn-primary" style={{ background: '#16a34a' }} onClick={() => openApproval(worker, 'approved_senior')}>
-                          <HiOutlineTrophy /> Upgrade to Senior Pro
-                        </button>
-                      )}
-                      {worker.workerStatus === 'rejected' && (
-                        <button className="btn btn-sm btn-outline" style={{ color: '#2563eb', borderColor: '#bfdbfe' }} onClick={() => openApproval(worker, 'pending_interview')}>
-                          Reopen Application
-                        </button>
-                      )}
-                    </div>
+                        )}
+                        {worker.workerStatus === 'rejected' && (
+                          <button className="btn btn-sm btn-outline" style={{ color: '#2563eb', borderColor: '#bfdbfe' }} onClick={() => openApproval(worker, 'pending_interview')}>
+                            Reopen Application
+                          </button>
+                        )}
+                      </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -446,6 +557,100 @@ const WorkerVerification = () => {
                     onClick={submitApproval}
                   >
                     Confirm
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          );
+        })()}
+      </AnimatePresence>
+
+      {/* ID Card Preview Modal */}
+      <AnimatePresence>
+        {previewCardWorker && (() => {
+          const w = previewCardWorker;
+          const workerIdCode = w.workerIdCode || `SC-W-${(w.id || '').toString().slice(-4).toUpperCase() || '1001'}`;
+          const role = w.serviceCategory || 'Certified Professional';
+          return (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(6px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px',
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                style={{
+                  background: 'white', borderRadius: '24px', padding: '28px', maxWidth: '440px', width: '100%',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', overflow: 'hidden',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                    Permanent ServeCircle ID Card Preview
+                  </h3>
+                  <button onClick={() => setPreviewCardWorker(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#64748b' }}>
+                    <HiXMark />
+                  </button>
+                </div>
+
+                {/* Visual CR80 Card Rendering */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
+                  borderRadius: '16px', padding: '24px', color: 'white', border: '2px solid #38bdf8',
+                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', position: 'relative', overflow: 'hidden',
+                  marginBottom: '20px',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ background: '#2563eb', color: 'white', width: '32px', height: '32px', borderRadius: '8px', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
+                        SC
+                      </div>
+                      <span style={{ fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.03em' }}>ServeCircle</span>
+                    </div>
+                    <span style={{ fontSize: '0.65rem', background: '#22c55e', color: 'white', fontWeight: 800, padding: '2px 8px', borderRadius: '100px', textTransform: 'uppercase' }}>
+                      Official ID
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Worker Name</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white', marginBottom: '10px' }}>{w.name}</div>
+
+                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Worker ID</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fef08a', marginBottom: '10px' }}>{workerIdCode}</div>
+
+                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#93c5fd' }}>{role}</div>
+                    </div>
+
+                    {/* QR Code Container */}
+                    <div style={{
+                      background: 'white', padding: '10px', borderRadius: '12px', textAlign: 'center',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)', flexShrink: 0, width: '90px',
+                    }}>
+                      <HiOutlineQrCode style={{ fontSize: '70px', color: '#0f172a' }} />
+                      <span style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 800, display: 'block', marginTop: '2px' }}>
+                        SCAN TO VERIFY
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: '16px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.15)', fontSize: '0.65rem', opacity: 0.7, textAlign: 'center' }}>
+                    Permanent ServeCircle Card · No sensitive personal data printed
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setPreviewCardWorker(null)}>Close</button>
+                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => handleDownloadIdCardData(w)}>
+                    Download Printable Data
                   </button>
                 </div>
               </motion.div>
