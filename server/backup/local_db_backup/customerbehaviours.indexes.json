@@ -1,0 +1,34 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "customerId": 1
+    },
+    "name": "customerId_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "emergencyUsage.rate": -1
+    },
+    "name": "emergencyUsage.rate_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "averageBudget": -1
+    },
+    "name": "averageBudget_-1",
+    "background": true
+  }
+]

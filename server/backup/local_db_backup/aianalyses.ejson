@@ -1,0 +1,275 @@
+[
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c764851011f"
+    },
+    "analysisId": "anls_img_1786123156972_hduft",
+    "requestId": "req_test_123",
+    "provider": "gemini",
+    "model": "gemini-2.0-flash",
+    "feature": "vision_analysis",
+    "language": "English",
+    "imageHash": "6d688999c93ac1467eb2cafe2e14a26ff6f0fbcf489684c7602d4c0cc6530a75",
+    "textHash": "7347e90d57ce336ca9aac0c5c70760bc7bfbf3e6532dc2d9592a54a162344be0",
+    "promptTokens": 132,
+    "completionTokens": 136,
+    "totalTokens": 268,
+    "estimatedCost": 0.0000507,
+    "latency": 228,
+    "validationTime": 5,
+    "providerTime": 223,
+    "confidence": 0.7,
+    "confidenceBreakdown": {
+      "image": 0.63,
+      "text": 0.59,
+      "context": 0.8,
+      "provider": 0.9,
+      "validation": 0.95
+    },
+    "imageQuality": {
+      "score": 12,
+      "blur": 80,
+      "sharpness": 20,
+      "brightness": 23,
+      "contrast": 29,
+      "noise": 13,
+      "resolution": "LowRes (<480p)",
+      "needsBetterImage": true
+    },
+    "damageSeverity": "Moderate",
+    "status": "COMPLETED",
+    "rawResponse": null,
+    "parsedResponse": {
+      "problemCategory": "Plumbing",
+      "problemType": "Kitchen pipe leak under sink",
+      "serviceCategory": "Plumbing",
+      "visibleObjects": [
+        "Inspected Item"
+      ],
+      "visibleDamage": [
+        "Visible issue requiring technical inspection"
+      ],
+      "possibleCauses": [
+        "Wear and tear",
+        "Technical fault"
+      ],
+      "urgency": "medium",
+      "confidence": 0.7,
+      "recommendedWorkerSkill": "plumbing_specialist",
+      "estimatedDifficulty": "medium",
+      "estimatedDuration": "1-2 hours",
+      "needsMoreImages": false,
+      "needsMoreInformation": false,
+      "followUpQuestions": [],
+      "safetyWarnings": [
+        "Inspect main connections before servicing"
+      ]
+    },
+    "validationErrors": [],
+    "explainability": {
+      "decisionPath": [
+        "Visual Feature Extraction",
+        "Damage Severity Classification"
+      ],
+      "detectedObjects": [
+        "Inspected Item"
+      ],
+      "detectedDamage": [
+        "Visible issue requiring technical inspection"
+      ],
+      "reasoning": "Kitchen pipe leak under sink",
+      "evidence": [],
+      "confidenceFactors": {
+        "imageQualityScore": 12,
+        "modelConfidence": 0.7
+      }
+    },
+    "createdAt": {
+      "$date": "2026-08-07T17:19:17.207Z"
+    },
+    "updatedAt": {
+      "$date": "2026-08-07T17:19:17.207Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f773c"
+    },
+    "analysisId": "anls_img_1786123174289_81h52",
+    "requestId": "req_test_123",
+    "provider": "gemini",
+    "model": "gemini-2.0-flash",
+    "feature": "vision_analysis",
+    "language": "English",
+    "imageHash": "6d688999c93ac1467eb2cafe2e14a26ff6f0fbcf489684c7602d4c0cc6530a75",
+    "textHash": "7347e90d57ce336ca9aac0c5c70760bc7bfbf3e6532dc2d9592a54a162344be0",
+    "promptTokens": 132,
+    "completionTokens": 136,
+    "totalTokens": 268,
+    "estimatedCost": 0.0000507,
+    "latency": 228,
+    "validationTime": 5,
+    "providerTime": 223,
+    "confidence": 0.7,
+    "confidenceBreakdown": {
+      "image": 0.63,
+      "text": 0.59,
+      "context": 0.8,
+      "provider": 0.9,
+      "validation": 0.95
+    },
+    "imageQuality": {
+      "score": 12,
+      "blur": 80,
+      "sharpness": 20,
+      "brightness": 23,
+      "contrast": 29,
+      "noise": 13,
+      "resolution": "LowRes (<480p)",
+      "needsBetterImage": true
+    },
+    "damageSeverity": "Moderate",
+    "status": "COMPLETED",
+    "rawResponse": null,
+    "parsedResponse": {
+      "problemCategory": "Plumbing",
+      "problemType": "Kitchen pipe leak under sink",
+      "serviceCategory": "Plumbing",
+      "visibleObjects": [
+        "Inspected Item"
+      ],
+      "visibleDamage": [
+        "Visible issue requiring technical inspection"
+      ],
+      "possibleCauses": [
+        "Wear and tear",
+        "Technical fault"
+      ],
+      "urgency": "medium",
+      "confidence": 0.7,
+      "recommendedWorkerSkill": "plumbing_specialist",
+      "estimatedDifficulty": "medium",
+      "estimatedDuration": "1-2 hours",
+      "needsMoreImages": false,
+      "needsMoreInformation": false,
+      "followUpQuestions": [],
+      "safetyWarnings": [
+        "Inspect main connections before servicing"
+      ]
+    },
+    "validationErrors": [],
+    "explainability": {
+      "decisionPath": [
+        "Visual Feature Extraction",
+        "Damage Severity Classification"
+      ],
+      "detectedObjects": [
+        "Inspected Item"
+      ],
+      "detectedDamage": [
+        "Visible issue requiring technical inspection"
+      ],
+      "reasoning": "Kitchen pipe leak under sink",
+      "evidence": [],
+      "confidenceFactors": {
+        "imageQualityScore": 12,
+        "modelConfidence": 0.7
+      }
+    },
+    "createdAt": {
+      "$date": "2026-08-07T17:19:34.525Z"
+    },
+    "updatedAt": {
+      "$date": "2026-08-07T17:19:34.525Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774e"
+    },
+    "analysisId": "anls_mm_1786123174520_ed38q",
+    "requestId": "req_test_123",
+    "provider": "gemini",
+    "model": "gemini-2.0-flash",
+    "feature": "multimodal_analysis",
+    "language": "Gujarati",
+    "imageHash": "6d688999c93ac1467eb2cafe2e14a26ff6f0fbcf489684c7602d4c0cc6530a75",
+    "textHash": "f7caf0c911f5e6491de990c7b731c1f1e0f61c37db12ccae1f0504d2d33ac87a",
+    "promptTokens": 209,
+    "completionTokens": 2214,
+    "totalTokens": 2423,
+    "estimatedCost": 0.00067987,
+    "latency": 248,
+    "validationTime": 8,
+    "providerTime": 240,
+    "confidence": 0.75,
+    "confidenceBreakdown": {
+      "image": 0.68,
+      "text": 0.64,
+      "context": 0.85,
+      "provider": 0.9,
+      "validation": 0.95
+    },
+    "imageQuality": {
+      "score": 12,
+      "blur": 80,
+      "sharpness": 20,
+      "brightness": 23,
+      "contrast": 29,
+      "noise": 13,
+      "resolution": "LowRes (<480p)",
+      "needsBetterImage": true
+    },
+    "damageSeverity": "Moderate",
+    "status": "COMPLETED",
+    "rawResponse": null,
+    "parsedResponse": {
+      "contextId": "uctx_1786123174521_2hekwc",
+      "activeModalities": [
+        "text",
+        "image"
+      ],
+      "problemCategory": "plumbing",
+      "topProblem": "AC is leaking water and not cooling.",
+      "resolvedService": "Plumbing",
+      "requiredSkill": "plumbing",
+      "urgencyLevel": "LOW",
+      "dispatchPriority": "FLEXIBLE",
+      "slaDeadline": "2026-08-10T17:19:34.767Z",
+      "overallConfidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "missingInfoCount": 3,
+      "additionalQCount": 3,
+      "contextValid": true
+    },
+    "validationErrors": [],
+    "explainability": {
+      "decisionPath": [
+        "Multimodal Context Fusion",
+        "Unified Intelligence Resolution"
+      ],
+      "detectedObjects": [],
+      "detectedDamage": [],
+      "reasoning": "Multimodal analysis evaluated for \"AC is leaking water and not cooling.\"",
+      "evidence": [
+        "AC is leaking water and not cooling.",
+        "Pipe Leak"
+      ],
+      "confidenceFactors": {
+        "overallConfidence": 0.75,
+        "imageQualityScore": 12
+      }
+    },
+    "createdAt": {
+      "$date": "2026-08-07T17:19:34.771Z"
+    },
+    "updatedAt": {
+      "$date": "2026-08-07T17:19:34.771Z"
+    },
+    "__v": 0
+  }
+]

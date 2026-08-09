@@ -1,0 +1,226 @@
+{
+  "timestamp": "2026-08-09T06:43:52.731Z",
+  "localDbName": "servecircle",
+  "atlasDbName": "servecircle",
+  "totalLocalDocs": 217,
+  "totalAtlasDocs": 217,
+  "totalCollections": 24,
+  "results": [
+    {
+      "colName": "services",
+      "localCount": 10,
+      "atlasCount": 10,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "users",
+      "localCount": 19,
+      "atlasCount": 19,
+      "localIndexes": 7,
+      "atlasIndexes": 7,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "coupons",
+      "localCount": 4,
+      "atlasCount": 4,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "contracts",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "invoices",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "partners",
+      "localCount": 3,
+      "atlasCount": 3,
+      "localIndexes": 1,
+      "atlasIndexes": 1,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "demandhistories",
+      "localCount": 1,
+      "atlasCount": 1,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "complaintmetrics",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 3,
+      "atlasIndexes": 3,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "trustprofiles",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 4,
+      "atlasIndexes": 4,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "workermetrics",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "workerskillhistories",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 4,
+      "atlasIndexes": 4,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "workergeohistories",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "documenthistories",
+      "localCount": 21,
+      "atlasCount": 21,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "customermetrics",
+      "localCount": 1,
+      "atlasCount": 1,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "customerbehaviours",
+      "localCount": 1,
+      "atlasCount": 1,
+      "localIndexes": 4,
+      "atlasIndexes": 4,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "bookings",
+      "localCount": 4,
+      "atlasCount": 4,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "reviews",
+      "localCount": 5,
+      "atlasCount": 5,
+      "localIndexes": 4,
+      "atlasIndexes": 4,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "complaints",
+      "localCount": 3,
+      "atlasCount": 3,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "wallettransactions",
+      "localCount": 4,
+      "atlasCount": 4,
+      "localIndexes": 2,
+      "atlasIndexes": 2,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "notifications",
+      "localCount": 3,
+      "atlasCount": 3,
+      "localIndexes": 1,
+      "atlasIndexes": 1,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "aianalyses",
+      "localCount": 3,
+      "atlasCount": 3,
+      "localIndexes": 12,
+      "atlasIndexes": 12,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "activitylogs",
+      "localCount": 4,
+      "atlasCount": 4,
+      "localIndexes": 5,
+      "atlasIndexes": 5,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "eventlogs",
+      "localCount": 115,
+      "atlasCount": 115,
+      "localIndexes": 10,
+      "atlasIndexes": 10,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    },
+    {
+      "colName": "featurestores",
+      "localCount": 2,
+      "atlasCount": 2,
+      "localIndexes": 8,
+      "atlasIndexes": 8,
+      "status": "VERIFIED ✅",
+      "alreadyVerified": true
+    }
+  ]
+}

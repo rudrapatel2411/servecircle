@@ -1,0 +1,78 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c1666e"
+    },
+    "userId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "role": "admin",
+    "action": "EXPORT_DATASET",
+    "module": "export",
+    "targetId": null,
+    "userAgent": "curl/8.21.0",
+    "requestId": "d5148645-73d8-41f2-a521-d06c5ce1dc02",
+    "ipAddress": "::1",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.827Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c16672"
+    },
+    "userId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "role": "admin",
+    "action": "EXPORT_DATASET",
+    "module": "export",
+    "targetId": null,
+    "userAgent": "curl/8.21.0",
+    "requestId": "8352d357-0a09-49bf-b67f-986642fdb5ef",
+    "ipAddress": "::1",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.859Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c16822"
+    },
+    "userId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "role": "admin",
+    "action": "EXPORT_DATASET",
+    "module": "export",
+    "targetId": null,
+    "userAgent": "curl/8.21.0",
+    "requestId": "de434c39-4b82-475a-aafe-fe8a74167f8c",
+    "ipAddress": "::1",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.802Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c16826"
+    },
+    "userId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "role": "admin",
+    "action": "EXPORT_DATASET",
+    "module": "export",
+    "targetId": null,
+    "userAgent": "curl/8.21.0",
+    "requestId": "ee7c7c47-7e2a-45d8-8b4f-7e3a5ebdd7e4",
+    "ipAddress": "::1",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.836Z"
+    },
+    "__v": 0
+  }
+]

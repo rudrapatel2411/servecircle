@@ -1,0 +1,134 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c1665e"
+    },
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "city": "unknown",
+    "category": "Home Repairs",
+    "price": 750,
+    "isEmergency": false,
+    "scheduledHour": 19,
+    "scheduledDayOfWeek": 4,
+    "arrivalTimeMs": 106,
+    "responseTimeMs": 185,
+    "completionTimeMs": 371,
+    "workerMetricsSnapshot": {
+      "completionRate": 1,
+      "acceptanceRate": 1,
+      "avgRating": 0,
+      "totalCompletions": 1,
+      "avgResponseTimeMs": 92.5,
+      "avgArrivalTimeMs": 53
+    },
+    "customerMetricsSnapshot": {
+      "totalBookings": 2,
+      "completedBookings": 2,
+      "avgSpend": 625,
+      "isRepeat": true
+    },
+    "trustProfileSnapshot": {
+      "completionRate": 0,
+      "complaintRate": 0,
+      "refundRate": 0,
+      "averageRating": 0,
+      "adminWarnings": 0
+    },
+    "complaintSnapshot": {
+      "hadComplaint": false
+    },
+    "timelineSummary": {
+      "milestones": [
+        "BOOKING_CREATED",
+        "BOOKING_ASSIGNED",
+        "BOOKING_ACCEPTED",
+        "BOOKING_EN_ROUTE",
+        "BOOKING_ARRIVED",
+        "BOOKING_STARTED",
+        "BOOKING_COMPLETED",
+        "BOOKING_PAID",
+        "BOOKING_CLOSED"
+      ],
+      "totalDurationMs": 1148
+    },
+    "targetLabel": null,
+    "createdAt": {
+      "$date": "2026-07-31T09:19:25.365Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c167fb"
+    },
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "city": "unknown",
+    "category": "Home Repairs",
+    "price": 750,
+    "isEmergency": false,
+    "scheduledHour": 19,
+    "scheduledDayOfWeek": 4,
+    "arrivalTimeMs": 80,
+    "responseTimeMs": 126,
+    "completionTimeMs": 347,
+    "workerMetricsSnapshot": {
+      "completionRate": 1,
+      "acceptanceRate": 1,
+      "avgRating": 0,
+      "totalCompletions": 2,
+      "avgResponseTimeMs": 66.5,
+      "avgArrivalTimeMs": 40.25
+    },
+    "customerMetricsSnapshot": {
+      "totalBookings": 3,
+      "completedBookings": 3,
+      "avgSpend": 666.6666666666666,
+      "isRepeat": true
+    },
+    "trustProfileSnapshot": {
+      "completionRate": 0.5,
+      "complaintRate": 0,
+      "refundRate": 0,
+      "averageRating": 0,
+      "adminWarnings": 0
+    },
+    "complaintSnapshot": {
+      "hadComplaint": false
+    },
+    "timelineSummary": {
+      "milestones": [
+        "BOOKING_CREATED",
+        "BOOKING_ASSIGNED",
+        "BOOKING_ACCEPTED",
+        "BOOKING_EN_ROUTE",
+        "BOOKING_ARRIVED",
+        "BOOKING_STARTED",
+        "BOOKING_COMPLETED",
+        "BOOKING_PAID",
+        "BOOKING_CLOSED"
+      ],
+      "totalDurationMs": 1000
+    },
+    "targetLabel": null,
+    "createdAt": {
+      "$date": "2026-07-31T09:19:59.318Z"
+    },
+    "__v": 0
+  }
+]

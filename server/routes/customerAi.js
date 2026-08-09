@@ -7,6 +7,7 @@ import { AppError } from '../middleware/errorHandler.js';
 import { runMultimodalInference } from '../ai/inferenceService.js';
 import { validateImage } from '../ai/multimodal/imageProcessor.js';
 import { resolveService } from '../ai/multimodal/serviceResolver.js';
+import Service from '../models/Service.js';
 
 const router = express.Router();
 
@@ -695,7 +696,7 @@ router.post(
       const serviceGuard = !guardedRoute ? applyServiceCategoryGuard(result, !!image) : null;
       const finalGuard   = guardedRoute || serviceGuard;
 
-      res.status(StatusCodes.OK).json(finalGuard ? {
+      const payload = finalGuard ? {
         status: 'success',
         ...finalGuard,
       } : {
@@ -707,7 +708,48 @@ router.post(
           || result?.multimodal?.recommendation?.additionalQuestions?.map((q) => q.question)
           || [],
         analysis: result,
-      });
+      };
+
+      const recommendedService = payload.analysis?.multimodal?.recommendation?.recommendedService || payload.recommendedService || payload.analysis?.recommendedService || payload.multimodal?.recommendation?.recommendedService;
+      if (recommendedService) {
+        const queryName = recommendedService.name || '';
+        const queryCat = recommendedService.category || '';
+        
+        let dbService = await Service.findOne({ name: queryName }).lean();
+        
+        if (!dbService) {
+          // Fallback mapper for Atlas production DB services
+          const n = (queryName + ' ' + queryCat).toLowerCase();
+          if (n.includes('plumb') || n.includes('leak') || n.includes('pipe') || n.includes('drain') || n.includes('toilet') || n.includes('tap')) {
+            dbService = await Service.findOne({ name: 'Plumbing' }).lean();
+          } else if (n.includes('electric') || n.includes('wire') || n.includes('switch') || n.includes('power')) {
+            dbService = await Service.findOne({ name: 'Electrical Work' }).lean();
+          } else if (n.includes('ac ') || n.includes('appliance') || n.includes('fridge') || n.includes('washing')) {
+            dbService = await Service.findOne({ name: 'AC & Appliance Repair' }).lean();
+          } else if (n.includes('paint') || n.includes('wall')) {
+            dbService = await Service.findOne({ name: 'Painting' }).lean();
+          } else if (n.includes('clean') || n.includes('hygiene') || n.includes('sweep')) {
+            dbService = await Service.findOne({ name: 'Home Deep Cleaning' }).lean();
+          } else if (n.includes('pest') || n.includes('termite') || n.includes('cockroach')) {
+            dbService = await Service.findOne({ name: 'Pest Control' }).lean();
+          } else if (n.includes('carpent') || n.includes('wood') || n.includes('furniture') || n.includes('door') || n.includes('window')) {
+            dbService = await Service.findOne({ name: 'Carpentry' }).lean();
+          } else if (n.includes('car ') || n.includes('engine') || n.includes('four wheeler')) {
+            dbService = await Service.findOne({ name: 'Car Repair' }).lean();
+          } else if (n.includes('bike') || n.includes('motorcycle') || n.includes('two wheeler')) {
+            dbService = await Service.findOne({ name: 'Bike Repair' }).lean();
+          }
+        }
+        
+        if (dbService) {
+          recommendedService.serviceId = dbService._id.toString();
+          recommendedService.serviceName = dbService.name;
+          recommendedService.name = dbService.name;
+          recommendedService.estimatedPrice = dbService.basePrice || dbService.price || 499.0;
+        }
+      }
+
+      res.status(StatusCodes.OK).json(payload);
     } catch (err) {
       res.status(err.statusCode || StatusCodes.SERVICE_UNAVAILABLE).json({
         status: 'error',

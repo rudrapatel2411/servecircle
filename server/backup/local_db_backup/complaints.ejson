@@ -1,0 +1,93 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe11c"
+    },
+    "complaintId": "CMP-1002",
+    "filedBy": {
+      "$oid": "6a5f4c90437c4810f45fe0ea"
+    },
+    "subject": "Worker arrived late",
+    "description": "The worker was 45 minutes late for the scheduled appointment.",
+    "category": "delay",
+    "priority": "low",
+    "status": "resolved",
+    "resolution": "Refund of ₹100 issued. Worker warned.",
+    "resolvedBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "resolvedAt": {
+      "$date": "2026-07-21T10:40:18.608Z"
+    },
+    "attachments": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.609Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.609Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe11b"
+    },
+    "complaintId": "CMP-1001",
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe0fd"
+    },
+    "filedBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "againstUser": {
+      "$oid": "6a5f4c91437c4810f45fe0ef"
+    },
+    "subject": "AC making noise after servicing",
+    "description": "After the AC servicing was done, the AC is making a buzzing noise.",
+    "category": "service_quality",
+    "priority": "medium",
+    "status": "open",
+    "attachments": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.609Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.609Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c167ff"
+    },
+    "complaintId": "CMP-1003",
+    "booking": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "filedBy": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "againstUser": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "subject": "Late arrival",
+    "description": "Worker arrived 15 mins late",
+    "category": "delay",
+    "priority": "medium",
+    "status": "resolved",
+    "attachments": [],
+    "createdAt": {
+      "$date": "2026-07-31T09:19:59.371Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T09:19:59.430Z"
+    },
+    "__v": 0,
+    "resolvedAt": {
+      "$date": "2026-07-31T09:19:59.430Z"
+    },
+    "resolvedBy": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    }
+  }
+]

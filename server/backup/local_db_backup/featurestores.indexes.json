@@ -1,0 +1,68 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "bookingId": 1
+    },
+    "name": "bookingId_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "workerId": 1
+    },
+    "name": "workerId_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "customerId": 1
+    },
+    "name": "customerId_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "category": 1
+    },
+    "name": "category_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "city": 1,
+      "category": 1
+    },
+    "name": "city_1_category_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "createdAt": -1
+    },
+    "name": "createdAt_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "targetLabel": 1
+    },
+    "name": "targetLabel_1",
+    "background": true,
+    "sparse": true
+  }
+]

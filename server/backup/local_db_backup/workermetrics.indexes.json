@@ -1,0 +1,42 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "workerId": 1
+    },
+    "name": "workerId_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "successRate": -1
+    },
+    "name": "successRate_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "avgRatingOverall": -1
+    },
+    "name": "avgRatingOverall_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "totalCompletions": -1
+    },
+    "name": "totalCompletions_-1",
+    "background": true
+  }
+]

@@ -7,6 +7,7 @@ import {
   HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
+import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import { useWorkerAuth } from './useWorkerAuth';
 import {
   fetchWorkerJobs,
@@ -36,6 +37,7 @@ const WorkerProfile = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showIdCardModal, setShowIdCardModal] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -277,8 +279,27 @@ const WorkerProfile = () => {
                 </div>
               </div>
               
+              {/* OFFICIAL ID CARD SECTION */}
+              <div className="card" style={{ marginTop: '20px', background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)', color: 'white', borderRadius: '16px', border: '1.5px solid #38bdf8', padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'white' }}>Official ServeCircle ID Card 🪪</h4>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#93c5fd' }}>
+                      Worker ID: <strong>{profile.workerIdCode || 'SC-W-1001'}</strong> • QR Scannable
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ background: '#2563eb', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 800 }}
+                    onClick={() => setShowIdCardModal(true)}
+                  >
+                    View & Print ID Card
+                  </button>
+                </div>
+              </div>
+
               {isProUnlocked && (
-                <div className="card" style={{ marginTop: '24px', background: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', borderColor: '#d8b4fe', textAlign: 'center' }}>
+                <div className="card" style={{ marginTop: '20px', background: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', borderColor: '#d8b4fe', textAlign: 'center' }}>
                   <HiOutlineShieldCheck style={{ fontSize: '3rem', color: '#9333ea', margin: '0 auto 12px' }} />
                   <h4 style={{ color: '#6b21a8', margin: '0 0 8px 0' }}>Verified Pro Status Active</h4>
                   <p style={{ color: '#7e22ce', fontSize: '0.9rem', margin: 0 }}>You are receiving priority job requests and premium listings in your service area.</p>
@@ -287,6 +308,13 @@ const WorkerProfile = () => {
             </div>
           )}
         </div>
+      )}
+
+      {showIdCardModal && (
+        <WorkerIDCardModal
+          worker={profile || user}
+          onClose={() => setShowIdCardModal(false)}
+        />
       )}
     </div>
   );

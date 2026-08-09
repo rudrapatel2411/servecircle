@@ -1,0 +1,36 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "booking": 1,
+      "customer": 1
+    },
+    "name": "booking_1_customer_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "worker": 1,
+      "isDeleted": 1
+    },
+    "name": "worker_1_isDeleted_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "isDeleted": 1
+    },
+    "name": "isDeleted_1",
+    "background": true
+  }
+]

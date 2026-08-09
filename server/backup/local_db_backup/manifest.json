@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-08-09T06:37:59.256Z",
+  "dbName": "servecircle",
+  "collections": {
+    "wallettransactions": {
+      "count": 4,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\wallettransactions.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\wallettransactions.indexes.json"
+    },
+    "workerskillhistories": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workerskillhistories.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workerskillhistories.indexes.json"
+    },
+    "aianalyses": {
+      "count": 3,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\aianalyses.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\aianalyses.indexes.json"
+    },
+    "users": {
+      "count": 19,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\users.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\users.indexes.json"
+    },
+    "trustprofiles": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\trustprofiles.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\trustprofiles.indexes.json"
+    },
+    "workergeohistories": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workergeohistories.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workergeohistories.indexes.json"
+    },
+    "workermetrics": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workermetrics.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\workermetrics.indexes.json"
+    },
+    "coupons": {
+      "count": 4,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\coupons.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\coupons.indexes.json"
+    },
+    "documenthistories": {
+      "count": 21,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\documenthistories.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\documenthistories.indexes.json"
+    },
+    "contracts": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\contracts.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\contracts.indexes.json"
+    },
+    "invoices": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\invoices.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\invoices.indexes.json"
+    },
+    "customerbehaviours": {
+      "count": 1,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\customerbehaviours.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\customerbehaviours.indexes.json"
+    },
+    "featurestores": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\featurestores.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\featurestores.indexes.json"
+    },
+    "bookings": {
+      "count": 4,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\bookings.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\bookings.indexes.json"
+    },
+    "notifications": {
+      "count": 3,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\notifications.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\notifications.indexes.json"
+    },
+    "reviews": {
+      "count": 5,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\reviews.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\reviews.indexes.json"
+    },
+    "complaintmetrics": {
+      "count": 2,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\complaintmetrics.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\complaintmetrics.indexes.json"
+    },
+    "complaints": {
+      "count": 3,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\complaints.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\complaints.indexes.json"
+    },
+    "partners": {
+      "count": 3,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\partners.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\partners.indexes.json"
+    },
+    "activitylogs": {
+      "count": 4,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\activitylogs.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\activitylogs.indexes.json"
+    },
+    "services": {
+      "count": 10,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\services.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\services.indexes.json"
+    },
+    "demandhistories": {
+      "count": 1,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\demandhistories.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\demandhistories.indexes.json"
+    },
+    "customermetrics": {
+      "count": 1,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\customermetrics.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\customermetrics.indexes.json"
+    },
+    "eventlogs": {
+      "count": 115,
+      "file": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\eventlogs.ejson",
+      "indexesFile": "D:\\PROJECTS\\servecircle\\server\\backup\\local_db_backup\\eventlogs.indexes.json"
+    }
+  }
+}

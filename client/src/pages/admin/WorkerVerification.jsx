@@ -9,6 +9,7 @@ import {
   HiOutlineCalendarDays, HiOutlineQrCode, HiOutlineArrowDownTray,
   HiOutlineEye, HiOutlineArrowPath, HiXMark,
 } from 'react-icons/hi2';
+import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import '../Dashboard.css';
 import './AdminPages.css';
 
@@ -565,99 +566,13 @@ const WorkerVerification = () => {
         })()}
       </AnimatePresence>
 
-      {/* ID Card Preview Modal */}
-      <AnimatePresence>
-        {previewCardWorker && (() => {
-          const w = previewCardWorker;
-          const workerIdCode = w.workerIdCode || `SC-W-${(w.id || '').toString().slice(-4).toUpperCase() || '1001'}`;
-          const role = w.serviceCategory || 'Certified Professional';
-          return (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{
-                position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(6px)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px',
-              }}
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                style={{
-                  background: 'white', borderRadius: '24px', padding: '28px', maxWidth: '440px', width: '100%',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)', overflow: 'hidden',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#0f172a' }}>
-                    Permanent ServeCircle ID Card Preview
-                  </h3>
-                  <button onClick={() => setPreviewCardWorker(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#64748b' }}>
-                    <HiXMark />
-                  </button>
-                </div>
-
-                {/* Visual CR80 Card Rendering */}
-                <div style={{
-                  background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)',
-                  borderRadius: '16px', padding: '24px', color: 'white', border: '2px solid #38bdf8',
-                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', position: 'relative', overflow: 'hidden',
-                  marginBottom: '20px',
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ background: '#2563eb', color: 'white', width: '32px', height: '32px', borderRadius: '8px', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>
-                        SC
-                      </div>
-                      <span style={{ fontWeight: 900, fontSize: '1.1rem', letterSpacing: '0.03em' }}>ServeCircle</span>
-                    </div>
-                    <span style={{ fontSize: '0.65rem', background: '#22c55e', color: 'white', fontWeight: 800, padding: '2px 8px', borderRadius: '100px', textTransform: 'uppercase' }}>
-                      Official ID
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Worker Name</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white', marginBottom: '10px' }}>{w.name}</div>
-
-                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Worker ID</div>
-                      <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fef08a', marginBottom: '10px' }}>{workerIdCode}</div>
-
-                      <div style={{ fontSize: '0.7rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#93c5fd' }}>{role}</div>
-                    </div>
-
-                    {/* QR Code Container */}
-                    <div style={{
-                      background: 'white', padding: '10px', borderRadius: '12px', textAlign: 'center',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)', flexShrink: 0, width: '90px',
-                    }}>
-                      <HiOutlineQrCode style={{ fontSize: '70px', color: '#0f172a' }} />
-                      <span style={{ fontSize: '0.6rem', color: '#64748b', fontWeight: 800, display: 'block', marginTop: '2px' }}>
-                        SCAN TO VERIFY
-                      </span>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: '16px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.15)', fontSize: '0.65rem', opacity: 0.7, textAlign: 'center' }}>
-                    Permanent ServeCircle Card · No sensitive personal data printed
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setPreviewCardWorker(null)}>Close</button>
-                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => handleDownloadIdCardData(w)}>
-                    Download Printable Data
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          );
-        })()}
-      </AnimatePresence>
+      {/* ID Card Preview & Print Modal */}
+      {previewCardWorker && (
+        <WorkerIDCardModal
+          worker={previewCardWorker}
+          onClose={() => setPreviewCardWorker(null)}
+        />
+      )}
     </div>
   );
 };

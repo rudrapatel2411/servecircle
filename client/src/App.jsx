@@ -181,6 +181,10 @@ function App() {
           <Route path="team" element={<B2BTeam />} />
           <Route path="invoices" element={<B2BInvoices />} />
         </Route>
+
+        {/* Public QR Code Verification Routes */}
+        <Route path="/verify-worker" element={<SecureWorkerVerification />} />
+        <Route path="/verify/worker/:workerIdCode" element={<SecureWorkerVerification />} />
       </Routes>
     </BrowserRouter>
   );

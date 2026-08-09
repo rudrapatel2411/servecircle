@@ -1,0 +1,86 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe132"
+    },
+    "user": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "type": "payment",
+    "amount": -100,
+    "balanceAfter": 2450,
+    "description": "Tip to worker",
+    "status": "completed",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe131"
+    },
+    "user": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "type": "bonus",
+    "amount": 50,
+    "balanceAfter": 2550,
+    "description": "Referral bonus",
+    "status": "completed",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe12f"
+    },
+    "user": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "type": "topup",
+    "amount": 3000,
+    "balanceAfter": 3000,
+    "description": "Wallet top-up via UPI",
+    "status": "completed",
+    "paymentMethod": "UPI",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe130"
+    },
+    "user": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "type": "payment",
+    "amount": -500,
+    "balanceAfter": 2500,
+    "description": "AC Servicing payment",
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe0fd"
+    },
+    "status": "completed",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.632Z"
+    },
+    "__v": 0
+  }
+]

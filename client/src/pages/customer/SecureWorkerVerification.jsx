@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   HiOutlineShieldCheck,
@@ -15,11 +15,12 @@ import {
   HiOutlineUserCircle,
 } from 'react-icons/hi2';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://theorize-energize-matted.ngrok-free.dev/api';
 
 const SecureWorkerVerification = () => {
   const [searchParams] = useSearchParams();
-  const workerId = searchParams.get('workerId') || 'SC-W-1001';
+  const params = useParams();
+  const workerId = params.workerIdCode || searchParams.get('code') || searchParams.get('workerId') || 'SC-W-1001';
   const bookingId = searchParams.get('bookingId');
   const navigate = useNavigate();
 

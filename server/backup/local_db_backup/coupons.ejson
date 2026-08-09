@@ -1,0 +1,134 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe113"
+    },
+    "code": "WELCOME50",
+    "description": "New user welcome discount",
+    "discountType": "percentage",
+    "discountValue": 50,
+    "minOrderAmount": 0,
+    "maxDiscount": 200,
+    "usageLimit": 500,
+    "usedCount": 0,
+    "validFrom": {
+      "$date": "2026-01-01T00:00:00Z"
+    },
+    "validUntil": {
+      "$date": "2026-12-31T00:00:00Z"
+    },
+    "applicableCategories": [],
+    "applicablePlans": [],
+    "isActive": true,
+    "createdBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe115"
+    },
+    "code": "FLAT100",
+    "description": "₹100 off on any service",
+    "discountType": "flat",
+    "discountValue": 100,
+    "minOrderAmount": 300,
+    "usageLimit": 200,
+    "usedCount": 0,
+    "validFrom": {
+      "$date": "2026-05-01T00:00:00Z"
+    },
+    "validUntil": {
+      "$date": "2026-05-31T00:00:00Z"
+    },
+    "applicableCategories": [],
+    "applicablePlans": [],
+    "isActive": true,
+    "createdBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe114"
+    },
+    "code": "CLEAN20",
+    "description": "20% off on Cleaning services",
+    "discountType": "percentage",
+    "discountValue": 20,
+    "minOrderAmount": 0,
+    "maxDiscount": 500,
+    "usageLimit": 100,
+    "usedCount": 0,
+    "validFrom": {
+      "$date": "2026-05-01T00:00:00Z"
+    },
+    "validUntil": {
+      "$date": "2026-06-30T00:00:00Z"
+    },
+    "applicableCategories": [
+      "Cleaning & Hygiene"
+    ],
+    "applicablePlans": [],
+    "isActive": true,
+    "createdBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe116"
+    },
+    "code": "GOLD25",
+    "description": "25% off for Gold members",
+    "discountType": "percentage",
+    "discountValue": 25,
+    "minOrderAmount": 0,
+    "maxDiscount": 1000,
+    "usageLimit": 50,
+    "usedCount": 0,
+    "validFrom": {
+      "$date": "2026-05-01T00:00:00Z"
+    },
+    "validUntil": {
+      "$date": "2026-08-31T00:00:00Z"
+    },
+    "applicableCategories": [],
+    "applicablePlans": [
+      "gold",
+      "platinum"
+    ],
+    "isActive": true,
+    "createdBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.601Z"
+    },
+    "__v": 0
+  }
+]

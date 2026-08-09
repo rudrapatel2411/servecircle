@@ -1,0 +1,68 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689c09ec34fd5c975d69"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "__v": 0,
+    "averageBudget": 0,
+    "bookingFrequency": {
+      "monthly": 0,
+      "weekly": 0
+    },
+    "cancellationPattern": {
+      "avgCancelLeadTimeMs": 0,
+      "rate": 0,
+      "total": 0
+    },
+    "emergencyUsage": {
+      "count": 0,
+      "rate": 0
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:58.309Z"
+    },
+    "maxBudget": 0,
+    "minBudget": 0,
+    "preferredCategories": [
+      {
+        "category": "Home Repairs",
+        "count": 2,
+        "lastUsed": {
+          "$date": "2026-07-31T09:19:58.319Z"
+        },
+        "_id": {
+          "$oid": "6a6c689ced35f87422c16503"
+        }
+      }
+    ],
+    "preferredDays": {
+      "friday": 0,
+      "monday": 0,
+      "saturday": 0,
+      "sunday": 0,
+      "thursday": 2,
+      "tuesday": 0,
+      "wednesday": 0
+    },
+    "preferredTime": {
+      "afternoon": 0,
+      "evening": 2,
+      "morning": 0,
+      "night": 0
+    },
+    "preferredWorkers": [],
+    "repeatBookings": {
+      "sameServiceCount": 0,
+      "sameWorkerCount": 0
+    },
+    "reviewPattern": {
+      "avgRatingGiven": 0,
+      "reviewRate": 0,
+      "tendencyToRate": "never",
+      "totalReviews": 0
+    }
+  }
+]

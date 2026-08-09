@@ -19,6 +19,7 @@ import {
   HiOutlineLockOpen,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
+import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
@@ -35,6 +36,7 @@ const WorkerDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState('');
+  const [showIdCardModal, setShowIdCardModal] = useState(false);
 
   const loadJobs = async () => {
     if (!token) return;
@@ -137,7 +139,12 @@ const WorkerDashboard = () => {
           </h1>
           <p className="page-subtitle">You have {pendingJobs.length} new job requests waiting for you.</p>
         </div>
-        <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setShowIdCardModal(true)}>
+            🪪 View ID Card
+          </button>
+          <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
+        </div>
       </div>
 
       {/* ===== TIER STATUS CARD ===== */}
@@ -338,6 +345,12 @@ const WorkerDashboard = () => {
 
 
 
+      {showIdCardModal && (
+        <WorkerIDCardModal
+          worker={user}
+          onClose={() => setShowIdCardModal(false)}
+        />
+      )}
     </div>
   );
 };

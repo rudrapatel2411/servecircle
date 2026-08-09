@@ -1,0 +1,71 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe13d"
+    },
+    "name": "PM Kaushal Vikas Yojana",
+    "type": "government",
+    "contactPerson": "District Officer",
+    "email": "pmkvy@gov.in",
+    "phone": "1800-123-4567",
+    "description": "Skill development training for underprivileged youth.",
+    "partnershipType": "training",
+    "status": "active",
+    "startDate": {
+      "$date": "2025-01-01T00:00:00Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe13f"
+    },
+    "name": "TechPark Offices",
+    "type": "corporate",
+    "contactPerson": "Ankit Mehta",
+    "email": "admin@techpark.co",
+    "phone": "9876598765",
+    "description": "Corporate office maintenance contract.",
+    "partnershipType": "bulk_client",
+    "status": "active",
+    "startDate": {
+      "$date": "2026-01-15T00:00:00Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe13e"
+    },
+    "name": "Seva Foundation",
+    "type": "ngo",
+    "contactPerson": "Rohit Sharma",
+    "email": "info@sevafoundation.org",
+    "phone": "9876512345",
+    "description": "NGO supporting women empowerment through home-based services.",
+    "partnershipType": "social_impact",
+    "status": "active",
+    "startDate": {
+      "$date": "2025-06-01T00:00:00Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.644Z"
+    },
+    "__v": 0
+  }
+]

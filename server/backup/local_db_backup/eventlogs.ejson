@@ -1,0 +1,3202 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df1be"
+    },
+    "eventId": "1785488687101-54b171cc4f90",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "currentState": "pending",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "currentState": "pending"
+    },
+    "requestId": "1fffeaf5-3dd0-422d-8a05-13cd69a3b39b",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.102Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df1f9"
+    },
+    "eventId": "1785488687139-94a8c61f4e6e",
+    "eventType": "BOOKING_ASSIGNED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "pending",
+    "currentState": "assigned",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "pending"
+    },
+    "requestId": "1fffeaf5-3dd0-422d-8a05-13cd69a3b39b",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.139Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df214"
+    },
+    "eventId": "1785488687273-382beaf89153",
+    "eventType": "BOOKING_ACCEPTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "assigned",
+    "currentState": "accepted",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "assigned"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.274Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df234"
+    },
+    "eventId": "1785488687313-5cd77a7209a0",
+    "eventType": "BOOKING_EN_ROUTE",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "accepted",
+    "currentState": "en-route",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "accepted"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.313Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df257"
+    },
+    "eventId": "1785488687356-577e89603612",
+    "eventType": "BOOKING_ARRIVED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "en-route",
+    "currentState": "arrived",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "en-route"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.356Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df28d"
+    },
+    "eventId": "1785488687709-b495561ab79f",
+    "eventType": "BOOKING_STARTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "arrived",
+    "currentState": "started",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "arrived"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.709Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6530bd7ef589ff6df2bf"
+    },
+    "eventId": "1785488688043-9b62b0519c51",
+    "eventType": "BOOKING_COMPLETED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "started",
+    "currentState": "completed",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "started"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:48.043Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6530bd7ef589ff6df2f4"
+    },
+    "eventId": "1785488688085-9baa5de466c3",
+    "eventType": "BOOKING_PAID",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "completed",
+    "currentState": "paid",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "completed",
+      "metadata": {
+        "paymentMethod": "wallet",
+        "amount": 500
+      }
+    },
+    "requestId": "a01f8036-922f-4f74-8f28-c4e4e3de26da",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:48.085Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6530bd7ef589ff6df315"
+    },
+    "eventId": "1785488688123-615de1ef8fa4",
+    "eventType": "BOOKING_CLOSED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "bookingId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "paid",
+    "currentState": "closed",
+    "metadata": {
+      "bookingId": "SC-2801",
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "amount": 500,
+      "previousState": "paid"
+    },
+    "requestId": "45f82e9c-49f1-44b3-8805-db16defaa43f",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:04:48.123Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c164e7"
+    },
+    "eventId": "1785489564222-73f6f0a0f907",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "currentState": "pending",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "currentState": "pending"
+    },
+    "requestId": "47360709-21e3-461d-baf4-c47aa2d299d8",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.222Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c1652e"
+    },
+    "eventId": "1785489564267-81390da0691c",
+    "eventType": "BOOKING_ASSIGNED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "pending",
+    "currentState": "assigned",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "pending"
+    },
+    "requestId": "47360709-21e3-461d-baf4-c47aa2d299d8",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.267Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c16549"
+    },
+    "eventId": "1785489564448-8231fe395f5b",
+    "eventType": "BOOKING_ACCEPTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "assigned",
+    "currentState": "accepted",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "assigned"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.449Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c16569"
+    },
+    "eventId": "1785489564514-c32717710005",
+    "eventType": "BOOKING_EN_ROUTE",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "accepted",
+    "currentState": "en-route",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "accepted"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.514Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c1658c"
+    },
+    "eventId": "1785489564554-df66a613e8f8",
+    "eventType": "BOOKING_ARRIVED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "en-route",
+    "currentState": "arrived",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "en-route"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.554Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c165c2"
+    },
+    "eventId": "1785489564909-f7496157f3f3",
+    "eventType": "BOOKING_STARTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "arrived",
+    "currentState": "started",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "arrived"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.909Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c165f4"
+    },
+    "eventId": "1785489565279-4063449dd005",
+    "eventType": "BOOKING_COMPLETED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "started",
+    "currentState": "completed",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "started"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.279Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c16636"
+    },
+    "eventId": "1785489565321-d53689d5c38a",
+    "eventType": "BOOKING_PAID",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "completed",
+    "currentState": "paid",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "completed",
+      "metadata": {
+        "paymentMethod": "wallet",
+        "amount": 750
+      }
+    },
+    "requestId": "73648b88-f5fb-4c87-8aee-bba8899d4b67",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.321Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c16657"
+    },
+    "eventId": "1785489565358-981d36776c1c",
+    "eventType": "BOOKING_CLOSED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "bookingId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "previousState": "paid",
+    "currentState": "closed",
+    "metadata": {
+      "bookingId": "SC-2802",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "paid"
+    },
+    "requestId": "e2bbec0f-9718-41aa-bc30-a57fe8761176",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.358Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c1667c"
+    },
+    "eventId": "1785489598309-67772aec89ae",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "currentState": "pending",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "currentState": "pending"
+    },
+    "requestId": "d28b88c0-3914-4d18-ae59-fd471a798172",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.309Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c166c6"
+    },
+    "eventId": "1785489598334-b25b02ffcabe",
+    "eventType": "BOOKING_ASSIGNED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "pending",
+    "currentState": "assigned",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "pending"
+    },
+    "requestId": "d28b88c0-3914-4d18-ae59-fd471a798172",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.334Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c166e2"
+    },
+    "eventId": "1785489598459-3930af195692",
+    "eventType": "BOOKING_ACCEPTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "assigned",
+    "currentState": "accepted",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "assigned"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.460Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c16704"
+    },
+    "eventId": "1785489598500-58cbdeae349e",
+    "eventType": "BOOKING_EN_ROUTE",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "accepted",
+    "currentState": "en-route",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "accepted"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.500Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c16727"
+    },
+    "eventId": "1785489598541-d0cf77d2aa7b",
+    "eventType": "BOOKING_ARRIVED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "en-route",
+    "currentState": "arrived",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "en-route"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.541Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c1675e"
+    },
+    "eventId": "1785489598886-4f73247e2a14",
+    "eventType": "BOOKING_STARTED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "arrived",
+    "currentState": "started",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "arrived"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.887Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c16790"
+    },
+    "eventId": "1785489599232-deccadbf35d2",
+    "eventType": "BOOKING_COMPLETED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "actorRole": "worker",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "started",
+    "currentState": "completed",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "started"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.232Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c167d3"
+    },
+    "eventId": "1785489599273-e1b06eee347d",
+    "eventType": "BOOKING_PAID",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "completed",
+    "currentState": "paid",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "completed",
+      "metadata": {
+        "paymentMethod": "wallet",
+        "amount": 750
+      }
+    },
+    "requestId": "54562e8a-b10e-4b98-bfca-c2ca5b7fb567",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.274Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c167f4"
+    },
+    "eventId": "1785489599311-37f73ff575a5",
+    "eventType": "BOOKING_CLOSED",
+    "entityType": "Booking",
+    "entityId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "bookingId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "previousState": "paid",
+    "currentState": "closed",
+    "metadata": {
+      "bookingId": "SC-2803",
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "amount": 750,
+      "previousState": "paid"
+    },
+    "requestId": "ea9b353c-1997-497d-96a5-92181f12243d",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.311Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c16801"
+    },
+    "eventId": "1785489599396-bee3543445e9",
+    "eventType": "COMPLAINT_CREATED",
+    "entityType": "User",
+    "entityId": {
+      "$oid": "6a6c68bfed35f87422c167ff"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "actorRole": "customer",
+    "metadata": {
+      "complaintId": "CMP-1003",
+      "againstUser": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "requestId": "e4e9b331-ff7f-4083-8732-b353d9853b1c",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.396Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c16811"
+    },
+    "eventId": "1785489599434-d88126558187",
+    "eventType": "COMPLAINT_UPDATED",
+    "entityType": "User",
+    "entityId": {
+      "$oid": "6a6c68bfed35f87422c167ff"
+    },
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "status": "resolved"
+    },
+    "requestId": "a71582b5-f4ab-4d9e-8ded-7bdfab681f35",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.434Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6b634633922381dc419b"
+    },
+    "eventId": "1785490275511-e742e6db35c7",
+    "eventType": "AI_FEATURE_EXTRACTED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "serviceName": "Plumbing"
+    },
+    "requestId": "fe516d4c-ef0b-42ee-aa6d-b3f4bb3ba36d",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:31:15.513Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6b634633922381dc419f"
+    },
+    "eventId": "1785490275609-889d95080d40",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "modelName": "FairPrice",
+      "version": "v1.0.0-architecture",
+      "confidenceLevel": "Medium",
+      "confidenceScore": 0.65,
+      "latencyMs": 1
+    },
+    "requestId": "aa6c5dbb-2847-479a-b2e2-5a24d07bc997",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:31:15.609Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6b634633922381dc41a2"
+    },
+    "eventId": "1785490275666-f9478243232b",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "modelName": "FairPrice",
+      "version": "v1.0.0-architecture",
+      "confidenceLevel": "Medium",
+      "confidenceScore": 0.65,
+      "latencyMs": 0
+    },
+    "requestId": "3eace04e-df82-4944-9bfd-5c78f080c2cd",
+    "ipAddress": "::1",
+    "userAgent": "curl/8.21.0",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-07-31T09:31:15.666Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a76124e6ecd1584692f868d"
+    },
+    "eventId": "1786122830964-228811f47bb8",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 257,
+      "problemCategory": "Plumbing",
+      "problemType": "Water pipe is leaking heavily under the kitchen sink.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:50.968Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a76124f6ecd1584692f868f"
+    },
+    "eventId": "1786122831233-ebf92633fea5",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 265,
+      "problemCategory": "Electrical",
+      "problemType": "The wall switch is broken and sparking when turned on.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:51.233Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a76124f6ecd1584692f8691"
+    },
+    "eventId": "1786122831573-6cb4e36fcde0",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 340,
+      "problemCategory": "Appliance Repair",
+      "problemType": "Split AC is not cooling and making loud noises.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:51.573Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a76124f6ecd1584692f8693"
+    },
+    "eventId": "1786122831955-ebcdff28c648",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 382,
+      "problemCategory": "Appliance Repair",
+      "problemType": "Front load washing machine is leaking water during rinse.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:51.955Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612506ecd1584692f8695"
+    },
+    "eventId": "1786122832236-4e2f1993ab9e",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 281,
+      "problemCategory": "Security & Locks",
+      "problemType": "Main door lock latch is jammed and key won't turn.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:52.236Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612506ecd1584692f8697"
+    },
+    "eventId": "1786122832449-d862a5983604",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 213,
+      "problemCategory": "Electrical",
+      "problemType": "Ceiling fan is spinning slowly and making humming sound.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:52.449Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612506ecd1584692f8699"
+    },
+    "eventId": "1786122832678-02290b9c9d87",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 229,
+      "problemCategory": "General Service",
+      "problemType": "Customer uploaded a selfie photo instead of problem image.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:52.678Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612506ecd1584692f869b"
+    },
+    "eventId": "1786122832903-2adb9df9a8e7",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 225,
+      "problemCategory": "General Service",
+      "problemType": "Customer uploaded a photo of their pet dog.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:52.903Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a0"
+    },
+    "eventId": "1786122833114-55593749adca",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "contextId": "uctx_1786122833113_sx4hbx",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.114Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f869e"
+    },
+    "eventId": "1786122833112-a710f44225aa",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.112Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f869d"
+    },
+    "eventId": "1786122833111-aa6fe9fbbc2e",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "latencyMs": 207,
+      "problemCategory": "General Service",
+      "problemType": "Photo shows a blank white wall with no visible issues.",
+      "confidence": 0.7
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.111Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f869f"
+    },
+    "eventId": "1786122833114-6d555f69a932",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "contextId": "uctx_1786122833113_sx4hbx",
+      "wordCount": 10,
+      "language": "en",
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.114Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a5"
+    },
+    "eventId": "1786122833340-8ba5fb134ae0",
+    "eventType": "AI_MULTIMODAL_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "problemCategory": "Home Repair",
+      "urgency": "medium",
+      "confidence": 0.75
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.340Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a7"
+    },
+    "eventId": "1786122833341-52eaf4d19cd2",
+    "eventType": "SERVICE_RESOLVED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "contextId": "uctx_1786122833113_sx4hbx",
+      "service": "Plumbing",
+      "category": "Home Repair",
+      "subCategory": "Plumbing",
+      "requiredWorkerSkill": "plumbing",
+      "resolved": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.341Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86aa"
+    },
+    "eventId": "1786122833342-cf1db101c647",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.342Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86ac"
+    },
+    "eventId": "1786122833343-a7d24fcb9392",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "contextId": "uctx_1786122833342_ejon4z",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.343Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86ab"
+    },
+    "eventId": "1786122833343-1062b34dd366",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "contextId": "uctx_1786122833342_ejon4z",
+      "wordCount": 13,
+      "language": "en",
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.343Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a6"
+    },
+    "eventId": "1786122833340-cb204e99aa98",
+    "eventType": "PROBLEM_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "contextId": "uctx_1786122833113_sx4hbx",
+      "problemCategory": "plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "problemCount": 2,
+      "missingInfoCount": 3
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.341Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a8"
+    },
+    "eventId": "1786122833341-7c74dffc5563",
+    "eventType": "URGENCY_CLASSIFIED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "contextId": "uctx_1786122833113_sx4hbx",
+      "urgencyLevel": "LOW",
+      "urgencyScore": 1,
+      "dispatchPriority": "FLEXIBLE",
+      "slaHours": 72
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.341Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86a9"
+    },
+    "eventId": "1786122833342-f4556ed9f618",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833112_svknhk",
+      "modelName": "MultimodalPipeline",
+      "version": "1.0.0",
+      "latencyMs": 230,
+      "urgencyLevel": "LOW",
+      "resolvedService": "Plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "fromCache": false
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.342Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86b6"
+    },
+    "eventId": "1786122833573-1583106ad3c7",
+    "eventType": "PROBLEM_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "contextId": "uctx_1786122833342_ejon4z",
+      "problemCategory": "electrical",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "problemCount": 3,
+      "missingInfoCount": 3
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.573Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86b5"
+    },
+    "eventId": "1786122833572-bb478a80f60b",
+    "eventType": "AI_MULTIMODAL_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "problemCategory": "Home Repair",
+      "urgency": "medium",
+      "confidence": 0.75
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.572Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86b8"
+    },
+    "eventId": "1786122833573-7f644e5d9cb5",
+    "eventType": "URGENCY_CLASSIFIED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "contextId": "uctx_1786122833342_ejon4z",
+      "urgencyLevel": "MEDIUM",
+      "urgencyScore": 2,
+      "dispatchPriority": "STANDARD",
+      "slaHours": 24
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.573Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86bb"
+    },
+    "eventId": "1786122833574-071bea243122",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "contextId": "uctx_1786122833574_af852e",
+      "wordCount": 7,
+      "language": "en",
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.574Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86ba"
+    },
+    "eventId": "1786122833573-05424d664dfe",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.574Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86b7"
+    },
+    "eventId": "1786122833573-da6538a13b23",
+    "eventType": "SERVICE_RESOLVED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "contextId": "uctx_1786122833342_ejon4z",
+      "service": "Electrical Work",
+      "category": "Home Repair",
+      "subCategory": "Electrical",
+      "requiredWorkerSkill": "electrician",
+      "resolved": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.573Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86bc"
+    },
+    "eventId": "1786122833574-bcf57a82ab21",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "contextId": "uctx_1786122833574_af852e",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.574Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86b9"
+    },
+    "eventId": "1786122833573-b08825089ebd",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833342_xq2gmi",
+      "modelName": "MultimodalPipeline",
+      "version": "1.0.0",
+      "latencyMs": 231,
+      "urgencyLevel": "MEDIUM",
+      "resolvedService": "Electrical Work",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "fromCache": false
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.573Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86c6"
+    },
+    "eventId": "1786122833928-fb67139a1d3a",
+    "eventType": "PROBLEM_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "contextId": "uctx_1786122833574_af852e",
+      "problemCategory": "plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "problemCount": 3,
+      "missingInfoCount": 3
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.928Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86c5"
+    },
+    "eventId": "1786122833928-418aaa681a2b",
+    "eventType": "AI_MULTIMODAL_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "problemCategory": "Home Repair",
+      "urgency": "medium",
+      "confidence": 0.75
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.928Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86c7"
+    },
+    "eventId": "1786122833928-b438d2077cf5",
+    "eventType": "SERVICE_RESOLVED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "contextId": "uctx_1786122833574_af852e",
+      "service": "Plumbing",
+      "category": "Home Repair",
+      "subCategory": "Plumbing",
+      "requiredWorkerSkill": "plumbing",
+      "resolved": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.928Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86c8"
+    },
+    "eventId": "1786122833928-43be9d76a96f",
+    "eventType": "URGENCY_CLASSIFIED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "contextId": "uctx_1786122833574_af852e",
+      "urgencyLevel": "EMERGENCY",
+      "urgencyScore": 5,
+      "dispatchPriority": "IMMEDIATE",
+      "slaHours": 2
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.928Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86cb"
+    },
+    "eventId": "1786122833929-b07d3bf2c3a3",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833929_aksv01",
+      "contextId": "uctx_1786122833929_xh2ko9",
+      "wordCount": 10,
+      "language": "en",
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.929Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86c9"
+    },
+    "eventId": "1786122833929-62785928418b",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833573_v65rrc",
+      "modelName": "MultimodalPipeline",
+      "version": "1.0.0",
+      "latencyMs": 356,
+      "urgencyLevel": "EMERGENCY",
+      "resolvedService": "Plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "fromCache": false
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.929Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86cc"
+    },
+    "eventId": "1786122833929-28b57a32c65a",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833929_aksv01",
+      "contextId": "uctx_1786122833929_xh2ko9",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.930Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7612516ecd1584692f86ca"
+    },
+    "eventId": "1786122833929-d100db7e0471",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a76124e6ecd1584692f8651"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786122833929_aksv01",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Phase4ATestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:13:53.929Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761394d53d7c7648510114"
+    },
+    "eventId": "1786123156840-d0d2cdc9c7d2",
+    "eventType": "AI_CACHE_HIT",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "02257945210439f8d7c67aba87bead64edbe3b57e1828feae90f55f40846b036",
+      "itemHits": 1
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:16.843Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761394d53d7c7648510115"
+    },
+    "eventId": "1786123156844-cfebab2405c6",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "non_existent_key"
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:16.844Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761394d53d7c7648510118"
+    },
+    "eventId": "1786123156900-67883b6abfe6",
+    "eventType": "AI_RETRY",
+    "entityType": "System",
+    "metadata": {
+      "context": "TestRetry",
+      "attempt": 1,
+      "maxRetries": 2,
+      "delayMs": 100
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:16.901Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761394d53d7c764851011d"
+    },
+    "eventId": "1786123156972-7c265906507a",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "2e14afd7a60227c265004ebc6ef802de7bdd14dfb1b4e9841018f2b5ebf93cca"
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:16.972Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510122"
+    },
+    "eventId": "1786123157205-0d761c82b7bb",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "contextId": "uctx_1786123157203_k6s7s8",
+      "wordCount": 7,
+      "language": "en",
+      "isValid": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.205Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510121"
+    },
+    "eventId": "1786123157203-e763f91ff1c8",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.203Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510120"
+    },
+    "eventId": "1786123157202-1ef0793fc380",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "analysisId": "anls_img_1786123156972_hduft",
+      "latencyMs": 228,
+      "problemCategory": "Plumbing",
+      "problemType": "Kitchen pipe leak under sink",
+      "confidence": 0.7
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.202Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510124"
+    },
+    "eventId": "1786123157205-f273e48a6998",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "4a3973803d39236c9a1103dca5d67127a3ee9f31190d0c2985c50e7a791ce3fd"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.205Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510123"
+    },
+    "eventId": "1786123157205-77f8634c2e7e",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "contextId": "uctx_1786123157203_k6s7s8",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.205Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c764851012b"
+    },
+    "eventId": "1786123157212-430c9066ea49",
+    "eventType": "AI_ANALYSIS_STORED",
+    "entityType": "System",
+    "metadata": {
+      "analysisId": "anls_img_1786123156972_hduft",
+      "feature": "vision_analysis",
+      "totalTokens": 268,
+      "estimatedCostUsd": 0.0000507
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.212Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c764851012d"
+    },
+    "eventId": "1786123157548-69cec16a7a22",
+    "eventType": "AI_MULTIMODAL_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "problemCategory": "Home Repair",
+      "urgency": "medium",
+      "confidence": 0.75
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.548Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c764851012f"
+    },
+    "eventId": "1786123157550-90612fe5525b",
+    "eventType": "SERVICE_RESOLVED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "contextId": "uctx_1786123157203_k6s7s8",
+      "service": "Plumbing",
+      "category": "Home Repair",
+      "subCategory": "Plumbing",
+      "requiredWorkerSkill": "plumbing",
+      "resolved": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.550Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c764851012e"
+    },
+    "eventId": "1786123157549-46dd0b2f1ed6",
+    "eventType": "PROBLEM_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "contextId": "uctx_1786123157203_k6s7s8",
+      "problemCategory": "plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "problemCount": 2,
+      "missingInfoCount": 3
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.549Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510132"
+    },
+    "eventId": "1786123157570-85a437d9f1c4",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "analysisId": "anls_mm_1786123157203_g61v2",
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "modelName": "MultimodalPipeline",
+      "version": "1.0.0",
+      "latencyMs": 348,
+      "urgencyLevel": "LOW",
+      "resolvedService": "Plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "fromCache": false
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.570Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a761395d53d7c7648510130"
+    },
+    "eventId": "1786123157550-e127bae37860",
+    "eventType": "URGENCY_CLASSIFIED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a761394d53d7c7648510113"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123157203_vzn05z",
+      "contextId": "uctx_1786123157203_k6s7s8",
+      "urgencyLevel": "LOW",
+      "urgencyScore": 1,
+      "dispatchPriority": "FLEXIBLE",
+      "slaHours": 72
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:17.551Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7732"
+    },
+    "eventId": "1786123174216-26cb158b9676",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "non_existent_key"
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.217Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7731"
+    },
+    "eventId": "1786123174213-8d403b8feed1",
+    "eventType": "AI_CACHE_HIT",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "02257945210439f8d7c67aba87bead64edbe3b57e1828feae90f55f40846b036",
+      "itemHits": 1
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.216Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7735"
+    },
+    "eventId": "1786123174267-5e88837ac80e",
+    "eventType": "AI_RETRY",
+    "entityType": "System",
+    "metadata": {
+      "context": "TestRetry",
+      "attempt": 1,
+      "maxRetries": 2,
+      "delayMs": 100
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.268Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f773a"
+    },
+    "eventId": "1786123174290-c0552b9f2a7a",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "2e14afd7a60227c265004ebc6ef802de7bdd14dfb1b4e9841018f2b5ebf93cca"
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.290Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7741"
+    },
+    "eventId": "1786123174523-8b6294c353c0",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "4a3973803d39236c9a1103dca5d67127a3ee9f31190d0c2985c50e7a791ce3fd"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.523Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f773d"
+    },
+    "eventId": "1786123174519-06add40e755d",
+    "eventType": "AI_IMAGE_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "analysisId": "anls_img_1786123174289_81h52",
+      "latencyMs": 228,
+      "problemCategory": "Plumbing",
+      "problemType": "Kitchen pipe leak under sink",
+      "confidence": 0.7
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.519Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7740"
+    },
+    "eventId": "1786123174522-b18c7b52a464",
+    "eventType": "IMAGE_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "contextId": "uctx_1786123174521_2hekwc",
+      "mimeType": "image/jpeg",
+      "hasGps": false,
+      "isValid": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.522Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f773f"
+    },
+    "eventId": "1786123174522-a4e88ffa699f",
+    "eventType": "TEXT_CONTEXT_CREATED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "contextId": "uctx_1786123174521_2hekwc",
+      "wordCount": 7,
+      "language": "en",
+      "isValid": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.522Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f773e"
+    },
+    "eventId": "1786123174520-db5e0293d919",
+    "eventType": "MULTIMODAL_REQUEST",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "modalities": {
+        "hasText": true,
+        "hasImage": true,
+        "hasVoice": false
+      },
+      "bookingId": null,
+      "customerId": null
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.520Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7748"
+    },
+    "eventId": "1786123174528-ffa8655af402",
+    "eventType": "AI_ANALYSIS_STORED",
+    "entityType": "System",
+    "metadata": {
+      "analysisId": "anls_img_1786123174289_81h52",
+      "feature": "vision_analysis",
+      "totalTokens": 268,
+      "estimatedCostUsd": 0.0000507
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.528Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774a"
+    },
+    "eventId": "1786123174766-c19ddd540277",
+    "eventType": "AI_MULTIMODAL_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "problemCategory": "Home Repair",
+      "urgency": "medium",
+      "confidence": 0.75
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.766Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774d"
+    },
+    "eventId": "1786123174767-0f2b7b4ac41e",
+    "eventType": "URGENCY_CLASSIFIED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "contextId": "uctx_1786123174521_2hekwc",
+      "urgencyLevel": "LOW",
+      "urgencyScore": 1,
+      "dispatchPriority": "FLEXIBLE",
+      "slaHours": 72
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.768Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774c"
+    },
+    "eventId": "1786123174767-7ef65d98ed46",
+    "eventType": "SERVICE_RESOLVED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "contextId": "uctx_1786123174521_2hekwc",
+      "service": "Plumbing",
+      "category": "Home Repair",
+      "subCategory": "Plumbing",
+      "requiredWorkerSkill": "plumbing",
+      "resolved": true
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.767Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774b"
+    },
+    "eventId": "1786123174767-168ddc6bb4b9",
+    "eventType": "PROBLEM_ANALYZED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "pipelineId": "mm_1786123174520_elr1js",
+      "contextId": "uctx_1786123174521_2hekwc",
+      "problemCategory": "plumbing",
+      "confidence": {
+        "score": 0.75,
+        "level": "MEDIUM"
+      },
+      "problemCount": 2,
+      "missingInfoCount": 3
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.767Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f774f"
+    },
+    "eventId": "1786123174769-29887fc514b8",
+    "eventType": "AI_INFERENCE_COMPLETED",
+    "entityType": "System",
+    "actorId": {
+      "$oid": "6a7613a6192f6e688c2f7730"
+    },
+    "actorRole": "admin",
+    "metadata": {
+      "analysisId": "anls_mm_1786123174520_ed38q",
+      "pipelineId": "mm_1786123174520_elr1js",
+      "modelName": "MultimodalPipeline",
+      "version": "1.0.0",
+      "latencyMs": 248,
+      "urgencyLevel": "LOW",
+      "resolvedService": "Plumbing",
+      "confidence": 0.75,
+      "fromCache": false
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.769Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7613a6192f6e688c2f7757"
+    },
+    "eventId": "1786123174773-8103d463340c",
+    "eventType": "AI_ANALYSIS_STORED",
+    "entityType": "System",
+    "metadata": {
+      "analysisId": "anls_mm_1786123174520_ed38q",
+      "feature": "multimodal_analysis",
+      "totalTokens": 2423,
+      "estimatedCostUsd": 0.00067987
+    },
+    "requestId": "req_test_123",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "EnterpriseTestRunner",
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-07T17:19:34.773Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a77584f7d6e2ec21580a212"
+    },
+    "eventId": "1786206287029-c4afd1845090",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "c05327a51ba2d9fd6944bfd29b5d0e29b33ea3464ad3c8f0cffcda4e8c558c48"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:24:47.029Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7758ab7d6e2ec21580a21d"
+    },
+    "eventId": "1786206379949-c4425804deef",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "1fcf77a868a00288432776f603c7e8abfb5ebde8751549e7dc1e13e83661b774"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:26:19.949Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7758c27d6e2ec21580a227"
+    },
+    "eventId": "1786206402028-82ce576c45c5",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "c0e0170314853dd93491a827f74261615a306946133d0b4c291ac32389730098"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:26:42.028Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7759667d6e2ec21580a231"
+    },
+    "eventId": "1786206566683-1d93a4c8d651",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "df1c0e299a99722958b0b197658f5e6ccdb8a7cda337699375b2d8fd6b67f90f"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:29:26.683Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775b78f27454b213ca6406"
+    },
+    "eventId": "1786207096022-af6f84f49912",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "33320e961c2b46eb36cb0784e8452225c64b8e39d262913081637cf57cc47e72"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:38:16.022Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775b8af27454b213ca6410"
+    },
+    "eventId": "1786207114307-a605fcd1847a",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "4b40309afdfeee2fd38997ebfde80ac9d34c0d521f3356d7d0babdf6626a75f4"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:38:34.307Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775b98f27454b213ca641b"
+    },
+    "eventId": "1786207128738-d747aa758877",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "91e50e261816932197b8677c5b8fbda45b0c94988a0aaab02bfc85861f8929b0"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:38:48.738Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775cdcdb35af78177fbb60"
+    },
+    "eventId": "1786207452651-9c29db953e72",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "ed20369bee69ad9fe1045a439efb5dd6c16638615689dc060ecf7c40af8faa5f"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:44:12.652Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775d6d3b24b02d7f09e026"
+    },
+    "eventId": "1786207597631-7b2c1d960acb",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "66db0f0f0e749bad1415f1f8b655180a243bd194cf3f12123c3835b078bfa9b3"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:46:37.631Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775db03b24b02d7f09e035"
+    },
+    "eventId": "1786207664204-6e326dc7cfc3",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "f4904327e74f49c47cdf5a42396e63ed18ad963e60ea1f0bd6eac47b718d37a7"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-08T16:47:44.204Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775e6e3b24b02d7f09e03e"
+    },
+    "eventId": "1786207854633-cbff1cb0eddb",
+    "eventType": "WORKER_VERIFICATION_FAILED",
+    "entityType": "User",
+    "metadata": {
+      "identifier": "bxgchvjk",
+      "bookingId": null,
+      "reason": "Invalid ID/QR"
+    },
+    "requestId": "ba4ec239-0c69-4867-8ebd-9bb52919765b",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "success": false,
+    "timestamp": {
+      "$date": "2026-08-08T16:50:54.634Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a775e714d4ba7489351d183"
+    },
+    "eventId": "1786207857856-710ee97e2e30",
+    "eventType": "WORKER_VERIFICATION_FAILED",
+    "entityType": "User",
+    "metadata": {
+      "identifier": "SC-W-1001",
+      "bookingId": null,
+      "reason": "Invalid ID/QR"
+    },
+    "requestId": "33cf5b23-a621-40a0-a364-9e6335d0de95",
+    "ipAddress": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "success": false,
+    "timestamp": {
+      "$date": "2026-08-08T16:50:57.861Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7807de1bd8661c5f23015e"
+    },
+    "eventId": "1786251230092-851c04670d89",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "1a7bb86c486c5519f6a736d863413910e8fcbaef6bcce93c532a50a8319adf7e"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-09T04:53:50.092Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a7807f51bd8661c5f230168"
+    },
+    "eventId": "1786251253381-2fa2deaf175e",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "7bfbeef78dd89135a4a45dfb07c36256dacd68ccd5362a536905c80fa52f9ab4"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-09T04:54:13.382Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a780d2228de3d7103583bbb"
+    },
+    "eventId": "1786252578471-f53a434c3c52",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "5c668815b65be26c1a32dc4c88c90d46a1408166a27750b3aee383ce133e82d3"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-09T05:16:18.472Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a780dd428de3d7103583bc6"
+    },
+    "eventId": "1786252756876-1e7e95c27929",
+    "eventType": "AI_CACHE_MISS",
+    "entityType": "System",
+    "metadata": {
+      "cacheKey": "6885d4f621cb1fa98fae532f065d93b04cc3b3b81726452014a568c08de5fa20"
+    },
+    "success": true,
+    "timestamp": {
+      "$date": "2026-08-09T05:19:16.876Z"
+    },
+    "__v": 0
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe129"
+    },
+    "invoiceId": "INV-5001",
+    "contract": {
+      "$oid": "6a5f4c92437c4810f45fe11f"
+    },
+    "partner": {
+      "$oid": "6a5f4c92437c4810f45fe0f9"
+    },
+    "items": [
+      {
+        "description": "Monthly Cleaning - May 2026",
+        "quantity": 1,
+        "unitPrice": 25000,
+        "total": 25000,
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe12a"
+        }
+      }
+    ],
+    "subtotal": 25000,
+    "tax": 4500,
+    "discount": 0,
+    "totalAmount": 29500,
+    "dueDate": {
+      "$date": "2026-05-31T00:00:00Z"
+    },
+    "status": "sent",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.624Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.624Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe12b"
+    },
+    "invoiceId": "INV-5002",
+    "contract": {
+      "$oid": "6a5f4c92437c4810f45fe11f"
+    },
+    "partner": {
+      "$oid": "6a5f4c92437c4810f45fe0f9"
+    },
+    "items": [
+      {
+        "description": "Monthly Cleaning - April 2026",
+        "quantity": 1,
+        "unitPrice": 25000,
+        "total": 25000,
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe12c"
+        }
+      }
+    ],
+    "subtotal": 25000,
+    "tax": 4500,
+    "discount": 0,
+    "totalAmount": 29500,
+    "dueDate": {
+      "$date": "2026-04-30T00:00:00Z"
+    },
+    "paidDate": {
+      "$date": "2026-04-28T00:00:00Z"
+    },
+    "status": "paid",
+    "paymentMethod": "bank_transfer",
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.624Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.624Z"
+    },
+    "__v": 0
+  }
+]
