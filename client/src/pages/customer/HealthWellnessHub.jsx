@@ -190,7 +190,7 @@ const HealthWellnessHub = () => {
                     <div style={{ display: 'flex', gap: '6px' }}>
                       {['physician', 'mental', 'derma', 'dietitian', 'pediatrician', 'cardiologist'].includes(selectedSpecialist) && (
                         <Link
-                          to={`/customer/book?service=${encodeURIComponent('Video Consultation')}&price=299`}
+                          to={`/customer/book?service=${encodeURIComponent('Video Consultation')}&serviceId=video-consult&category=health-wellness&price=299`}
                           className="btn btn-outline btn-sm"
                           style={{ padding: '6px 10px', fontSize: '0.75rem', borderColor: '#3b82f6', color: '#3b82f6' }}
                         >
@@ -198,7 +198,7 @@ const HealthWellnessHub = () => {
                         </Link>
                       )}
                       <Link
-                        to={`/customer/book?service=${encodeURIComponent(selectedSpecialist === 'physician' ? 'Doctor Home Visit' : selectedSpecialist + ' Session')}&price=${sp.price}`}
+                        to={`/customer/book?service=${encodeURIComponent(selectedSpecialist === 'physician' ? 'Doctor Home Visit' : selectedSpecialist + ' Session')}&serviceId=${selectedSpecialist === 'physician' ? 'doctor-visit' : 'health-session'}&category=health-wellness&price=${sp.price}`}
                         className="btn btn-primary btn-sm"
                         style={{ padding: '6px 10px', fontSize: '0.75rem', background: '#3b82f6', borderColor: '#3b82f6' }}
                       >
@@ -371,7 +371,7 @@ const HealthWellnessHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent(labPackagesData.find(p => p.id === labPackage)?.name + ' at Home')}&price=${labPackagesData.find(p => p.id === labPackage)?.price}`}
+              to={`/customer/book?service=${encodeURIComponent(labPackagesData.find(p => p.id === labPackage)?.name + ' at Home')}&serviceId=lab-diagnostics&category=health-wellness&price=${labPackagesData.find(p => p.id === labPackage)?.price}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#3b82f6', borderColor: '#3b82f6' }}
             >

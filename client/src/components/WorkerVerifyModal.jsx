@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QrScanner from 'qr-scanner';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineQrCode,
@@ -12,7 +13,7 @@ import {
   HiOutlineArrowRight,
 } from 'react-icons/hi2';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const WorkerVerifyModal = ({ isOpen, onClose, bookingId = null, onVerificationSuccess = null }) => {
   const [activeTab, setActiveTab] = useState('camera'); // 'camera' | 'manual'
@@ -20,6 +21,7 @@ const WorkerVerifyModal = ({ isOpen, onClose, bookingId = null, onVerificationSu
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [verificationResult, setVerificationResult] = useState(null);
+  const [scanLoading, setScanLoading] = useState(false);
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -65,6 +67,38 @@ const WorkerVerifyModal = ({ isOpen, onClose, bookingId = null, onVerificationSu
   const handleSimulatedScan = (sampleId) => {
     setWorkerIdInput(sampleId);
     handleVerify(sampleId);
+  };
+
+  const extractWorkerIdentifier = (rawValue) => {
+    const value = rawValue.trim();
+    try {
+      const url = new URL(value);
+      const pathMatch = url.pathname.match(/\/verify\/worker\/([^/]+)/i);
+      return decodeURIComponent(pathMatch?.[1] || url.searchParams.get('workerId') || url.searchParams.get('code') || value);
+    } catch {
+      return value;
+    }
+  };
+
+  const handleQrFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setScanLoading(true);
+    setError('');
+    setVerificationResult(null);
+    try {
+      const scanResult = await QrScanner.scanImage(file, { returnDetailedScanResult: true });
+      const rawValue = typeof scanResult === 'string' ? scanResult : scanResult.data;
+      const identifier = extractWorkerIdentifier(rawValue);
+      setWorkerIdInput(identifier);
+      await handleVerify(identifier);
+    } catch {
+      setError('QR code could not be read from this image. Use a clear ID-card photo or enter the Worker ID manually.');
+    } finally {
+      setScanLoading(false);
+    }
   };
 
   const handleProceedToVerificationPage = () => {
@@ -227,10 +261,34 @@ const WorkerVerifyModal = ({ isOpen, onClose, bookingId = null, onVerificationSu
                   </div>
 
                   <HiOutlineQrCode style={{ fontSize: '3rem', color: '#60a5fa', marginBottom: '8px', zIndex: 1 }} />
-                  <span style={{ color: 'white', fontSize: '0.82rem', fontWeight: 600, zIndex: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-                    Align QR Code inside frame
+                  <span style={{ color: 'white', fontSize: '0.82rem', fontWeight: 600, zIndex: 1, textShadow: '0 2px 4px rgba(0,0,0,0.8)', textAlign: 'center', padding: '0 24px' }}>
+                    Upload a clear ID-card photo to scan its QR code
                   </span>
                 </div>
+
+                <label
+                  htmlFor="worker-id-card-image"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                    marginTop: '14px', padding: '12px 16px', borderRadius: '10px', cursor: scanLoading ? 'wait' : 'pointer',
+                    background: 'linear-gradient(135deg, #1e3a5f, #2563eb)', color: 'white', fontWeight: 800,
+                    opacity: scanLoading ? 0.7 : 1,
+                  }}
+                >
+                  <HiOutlineCamera /> {scanLoading ? 'Scanning ID card...' : 'Upload ID Card Photo / Scan QR'}
+                </label>
+                <input
+                  id="worker-id-card-image"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleQrFile}
+                  disabled={scanLoading || loading}
+                  style={{ display: 'none' }}
+                />
+                <p style={{ fontSize: '0.74rem', color: '#64748b', textAlign: 'center', margin: '8px 0 0' }}>
+                  Works with a saved image or camera capture. The QR must be visible and in focus.
+                </p>
 
                 <div style={{ marginTop: '16px', textAlign: 'center' }}>
                   <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>

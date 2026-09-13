@@ -357,7 +357,7 @@ const EventsHub = () => {
 
     const notes = `Date: ${eventDate || 'Not specified'}. Venue: ${venueType}. Guests: ${guestsCount}. Inclusions: ${inclusions.join(', ')}. Details: ${eventDesc}`;
     
-    navigate(`/customer/book?service=${encodeURIComponent(eventName)}&price=${totalEstimate}&guests=${guestsCount}&notes=${encodeURIComponent(notes)}`);
+    navigate(`/customer/book?service=${encodeURIComponent(eventName)}&serviceId=birthday-decor&category=events&price=${totalEstimate}&guests=${guestsCount}&notes=${encodeURIComponent(notes)}`);
   };
 
   // Live computed dynamic vendor details for active key

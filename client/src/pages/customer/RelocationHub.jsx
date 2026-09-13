@@ -256,7 +256,7 @@ const RelocationHub = () => {
                 </span>
               </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&price=${dynamicPrice}`}
+                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&serviceId=${transitType === 'full' ? 'full-home-shifting' : 'single-item-transport'}&category=relocation&price=${dynamicPrice}`}
                 className="btn btn-primary btn-sm"
                 style={{ padding: '8px 16px', background: '#8b5cf6', borderColor: '#8b5cf6' }}
               >
@@ -333,7 +333,7 @@ const RelocationHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Digital Secure Storage Vault')}&price=${vaultSpace * vaultPricePerSqFt}`}
+              to={`/customer/book?service=${encodeURIComponent('Digital Secure Storage Vault')}&serviceId=storage-vault&category=relocation&price=${vaultSpace * vaultPricePerSqFt}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#8b5cf6', borderColor: '#8b5cf6' }}
             >
@@ -376,7 +376,7 @@ const RelocationHub = () => {
           <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>♻️🛋️</div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.scrapRemoval')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.scrapRemovalDesc')}</p>
-          <Link to="/customer/book?service=Junk Removal Evaluation&price=0" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to={`/customer/book?service=${encodeURIComponent('Junk Removal Evaluation')}&category=relocation&price=0`} className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
             Schedule Pickup
           </Link>
         </div>

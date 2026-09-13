@@ -51,7 +51,7 @@ const ServiceDetail = () => {
       showToast('Please select a time slot!');
       return;
     }
-    navigate(`/customer/book?service=${encodeURIComponent(t(service.nameKey))}&tier=${activeTier}&price=${price}&date=${selectedDate}&slot=${selectedTimeSlot}`);
+    navigate(`/customer/book?service=${encodeURIComponent(t(service.nameKey))}&serviceId=${encodeURIComponent(service.id)}&category=${encodeURIComponent(service.category)}&tier=${activeTier}&price=${price}&date=${selectedDate}&slot=${selectedTimeSlot}`);
   };
 
   const getBackgroundImage = (categoryId) => {

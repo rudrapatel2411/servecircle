@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import User from '../models/User.js';
+import { findFallbackUserById } from '../utils/demoAuthStore.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -21,12 +23,21 @@ export const protect = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = await User.findById(decoded.id).select('-password');
+    let user = findFallbackUserById(decoded.id);
 
-    if (!req.user) {
+    if (!user && mongoose.connection.readyState === 1) {
+      try {
+        user = await User.findById(decoded.id).select('-password');
+      } catch {
+        user = null;
+      }
+    }
+
+    if (!user) {
       return res.status(401).json({ message: 'Not authorized — user not found' });
     }
 
+    req.user = user;
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Not authorized — invalid token' });
@@ -36,9 +47,9 @@ export const protect = async (req, res, next) => {
 // Role-based access control
 export const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user?.role)) {
       return res.status(403).json({
-        message: `Access denied — role '${req.user.role}' is not authorized for this route`,
+        message: `Access denied — role '${req.user?.role}' is not authorized for this route`,
       });
     }
     next();
@@ -54,10 +65,19 @@ export const optionalAuth = async (req, res, next) => {
     }
     if (token) {
       const decoded = jwt.verify(token, JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
+      let user = findFallbackUserById(decoded.id);
+      if (!user && mongoose.connection.readyState === 1) {
+        try {
+          user = await User.findById(decoded.id).select('-password');
+        } catch {
+          user = null;
+        }
+      }
+      req.user = user || null;
     }
   } catch (err) {
     // Token invalid — continue without user
   }
   next();
 };
+

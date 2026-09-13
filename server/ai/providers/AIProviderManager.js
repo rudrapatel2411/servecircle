@@ -344,6 +344,26 @@ class AIProviderManagerClass {
     }
   }
 
+  /**
+   * Master Customer Chat interface via active provider.
+   */
+  async chatWithCustomer(payload, options = {}) {
+    this._assertInitialized('chatWithCustomer');
+    this._log(AI_MANAGER_EVENTS.AI_REQUEST, `chatWithCustomer — provider: ${this._providerName}`);
+
+    try {
+      if (typeof this._provider.chatWithCustomer === 'function') {
+        const result = await this._provider.chatWithCustomer(payload, options);
+        this._log(AI_MANAGER_EVENTS.AI_RESPONSE, `chatWithCustomer OK`);
+        return result;
+      }
+      return this._provider.analyzeCustomerProblem(payload.text, options);
+    } catch (err) {
+      this._log(AI_MANAGER_EVENTS.AI_PROVIDER_FAILED, `chatWithCustomer failed: ${err.message}`);
+      throw err;
+    }
+  }
+
   // ─── Utility Passthroughs ────────────────────────────────────────────────────
 
   /**

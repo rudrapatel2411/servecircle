@@ -20,39 +20,60 @@ const SERVICE_KEYWORDS = {
   plumbing: [
     'pipe', 'pipes', 'leak', 'leaking', 'water', 'tap', 'faucet', 'drain', 'drainage',
     'clog', 'clogged', 'blocked', 'blockage', 'flush', 'toilet', 'overflow', 'burst',
-    'plumber', 'plumbing', 'sewage', 'tank', 'geyser', 'pressure',
+    'plumber', 'plumbing', 'sewage', 'tank', 'geyser', 'pressure', 'pani', 'nal', 'seepage',
   ],
   electrical: [
     'electric', 'electrical', 'power', 'wire', 'wiring', 'circuit', 'fuse', 'tripped',
     'outlet', 'socket', 'switch', 'short', 'sparks', 'sparking', 'shock', 'voltage',
-    'breaker', 'lights', 'light', 'bulb', 'meter', 'mcb', 'plug', 'blackout',
+    'breaker', 'lights', 'light', 'bulb', 'meter', 'mcb', 'plug', 'blackout', 'bijli',
   ],
   cleaning: [
     'clean', 'cleaning', 'dirty', 'dust', 'stain', 'mold', 'mould', 'sweep', 'mop',
     'scrub', 'bathroom', 'kitchen', 'floor', 'carpet', 'sofa', 'couch', 'deep clean',
-    'pest', 'cockroach', 'termite', 'rat', 'insect', 'disinfect',
+    'pest', 'cockroach', 'termite', 'rat', 'insect', 'disinfect', 'safai',
   ],
   carpentry: [
     'wood', 'wooden', 'carpenter', 'carpentry', 'furniture', 'door', 'window', 'hinge',
     'drawer', 'shelf', 'shelves', 'cabinet', 'wardrobe', 'frame', 'board', 'nail',
-    'screw', 'broken', 'repair', 'fix',
+    'screw', 'darwaza', 'khidki', 'almirah',
   ],
   painting: [
     'paint', 'painting', 'painter', 'wall', 'ceiling', 'brush', 'roller', 'primer',
-    'coat', 'color', 'colour', 'texture', 'whitewash', 'distemper', 'enamel',
+    'coat', 'color', 'colour', 'texture', 'whitewash', 'distemper', 'enamel', 'putty',
   ],
   appliance: [
     'ac', 'air conditioner', 'fridge', 'refrigerator', 'washing machine', 'geyser',
-    'microwave', 'oven', 'fan', 'cooler', 'tv', 'television', 'appliance', 'repair',
-    'service', 'not working', 'stopped', 'broken',
+    'microwave', 'oven', 'fan', 'cooler', 'tv', 'television', 'appliance', 'cooling',
+    'purifier', 'ro filter',
   ],
   security: [
     'lock', 'locks', 'locksmith', 'door lock', 'key', 'keys', 'deadbolt', 'padlock',
-    'cctv', 'camera', 'alarm', 'security', 'safe', 'lost key',
+    'cctv', 'camera', 'alarm', 'security', 'safe', 'lost key', 'chabi',
   ],
   moving: [
     'move', 'moving', 'shift', 'shifting', 'relocate', 'relocation', 'pack', 'packing',
-    'unpack', 'cargo', 'transport', 'heavy', 'furniture move', 'house shift',
+    'unpack', 'cargo', 'transport', 'heavy', 'furniture move', 'house shift', 'samaan',
+  ],
+  travel: [
+    'driver', 'chauffeur', 'airport', 'cab', 'commute', 'carpool', 'outstation', 'trip', 'gadi chalana',
+  ],
+  food: [
+    'cook', 'chef', 'kitchen', 'khana', 'tiffin', 'catering', 'rasoi', 'meal',
+  ],
+  pet: [
+    'pet', 'dog', 'cat', 'grooming', 'vet', 'puppy', 'kitten', 'pet bath', 'dog walker',
+  ],
+  health: [
+    'nurse', 'nursing', 'doctor', 'physio', 'physiotherapy', 'patient', 'elder', 'caretaker',
+  ],
+  society: [
+    'society', 'maintenance', 'gatekeeper', 'watchman', 'security guard',
+  ],
+  events: [
+    'birthday', 'event', 'party', 'decor', 'dj', 'sound system', 'photographer', 'celebration',
+  ],
+  vehicle: [
+    'car', 'bike', 'motorcycle', 'engine', 'mechanic', 'car wash', 'detailing', 'puncture', 'vehicle',
   ],
 };
 

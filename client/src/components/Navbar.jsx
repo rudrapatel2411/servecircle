@@ -36,6 +36,9 @@ const Navbar = () => {
         <div className={`navbar-links ${mobileOpen ? 'navbar-links-open' : ''}`}>
           <Link to="/" className={location.pathname === '/' ? 'active' : ''}>{t('nav.home')}</Link>
           <a href="#services">{t('nav.services')}</a>
+          <Link to="/customer/ai-chat" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#6366f1', fontWeight: 600 }}>
+            <HiOutlineSparkles /> AI Assistant
+          </Link>
           <a href="#pricing">{t('nav.pricing')}</a>
           <a href="#impact">{t('nav.about')}</a>
         </div>

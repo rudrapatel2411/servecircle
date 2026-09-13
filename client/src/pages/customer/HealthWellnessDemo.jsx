@@ -74,7 +74,7 @@ const HealthWellnessDemo = () => {
           price = elderlyData.plan === '1-Month' ? 499 : (elderlyData.plan === '3-Month' ? 399 : 299);
         }
 
-        navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+        navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=health-wellness&price=${price}`);
       }
     }, 800);
   };

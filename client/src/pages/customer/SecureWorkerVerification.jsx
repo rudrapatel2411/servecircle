@@ -15,7 +15,11 @@ import {
   HiOutlineUserCircle,
 } from 'react-icons/hi2';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://theorize-energize-matted.ngrok-free.dev/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || (
+  typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? '/api'
+    : 'https://theorize-energize-matted.ngrok-free.dev/api'
+);
 
 const SecureWorkerVerification = () => {
   const [searchParams] = useSearchParams();

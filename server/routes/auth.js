@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
@@ -7,6 +8,7 @@ import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
 import { validateRegister, validateLogin } from '../middleware/validation.js';
 import { logEvent, logActivity, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
+import { findFallbackUserByEmail, addFallbackUser, verifyPassword } from '../utils/demoAuthStore.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -32,6 +34,47 @@ router.post(
       throw new AppError('This role cannot be self-registered', StatusCodes.FORBIDDEN);
     }
 
+    // Resilient offline fallback if MongoDB is not connected
+    if (mongoose.connection.readyState !== 1) {
+      const existing = findFallbackUserByEmail(email);
+      if (existing) {
+        throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
+      }
+      const demoId = `demo_${Date.now()}`;
+      const newUser = {
+        _id: demoId,
+        name: name || 'Demo User',
+        email,
+        password,
+        phone: phone || '9876543210',
+        role: normalizedRole,
+        subscription: 'basic',
+        walletBalance: 0,
+        skills: skills || [],
+        serviceCategory: serviceCategory || '',
+        city: city || '',
+        experience: experience || 'Fresher',
+        workerStatus: normalizedRole === 'worker' ? 'pending_interview' : undefined,
+        companyName: normalizedRole === 'b2b' ? companyName : undefined,
+        isVerified: false,
+      };
+      addFallbackUser(newUser);
+
+      const token = jwt.sign({ id: demoId, role: normalizedRole }, JWT_SECRET, { expiresIn: '7d' });
+      return res.status(StatusCodes.CREATED).json({
+        token,
+        user: {
+          id: demoId,
+          name: newUser.name,
+          email: newUser.email,
+          phone: newUser.phone,
+          role: newUser.role,
+          subscription: newUser.subscription,
+          walletBalance: newUser.walletBalance,
+        },
+      });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
@@ -53,7 +96,11 @@ router.post(
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
     // Phase 2: log registration event
-    logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { name: user.name, email: user.email, role: user.role }, ...req.reqCtx });
+    try {
+      logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { name: user.name, email: user.email, role: user.role }, ...req.reqCtx });
+    } catch {
+      // ignore logging errors
+    }
 
     res.status(StatusCodes.CREATED).json({
       token,
@@ -78,18 +125,48 @@ router.post(
   validateLogin,
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
+    let user = null;
 
-    const user = await User.findOne({ email });
-    if (!user) throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+    // 1. Try finding in MongoDB if connected
+    if (mongoose.connection.readyState === 1) {
+      try {
+        user = await User.findOne({ email });
+      } catch (dbErr) {
+        console.warn('DB lookup failed, checking fallback store:', dbErr.message);
+        user = null;
+      }
+    }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+    // 2. If not found in DB or DB not connected, check demo / fallback store
+    if (!user) {
+      const fallbackUser = findFallbackUserByEmail(email);
+      if (fallbackUser) {
+        const isMatch = await verifyPassword(fallbackUser, password);
+        if (!isMatch) {
+          throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+        }
+        user = fallbackUser;
+      }
+    } else {
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+      }
+    }
+
+    if (!user) {
+      throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+    }
 
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
     // Phase 2: log login event
-    logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { email: user.email }, ...req.reqCtx });
-    logActivity({ userId: user._id, role: user.role, action: 'LOGIN', module: 'auth', ...req.reqCtx });
+    try {
+      logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { email: user.email }, ...req.reqCtx });
+      logActivity({ userId: user._id, role: user.role, action: 'LOGIN', module: 'auth', ...req.reqCtx });
+    } catch {
+      // ignore logging errors
+    }
 
     res.json({
       token,
@@ -107,11 +184,11 @@ router.post(
         completedJobs: user.completedJobs || 0,
         shadowJobsDone: user.shadowJobsDone || 0,
         rating: user.rating || 0,
-        subscription: user.subscription,
-        walletBalance: user.walletBalance,
-        avatar: user.avatar,
-        isVerified: user.isVerified,
-        companyName: user.companyName,
+        subscription: user.subscription || 'basic',
+        walletBalance: user.walletBalance || 0,
+        avatar: user.avatar || '',
+        isVerified: user.isVerified || false,
+        companyName: user.companyName || null,
       },
     });
   })

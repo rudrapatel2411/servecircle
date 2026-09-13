@@ -7,6 +7,8 @@ import {
   HiOutlineCreditCard, HiOutlineWallet, HiOutlineBanknotes, HiOutlineDevicePhoneMobile, HiCheckCircle, HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import { mockWorkersForService } from './WorkerComparison';
+import { getSession, requestApi } from '../../utils/authSession.js';
+import { servicesRegistry } from '../../data/servicesRegistry';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -17,6 +19,60 @@ const AVAILABLE_COUPONS = [
   { code: 'SAVE10', discount: 10, type: 'PERCENT', maxDiscount: 100, minAmount: 199, desc: '10% off up to ₹100' }
 ];
 
+export const CATEGORY_DISPLAY_MAP = {
+  'home-repairs': 'Home Repairs',
+  'vehicle-services': 'Vehicle Services',
+  'cleaning': 'Cleaning & Hygiene',
+  'events': 'Events & Celebrations',
+  'home-it': 'Home IT & Tech Support',
+  'care-family': 'Care & Family',
+  'utility-daily': 'Utility & Daily Services',
+  'learning-support': 'Learning & Support',
+  'property-services': 'Property Services',
+  'festive-seasonal': 'Festive & Seasonal',
+  'furniture-decor': 'Furniture & Decor',
+  'garden-outdoor': 'Garden & Outdoor',
+  'relocation': 'Relocation & Packers',
+  'health-wellness': 'Health & Wellness',
+  'kids-elderly': 'Kids & Elderly Care',
+  'pet-services': 'Pet Services',
+  'food-kitchen': 'Food & Kitchen',
+  'travel-commute': 'Travel & Commute',
+  'society-management': 'Society Management',
+  'emergency': 'Emergency Services',
+};
+
+export function inferCategoryFromService(serviceName = '', serviceId = '', rawCategory = '') {
+  if (rawCategory && CATEGORY_DISPLAY_MAP[rawCategory.toLowerCase()]) {
+    return CATEGORY_DISPLAY_MAP[rawCategory.toLowerCase()];
+  }
+  if (rawCategory && Object.values(CATEGORY_DISPLAY_MAP).includes(rawCategory)) {
+    return rawCategory;
+  }
+
+  const match = servicesRegistry.find(s => s.id === serviceId);
+  if (match && CATEGORY_DISPLAY_MAP[match.category]) {
+    return CATEGORY_DISPLAY_MAP[match.category];
+  }
+
+  const s = `${serviceName} ${serviceId}`.toLowerCase();
+  if (s.includes('pet') || s.includes('dog') || s.includes('cat') || s.includes('vet') || s.includes('grooming')) return 'Pet Services';
+  if (s.includes('food') || s.includes('chef') || s.includes('tiffin') || s.includes('meal') || s.includes('cake') || s.includes('kitchen')) return 'Food & Kitchen';
+  if (s.includes('travel') || s.includes('cab') || s.includes('driver') || s.includes('airport') || s.includes('chauffeur')) return 'Travel & Commute';
+  if (s.includes('society') || s.includes('rwa') || s.includes('gate') || s.includes('security')) return 'Society Management';
+  if (s.includes('shift') || s.includes('pack') || s.includes('transit') || s.includes('relocation') || s.includes('storage') || s.includes('vault')) return 'Relocation & Packers';
+  if (s.includes('health') || s.includes('wellness') || s.includes('doctor') || s.includes('physio') || s.includes('nurse') || s.includes('lab') || s.includes('consultation')) return 'Health & Wellness';
+  if (s.includes('event') || s.includes('party') || s.includes('wedding') || s.includes('celebration') || s.includes('birthday') || s.includes('decor') || s.includes('catering') || s.includes('dj')) return 'Events & Celebrations';
+  if (s.includes('clean') || s.includes('hygiene') || s.includes('pest') || s.includes('sofa') || s.includes('carpet')) return 'Cleaning & Hygiene';
+  if (s.includes('car') || s.includes('bike') || s.includes('vehicle') || s.includes('puncture') || s.includes('battery')) return 'Vehicle Services';
+  if (s.includes('furniture') || s.includes('decor') || s.includes('wallpaper') || s.includes('curtain')) return 'Furniture & Decor';
+  if (s.includes('garden') || s.includes('lawn') || s.includes('plant') || s.includes('outdoor')) return 'Garden & Outdoor';
+  if (s.includes('child') || s.includes('kid') || s.includes('elder') || s.includes('nanny') || s.includes('babysitting')) return 'Kids & Elderly Care';
+  if (s.includes('it') || s.includes('wifi') || s.includes('cctv') || s.includes('computer') || s.includes('tv') || s.includes('printer')) return 'Home IT & Tech Support';
+
+  return rawCategory ? (CATEGORY_DISPLAY_MAP[rawCategory] || rawCategory) : 'Home Repairs';
+}
+
 const BookingFlow = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -24,9 +80,13 @@ const BookingFlow = () => {
 
   // Initialize from URL params if available - fallbacks to mock service details to prevent validation lockouts
   const initialService = searchParams.get('service') || 'AC General Service';
-  const initialCategory = searchParams.get('category') || 'home-repairs';
+  const initialServiceId = searchParams.get('serviceId') || '';
+  const initialCategoryParam = searchParams.get('category') || '';
+  const resolvedCategory = inferCategoryFromService(initialService, initialServiceId, initialCategoryParam);
+  const matchedService = servicesRegistry.find(s => s.id === initialServiceId || s.id === initialService?.toLowerCase()?.replace(/\s+/g, '-'));
+  const resolvedServiceId = initialServiceId || matchedService?.id || undefined;
   const priceParam = searchParams.get('price');
-  const initialBasePrice = priceParam !== null && !isNaN(parseInt(priceParam)) ? parseInt(priceParam) : 499;
+  const initialBasePrice = priceParam !== null && !isNaN(parseInt(priceParam)) ? parseInt(priceParam) : (matchedService?.basePrice || 499);
   const initialDate = searchParams.get('date') || '';
   const initialTime = searchParams.get('slot') || '';
   const initialTier = searchParams.get('tier') || 'standard';
@@ -41,6 +101,7 @@ const BookingFlow = () => {
   const [selectedWorker, setSelectedWorker] = useState(defaultWorker);
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [toastMessage, setToastMessage] = useState(null);
+  const [isCreatingBooking, setIsCreatingBooking] = useState(false);
   
   // Default to collapsed schedule card for a scroll-free layout
   const [editSchedule, setEditSchedule] = useState(false);
@@ -83,7 +144,7 @@ const BookingFlow = () => {
   // Pre-fill all fields with default dummy values for smooth, zero-friction testing
   const [formData, setFormData] = useState({
     service: initialService,
-    category: initialCategory,
+    category: resolvedCategory,
     price: Math.round(initialBasePrice * (defaultWorker?.rateMultiplier || 1)),
     date: (initialDate && initialDate !== 'Today') ? initialDate : new Date().toISOString().split('T')[0],
     time: initialTime || '11:30',
@@ -274,15 +335,16 @@ const BookingFlow = () => {
       return;
     }
 
+    // Cash on Delivery — instant order placement!
     if (price === 0 || isSellingService || paymentMethod === 'Cash') {
-      handleBook();
+      showToast('⚡ Placing order with Cash on Delivery...');
+      handleBook('Cash');
     } else if (paymentMethod === 'UPI') {
       setModalError('');
-      setUpiStep(2);
-      setUpiCountdown(5);
+      setUpiStep(1);
+      setUpiCountdown(4);
       setActivePaymentModal('UPI');
     } else {
-      // Reset modes states
       setModalError('');
       setActivePaymentModal(paymentMethod);
     }
@@ -307,37 +369,24 @@ const BookingFlow = () => {
         setModalError('Please enter 3-digit CVV.');
         return;
       }
-    }
 
-    if (activePaymentModal === 'UPI' && upiMethod === 'ID') {
-      if (!upiId.trim() || !upiId.includes('@')) {
-        setModalError('Please enter a valid UPI ID (e.g. name@upi).');
-        return;
-      }
-      setUpiStep(2);
-      setUpiCountdown(4);
+      setIsProcessingPayment(true);
+      setTimeout(() => {
+        setIsProcessingPayment(false);
+        setActivePaymentModal(null);
+        handleBook('Card');
+      }, 1000);
       return;
     }
 
-    if (activePaymentModal === 'UPI' && upiMethod === 'APPS') {
-      if (!selectedApp) {
-        setModalError('Please select a UPI app.');
-        return;
-      }
-      // On real mobile devices, we'd fire the deep link here
-      const upiUrl = `upi://pay?pa=payments@servecircle&pn=ServeCircle&tr=SC${Math.floor(Math.random()*10000)}&am=${totalAmount}&cu=INR`;
-      // window.location.href = upiUrl; // Attempt to open app (Commented out to prevent desktop crash during testing)
-      
-      setUpiStep(2);
-      setUpiCountdown(5); // Simulate waiting for the app to return
+    if (activePaymentModal === 'UPI') {
+      setIsProcessingPayment(true);
+      setTimeout(() => {
+        setIsProcessingPayment(false);
+        setActivePaymentModal(null);
+        handleBook('UPI');
+      }, 800);
       return;
-    }
-    
-    if (activePaymentModal === 'UPI' && upiMethod === 'QR') {
-       // Simulate bank processing time for QR
-       setUpiStep(2);
-       setUpiCountdown(3);
-       return;
     }
 
     if (activePaymentModal === 'Wallet') {
@@ -346,25 +395,22 @@ const BookingFlow = () => {
         return;
       }
       setWalletBalance(prev => prev - totalAmount);
+      setIsProcessingPayment(true);
+      setTimeout(() => {
+        setIsProcessingPayment(false);
+        setActivePaymentModal(null);
+        handleBook('Wallet');
+      }, 800);
     }
-
-    setIsProcessingPayment(true);
-    setTimeout(() => {
-      setIsProcessingPayment(false);
-      setActivePaymentModal(null);
-      handleBook();
-    }, 1500);
   };
 
   const getModalSubmitText = () => {
     if (isProcessingPayment) return '⏳ Processing...';
     if (activePaymentModal === 'UPI') {
-      if (upiMethod === 'QR') return 'I Have Paid';
-      if (upiMethod === 'APPS') return `Pay with ${selectedApp || 'App'}`;
-      return 'Verify & Pay';
+      return '⚡ Instant Test Payment (Approve & Book)';
     }
     if (activePaymentModal === 'Card') {
-      return `Pay ₹${totalAmount}`;
+      return `⚡ Pay ₹${totalAmount} (Demo Card)`;
     }
     if (activePaymentModal === 'Wallet') {
       return `Deduct & Pay ₹${totalAmount}`;
@@ -372,9 +418,44 @@ const BookingFlow = () => {
     return 'Confirm & Pay';
   };
 
-  const handleBook = () => {
-    const bookingId = `SC-${Math.floor(2840 + Math.random() * 100)}`;
-    navigate(`/customer/live-tracking?bookingId=${bookingId}&service=${encodeURIComponent(formData.service)}&worker=${encodeURIComponent(workerName)}&price=${price}`);
+  const handleBook = async (confirmedMethod) => {
+    const finalMethod = confirmedMethod || paymentMethod || 'Cash';
+    const session = getSession();
+    if (!session?.token) {
+      navigate('/login', { replace: true, state: { from: '/customer/book' } });
+      return;
+    }
+
+    setIsCreatingBooking(true);
+    try {
+      const finalCategory = CATEGORY_DISPLAY_MAP[formData.category?.toLowerCase()] || formData.category || 'Home Repairs';
+      const booking = await requestApi('/bookings', {
+        method: 'POST',
+        token: session.token,
+        body: {
+          service: formData.service,
+          serviceId: initialServiceId || resolvedServiceId || undefined,
+          category: finalCategory,
+          description: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
+          scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
+          scheduledTime: formData.time,
+          address: formData.address,
+          city: formData.city,
+          amount: Math.max(0, totalAmount ?? price ?? 299),
+          paymentMethod: finalMethod,
+          isEmergency: isExpressMode,
+        },
+      });
+
+      const bookingId = booking?._id || booking?.id;
+      if (!bookingId) throw new Error('Booking was created without an ID');
+      showToast('🎉 Booking confirmed successfully!');
+      navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(bookingId)}&service=${encodeURIComponent(formData.service)}&worker=${encodeURIComponent(workerName)}&price=${totalAmount || price}`);
+    } catch (bookingError) {
+      showToast(bookingError.message || 'Unable to create booking. Please try again.');
+    } finally {
+      setIsCreatingBooking(false);
+    }
   };
 
   return (
@@ -840,14 +921,19 @@ const BookingFlow = () => {
             width: '100%', maxWidth: '400px', background: 'white', padding: '24px',
             borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-xl)', position: 'relative'
           }}>
-            <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '14px' }}>
-              {activePaymentModal === 'UPI' && 'UPI Payment'}
-              {activePaymentModal === 'Card' && 'Debit/Credit Card Details'}
-              {activePaymentModal === 'Wallet' && 'Pay using ServeCircle Wallet'}
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-900)', fontWeight: 800, margin: 0 }}>
+                {activePaymentModal === 'UPI' && '⚡ Demo UPI Payment Simulator'}
+                {activePaymentModal === 'Card' && '⚡ Demo Card Payment Simulator'}
+                {activePaymentModal === 'Wallet' && '⚡ ServeCircle Wallet (Demo)'}
+              </h3>
+              <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#dbeafe', color: '#1d4ed8', padding: '2px 8px', borderRadius: '12px' }}>
+                Testing Mode
+              </span>
+            </div>
 
             {modalError && (
-              <div style={{ color: 'var(--danger, #ef4444)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px' }}>
+              <div style={{ color: 'var(--danger, #ef4444)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px', background: '#fee2e2', padding: '8px 12px', borderRadius: '6px' }}>
                 ⚠️ {modalError}
               </div>
             )}
@@ -855,129 +941,153 @@ const BookingFlow = () => {
             {/* UPI Modal Content */}
             {activePaymentModal === 'UPI' && (
               <div style={{ textAlign: 'center' }}>
-                  <div className="animate-fade-in" style={{ padding: '24px 0', textAlign: 'center' }}>
-                    <div style={{ width: '60px', height: '60px', margin: '0 auto 16px', position: 'relative' }}>
-                       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: '3px solid var(--gray-100)', borderRadius: '50%' }}></div>
-                       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: '3px solid var(--primary-500)', borderRadius: '50%', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }}></div>
-                    </div>
-                    <h4 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 8px 0', fontSize: '1.1rem' }}>
-                      Opening UPI App
-                    </h4>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)', margin: '0 0 16px 0', lineHeight: 1.5 }}>
-                      Please complete the payment securely in your UPI app.
-                    </p>
-                    <div style={{ background: '#f8fafc', padding: '8px 16px', borderRadius: '20px', display: 'inline-block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary-700)' }}>
-                      00:0{upiCountdown}
-                    </div>
-                  </div>
+                <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '10px', padding: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#6b21a8', fontWeight: 700 }}>Total Payable</span>
+                  <span style={{ fontSize: '1.1rem', color: '#581c87', fontWeight: 900 }}>₹{totalAmount}</span>
+                </div>
+
+                <p style={{ fontSize: '0.82rem', color: 'var(--gray-600)', margin: '0 0 14px 0', lineHeight: 1.4 }}>
+                  Simulated UPI transaction. You can click <strong>Instant Approve</strong> to book immediately or watch the automatic simulator.
+                </p>
+
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
+                  <span style={{ fontSize: '0.78rem', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', color: '#334155' }}>
+                    Demo VPA: <strong>{upiId}</strong>
+                  </span>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '8px 16px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary-700)', marginBottom: '16px' }}>
+                  <span style={{ width: '12px', height: '12px', border: '2px solid #3b82f6', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }}></span>
+                  Auto-approving in 00:0{upiCountdown}
+                </div>
+
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => executePayment()}
+                  disabled={isProcessingPayment}
+                  style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  {isProcessingPayment ? '⏳ Completing Demo Booking...' : '⚡ Instant Approve Demo Payment'}
+                </button>
               </div>
             )}
 
             {/* Card Modal Content */}
             {activePaymentModal === 'Card' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
-                <div className="input-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Cardholder Name</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="John Doe"
-                    value={cardName}
-                    onChange={(e) => setCardName(e.target.value)}
-                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
-                  />
-                </div>
-                
-                <div className="input-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Card Number</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="xxxx xxxx xxxx xxxx"
-                    value={cardNumber}
-                    onChange={(e) => handleCardNumberChange(e.target.value)}
-                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
-                  />
+              <div>
+                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '10px', padding: '12px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#1e40af', fontWeight: 700 }}>Total Payable</span>
+                  <span style={{ fontSize: '1.1rem', color: '#1e3a8a', fontWeight: 900 }}>₹{totalAmount}</span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
                   <div className="input-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Expiry Date</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Cardholder Name</label>
                     <input
                       type="text"
                       className="input-field"
-                      placeholder="MM/YY"
-                      value={cardExpiry}
-                      onChange={(e) => handleExpiryChange(e.target.value)}
+                      placeholder="John Doe"
+                      value={cardName}
+                      onChange={(e) => setCardName(e.target.value)}
                       style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                     />
                   </div>
+                  
                   <div className="input-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>CVV</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Card Number (Pre-filled Test)</label>
                     <input
-                      type="password"
+                      type="text"
                       className="input-field"
-                      placeholder="***"
-                      value={cardCvv}
-                      onChange={(e) => handleCvvChange(e.target.value)}
+                      placeholder="xxxx xxxx xxxx xxxx"
+                      value={cardNumber}
+                      onChange={(e) => handleCardNumberChange(e.target.value)}
                       style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                     />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>Expiry Date</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        placeholder="MM/YY"
+                        value={cardExpiry}
+                        onChange={(e) => handleExpiryChange(e.target.value)}
+                        style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                      />
+                    </div>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)' }}>CVV</label>
+                      <input
+                        type="password"
+                        className="input-field"
+                        placeholder="***"
+                        value={cardCvv}
+                        onChange={(e) => handleCvvChange(e.target.value)}
+                        style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                      />
+                    </div>
                   </div>
                 </div>
+
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => executePayment()}
+                  disabled={isProcessingPayment}
+                  style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  {isProcessingPayment ? '⏳ Processing Demo Card...' : `⚡ Pay ₹${totalAmount} (Demo Card)`}
+                </button>
               </div>
             )}
 
             {/* Wallet Modal Content */}
             {activePaymentModal === 'Wallet' && (
-              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid var(--gray-200)', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
-                  <span style={{ color: 'var(--gray-600)' }}>Current Balance:</span>
-                  <span style={{ fontWeight: 800, color: 'var(--navy-800)' }}>₹{walletBalance.toFixed(2)}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
-                  <span style={{ color: 'var(--gray-600)' }}>Booking Cost:</span>
-                  <span style={{ fontWeight: 800, color: 'var(--danger-700)' }}>- ₹{totalAmount}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px dashed var(--gray-300)', fontSize: '0.85rem', fontWeight: 800 }}>
-                  <span style={{ color: 'var(--navy-800)' }}>Remaining Balance:</span>
-                  <span style={{ color: walletBalance >= totalAmount ? 'var(--primary-700)' : 'var(--danger-600)' }}>
-                    ₹{(walletBalance - totalAmount).toFixed(2)}
-                  </span>
-                </div>
-                {walletBalance < totalAmount && (
-                  <div style={{ color: 'var(--danger-600)', fontSize: '0.72rem', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
-                    ⚠️ Insufficient balance in wallet!
+              <div>
+                <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid var(--gray-200)', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
+                    <span style={{ color: 'var(--gray-600)' }}>Current Balance:</span>
+                    <span style={{ fontWeight: 800, color: 'var(--navy-800)' }}>₹{walletBalance.toFixed(2)}</span>
                   </div>
-                )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
+                    <span style={{ color: 'var(--gray-600)' }}>Booking Cost:</span>
+                    <span style={{ fontWeight: 800, color: 'var(--danger-700)' }}>- ₹{totalAmount}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px dashed var(--gray-300)', fontSize: '0.85rem', fontWeight: 800 }}>
+                    <span style={{ color: 'var(--navy-800)' }}>Remaining Balance:</span>
+                    <span style={{ color: walletBalance >= totalAmount ? 'var(--primary-700)' : 'var(--danger-600)' }}>
+                      ₹{(walletBalance - totalAmount).toFixed(2)}
+                    </span>
+                  </div>
+                  {walletBalance < totalAmount && (
+                    <div style={{ color: 'var(--danger-600)', fontSize: '0.72rem', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
+                      ⚠️ Insufficient balance in wallet!
+                    </div>
+                  )}
+                </div>
+
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => executePayment()}
+                  disabled={isProcessingPayment || walletBalance < totalAmount}
+                  style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  {isProcessingPayment ? '⏳ Deducting...' : `⚡ Deduct & Pay ₹${totalAmount}`}
+                </button>
               </div>
             )}
 
-
-
-            {/* Modal Actions */}
-            <div style={{ display: 'flex', gap: '10px' }}>
+            {/* Modal Cancel Button */}
+            <div style={{ marginTop: '12px' }}>
               <button 
                 className="btn btn-outline" 
-                onClick={() => {
-                  if (upiStep !== 2) {
-                    setActivePaymentModal(null);
-                  }
-                }}
-                style={{ flex: 1, padding: '10px', fontSize: '0.8rem' }}
-                disabled={isProcessingPayment || upiStep === 2}
+                onClick={() => setActivePaymentModal(null)}
+                style={{ width: '100%', padding: '8px', fontSize: '0.8rem' }}
+                disabled={isProcessingPayment}
               >
-                Cancel
+                Close / Choose Different Method
               </button>
-              {upiStep === 1 && (
-                <button 
-                  className="btn btn-primary" 
-                  onClick={executePayment}
-                  style={{ flex: 1.5, padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '0.8rem' }}
-                  disabled={isProcessingPayment}
-                >
-                  {getModalSubmitText()}
-                </button>
-              )}
             </div>
           </div>
         </div>

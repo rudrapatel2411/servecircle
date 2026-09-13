@@ -18,6 +18,7 @@
  */
 
 import { GeminiProvider }                    from './GeminiProvider.js';
+import { GroqProvider }                      from './GroqProvider.js';
 import { PROVIDER_CONFIGS, getProviderConfig } from '../../config/providers.js';
 
 // ─── Provider Status ──────────────────────────────────────────────────────────
@@ -37,6 +38,7 @@ export const PROVIDER_STATUS = Object.freeze({
  * Planned providers without a factory will be treated as PLANNED/DISABLED.
  */
 const PROVIDER_FACTORIES = {
+  groq:   (config) => new GroqProvider(config),
   gemini: (config) => new GeminiProvider(config),
   // openai:  (config) => new OpenAIProvider(config),   // future
   // claude:  (config) => new ClaudeProvider(config),   // future

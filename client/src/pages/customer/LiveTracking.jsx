@@ -224,11 +224,14 @@ const LiveTracking = () => {
   return (
     <div className="page-content" style={{ minHeight: 'calc(100vh - 128px)', display: 'flex', flexDirection: 'column', paddingBottom: '12px' }}>
 
-      <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0 }}>
+      <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
           <p className="page-subtitle" style={{ fontSize: '0.85rem' }}>{t('liveTracking.subtitle', 'Watch your service expert arrive in real-time.')}</p>
         </div>
+        <Link to="/customer/bookings" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
+          📋 View My Bookings
+        </Link>
       </div>
 
       <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.8fr', gap: '20px', flex: 1, marginBottom: '10px' }}>

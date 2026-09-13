@@ -47,8 +47,8 @@ export const handleValidationErrors = (req, res, next) => {
 
 export const validateMongoIdParam = (paramName = 'id') => [
   param(paramName)
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage(`Invalid MongoDB ObjectId format for parameter '${paramName}'`),
+    .custom((val) => mongoose.Types.ObjectId.isValid(val) || /^SC-\d+$/i.test(val) || String(val).startsWith('demo_'))
+    .withMessage(`Invalid identifier format for parameter '${paramName}'`),
   handleValidationErrors,
 ];
 
@@ -83,12 +83,13 @@ export const validateLogin = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const validateCreateBooking = [
+  body('serviceId').optional().trim().isString().withMessage('Service ID must be a string'),
   body('service').trim().notEmpty().withMessage('Service name is required'),
   body('category').trim().notEmpty().withMessage('Service category is required'),
   body('address').trim().notEmpty().withMessage('Address is required'),
   body('amount')
     .exists().withMessage('Amount is required')
-    .isFloat({ gt: 0 }).withMessage('Amount must be greater than zero'),
+    .isFloat({ min: 0 }).withMessage('Amount must be zero or greater'),
   body('scheduledDate')
     .exists().withMessage('Scheduled date is required')
     .custom((val) => {

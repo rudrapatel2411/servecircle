@@ -210,7 +210,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Daily Tiffin Meal Plan Subscription')}&price=${calculateTiffinPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Daily Tiffin Meal Plan Subscription')}&serviceId=tiffin-subscription&category=food-kitchen&price=${calculateTiffinPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -296,7 +296,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&price=${calculateChefPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&serviceId=home-chef&category=food-kitchen&price=${calculateChefPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -384,7 +384,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Grand Birthday Theme Decor')}&price=${cakeStyle === 'minimalist' ? 1499 : cakeStyle === 'fruit' ? 1799 : 2999}`}
+              to={`/customer/book?service=${encodeURIComponent('Celebration Custom Cake Designer')}&serviceId=custom-cake&category=food-kitchen&price=${cakeStyle === 'minimalist' ? 1499 : cakeStyle === 'fruit' ? 1799 : 2999}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >

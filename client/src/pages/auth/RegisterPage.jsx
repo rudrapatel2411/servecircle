@@ -2,14 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineArrowRight, HiOutlineUserPlus, HiOutlineShieldCheck, HiOutlineUserGroup, HiOutlineClock } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
+import { requestAuth, roleHome, saveSession } from '../../utils/authSession.js';
 import './AuthPages.css';
-
-const defaultByRole = {
-  customer: '/customer',
-  worker: '/worker',
-  admin: '/admin',
-  b2b: '/b2b',
-};
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -22,19 +16,29 @@ const RegisterPage = () => {
     role: 'customer',
   });
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const update = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!form.name || !form.email || !form.password) {
       setError(t('auth.validationError', 'Name, email, and password are required'));
       return;
     }
     setError('');
-    navigate(defaultByRole[form.role]);
+    setIsSubmitting(true);
+    try {
+      const data = await requestAuth('/auth/register', form);
+      saveSession({ token: data.token, user: data.user });
+      navigate(roleHome[data.user.role], { replace: true });
+    } catch (submitError) {
+      setError(submitError.message || t('auth.error', 'Unable to create your account'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -110,8 +114,8 @@ const RegisterPage = () => {
             {error && <p className="auth-error">{error}</p>}
 
             <div className="auth-form-footer">
-              <button className="btn btn-primary" type="submit">
-                {t('auth.createAccountBtn', 'Create account')}
+              <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? t('auth.creatingAccount', 'Creating account...') : t('auth.createAccountBtn', 'Create account')}
                 <HiOutlineArrowRight />
               </button>
               <span className="auth-hint">

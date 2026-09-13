@@ -37,9 +37,18 @@ const DEFAULT_EMBEDDING_MODEL = 'text-embedding-004';
  */
 export const PROVIDER_CONFIGS = [
   {
-    name:           'gemini',
+    name:           'groq',
     enabled:        true,
     priority:       1,
+    description:    'Groq Cloud LPU via groq-sdk (Qwen 3.8 27B Multimodal & Vision)',
+    textModel:      process.env.GROQ_TEXT_MODEL   || 'qwen/qwen3.8-27b',
+    visionModel:    process.env.GROQ_VISION_MODEL || 'qwen/qwen3.8-27b',
+    embeddingModel: '',
+  },
+  {
+    name:           'gemini',
+    enabled:        true,
+    priority:       2,
     description:    'Google Gemini via @google/genai SDK',
     textModel:      process.env.GEMINI_TEXT_MODEL      || DEFAULT_TEXT_MODEL,
     visionModel:    process.env.GEMINI_VISION_MODEL    || DEFAULT_VISION_MODEL,

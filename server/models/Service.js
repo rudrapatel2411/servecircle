@@ -2,6 +2,7 @@
 
 const serviceSchema = new mongoose.Schema(
   {
+    serviceId: { type: String, trim: true, unique: true, sparse: true, index: true },
     name: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
     subCategory: { type: String, trim: true },

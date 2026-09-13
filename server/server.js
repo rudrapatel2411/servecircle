@@ -67,20 +67,31 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection with Atlas support and DNS fallback
+// MongoDB Connection with Atlas support and automatic Local fallback
 const connectDB = async () => {
-  try {
-    const mongoURI = process.env.MONGODB_ATLAS_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/servecircle';
-    if (mongoURI.includes('+srv://')) {
-      try {
-        dns.setServers(['8.8.8.8', '8.8.4.4']);
-      } catch (dnsErr) {
-        console.warn('DNS server configuration warning:', dnsErr.message);
+  const atlasURI = process.env.MONGODB_ATLAS_URI;
+  const localURI = process.env.MONGO_URI || 'mongodb://localhost:27017/servecircle';
+
+  if (atlasURI) {
+    try {
+      if (atlasURI.includes('+srv://')) {
+        try {
+          dns.setServers(['8.8.8.8', '8.8.4.4']);
+        } catch (dnsErr) {
+          console.warn('DNS server configuration warning:', dnsErr.message);
+        }
       }
+      await mongoose.connect(atlasURI, { serverSelectionTimeoutMS: 5000 });
+      console.log(`✅ MongoDB Atlas Connected Successfully (Database: ${mongoose.connection.name})`);
+      return;
+    } catch (atlasErr) {
+      console.warn(`⚠️ Atlas connection failed (${atlasErr.message}). Falling back to local MongoDB...`);
     }
-    await mongoose.connect(mongoURI);
-    const dbName = mongoose.connection.name;
-    const isAtlas = mongoURI.includes('+srv://');
-    console.log(`✅ ${isAtlas ? 'MongoDB Atlas' : 'Local MongoDB'} Connected Successfully (Database: ${dbName})`);
+  }
+
+  try {
+    await mongoose.connect(localURI);
+    console.log(`✅ Local MongoDB Connected Successfully (Database: ${mongoose.connection.name})`);
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
     console.log('⚠️ Running in demo fallback mode');
@@ -135,5 +146,11 @@ app.use('/api/*path', (req, res) => {
 app.use(errorHandler);
 
 httpServer.listen(PORT, () => {
-  console.log(`🌐 ServeCircle Server running on http://localhost:${PORT}`);
+  console.log(`
+┌────────────────────────────────────────────────────────┐
+│  🚀 ServeCircle Backend Ready!                         │
+│  🌐 Web App (Client):  http://localhost:5173           │
+│  ⚙️  API (Server):      http://localhost:${PORT}           │
+└────────────────────────────────────────────────────────┘
+`);
 });

@@ -65,10 +65,10 @@ const PROBLEM_TAXONOMY = {
   painting: {
     displayName: 'Painting',
     possibleProblems: [
-      { id: 'PNTG_001', name: 'Interior Painting',  keywords: ['interior', 'inside', 'room', 'wall'] },
-      { id: 'PNTG_002', name: 'Exterior Painting',  keywords: ['exterior', 'outside', 'facade', 'balcony'] },
-      { id: 'PNTG_003', name: 'Touch-up',           keywords: ['touch', 'patch', 'peel', 'crack'] },
-      { id: 'PNTG_004', name: 'Texture/Design',     keywords: ['texture', 'design', 'wallpaper', 'stencil'] },
+      { id: 'PNTG_001', name: 'Interior & Wall Painting', keywords: ['paint', 'painting', 'wall paint', 'interior', 'inside', 'room', 'wall', 'whitewash'] },
+      { id: 'PNTG_002', name: 'Exterior Painting',        keywords: ['exterior', 'outside', 'facade', 'balcony', 'weather coat'] },
+      { id: 'PNTG_003', name: 'Touch-up & Waterproofing', keywords: ['touch', 'patch', 'peel', 'crack', 'waterproof', 'putty', 'seepage'] },
+      { id: 'PNTG_004', name: 'Texture/Design',           keywords: ['texture', 'design', 'wallpaper', 'stencil'] },
     ],
     requiredFeatures: ['location', 'area', 'colorPreference'],
     recommendedFeatures: ['image'],
@@ -76,10 +76,10 @@ const PROBLEM_TAXONOMY = {
   appliance: {
     displayName: 'Appliance Repair',
     possibleProblems: [
-      { id: 'APPL_001', name: 'AC Repair',              keywords: ['ac', 'air conditioner', 'cooling', 'not cooling'] },
-      { id: 'APPL_002', name: 'Refrigerator Repair',    keywords: ['fridge', 'refrigerator', 'freezer'] },
-      { id: 'APPL_003', name: 'Washing Machine Repair', keywords: ['washing machine', 'washer', 'laundry'] },
-      { id: 'APPL_004', name: 'Microwave/Oven Repair',  keywords: ['microwave', 'oven', 'cooking'] },
+      { id: 'APPL_001', name: 'AC Repair & Servicing',  keywords: ['ac', 'air conditioner', 'cooling', 'not cooling', 'ac repair', 'ac gas'] },
+      { id: 'APPL_002', name: 'Refrigerator Repair',    keywords: ['fridge', 'refrigerator', 'freezer', 'not chilling'] },
+      { id: 'APPL_003', name: 'Washing Machine Repair', keywords: ['washing machine', 'washer', 'laundry', 'spin'] },
+      { id: 'APPL_004', name: 'Microwave/Oven Repair',  keywords: ['microwave', 'oven', 'cooking', 'grill'] },
       { id: 'APPL_005', name: 'TV/Entertainment',       keywords: ['tv', 'television', 'led', 'display'] },
       { id: 'APPL_006', name: 'Water Purifier',         keywords: ['purifier', 'ro', 'filter', 'water filter'] },
     ],
@@ -89,8 +89,8 @@ const PROBLEM_TAXONOMY = {
   security: {
     displayName: 'Security & Locks',
     possibleProblems: [
-      { id: 'SECU_001', name: 'Lock Repair/Replace',    keywords: ['lock', 'deadbolt', 'stuck lock'] },
-      { id: 'SECU_002', name: 'Key Duplication/Lost',   keywords: ['key', 'lost key', 'duplicate'] },
+      { id: 'SECU_001', name: 'Lock Repair/Replace',    keywords: ['lock', 'deadbolt', 'stuck lock', 'door lock'] },
+      { id: 'SECU_002', name: 'Key Duplication/Lost',   keywords: ['key', 'lost key', 'duplicate', 'chabi'] },
       { id: 'SECU_003', name: 'CCTV Installation',      keywords: ['cctv', 'camera', 'surveillance'] },
       { id: 'SECU_004', name: 'Alarm System',           keywords: ['alarm', 'security system'] },
     ],
@@ -100,10 +100,10 @@ const PROBLEM_TAXONOMY = {
   moving: {
     displayName: 'Moving & Relocation',
     possibleProblems: [
-      { id: 'MOVE_001', name: 'Home Shifting',          keywords: ['home shift', 'house move', 'relocate', 'shifting'] },
-      { id: 'MOVE_002', name: 'Office Relocation',      keywords: ['office move', 'office shift'] },
-      { id: 'MOVE_003', name: 'Furniture Transportation', keywords: ['furniture', 'heavy items', 'sofa move'] },
-      { id: 'MOVE_004', name: 'Packing Services',       keywords: ['pack', 'packing', 'box', 'wrapping'] },
+      { id: 'MOVE_001', name: 'Home Shifting & Packers', keywords: ['moving', 'shifting', 'packers', 'home shift', 'house move', 'relocate', 'samaan'] },
+      { id: 'MOVE_002', name: 'Office Relocation',       keywords: ['office move', 'office shift'] },
+      { id: 'MOVE_003', name: 'Furniture Transportation', keywords: ['furniture move', 'heavy items', 'sofa move'] },
+      { id: 'MOVE_004', name: 'Packing Services',        keywords: ['pack', 'packing', 'box', 'wrapping'] },
     ],
     requiredFeatures: ['fromLocation', 'toLocation', 'estimatedVolume'],
     recommendedFeatures: ['image'],
@@ -111,10 +111,10 @@ const PROBLEM_TAXONOMY = {
   travel: {
     displayName: 'Travel & Driver Services',
     possibleProblems: [
-      { id: 'TRVL_001', name: 'Outstation Driver / Chauffeur', keywords: ['driver', 'chauffeur', 'outstation driver', 'car driver', 'personal driver'] },
-      { id: 'TRVL_002', name: 'Airport Drop & Pick',      keywords: ['airport', 'flight drop', 'airport pickup', 'airport transfer'] },
-      { id: 'TRVL_003', name: 'Luxury Car Rental',        keywords: ['car rental', 'luxury rental', 'wedding car'] },
-      { id: 'TRVL_004', name: 'Commute / Carpool',        keywords: ['commute', 'carpool', 'school commute', 'daily commute'] },
+      { id: 'TRVL_001', name: 'Outstation Driver / Chauffeur', keywords: ['driver', 'chauffeur', 'outstation driver', 'car driver', 'personal driver', 'gadi chalana'] },
+      { id: 'TRVL_002', name: 'Airport Drop & Pick',           keywords: ['airport', 'flight drop', 'airport pickup', 'airport transfer'] },
+      { id: 'TRVL_003', name: 'Luxury Car Rental',             keywords: ['car rental', 'luxury rental', 'wedding car'] },
+      { id: 'TRVL_004', name: 'Commute / Carpool',             keywords: ['commute', 'carpool', 'school commute', 'daily commute'] },
     ],
     requiredFeatures: ['location', 'description'],
     recommendedFeatures: ['travelDate'],
@@ -122,7 +122,7 @@ const PROBLEM_TAXONOMY = {
   food: {
     displayName: 'Food & Kitchen Services',
     possibleProblems: [
-      { id: 'FOOD_001', name: 'Home Cook / Personal Chef', keywords: ['cook', 'chef', 'home cook', 'khana', 'rasoi', 'cooking'] },
+      { id: 'FOOD_001', name: 'Home Cook / Personal Chef', keywords: ['cook', 'chef', 'home cook', 'khana', 'rasoi', 'cooking', 'mahila cook'] },
       { id: 'FOOD_002', name: 'Tiffin Service',           keywords: ['tiffin', 'meal box', 'daily tiffin', 'lunch box'] },
       { id: 'FOOD_003', name: 'Catering Service',         keywords: ['catering', 'party food', 'bulk food', 'buffet'] },
     ],
@@ -132,8 +132,8 @@ const PROBLEM_TAXONOMY = {
   pet: {
     displayName: 'Pet Care Services',
     possibleProblems: [
-      { id: 'PET_001', name: 'Pet Grooming',             keywords: ['pet grooming', 'dog bath', 'cat grooming', 'pet hair cut'] },
-      { id: 'PET_002', name: 'Vet / Home Doctor',        keywords: ['vet', 'vet doctor', 'pet doctor', 'dog illness'] },
+      { id: 'PET_001', name: 'Pet Grooming & Care',       keywords: ['pet', 'dog', 'cat', 'grooming', 'pet grooming', 'dog bath', 'cat grooming', 'pet hair cut', 'puppy'] },
+      { id: 'PET_002', name: 'Vet / Home Doctor',        keywords: ['vet', 'vet doctor', 'pet doctor', 'dog illness', 'cat doctor'] },
       { id: 'PET_003', name: 'Dog Walker / Pet Sitting', keywords: ['dog walker', 'pet sitter', 'dog walking', 'pet boarding'] },
     ],
     requiredFeatures: ['location', 'petType'],
@@ -171,8 +171,8 @@ const PROBLEM_TAXONOMY = {
   vehicle: {
     displayName: 'Vehicle Services',
     possibleProblems: [
-      { id: 'VEH_001', name: 'Car Washing & Detailing',  keywords: ['car wash', 'car detailing', 'foam wash', 'bike wash'] },
-      { id: 'VEH_002', name: 'Car & Bike Repair',        keywords: ['mechanic', 'car repair', 'bike repair', 'breakdown', 'tyre puncture'] },
+      { id: 'VEH_001', name: 'Car Washing & Detailing',  keywords: ['car wash', 'car detailing', 'foam wash', 'bike wash', 'washing'] },
+      { id: 'VEH_002', name: 'Car & Bike Repair',        keywords: ['car', 'bike', 'motorcycle', 'engine', 'mechanic', 'car repair', 'bike repair', 'breakdown', 'tyre puncture', 'starting issue'] },
     ],
     requiredFeatures: ['location', 'vehicleModel'],
     recommendedFeatures: ['image'],
@@ -190,25 +190,24 @@ const PROBLEM_TAXONOMY = {
 // ─── Confidence scoring ───────────────────────────────────────────────────────
 
 function _computeConfidence({ matchedKeywords, hasImage, hasVoice, hasLocation, hasDescription }) {
-  let score = 0;
+  let score = 0.65; // High baseline confidence for detected problem category
 
-  if (matchedKeywords >= 3) score += 0.40;
-  else if (matchedKeywords === 2) score += 0.25;
-  else if (matchedKeywords === 1) score += 0.15;
+  if (matchedKeywords >= 3) score += 0.20;
+  else if (matchedKeywords === 2) score += 0.15;
+  else if (matchedKeywords >= 1) score += 0.10;
 
-  if (hasDescription) score += 0.20;
-  if (hasLocation)    score += 0.15;
-  if (hasImage)       score += 0.15;
-  if (hasVoice)       score += 0.10;
+  if (hasDescription) score += 0.10;
+  if (hasLocation)    score += 0.05;
+  if (hasImage)       score += 0.05;
+  if (hasVoice)       score += 0.05;
 
-  const normalized = Math.min(1.0, score);
+  const normalized = Math.min(0.96, score);
 
   return {
     score: Math.round(normalized * 100) / 100,
     level: normalized >= 0.8 ? 'HIGH'
          : normalized >= 0.5 ? 'MEDIUM'
-         : normalized >= 0.2 ? 'LOW'
-         : 'VERY_LOW',
+         : 'LOW',
   };
 }
 

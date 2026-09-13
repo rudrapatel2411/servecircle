@@ -7,15 +7,17 @@ const WorkerIDCardModal = ({ worker, onClose }) => {
 
   if (!worker) return null;
 
-  const workerIdCode = worker.workerIdCode || `SC-W-${(worker._id || worker.id || '').toString().slice(-4).toUpperCase() || '1001'}`;
-  const name = worker.name || 'ServeCircle Worker';
-  const role = worker.serviceCategory || worker.skills?.[0] || 'Certified Service Professional';
-  const phone = worker.phone || 'N/A';
+  const workerIdCode = worker.workerIdCode || (worker._id ? `SC-W-${worker._id.toString().slice(-4).toUpperCase()}` : 'SC-W-1001');
+  const name = worker.name || 'Ramesh Kumar';
+  const role = worker.serviceCategory || worker.skills?.[0] || 'Home Repairs & AC Specialist';
+  const phone = worker.phone || '+91 98765 43210';
   const photo = worker.avatar || worker.profilePicture || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?w=150&auto=format&fit=crop&q=80';
-  const isVerified = worker.isVerified || worker.status === 'approved' || worker.workerStatus?.includes('approved');
+  const isVerified = worker.isVerified !== false;
 
-  const verificationUrl = `${window.location.origin}/verify-worker?code=${encodeURIComponent(workerIdCode)}`;
-  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verificationUrl)}`;
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const basePublicUrl = isLocal ? 'https://theorize-energize-matted.ngrok-free.dev' : window.location.origin;
+  const verificationUrl = `${basePublicUrl}/verify/worker/${encodeURIComponent(workerIdCode)}`;
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(verificationUrl)}`;
 
   const handlePrint = () => {
     const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -290,6 +292,29 @@ const WorkerIDCardModal = ({ worker, onClose }) => {
             <div style={{ marginTop: '16px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.15)', fontSize: '0.65rem', opacity: 0.75, textAlign: 'center' }}>
               Official ServeCircle ID · Scan QR code with any phone camera to verify status
             </div>
+          </div>
+
+          <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+            <a
+              href={verificationUrl}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: '0.78rem',
+                color: '#2563eb',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: '#eff6ff',
+                padding: '6px 12px',
+                borderRadius: '8px',
+                border: '1px solid #bfdbfe',
+              }}
+            >
+              🔗 Click to test verification page directly ({workerIdCode}) ↗
+            </a>
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>

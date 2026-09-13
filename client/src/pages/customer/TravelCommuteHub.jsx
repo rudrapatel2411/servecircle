@@ -134,7 +134,7 @@ const TravelCommuteHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Guaranteed Airport Drop & Pick')}&price=${calculateAirportPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Guaranteed Airport Drop & Pick')}&serviceId=airport-transfer&category=travel-commute&price=${calculateAirportPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e' }}
             >
@@ -237,7 +237,7 @@ const TravelCommuteHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Multi-Day Outstation Chauffeur')}&price=${calculateOutstationPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Multi-Day Outstation Chauffeur')}&serviceId=outstation-chauffeur&category=travel-commute&price=${calculateOutstationPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e' }}
             >

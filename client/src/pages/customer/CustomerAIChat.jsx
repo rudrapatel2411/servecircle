@@ -17,7 +17,7 @@ import {
 import '../Dashboard.css';
 import './CustomerAIChat.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+import { API_BASE, getSession } from '../../utils/authSession.js';
 const ACTIVE_SESSION_ID_KEY = 'servecircle_ai_active_session_id';
 const SESSIONS_STORAGE_KEY = 'servecircle_ai_chat_sessions';
 
@@ -68,6 +68,11 @@ function getAnalysisParts(response) {
   const recommendation = multimodal?.recommendation || {};
   const summary = multimodal?.summary || response?.analysis?.prediction || {};
 
+  const rawPrice = service.priceRangeInr?.min 
+    || recommendation.recommendedService?.priceRangeInr?.min 
+    || recommendation.recommendedService?.estimatedPrice 
+    || service.estimatedPrice;
+
   return {
     problem,
     service,
@@ -79,6 +84,8 @@ function getAnalysisParts(response) {
     skill: cleanLabel(service.requiredWorkerSkill || summary.requiredSkill || recommendation.requiredSkill?.primary, 'Technician'),
     duration: cleanLabel(service.estimatedDurationLabel || recommendation.recommendedService?.estimatedDurationLabel || problem.aiAnalysisRaw?.estimatedDuration, 'After inspection'),
     confidence: confidencePercent(recommendation.confidence?.overall || problem.confidence || response?.analysis?.confidence),
+    price: rawPrice ? `₹${rawPrice}` : 'From ₹349',
+    rawPrice: rawPrice || 499,
     targetHubRoute: service.targetHubRoute || null,
     questions: response?.followUpQuestions || problem.aiAnalysisRaw?.followUpQuestions || recommendation.additionalQuestions?.map((q) => q.question) || [],
     actions: problem.aiAnalysisRaw?.recommendedActions || service.safetyPrecautions || recommendation.recommendedService?.safetyPrecautions || [],
@@ -103,6 +110,17 @@ function ctaLabel(analysis) {
 
   return 'Explore Service Menu ➔';
 }
+
+const QUICK_SUGGESTIONS = [
+  { label: '❄️ AC Repair / Cooling', prompt: 'AC is blowing warm air, need urgent cooling repair' },
+  { label: '🔧 Tap & Pipe Leakage', prompt: 'Bathroom pipe se water leak ho raha hai, plumber chahiye' },
+  { label: '⚡ Fan / Switch Repair', prompt: 'Ceiling fan is not running and switch board sparked' },
+  { label: '🚗 Need a Driver', prompt: 'Need a verified driver for outstation travel' },
+  { label: '🐶 Pet Grooming / Bath', prompt: 'Need dog grooming and bathing service at home' },
+  { label: '🧹 Deep Cleaning', prompt: 'Need complete deep cleaning for 2BHK flat' },
+  { label: '🚪 Door Lock / Carpentry', prompt: 'Main door wooden lock is jammed, need carpenter' },
+  { label: '🍳 Home Cook / Chef', prompt: 'Need daily home cook service for family meals' },
+];
 
 const CustomerAIChat = () => {
   const navigate = useNavigate();
@@ -232,10 +250,20 @@ const CustomerAIChat = () => {
     setImage({ file, url: URL.createObjectURL(file) });
   };
 
-  const sendMessage = async () => {
-    if (!canSend) return;
-    const text = input.trim();
-    const attachedImage = image;
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isSending]);
+
+  const sendMessage = async (overridePrompt = null) => {
+    const isDirect = typeof overridePrompt === 'string' && overridePrompt.trim().length > 0;
+    const text = isDirect ? overridePrompt.trim() : input.trim();
+    const attachedImage = isDirect ? null : image;
+
+    if (!text && !attachedImage) return;
+    if (isSending) return;
+
     const userMessage = {
       id: `user-${Date.now()}`,
       role: 'user',
@@ -244,8 +272,10 @@ const CustomerAIChat = () => {
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setImage(null);
+    if (!isDirect) {
+      setInput('');
+      setImage(null);
+    }
     setError('');
     setIsSending(true);
 
@@ -256,8 +286,15 @@ const CustomerAIChat = () => {
     formData.append('customerContext', JSON.stringify({ preferredLanguage: 'auto' }));
 
     try {
+      const session = getSession();
+      const headers = {};
+      if (session?.token) {
+        headers['Authorization'] = `Bearer ${session.token}`;
+      }
+
       const response = await fetch(`${API_BASE}/customer/ai/chat`, {
         method: 'POST',
+        headers,
         body: formData,
       });
       const data = await response.json();
@@ -275,8 +312,10 @@ const CustomerAIChat = () => {
         },
       ]);
     } catch (err) {
-      setInput(text);
-      if (attachedImage) setImage(attachedImage);
+      if (!isDirect) {
+        setInput(text);
+        if (attachedImage) setImage(attachedImage);
+      }
       setError(err.message || 'AI is unavailable right now.');
       setMessages((prev) => [
         ...prev,
@@ -329,7 +368,7 @@ const CustomerAIChat = () => {
       navigate(analysis.targetHubRoute);
       return;
     }
-    const price = analysis.service?.priceRangeInr?.min || analysis.recommendation?.recommendedService?.priceRangeInr?.min || 499;
+    const price = analysis.rawPrice || 499;
     navigate(`/customer/book?service=${encodeURIComponent(analysis.serviceName)}&category=${encodeURIComponent(analysis.category)}&price=${price}`);
   };
 
@@ -372,6 +411,26 @@ const CustomerAIChat = () => {
             <article key={message.id} className={`ai-message ai-message--${message.role}${message.isError ? ' ai-message--error' : ''}`}>
               {message.imageUrl && <img className="ai-message-image" src={message.imageUrl} alt="Customer upload preview" />}
               <p>{message.content}</p>
+
+              {message.id === 'welcome' && messages.length <= 1 && (
+                <div className="ai-suggestions-box">
+                  <span className="ai-suggestions-label">⚡ Quick Prompts for Testing & Demo:</span>
+                  <div className="ai-suggestions-list">
+                    {QUICK_SUGGESTIONS.map((item) => (
+                      <button
+                        key={item.label}
+                        type="button"
+                        className="ai-suggestion-chip"
+                        onClick={() => sendMessage(item.prompt)}
+                        disabled={isSending}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {message.analysis && (
                 <div className="ai-result-card">
                   <div className="ai-result-head">
@@ -385,6 +444,7 @@ const CustomerAIChat = () => {
                     <span>Service <strong>{message.analysis.category}</strong></span>
                     <span>Urgency <strong>{message.analysis.urgency}</strong></span>
                     <span>Confidence <strong>{message.analysis.confidence}</strong></span>
+                    <span>Est. Price <strong>{message.analysis.price}</strong></span>
                     <span>Duration <strong>{message.analysis.duration}</strong></span>
                     <span>Skill <strong>{message.analysis.skill}</strong></span>
                   </div>
@@ -396,7 +456,7 @@ const CustomerAIChat = () => {
                   {message.analysis.questions.length > 0 && (
                     <div className="ai-followups">
                       {message.analysis.questions.slice(0, 3).map((question) => (
-                        <button key={question} onClick={() => setInput(question)}>{question}</button>
+                        <button key={question} onClick={() => sendMessage(question)}>{question}</button>
                       ))}
                     </div>
                   )}
@@ -408,7 +468,7 @@ const CustomerAIChat = () => {
               {!message.analysis && message.followUpQuestions?.length > 0 && (
                 <div className="ai-followups">
                   {message.followUpQuestions.slice(0, 3).map((question) => (
-                    <button key={question} onClick={() => setInput(question)}>{question}</button>
+                    <button key={question} onClick={() => sendMessage(question)}>{question}</button>
                   ))}
                 </div>
               )}
@@ -420,6 +480,7 @@ const CustomerAIChat = () => {
               <div className="ai-thinking"><span /><span /><span /></div>
             </article>
           )}
+          <div ref={messagesEndRef} />
         </main>
 
         <footer className="ai-composer-wrap">

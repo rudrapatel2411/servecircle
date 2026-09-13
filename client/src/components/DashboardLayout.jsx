@@ -1,9 +1,10 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import DashboardNavbar from './DashboardNavbar';
 import CallMeBackWidget from './CallMeBackWidget';
 import WorkerCallWidget from './WorkerCallWidget';
 import GlobalServiceSearch from './GlobalServiceSearch';
+import { getSession, roleHome } from '../utils/authSession.js';
 import './DashboardLayout.css';
 
 /* Routes where the General Services category sidebar should appear */
@@ -19,6 +20,15 @@ const GENERAL_SERVICES_ROUTES = [
 
 const DashboardLayout = ({ panel }) => {
   const location = useLocation();
+  const session = getSession();
+
+  if (!session) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  if (session.user.role !== panel) {
+    return <Navigate to={roleHome[session.user.role] || '/login'} replace />;
+  }
 
   // Show the category sidebar only on customer panel + General Services routes
   const isGeneralServicesRoute =

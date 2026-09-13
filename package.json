@@ -4,10 +4,9 @@
   "description": "ServeCircle Root Project",
   "scripts": {
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
-    "dev": "concurrently -n \"SERVER,CLIENT,TUNNEL\" -c \"cyan,magenta,yellow\" \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:tunnel\"",
-    "dev:server": "cd server && npm run dev",
-    "dev:client": "cd client && npm run dev",
-    "dev:tunnel": "node server/tunnel.js"
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -13,6 +13,7 @@
  *   bookingService → historyService   (Phase 2)
  */
 
+import mongoose from 'mongoose';
 import Booking from '../models/Booking.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
@@ -25,6 +26,14 @@ import { assignWorker, findBestWorker } from './assignmentService.js';
 import { notifyAdmin, notifyWorker, notifyCustomer, emitBookingStatus } from './notificationService.js';
 import { validateServiceForBooking } from './serviceService.js';
 import { generateStartOtp, generateEndOtp } from './otpService.js';
+import {
+  findDemoBookingById,
+  getDemoBookingsForCustomer,
+  getDemoBookingsForWorker,
+  getAllDemoBookings,
+  createDemoBooking,
+  updateDemoBooking,
+} from '../utils/demoBookingStore.js';
 
 // Phase 2 Batch 1: AI Data Foundation
 import { logBookingEvent, EVENT_TYPES } from './eventService.js';
@@ -69,6 +78,12 @@ async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdate
     ...(tsField ? { [tsField]: new Date() } : {}),
   };
 
+  if (mongoose.connection.readyState !== 1) {
+    const updated = updateDemoBooking(bookingId, update);
+    if (!updated) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
+    return updated;
+  }
+
   const updated = await Booking.findOneAndUpdate(
     { _id: bookingId, status: currentStatus, isDeleted: { $ne: true } },
     { $set: update },
@@ -102,7 +117,18 @@ async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdate
 // ─────────────────────────────────────────────────────────────────────────────
 export async function createBooking(data, customerId, io, customerName, reqCtx = {}) {
   // Validate service existence, active status and category match
-  await validateServiceForBooking(data.service, data.category);
+  await validateServiceForBooking(data.service, data.category, data.serviceId);
+
+  if (mongoose.connection.readyState !== 1) {
+    const booking = createDemoBooking(data, customerId, customerName);
+    notifyAdmin(
+      io,
+      'New Booking',
+      `Booking ${booking.bookingId} created by ${customerName || 'Customer'}.`,
+      'alert'
+    );
+    return booking;
+  }
 
   const count = await Booking.countDocuments();
   const bookingId = `SC-${count + 2800}`;
@@ -171,6 +197,13 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
 // @returns {Promise<{bookings, total, page, pages}>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getAllBookings({ status, page = 1, limit = 20, search } = {}) {
+  if (mongoose.connection.readyState !== 1) {
+    const all = getAllDemoBookings({ status, search });
+    const total = all.length;
+    const paginated = all.slice((page - 1) * limit, page * limit);
+    return { bookings: paginated, total, page: parseInt(page), pages: Math.ceil(total / limit) || 1 };
+  }
+
   const query = {};
   if (status) query.status = status;
   if (search) query.bookingId = { $regex: search, $options: 'i' };
@@ -196,6 +229,10 @@ export async function getAllBookings({ status, page = 1, limit = 20, search } = 
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getCustomerBookings(customerId, status) {
+  if (mongoose.connection.readyState !== 1) {
+    return getDemoBookingsForCustomer(customerId, status);
+  }
+
   const query = { customer: customerId };
   if (status) query.status = status;
   return Booking.find(query).populate('worker', 'name rating workerIdCode').sort('-createdAt').lean();
@@ -210,6 +247,10 @@ export async function getCustomerBookings(customerId, status) {
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getWorkerJobs(workerId, status) {
+  if (mongoose.connection.readyState !== 1) {
+    return getDemoBookingsForWorker(workerId, status);
+  }
+
   const query = { worker: workerId };
   if (status) query.status = status;
   return Booking.find(query).populate('customer', 'name phone address').sort('-scheduledDate').lean();
@@ -224,6 +265,12 @@ export async function getWorkerJobs(workerId, status) {
 // @returns {Promise<Booking>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getBookingById(bookingId, requestingUser) {
+  if (mongoose.connection.readyState !== 1) {
+    const booking = findDemoBookingById(bookingId);
+    if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
+    return booking;
+  }
+
   const booking = await Booking.findById(bookingId)
     .populate('customer', 'name email phone')
     .populate('worker', 'name workerIdCode');
@@ -262,6 +309,12 @@ export async function updateBookingFields(bookingId, updates) {
       'Status changes must use dedicated workflow endpoints (/assign, /accept, /reject, etc.)',
       StatusCodes.METHOD_NOT_ALLOWED
     );
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    const updated = updateDemoBooking(bookingId, updates);
+    if (!updated) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
+    return updated;
   }
 
   const booking = await Booking.findByIdAndUpdate(
@@ -456,12 +509,15 @@ export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function payBooking(bookingId, requestingUser, paymentMethod, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = mongoose.connection.readyState === 1
+    ? await Booking.findById(bookingId)
+    : findDemoBookingById(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
+  const custId = booking.customer?._id || booking.customer;
   if (
     requestingUser.role === 'customer' &&
-    booking.customer.toString() !== requestingUser._id.toString()
+    String(custId) !== String(requestingUser._id)
   ) {
     throw new AppError('Access denied', StatusCodes.FORBIDDEN);
   }
@@ -473,45 +529,55 @@ export async function payBooking(bookingId, requestingUser, paymentMethod, reqCt
   const updated = await applyTransition(bookingId, prevStatus, 'paid', extraUpdates);
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_PAID, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { paymentMethod } } },
-  });
-  logBookingEvent(EVENT_TYPES.BOOKING_PAID, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { paymentMethod, amount: booking.amount } });
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_PAID, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { paymentMethod } } },
+    });
+    logBookingEvent(EVENT_TYPES.BOOKING_PAID, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { paymentMethod, amount: booking.amount } });
+  }
 
   return updated;
 }
 
 export async function closeBooking(bookingId, requestingUser, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = mongoose.connection.readyState === 1
+    ? await Booking.findById(bookingId)
+    : findDemoBookingById(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'closed');
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_CLOSED, actor: requestingUser?._id, actorRole: requestingUser?.role, timestamp: new Date() } },
-  });
-  logBookingEvent(EVENT_TYPES.BOOKING_CLOSED, updated, requestingUser, reqCtx, { previousState: prevStatus });
-  // Phase 2 Batch 2: generate ML feature record on close
-  generateFeatureRecord(bookingId);
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_CLOSED, actor: requestingUser?._id, actorRole: requestingUser?.role, timestamp: new Date() } },
+    });
+    logBookingEvent(EVENT_TYPES.BOOKING_CLOSED, updated, requestingUser, reqCtx, { previousState: prevStatus });
+    // Phase 2 Batch 2: generate ML feature record on close
+    generateFeatureRecord(bookingId);
+  }
 
   return updated;
 }
 
 export async function cancelBooking(bookingId, requestingUser, reason, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = mongoose.connection.readyState === 1
+    ? await Booking.findById(bookingId)
+    : findDemoBookingById(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
+  const custId = booking.customer?._id || booking.customer;
   if (
     requestingUser.role === 'customer' &&
-    booking.customer.toString() !== requestingUser._id.toString()
+    String(custId) !== String(requestingUser._id)
   ) {
     throw new AppError('Access denied', StatusCodes.FORBIDDEN);
   }
 
+  const workerId = booking.worker?._id || booking.worker;
   if (requestingUser.role === 'worker') {
-    if (!booking.worker || booking.worker.toString() !== requestingUser._id.toString()) {
+    if (!workerId || String(workerId) !== String(requestingUser._id)) {
       throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
     }
   }
@@ -530,24 +596,26 @@ export async function cancelBooking(bookingId, requestingUser, reason, io, reqCt
   });
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_CANCELLED, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { reason } } },
-  });
-  notifyAdmin(
-    io,
-    'Booking Cancelled',
-    `Booking ${updated.bookingId} cancelled by ${requestingUser.name || requestingUser.role}.`,
-    'danger'
-  );
-  emitBookingStatus(io, updated, prevStatus);
-  logBookingEvent(EVENT_TYPES.BOOKING_CANCELLED, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { reason } });
-  if (booking.worker) recordWorkerCancellation(booking.worker);
-  if (requestingUser.role === 'customer') recordCustomerCancellation(requestingUser._id);
-  captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'cancelled', cancellationReason: reason }, changedBy: requestingUser._id, changeReason: EVENT_TYPES.BOOKING_CANCELLED });
-  // Phase 2 Batch 2: behaviour + demand
-  if (requestingUser.role === 'customer') recordBehaviourCancellation(requestingUser._id, reason);
-  if (booking.worker) syncTrustProfile(booking.worker);
-  recordDemand(booking, 'cancelled');
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_CANCELLED, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { reason } } },
+    });
+    notifyAdmin(
+      io,
+      'Booking Cancelled',
+      `Booking ${updated.bookingId} cancelled by ${requestingUser.name || requestingUser.role}.`,
+      'danger'
+    );
+    emitBookingStatus(io, updated, prevStatus);
+    logBookingEvent(EVENT_TYPES.BOOKING_CANCELLED, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { reason } });
+    if (booking.worker) recordWorkerCancellation(booking.worker);
+    if (requestingUser.role === 'customer') recordCustomerCancellation(requestingUser._id);
+    captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'cancelled', cancellationReason: reason }, changedBy: requestingUser._id, changeReason: EVENT_TYPES.BOOKING_CANCELLED });
+    // Phase 2 Batch 2: behaviour + demand
+    if (requestingUser.role === 'customer') recordBehaviourCancellation(requestingUser._id, reason);
+    if (booking.worker) syncTrustProfile(booking.worker);
+    recordDemand(booking, 'cancelled');
+  }
 
   return updated;
 }

@@ -117,6 +117,12 @@ const DashboardNavbar = ({ panel }) => {
       end: false,
     },
     {
+      path: '/customer/ai-chat',
+      label: 'AI Assistant',
+      icon: <HiOutlineChatBubbleLeftRight />,
+      end: false,
+    },
+    {
       path: '/customer/emergency',
       label: 'Emergency 24/7',
       icon: <HiOutlineBolt />,

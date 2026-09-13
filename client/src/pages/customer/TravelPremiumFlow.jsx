@@ -73,7 +73,7 @@ const TravelPremiumFlow = () => {
         price = vehicleClass === 'Premium Sedan' ? 3999 : 6499;
       }
       
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=travel-commute&price=${price}`);
     }, 1200);
   };
 

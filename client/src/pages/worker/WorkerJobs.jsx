@@ -21,6 +21,7 @@ import {
   fetchWorkerJobs,
   respondToJobRequest,
   updateWorkerJobStatus,
+  verifyWorkerOtp,
 } from './workerApi';
 import {
   formatDate,
@@ -33,9 +34,10 @@ import './WorkerPages.css';
 const tabs = [
   { key: 'all', label: 'All' },
   { key: 'pending', label: 'Pending' },
-  { key: 'confirmed', label: 'Confirmed' },
+  { key: 'accepted', label: 'Accepted' },
   { key: 'en-route', label: 'En-Route' },
-  { key: 'active', label: 'Active' },
+  { key: 'arrived', label: 'Arrived' },
+  { key: 'started', label: 'Started' },
   { key: 'completed', label: 'Completed' },
   { key: 'cancelled', label: 'Cancelled' },
 ];
@@ -64,7 +66,7 @@ const DEMO_JOBS = [
     scheduledTime: 'Immediate',
     address: 'Prahlad Nagar, Ahmedabad',
     amount: 1200,
-    status: 'confirmed',
+    status: 'accepted',
     isEmergency: true,
     customer: { name: 'Priya Desai' },
   },
@@ -76,7 +78,7 @@ const DEMO_JOBS = [
     scheduledTime: '11:00 AM',
     address: 'SG Highway, Ahmedabad',
     amount: 450,
-    status: 'en-route',
+    status: 'arrived',
     isEmergency: false,
     customer: { name: 'Amit Patel' },
   },
@@ -109,10 +111,6 @@ const WorkerJobs = () => {
   const [otpError, setOtpError] = useState({}); // { [jobId]: 'Wrong OTP' }
   const [cantResolveModal, setCantResolveModal] = useState(null); // jobId or null
   const [cantResolveReason, setCantResolveReason] = useState('');
-
-  // Mock OTPs for demo (in production these come from customer's app)
-  const MOCK_START_OTP = '8492';
-  const MOCK_END_OTP = '3751';
 
   const loadJobs = async (status = activeTab) => {
     if (isDemoMode) {
@@ -169,23 +167,33 @@ const WorkerJobs = () => {
     }
   };
 
-  const handleVerifyStartOtp = (jobId) => {
+  const handleVerifyStartOtp = async (jobId) => {
     const entered = otpInput[jobId] || '';
-    if (entered === MOCK_START_OTP) {
+    if (!entered) return;
+    setActionLoading(`${jobId}-start`);
+    try {
+      await verifyWorkerOtp(token, jobId, 'start', entered);
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      handleStatus(jobId, 'active');
-    } else {
-      setOtpError((prev) => ({ ...prev, [jobId]: '❌ Wrong OTP. Ask customer to share the correct Start OTP.' }));
+      await loadJobs(activeTab);
+    } catch (err) {
+      setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify Start OTP.' }));
+    } finally {
+      setActionLoading('');
     }
   };
 
-  const handleVerifyEndOtp = (jobId) => {
+  const handleVerifyEndOtp = async (jobId) => {
     const entered = otpInput[jobId] || '';
-    if (entered === MOCK_END_OTP) {
+    if (!entered) return;
+    setActionLoading(`${jobId}-end`);
+    try {
+      await verifyWorkerOtp(token, jobId, 'end', entered);
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      handleStatus(jobId, 'completed');
-    } else {
-      setOtpError((prev) => ({ ...prev, [jobId]: '❌ Wrong OTP. Ask customer to verify and share the End OTP.' }));
+      await loadJobs(activeTab);
+    } catch (err) {
+      setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify End OTP.' }));
+    } finally {
+      setActionLoading('');
     }
   };
 
@@ -316,8 +324,8 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 2: CONFIRMED — Ready to Go (reveals phone number to customer) ===== */}
-                {job.status === 'confirmed' && (
+                {/* ===== STEP 2: ACCEPTED — Ready to Go ===== */}
+                {job.status === 'accepted' && (
                   <div>
                     <div style={{ background: '#eff6ff', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#1e40af', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlinePhone style={{ flexShrink: 0, marginTop: '2px' }} />
@@ -335,13 +343,22 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 3: EN-ROUTE — Customer will give Start OTP on arrival ===== */}
+                {/* ===== STEP 3: EN-ROUTE — Mark arrival before Start OTP ===== */}
                 {job.status === 'en-route' && (
                   <div>
                     <div style={{ background: '#fefce8', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#854d0e', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlineShieldCheck style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>You are en-route. When you arrive, ask the customer for the <strong>Start OTP</strong> to begin the job.</span>
+                      <span>You are en-route. Mark arrival first, then ask the customer for the <strong>Start OTP</strong>.</span>
                     </div>
+                    <button className="btn btn-primary" onClick={() => handleStatus(job._id, 'arrived')} disabled={actionLoading === `${job._id}-arrived`} style={{ width: '100%', marginBottom: '10px' }}>
+                      {actionLoading === `${job._id}-arrived` ? 'Updating...' : '📍 Mark Arrived'}
+                    </button>
+                  </div>
+                )}
+
+                {/* ===== STEP 4: ARRIVED — Verify Start OTP ===== */}
+                {job.status === 'arrived' && (
+                  <div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <input
                         type="number"
@@ -359,10 +376,10 @@ const WorkerJobs = () => {
                       <button
                         className="btn btn-primary"
                         onClick={() => handleVerifyStartOtp(job._id)}
-                        disabled={actionLoading === `${job._id}-active`}
+                        disabled={actionLoading === `${job._id}-start`}
                         style={{ padding: '10px 20px' }}
                       >
-                        {actionLoading === `${job._id}-active` ? '...' : 'Verify & Start'}
+                        {actionLoading === `${job._id}-start` ? '...' : 'Verify & Start'}
                       </button>
                     </div>
                     {otpError[job._id] && (
@@ -371,8 +388,8 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 4: ACTIVE — Work in progress, Enter End OTP to complete ===== */}
-                {job.status === 'active' && (
+                {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP ===== */}
+                {job.status === 'started' && (
                   <div>
                     <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
@@ -395,10 +412,10 @@ const WorkerJobs = () => {
                       <button
                         className="btn btn-primary"
                         onClick={() => handleVerifyEndOtp(job._id)}
-                        disabled={actionLoading === `${job._id}-completed`}
+                        disabled={actionLoading === `${job._id}-end`}
                         style={{ padding: '10px 20px', background: '#16a34a' }}
                       >
-                        {actionLoading === `${job._id}-completed` ? '...' : '✅ Done'}
+                        {actionLoading === `${job._id}-end` ? '...' : '✅ Done'}
                       </button>
                     </div>
                     {otpError[job._id] && (
@@ -417,7 +434,7 @@ const WorkerJobs = () => {
                 )}
 
                 {/* Quick contact buttons for en-route and active */}
-                {(job.status === 'en-route' || job.status === 'active') && (
+                {(job.status === 'en-route' || job.status === 'started') && (
                   <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
                     <button
                       className="btn btn-outline"

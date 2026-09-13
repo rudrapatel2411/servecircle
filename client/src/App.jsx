@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 /* Layouts */
 import Navbar from './components/Navbar';
@@ -92,6 +92,9 @@ function App() {
         <Route path="/login" element={<><Navbar /><LoginPage /></>} />
         <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
         <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
+        <Route path="/ai-chat" element={<Navigate to="/customer/ai-chat" replace />} />
+        <Route path="/chat" element={<Navigate to="/customer/ai-chat" replace />} />
+        <Route path="/ai-diagnosis" element={<Navigate to="/customer/ai-diagnosis" replace />} />
 
         <Route path="/customer" element={<DashboardLayout panel="customer" />}>
           <Route index element={<CustomerDashboard />} />

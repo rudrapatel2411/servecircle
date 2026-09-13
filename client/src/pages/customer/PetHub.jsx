@@ -194,7 +194,7 @@ const PetHub = () => {
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Premium Grooming</h4>
           <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0d9488', marginBottom: '12px' }}>₹599</span>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>{t('petHub.groomingDesc')}</p>
-          <Link to={`/customer/book?service=${encodeURIComponent('Premium Pet Grooming')}&price=599`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: '#0d9488', color: '#0d9488', fontWeight: 700 }}>Book Grooming</Link>
+          <Link to={`/customer/book?service=${encodeURIComponent('Premium Pet Grooming')}&serviceId=pet-grooming&category=pet-services&price=599`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: '#0d9488', color: '#0d9488', fontWeight: 700 }}>Book Grooming</Link>
         </div>
 
         {/* Vet */}
@@ -203,7 +203,7 @@ const PetHub = () => {
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Vet Home Checkup</h4>
           <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0d9488', marginBottom: '12px' }}>₹799</span>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>{t('petHub.vetDesc')}</p>
-          <Link to={`/customer/book?service=${encodeURIComponent('Vet Checkup')}&price=799`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: '#0d9488', color: '#0d9488', fontWeight: 700 }}>Book Vet</Link>
+          <Link to={`/customer/book?service=${encodeURIComponent('Vet Checkup')}&serviceId=vet-visit&category=pet-services&price=799`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: '#0d9488', color: '#0d9488', fontWeight: 700 }}>Book Vet</Link>
         </div>
 
         {/* Dog Walking */}
@@ -213,7 +213,7 @@ const PetHub = () => {
           <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#3b82f6', marginBottom: '12px' }}>₹199</span>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>45-min guided walk for {petProfile.name} with live GPS tracking.</p>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <Link to={`/customer/book?service=${encodeURIComponent('Daily Dog Walking')}&price=199`} className="btn btn-primary" style={{ flex: 1, textAlign: 'center', background: '#3b82f6', borderColor: '#3b82f6', fontWeight: 700 }}>Book Walk</Link>
+            <Link to={`/customer/book?service=${encodeURIComponent('Daily Dog Walking')}&serviceId=pet-walking&category=pet-services&price=199`} className="btn btn-primary" style={{ flex: 1, textAlign: 'center', background: '#3b82f6', borderColor: '#3b82f6', fontWeight: 700 }}>Book Walk</Link>
             <button onClick={() => setShowWalkTracker(!showWalkTracker)} className="btn btn-outline" style={{ flex: 1, borderColor: '#3b82f6', color: '#3b82f6', fontWeight: 700 }}>Demo</button>
           </div>
         </div>

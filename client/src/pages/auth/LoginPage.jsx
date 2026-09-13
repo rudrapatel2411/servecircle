@@ -6,14 +6,8 @@ import {
   HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
+import { requestAuth, roleHome, saveSession } from '../../utils/authSession.js';
 import './AuthPages.css';
-
-const roleRoutes = {
-  customer: '/customer',
-  worker: '/worker',
-  admin: '/admin',
-  b2b: '/b2b',
-};
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -22,15 +16,29 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('customer');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email || !password) {
       setError(t('login.validationError', 'Email and password are required'));
       return;
     }
+
     setError('');
-    navigate(roleRoutes[role]);
+    setIsSubmitting(true);
+    try {
+      const data = await requestAuth('/auth/login', { email, password });
+      if (data?.user?.role !== role) {
+        throw new Error(`This account is not a ${role} account`);
+      }
+      saveSession({ token: data.token, user: data.user });
+      navigate(roleHome[data.user.role], { replace: true });
+    } catch (submitError) {
+      setError(submitError.message || t('login.error', 'Unable to sign in'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,8 +89,8 @@ const LoginPage = () => {
             {error && <p className="auth-error">{error}</p>}
 
             <div className="auth-form-footer">
-              <button className="btn btn-primary" type="submit">
-                {t('login.continueBtn', 'Continue')}
+              <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? t('login.signingIn', 'Signing in...') : t('login.continueBtn', 'Continue')}
                 <HiOutlineArrowRight />
               </button>
               <span className="auth-hint">
@@ -113,7 +121,7 @@ const LoginPage = () => {
             </Link>
           </div>
           <p className="auth-note">
-            {t('login.demoNote', 'Demo mode: navigation is role-based UI access. Authentication APIs can be wired directly later.')}
+            {t('login.authNote', 'Sign in uses your ServeCircle account and opens the matching role panel.')}
           </p>
         </aside>
       </div>

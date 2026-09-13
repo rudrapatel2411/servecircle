@@ -104,7 +104,8 @@ const EmergencyHub = () => {
   const getPresetService = (preset) => t(`emergencyHub.presets.${presetKeyMap[preset.id]}.service`, preset.service);
 
   const handleBookEmergency = (preset) => {
-    navigate(`/customer/book?service=${encodeURIComponent(getPresetService(preset))}&price=${preset.price}&expressMode=true`);
+    const cat = preset.id === 'vehicle-breakdown' ? 'vehicle-services' : 'home-repairs';
+    navigate(`/customer/book?service=${encodeURIComponent(getPresetService(preset))}&category=${cat}&price=${preset.price}&expressMode=true`);
   };
 
   const [searchQuery, setSearchQuery] = useState('');

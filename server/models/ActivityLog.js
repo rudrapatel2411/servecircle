@@ -26,7 +26,7 @@ const activityLogSchema = new mongoose.Schema(
     targetRef: { type: String }, // Collection name of targetId
 
     // When the action happened
-    timestamp: { type: Date, default: Date.now, index: true },
+    timestamp: { type: Date, default: Date.now },
 
     // How long the action took (ms) — for latency analysis
     duration:  { type: Number },

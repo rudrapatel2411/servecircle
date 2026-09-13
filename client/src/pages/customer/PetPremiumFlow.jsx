@@ -80,7 +80,7 @@ const PetPremiumFlow = () => {
         price = subPlan === 'Standard Box' ? 1999 : 2999;
       }
       
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=pet-services&price=${price}`);
     }, 1200);
   };
 

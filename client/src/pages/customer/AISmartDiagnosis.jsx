@@ -10,7 +10,7 @@ import {
 import '../Dashboard.css';
 import './CustomerPages.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+import { API_BASE, getSession } from '../../utils/authSession.js';
 
 const presetIssues = [
   {
@@ -92,9 +92,14 @@ const AISmartDiagnosis = () => {
     const formData = new FormData();
     const textPrompt = customNotes.trim() || selectedPreset?.title || 'Inspect this issue and recommend the exact service.';
     formData.append('text', textPrompt);
+    if (selectedPreset?.category) {
+      formData.append('category', selectedPreset.category);
+    }
 
     if (uploadedFile) {
       formData.append('image', uploadedFile);
+    } else if (selectedPreset?.image) {
+      formData.append('imageUrl', selectedPreset.image);
     }
 
     try {
@@ -108,34 +113,52 @@ const AISmartDiagnosis = () => {
         });
       }, 150);
 
-      const response = await fetch(`${API_BASE}/customer/ai/chat`, {
+      const session = getSession();
+      const headers = {};
+      if (session?.token) {
+        headers['Authorization'] = `Bearer ${session.token}`;
+      }
+
+      let response = await fetch(`${API_BASE}/customer/ai/diagnosis`, {
         method: 'POST',
+        headers,
         body: formData,
       });
+
+      if (!response.ok) {
+        // Fallback to /customer/ai/chat if needed
+        response = await fetch(`${API_BASE}/customer/ai/chat`, {
+          method: 'POST',
+          headers,
+          body: formData,
+        });
+      }
 
       clearInterval(stepTimer);
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'AI diagnosis failed');
 
-      // Extract Gemini multimodal results
+      // Extract multimodal / diagnosis results
+      const diag = data?.diagnosis || {};
       const multimodal = data?.analysis?.multimodal || data?.analysis || {};
       const problem = multimodal?.problemAnalysis || {};
       const service = multimodal?.serviceResolution || multimodal?.recommendation?.recommendedService || {};
       const recommendation = multimodal?.recommendation || {};
       const summary = multimodal?.summary || {};
 
-      const title = problem.aiAnalysisRaw?.problemType || problem.possibleProblems?.[0]?.name || summary.topProblem || data.serviceName || selectedPreset?.title || 'Detected Home Issue';
-      const categoryName = service.category || problem.aiAnalysisRaw?.serviceCategory || summary.problemCategory || selectedPreset?.category || 'Home Repair';
-      const serviceName = service.service || recommendation.recommendedService?.name || data.serviceName || selectedPreset?.service || 'Professional Service';
-      const estPrice = service.priceRangeInr?.min || recommendation.recommendedService?.priceRangeInr?.min || selectedPreset?.price || 499;
-      const targetHubRoute = service.targetHubRoute || null;
-      const confidenceScore = recommendation.confidence?.overall?.score || problem.confidence?.score || 0.88;
-      const confidencePct = `${Math.round(confidenceScore * 100)}%`;
+      const title = diag.title || problem.aiAnalysisRaw?.problemType || problem.possibleProblems?.[0]?.name || summary.topProblem || data.serviceName || selectedPreset?.title || 'Detected Home Issue';
+      const categoryName = diag.category || service.category || problem.aiAnalysisRaw?.serviceCategory || summary.problemCategory || selectedPreset?.category || 'Home Repairs';
+      const serviceName = diag.service || service.service || recommendation.recommendedService?.name || data.serviceName || selectedPreset?.service || 'Professional Service';
+      const estPrice = diag.price || service.priceRangeInr?.min || recommendation.recommendedService?.priceRangeInr?.min || selectedPreset?.price || 350;
+      const targetHubRoute = diag.targetHubRoute || service.targetHubRoute || null;
+      const confidencePct = diag.aiConfidence || `${Math.round((recommendation.confidence?.overall?.score || problem.confidence?.score || 0.96) * 100)}%`;
 
-      const safetyList = problem.aiAnalysisRaw?.recommendedActions?.length > 0
+      const safetyList = Array.isArray(diag.recommendations) && diag.recommendations.length > 0
+        ? diag.recommendations
+        : Array.isArray(problem.aiAnalysisRaw?.recommendedActions) && problem.aiAnalysisRaw.recommendedActions.length > 0
         ? problem.aiAnalysisRaw.recommendedActions
-        : service.safetyPrecautions?.length > 0
+        : Array.isArray(service.safetyPrecautions) && service.safetyPrecautions.length > 0
         ? service.safetyPrecautions
         : [
             'Do not attempt high-risk DIY repairs yourself.',
@@ -143,7 +166,7 @@ const AISmartDiagnosis = () => {
             'A verified professional is required to isolate and resolve this issue safely.'
           ];
 
-      const reasoningText = problem.aiAnalysisRaw?.reasoningLocalized || problem.aiAnalysisRaw?.reasoningEnglish || data.message || selectedPreset?.issueDetails || 'Visual inspection completed.';
+      const reasoningText = diag.issueDetails || problem.aiAnalysisRaw?.reasoningLocalized || problem.aiAnalysisRaw?.reasoningEnglish || data.message || selectedPreset?.issueDetails || 'Visual inspection completed.';
 
       setProgress(100);
       setTimeout(() => {
@@ -215,7 +238,7 @@ const AISmartDiagnosis = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('customer.aiDiagnosis')} 🤖</h1>
-          <p className="page-subtitle">Upload a photo/video or select a common issue to diagnose instantly with Gemini AI.</p>
+          <p className="page-subtitle">Upload a photo/video or select a common issue to diagnose instantly with ServeCircle AI.</p>
         </div>
       </div>
 
@@ -360,7 +383,7 @@ const AISmartDiagnosis = () => {
                   }} />
                 </div>
                 
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '8px' }}>Gemini AI Analysis in Progress...</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '8px' }}>ServeCircle AI Analysis in Progress...</h3>
                 <div className="progress-bar" style={{ width: '280px', margin: '0 auto 16px', height: '8px' }}>
                   <div className="progress-fill" style={{ width: `${progress}%` }} />
                 </div>
@@ -385,7 +408,7 @@ const AISmartDiagnosis = () => {
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '16px' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.4rem', color: 'var(--navy-800)', fontWeight: 800 }}>Gemini AI Diagnosis Results</h3>
+                    <h3 style={{ fontSize: '1.4rem', color: 'var(--navy-800)', fontWeight: 800 }}>ServeCircle AI Diagnosis Results</h3>
                     <p style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginTop: '4px' }}>Code: {result.diagnosisCode} • AI Confidence: <strong>{result.aiConfidence}</strong></p>
                   </div>
                   <button className="btn btn-outline btn-sm" onClick={resetDiagnosis} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -454,7 +477,7 @@ const AISmartDiagnosis = () => {
                 <h4 style={{ fontWeight: 800 }}>Why use AI Smart Diagnosis?</h4>
               </div>
               <ul style={{ paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: 'var(--gray-600)' }}>
-                <li><strong>Real Gemini Multimodal Vision</strong>: Analyzes high-res photos and video frames to detect damage and part failure.</li>
+                <li><strong>High-Precision Multimodal Vision</strong>: Analyzes high-res photos to detect damage, faults, and required tools.</li>
                 <li><strong>15+ Hub Service Routing</strong>: Directs you to the exact service hub (Plumbing, Driver, Pet, Health, Vehicle, Food, etc.).</li>
                 <li><strong>Transparent Estimates</strong>: View estimated price range and safety advisories before booking.</li>
               </ul>

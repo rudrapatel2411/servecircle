@@ -450,7 +450,7 @@ const BrowseServices = () => {
                   <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>₹{b.price}</div>
                 </div>
                 <Link
-                  to={`/customer/book?service=${encodeURIComponent(b.title)}&price=${b.price}`}
+                  to={`/customer/book?service=${encodeURIComponent(b.title)}&category=home-repairs&price=${b.price}`}
                   className="btn btn-primary btn-sm"
                   style={{ padding: '8px 16px' }}
                 >

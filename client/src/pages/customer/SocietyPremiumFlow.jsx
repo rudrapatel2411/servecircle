@@ -50,8 +50,8 @@ const SocietyPremiumFlow = () => {
   const handleDirectBooking = (serviceName, priceString, serviceId) => {
     setLoadingId(serviceId);
     setTimeout(() => {
-      const price = parseInt(priceString.replace(/[^\\d]/g, ''), 10);
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      const price = parseInt(priceString.replace(/[^\d]/g, ''), 10);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=society-management&price=${price}`);
     }, 800);
   };
 
@@ -123,7 +123,7 @@ const SocietyPremiumFlow = () => {
         price = packageLevel === 'Standard' ? 9999 : 19999;
       }
       
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=society-management&price=${price}`);
     }, 1200);
   };
 

@@ -103,13 +103,13 @@ const CustomerDashboard = () => {
 
         <div className="express-carousel">
           {[
-            { id: 'ac', name: 'AC Servicing', img: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=200&q=80', price: 499 },
-            { id: 'clean', name: 'Home Cleaning', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80', price: 999 },
-            { id: 'plumb', name: 'Plumber', img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=200&q=80', price: 299 },
-            { id: 'salon', name: 'Salon at Home', img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80', price: 799 }
+            { id: 'ac', name: 'AC Servicing', serviceId: 'ac-repair', category: 'home-repairs', img: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=200&q=80', price: 499 },
+            { id: 'clean', name: 'Home Cleaning', serviceId: 'deep-clean', category: 'cleaning', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80', price: 999 },
+            { id: 'plumb', name: 'Plumber', serviceId: 'plumbing-fix', category: 'home-repairs', img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=200&q=80', price: 299 },
+            { id: 'salon', name: 'Salon at Home', serviceId: 'beauty-home', category: 'care-family', img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80', price: 799 }
           ].map((svc) => (
             <Link 
-              to={`/customer/book?service=${encodeURIComponent(svc.name)}&price=${svc.price}&expressMode=true`} 
+              to={`/customer/book?service=${encodeURIComponent(svc.name)}&serviceId=${svc.serviceId}&category=${svc.category}&price=${svc.price}&expressMode=true`} 
               key={svc.id} 
               className="express-card"
             >

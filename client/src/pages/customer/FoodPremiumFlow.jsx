@@ -73,7 +73,7 @@ const FoodPremiumFlow = () => {
         price = cleanSize === 'Small Kitchen' ? 1999 : cleanSize === 'Medium Kitchen' ? 2999 : 4999;
       }
       
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=food-kitchen&price=${price}`);
     }, 1200);
   };
 

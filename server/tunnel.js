@@ -25,11 +25,11 @@ function startTunnel() {
     }
   });
 
-  // After 4 seconds, confirm tunnel is live if it hasn't exited
   setTimeout(() => {
     if (!hasFailed) {
       console.log(`[TUNNEL] ✅ Permanent URL active: https://${STATIC_DOMAIN}`);
-      console.log(`[TUNNEL] 🚀 Flutter app will connect to: https://${STATIC_DOMAIN}/api`);
+      console.log(`[TUNNEL] 🚀 API tunnel available at: https://${STATIC_DOMAIN}/api`);
+      console.log(`[TUNNEL] 🌐 Web App is open at: http://localhost:5173`);
     }
   }, 4000);
 }
