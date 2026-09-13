@@ -1,0 +1,47 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "city": 1,
+      "serviceCategory": 1,
+      "date": 1,
+      "hour": 1
+    },
+    "name": "city_1_serviceCategory_1_date_1_hour_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "date": -1
+    },
+    "name": "date_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "city": 1,
+      "date": -1
+    },
+    "name": "city_1_date_-1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "serviceCategory": 1,
+      "date": -1
+    },
+    "name": "serviceCategory_1_date_-1",
+    "background": true
+  }
+]

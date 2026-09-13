@@ -134,7 +134,7 @@ const VehicleRelocationDemo = () => {
                 <button 
                   className="btn" 
                   onClick={() => setVehicleData({...vehicleData, hasRC: true})}
-                  style={{ background: vehicleData.hasRC ? '#10b981' : 'white', color: vehicleData.hasRC ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasRC ? '#10b981' : 'var(--gray-300)'}` }}
+                  style={{ background: vehicleData.hasRC ? '#3b7dc1' : 'white', color: vehicleData.hasRC ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasRC ? '#3b7dc1' : 'var(--gray-300)'}` }}
                 >
                   {vehicleData.hasRC ? <><HiOutlineCheckCircle /> Uploaded</> : <><HiOutlineDocumentText /> Upload</>}
                 </button>
@@ -148,7 +148,7 @@ const VehicleRelocationDemo = () => {
                 <button 
                   className="btn" 
                   onClick={() => setVehicleData({...vehicleData, hasPhotos: true})}
-                  style={{ background: vehicleData.hasPhotos ? '#10b981' : 'white', color: vehicleData.hasPhotos ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasPhotos ? '#10b981' : 'var(--gray-300)'}` }}
+                  style={{ background: vehicleData.hasPhotos ? '#3b7dc1' : 'white', color: vehicleData.hasPhotos ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasPhotos ? '#3b7dc1' : 'var(--gray-300)'}` }}
                 >
                   {vehicleData.hasPhotos ? <><HiOutlineCheckCircle /> Verified</> : <><HiOutlineCamera /> Click</>}
                 </button>

@@ -23,8 +23,6 @@ const CustomerDashboard = () => {
       icon: <HiOutlineCalendarDays />, 
       value: '3', 
       label: t('customer.activeBookings'), 
-      color: '#3b82f6', 
-      bg: 'rgba(59, 130, 246, 0.12)',
       trend: '1 scheduled today',
       trendClass: 'positive'
     },
@@ -32,8 +30,6 @@ const CustomerDashboard = () => {
       icon: <HiOutlineWallet />, 
       value: '₹2,450', 
       label: t('customer.walletBalance'), 
-      color: '#10b981', 
-      bg: 'rgba(16, 185, 129, 0.12)',
       trend: '+₹150 cashback added',
       trendClass: 'positive'
     },
@@ -41,8 +37,6 @@ const CustomerDashboard = () => {
       icon: <HiOutlineClipboardDocumentCheck />, 
       value: '27', 
       label: t('customer.totalBookings'), 
-      color: '#8b5cf6', 
-      bg: 'rgba(139, 92, 246, 0.12)',
       trend: 'No cancellations',
       trendClass: 'neutral'
     },
@@ -50,18 +44,16 @@ const CustomerDashboard = () => {
       icon: <HiOutlineStar />, 
       value: 'Gold', 
       label: t('customer.subscriptions'), 
-      color: '#f59e0b', 
-      bg: 'rgba(245, 158, 11, 0.12)',
       trend: 'Expires in 5 months',
       trendClass: 'neutral'
     },
   ];
 
   const quickServices = [
-    { icon: <HiOutlineWrench />, name: t('dashboardTable.electrician'), color: '#3b82f6' },
-    { icon: <HiOutlineSparkles />, name: t('dashboardTable.cleaning'), color: '#06b6d4' },
-    { icon: <HiOutlineTruck />, name: t('dashboardTable.carRepair'), color: '#8b5cf6' },
-    { icon: <HiOutlineBolt />, name: t('dashboardTable.emergency'), color: '#ef4444' },
+    { icon: <HiOutlineWrench />, name: t('dashboardTable.electrician') },
+    { icon: <HiOutlineSparkles />, name: t('dashboardTable.cleaning') },
+    { icon: <HiOutlineTruck />, name: t('dashboardTable.carRepair') },
+    { icon: <HiOutlineBolt />, name: t('dashboardTable.emergency') },
   ];
 
   const recentBookings = [
@@ -74,18 +66,7 @@ const CustomerDashboard = () => {
   return (
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-      {/* Handcrafted Welcome Banner Card */}
-      <div className="welcome-banner-card animate-fade-in-up" style={{ marginBottom: 0 }}>
-        <div className="welcome-banner-text">
-          <h2>{getGreeting()}, Rudra! 👋</h2>
-          <p>
-            Your property looks in excellent shape. You have **Gold member benefits** active, giving you 5% cashback on all bookings today.
-          </p>
-        </div>
-        <Link to="/customer/services" className="btn btn-primary" style={{ textTransform: 'none' }}>
-          {t('common.bookNow')} <HiOutlineArrowUpRight style={{ fontSize: '1.2rem' }} />
-        </Link>
-      </div>
+
 
       {/* 1. User Bookings & Stats (Grid spanning full screen width) */}
       <div className="stats-container">
@@ -95,7 +76,7 @@ const CustomerDashboard = () => {
             className="stat-card animate-fade-in-up" 
             style={{ animationDelay: `${i * 0.08}s` }}
           >
-            <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>
+            <div className="stat-icon" style={{ background: 'rgba(17,24,39,0.06)', color: 'var(--gray-800)' }}>
               {stat.icon}
             </div>
             <div className="stat-details">
@@ -122,19 +103,19 @@ const CustomerDashboard = () => {
 
         <div className="express-carousel">
           {[
-            { id: 'ac', name: 'AC Servicing', color: '#0ea5e9', bg: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)', img: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=200&q=80', price: 499 },
-            { id: 'clean', name: 'Home Cleaning', color: '#8b5cf6', bg: 'linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80', price: 999 },
-            { id: 'plumb', name: 'Plumber', color: '#f59e0b', bg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=200&q=80', price: 299 },
-            { id: 'salon', name: 'Salon at Home', color: '#ec4899', bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80', price: 799 }
+            { id: 'ac', name: 'AC Servicing', serviceId: 'ac-repair', category: 'home-repairs', img: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=200&q=80', price: 499 },
+            { id: 'clean', name: 'Home Cleaning', serviceId: 'deep-clean', category: 'cleaning', img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80', price: 999 },
+            { id: 'plumb', name: 'Plumber', serviceId: 'plumbing-fix', category: 'home-repairs', img: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=200&q=80', price: 299 },
+            { id: 'salon', name: 'Salon at Home', serviceId: 'beauty-home', category: 'care-family', img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80', price: 799 }
           ].map((svc) => (
             <Link 
-              to={`/customer/book?service=${encodeURIComponent(svc.name)}&price=${svc.price}&expressMode=true`} 
+              to={`/customer/book?service=${encodeURIComponent(svc.name)}&serviceId=${svc.serviceId}&category=${svc.category}&price=${svc.price}&expressMode=true`} 
               key={svc.id} 
               className="express-card"
             >
-              <div className="express-image-wrapper" style={{ background: svc.bg }}>
-                <img src={svc.img} alt={svc.name} style={{ opacity: 0.7, mixBlendMode: 'overlay' }} />
-                <span className="express-badge" style={{ color: svc.color }}>
+              <div className="express-image-wrapper">
+                <img src={svc.img} alt={svc.name} />
+                <span className="express-badge">
                   <HiOutlineClock /> 15s Match
                 </span>
               </div>
@@ -162,7 +143,7 @@ const CustomerDashboard = () => {
         <div className="quick-services-grid">
           {quickServices.map((svc, i) => (
             <Link to="/customer/services" key={i} className="quick-service-card">
-              <div className="quick-service-icon" style={{ background: `${svc.color}12`, color: svc.color }}>
+              <div className="quick-service-icon">
                 {svc.icon}
               </div>
               <span className="quick-service-name">{svc.name}</span>

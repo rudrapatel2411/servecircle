@@ -1,0 +1,120 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c652f09ec34fd5c975d68"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "__v": 0,
+    "_sumArrivalTimeMs": 161,
+    "_sumCompletionTimeMs": 683,
+    "_sumResponseTimeMs": 266,
+    "_timingSamples": 4,
+    "acceptanceRate": 1,
+    "avgArrivalTimeMs": 40.25,
+    "avgCompletionTimeMs": 170.75,
+    "avgRatingCleanliness": 0,
+    "avgRatingCommunication": 0,
+    "avgRatingOverall": 0,
+    "avgRatingProfessionalism": 0,
+    "avgRatingPunctuality": 0,
+    "avgRatingQuality": 0,
+    "avgRatingValue": 0,
+    "avgResponseTimeMs": 66.5,
+    "categoryBreakdown": [
+      {
+        "category": "Home Repairs",
+        "completions": 2,
+        "avgRating": 0,
+        "_id": {
+          "$oid": "6a6c6530bd7ef589ff6df2d0"
+        }
+      }
+    ],
+    "completionRate": 1,
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.233Z"
+    },
+    "repeatCustomers": 1,
+    "resolvedComplaints": 0,
+    "successRate": 1,
+    "totalAcceptances": 2,
+    "totalAssignments": 2,
+    "totalCancellations": 0,
+    "totalComplaints": 0,
+    "totalCompletions": 2,
+    "totalNoShows": 0,
+    "totalOtpFailures": 0,
+    "totalRatings": 0,
+    "totalRejections": 0,
+    "uniqueCustomerIds": [
+      {
+        "$oid": "6a6596ed883d88f76414fa26"
+      }
+    ],
+    "uniqueCustomers": 1,
+    "lastJobAt": {
+      "$date": "2026-07-31T09:19:59.226Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689c09ec34fd5c975d6b"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "__v": 0,
+    "_sumArrivalTimeMs": 106,
+    "_sumCompletionTimeMs": 371,
+    "_sumResponseTimeMs": 185,
+    "_timingSamples": 2,
+    "acceptanceRate": 1,
+    "avgArrivalTimeMs": 53,
+    "avgCompletionTimeMs": 185.5,
+    "avgRatingCleanliness": 0,
+    "avgRatingCommunication": 0,
+    "avgRatingOverall": 0,
+    "avgRatingProfessionalism": 0,
+    "avgRatingPunctuality": 0,
+    "avgRatingQuality": 0,
+    "avgRatingValue": 0,
+    "avgResponseTimeMs": 92.5,
+    "categoryBreakdown": [
+      {
+        "category": "Home Repairs",
+        "completions": 1,
+        "avgRating": 0,
+        "_id": {
+          "$oid": "6a6c689ded35f87422c16612"
+        }
+      }
+    ],
+    "completionRate": 1,
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:25.279Z"
+    },
+    "repeatCustomers": 0,
+    "resolvedComplaints": 0,
+    "successRate": 1,
+    "totalAcceptances": 1,
+    "totalAssignments": 1,
+    "totalCancellations": 0,
+    "totalComplaints": 0,
+    "totalCompletions": 1,
+    "totalNoShows": 0,
+    "totalOtpFailures": 0,
+    "totalRatings": 0,
+    "totalRejections": 0,
+    "uniqueCustomerIds": [
+      {
+        "$oid": "6a6596ed883d88f76414fa26"
+      }
+    ],
+    "uniqueCustomers": 1,
+    "lastJobAt": {
+      "$date": "2026-07-31T09:19:25.273Z"
+    }
+  }
+]

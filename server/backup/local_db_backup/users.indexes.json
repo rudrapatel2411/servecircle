@@ -1,0 +1,64 @@
+[
+  {
+    "v": 2,
+    "key": {
+      "_id": 1
+    },
+    "name": "_id_"
+  },
+  {
+    "v": 2,
+    "key": {
+      "email": 1
+    },
+    "name": "email_1",
+    "background": true,
+    "unique": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "location": "2dsphere"
+    },
+    "name": "location_2dsphere",
+    "background": true,
+    "2dsphereIndexVersion": 3
+  },
+  {
+    "v": 2,
+    "key": {
+      "role": 1,
+      "isVerified": 1,
+      "workerStatus": 1,
+      "serviceCategory": 1
+    },
+    "name": "role_1_isVerified_1_workerStatus_1_serviceCategory_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "isDeleted": 1
+    },
+    "name": "isDeleted_1",
+    "background": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "workerIdCode": 1
+    },
+    "name": "workerIdCode_1",
+    "background": true,
+    "sparse": true
+  },
+  {
+    "v": 2,
+    "key": {
+      "qrToken": 1
+    },
+    "name": "qrToken_1",
+    "background": true,
+    "sparse": true
+  }
+]

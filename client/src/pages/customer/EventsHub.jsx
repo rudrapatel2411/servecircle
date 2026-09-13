@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineSparkles, HiOutlineCalculator, HiOutlineCheckCircle, HiOutlineCurrencyRupee,
-  HiOutlineEye, HiOutlineStar, HiOutlineUserGroup
+  HiOutlineEye, HiOutlineStar, HiOutlineUserGroup,
+  HiOutlineMagnifyingGlass, HiOutlineXMark
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -160,6 +161,13 @@ const EventsHub = () => {
   // State handles Theme ID rather than object to ensure dynamic translations update on language switch
   const [selectedThemeId, setSelectedThemeId] = useState('birthday');
   const selectedTheme = themesData.find(theme => theme.id === selectedThemeId) || themesData[0];
+
+  // Search for themes
+  const [themeSearchQuery, setThemeSearchQuery] = useState('');
+  const filteredThemes = themesData.filter((theme) =>
+    theme.name.toLowerCase().includes(themeSearchQuery.toLowerCase()) ||
+    theme.description.toLowerCase().includes(themeSearchQuery.toLowerCase())
+  );
 
   // Navigation tab states to avoid long scroll
   const [activeTab, setActiveTab] = useState('theme'); // 'theme' | 'checklist'
@@ -353,7 +361,7 @@ const EventsHub = () => {
 
     const notes = `Date: ${eventDate || 'Not specified'}. Venue: ${venueType}. Guests: ${guestsCount}. Inclusions: ${inclusions.join(', ')}. Details: ${eventDesc}`;
     
-    navigate(`/customer/book?service=${encodeURIComponent(eventName)}&price=${totalEstimate}&guests=${guestsCount}&notes=${encodeURIComponent(notes)}`);
+    navigate(`/customer/book?service=${encodeURIComponent(eventName)}&serviceId=birthday-decor&category=events&price=${totalEstimate}&guests=${guestsCount}&notes=${encodeURIComponent(notes)}`);
   };
 
   // Live computed dynamic vendor details for active key
@@ -417,24 +425,24 @@ const EventsHub = () => {
         }
       `}</style>
 
-      {/* Dynamic Header */}
-      <div className="page-header animate-fade-in-up" style={{
-        background: 'var(--gradient-primary, linear-gradient(135deg, #1e1b4b 0%, #311042 100%))',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        border: '1.5px solid var(--primary-300)'
-      }}>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <h1 className="page-title" style={{ color: 'white', fontSize: '2.2rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <HiOutlineSparkles style={{ color: '#f59e0b' }} /> {t('eventsHub.title', 'ServeCircle Events Hub')}
-          </h1>
-          <p style={{ color: '#d8b4fe', fontSize: '0.95rem', marginTop: '6px', maxWidth: '600px' }}>
-            {t('eventsHub.subtitle', 'Coordinate catering, customized LED/balloon styling decors, live sound setups, and pro event photographers in a single checkout.')}
-          </p>
-        </div>
+      {/* ===== SEARCH BAR ===== */}
+      <div className="hub-search-bar">
+        <HiOutlineMagnifyingGlass className="hub-search-icon" />
+        <input
+          type="text"
+          placeholder="Search event themes..."
+          value={themeSearchQuery}
+          onChange={(e) => setThemeSearchQuery(e.target.value)}
+          className="hub-search-input"
+        />
+        {themeSearchQuery && (
+          <button className="hub-search-clear" onClick={() => setThemeSearchQuery('')} aria-label="Clear">
+            <HiOutlineXMark />
+          </button>
+        )}
       </div>
+
+
 
       {/* Navigation tabs to save vertical scrolling space */}
       <div className="tabs-container" style={{
@@ -539,7 +547,9 @@ const EventsHub = () => {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-                  {themesData.map((theme) => (
+                  {filteredThemes.length === 0 ? (
+                    <div style={{ padding: '16px', color: 'var(--gray-500)', gridColumn: '1 / -1', textAlign: 'center' }}>No themes match your search.</div>
+                  ) : filteredThemes.map((theme) => (
                     <div
                       key={theme.id}
                       onClick={() => setSelectedThemeId(theme.id)}

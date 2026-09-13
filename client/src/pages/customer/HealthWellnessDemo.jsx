@@ -74,7 +74,7 @@ const HealthWellnessDemo = () => {
           price = elderlyData.plan === '1-Month' ? 499 : (elderlyData.plan === '3-Month' ? 399 : 299);
         }
 
-        navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+        navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=health-wellness&price=${price}`);
       }
     }, 800);
   };
@@ -82,7 +82,7 @@ const HealthWellnessDemo = () => {
   const getHeader = () => {
     if (type === 'iv') return { title: 'IV Drip Therapy', desc: 'Safe & Certified Home Administration', color: '#0ea5e9', bg: '#e0f2fe' };
     if (type === 'sports') return { title: 'Sports Recovery', desc: 'Professional Pain Management & Rehab', color: '#ea580c', bg: '#ffedd5' };
-    if (type === 'elderly') return { title: 'Elderly Care Subscription', desc: 'Compassionate In-Home Physiotherapy', color: '#10b981', bg: '#d1fae5' };
+    if (type === 'elderly') return { title: 'Elderly Care Subscription', desc: 'Compassionate In-Home Physiotherapy', color: '#3b7dc1', bg: '#e1ebf5' };
     return { title: 'Health & Wellness', desc: 'Premium Services', color: '#6366f1', bg: '#e0e7ff' };
   };
   const header = getHeader();

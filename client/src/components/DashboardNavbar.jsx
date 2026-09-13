@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
   HiOutlineBell,
   HiOutlineMagnifyingGlass,
@@ -11,8 +11,19 @@ import {
   HiOutlineStar,
   HiOutlineUser,
   HiOutlineArrowRightOnRectangle,
+  HiOutlineBolt,
+  HiOutlineSparkles,
+  HiOutlineSquares2X2,
+  HiOutlineViewColumns,
+  HiOutlineHome,
+  HiOutlineMagnifyingGlass as HiSearch,
+  HiBars3,
+  HiXMark as HiClose,
+  HiOutlineQrCode,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
+import WorkerVerifyModal from './WorkerVerifyModal';
 import { socket } from '../socket';
 import './DashboardNavbar.css';
 
@@ -21,8 +32,8 @@ const DashboardNavbar = ({ panel }) => {
   const [notifications, setNotifications] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
-  
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -80,23 +91,108 @@ const DashboardNavbar = ({ panel }) => {
 
   const user = getUserDetails();
 
+  const customerTopNavLinks = [
+    {
+      path: '/customer',
+      label: 'Dashboard',
+      icon: <HiOutlineHome />,
+      end: true,
+    },
+    {
+      path: '/customer/services',
+      label: 'Browse Services',
+      icon: <HiSearch />,
+      end: false,
+    },
+    {
+      path: '/customer/general-services',
+      label: 'General Services',
+      icon: <HiOutlineSquares2X2 />,
+      end: false,
+    },
+    {
+      path: '/customer/events',
+      label: 'Events Hub',
+      icon: <HiOutlineSparkles />,
+      end: false,
+    },
+    {
+      path: '/customer/ai-chat',
+      label: 'AI Assistant',
+      icon: <HiOutlineChatBubbleLeftRight />,
+      end: false,
+    },
+    {
+      path: '/customer/emergency',
+      label: 'Emergency 24/7',
+      icon: <HiOutlineBolt />,
+      end: false,
+      isEmergency: true,
+    },
+  ];
+
   return (
     <header className="dash-navbar">
-      <div className="dash-navbar-search">
-        <HiOutlineMagnifyingGlass />
-        <input type="text" placeholder={t('common.search')} className="dash-search-input" />
-      </div>
+      {/* ===== BRAND LOGO ===== */}
+      <NavLink to={panel === 'customer' ? '/customer' : `/${panel}`} className="dash-brand">
+        <div className="dash-brand-icon">SC</div>
+        <span className="dash-brand-text">ServeCircle</span>
+      </NavLink>
+
+      {/* ===== CUSTOMER TOP NAV (centered) ===== */}
+      {panel === 'customer' && (
+        <>
+          <nav className="customer-top-nav">
+            {customerTopNavLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.end}
+                className={({ isActive }) =>
+                  `customer-top-nav-link${isActive ? ' customer-top-nav-link--active' : ''}${link.isEmergency ? ' customer-top-nav-link--emergency' : ''}`
+                }
+              >
+                <span className="customer-top-nav-icon">{link.icon}</span>
+                <span className="customer-top-nav-label">{link.label}</span>
+              </NavLink>
+            ))}
+          </nav>
+
+        </>
+      )}
+
+      {/* ===== NON-CUSTOMER PANEL TITLE ===== */}
+      {panel !== 'customer' && (
+        <div className="dash-panel-title">
+          <span className="dash-panel-badge">{panel}</span>
+          <span className="dash-panel-label">
+            {panel === 'worker' ? 'Worker Panel' : panel === 'admin' ? 'Admin Panel' : 'B2B Panel'}
+          </span>
+        </div>
+      )}
+
+      {/* ===== RIGHT ACTIONS ===== */}
       <div className="dash-navbar-actions">
-        <LanguageToggle />
+        {panel === 'customer' && (
+          <button
+            className="dash-icon-btn dash-ai-btn"
+            aria-label="Open ServeCircle AI Assistant"
+            title="ServeCircle AI"
+            onClick={() => navigate('/customer/ai-chat')}
+          >
+            <HiOutlineChatBubbleLeftRight />
+          </button>
+        )}
+
         <button className="dash-icon-btn" aria-label={t('common.notifications')}>
           <HiOutlineBell />
           {notifications.length > 0 && <span className="notif-dot" style={{ background: 'var(--danger)' }} />}
         </button>
 
-        {/* Profile Dropdown Container */}
+        {/* Profile Dropdown */}
         <div className="dash-profile-container" ref={dropdownRef}>
-          <button 
-            className="dash-avatar-btn" 
+          <button
+            className="dash-avatar-btn"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             aria-label="Toggle profile menu"
           >
@@ -117,42 +213,76 @@ const DashboardNavbar = ({ panel }) => {
                   <span className="user-badge">{panel}</span>
                 </div>
               </div>
-              
+
               <div className="dropdown-divider" />
 
-              <div className="dropdown-links">
+              <div className="dropdown-links" style={{ paddingBottom: '8px' }}>
+                {/* Language Toggle in Profile Menu */}
+                <div style={{ padding: '4px 12px', display: 'flex', justifyContent: 'center' }}>
+                  <LanguageToggle />
+                </div>
+                <div className="dropdown-divider" style={{ margin: '8px 0' }} />
+
+                {/* Trust & Safety: Verify -> Verify Worker for ALL ROLES */}
+                <button
+                  className="dropdown-link"
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsVerifyModalOpen(true);
+                  }}
+                  style={{
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    fontWeight: 700,
+                    borderRadius: '8px',
+                    margin: '4px 0',
+                  }}
+                >
+                  <HiOutlineQrCode className="dropdown-link-icon" style={{ color: '#2563eb' }} />
+                  <span>Verify Worker</span>
+                </button>
+
                 {panel === 'customer' && (
                   <>
-                    <Link 
-                      to="/customer/my-home" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/my-home"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
-                      <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#10b981' }} />
+                      <HiOutlineShieldCheck className="dropdown-link-icon" style={{ color: '#3b7dc1' }} />
                       <span>{t('customer.myHome')}</span>
                     </Link>
-                    
-                    <Link 
-                      to="/customer/bookings" 
-                      className="dropdown-link" 
+
+                    <Link
+                      to="/customer/ordered-services"
+                      className="dropdown-link"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <HiOutlineSparkles className="dropdown-link-icon" style={{ color: '#d97706' }} />
+                      <span>Ordered Services (Live)</span>
+                    </Link>
+
+                    <Link
+                      to="/customer/bookings"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineCalendarDays className="dropdown-link-icon" />
-                      <span>{t('customer.myBookings')}</span>
+                      <span>{t('customer.myBookings', 'Booking History')}</span>
                     </Link>
 
-                    <Link 
-                      to="/customer/wallet" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/wallet"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineWallet className="dropdown-link-icon" />
                       <span>{t('customer.wallet')}</span>
                     </Link>
 
-                    <Link 
-                      to="/customer/subscriptions" 
-                      className="dropdown-link" 
+                    <Link
+                      to="/customer/subscriptions"
+                      className="dropdown-link"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       <HiOutlineStar className="dropdown-link-icon" />
@@ -162,9 +292,9 @@ const DashboardNavbar = ({ panel }) => {
                 )}
 
                 {panel === 'worker' && (
-                  <Link 
-                    to="/worker/profile" 
-                    className="dropdown-link" 
+                  <Link
+                    to="/worker/profile"
+                    className="dropdown-link"
                     onClick={() => setIsProfileOpen(false)}
                   >
                     <HiOutlineUser className="dropdown-link-icon" />
@@ -172,8 +302,8 @@ const DashboardNavbar = ({ panel }) => {
                   </Link>
                 )}
 
-                <button 
-                  className="dropdown-link logout-btn" 
+                <button
+                  className="dropdown-link logout-btn"
                   onClick={() => {
                     setIsProfileOpen(false);
                     navigate('/login');
@@ -188,6 +318,12 @@ const DashboardNavbar = ({ panel }) => {
         </div>
       </div>
 
+      <WorkerVerifyModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+      />
+
+      {/* Toast */}
       {showToast && latestToast && (
         <div className="toast-notification animate-slide-in-left" style={{ position: 'fixed', bottom: '24px', right: '24px', background: 'white', borderLeft: '4px solid var(--primary-500)', boxShadow: 'var(--shadow-lg)', padding: '16px 24px', borderRadius: 'var(--radius-md)', zIndex: 9999, display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
           <div>

@@ -72,36 +72,15 @@ const HealthWellnessHub = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('healthWellness.backToDirectory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #3b82f6',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>🩺</span>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('healthWellness.title')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '4px' }}>
-              {t('healthWellness.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       <div style={{
         display: 'grid',
@@ -198,7 +177,7 @@ const HealthWellnessHub = () => {
                 />
                 <div style={{ flex: 1 }}>
                   <h4 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {sp.name} <HiOutlineShieldCheck style={{ color: '#10b981', fontSize: '1.1rem' }} title="Verified Medical License" />
+                    {sp.name} <HiOutlineShieldCheck style={{ color: '#3b7dc1', fontSize: '1.1rem' }} title="Verified Medical License" />
                   </h4>
                   <span style={{ fontSize: '0.72rem', color: '#3b82f6', fontWeight: 650, display: 'block', marginTop: '2px' }}>
                     {sp.degree}
@@ -213,7 +192,7 @@ const HealthWellnessHub = () => {
                     <div style={{ display: 'flex', gap: '6px' }}>
                       {['physician', 'mental', 'derma', 'dietitian', 'pediatrician', 'cardiologist'].includes(selectedSpecialist) && (
                         <Link
-                          to={`/customer/book?service=${encodeURIComponent('Video Consultation')}&price=299`}
+                          to={`/customer/book?service=${encodeURIComponent('Video Consultation')}&serviceId=video-consult&category=health-wellness&price=299`}
                           className="btn btn-outline btn-sm"
                           style={{ padding: '6px 10px', fontSize: '0.75rem', borderColor: '#3b82f6', color: '#3b82f6' }}
                         >
@@ -221,7 +200,7 @@ const HealthWellnessHub = () => {
                         </Link>
                       )}
                       <Link
-                        to={`/customer/book?service=${encodeURIComponent(selectedSpecialist === 'physician' ? 'Doctor Home Visit' : selectedSpecialist + ' Session')}&price=${sp.price}`}
+                        to={`/customer/book?service=${encodeURIComponent(selectedSpecialist === 'physician' ? 'Doctor Home Visit' : selectedSpecialist + ' Session')}&serviceId=${selectedSpecialist === 'physician' ? 'doctor-visit' : 'health-session'}&category=health-wellness&price=${sp.price}`}
                         className="btn btn-primary btn-sm"
                         style={{ padding: '6px 10px', fontSize: '0.75rem', background: '#3b82f6', borderColor: '#3b82f6' }}
                       >
@@ -320,8 +299,8 @@ const HealthWellnessHub = () => {
                         width: '10px',
                         height: '10px',
                         borderRadius: '50%',
-                        background: isActive ? '#10b981' : 'var(--gray-300)',
-                        boxShadow: isActive ? '0 0 6px #10b981' : 'none'
+                        background: isActive ? '#3b7dc1' : 'var(--gray-300)',
+                        boxShadow: isActive ? '0 0 6px #3b7dc1' : 'none'
                       }} />
                       <div style={{ fontSize: '0.78rem', fontWeight: isActive ? 800 : 500, color: isActive ? 'var(--navy-800)' : 'var(--gray-400)' }}>
                         {step.label}
@@ -368,9 +347,9 @@ const HealthWellnessHub = () => {
               
               {/* Doctor Review Call-to-Action */}
               {labStep === 4 && (
-                <div className="animate-fade-in-up" style={{ marginTop: '12px', background: '#ecfdf5', padding: '12px', borderRadius: '8px', border: '1px solid #6ee7b7', textAlign: 'center' }}>
-                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#047857', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
-                  <button className="btn btn-primary btn-sm" style={{ background: '#10b981', borderColor: '#10b981', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => alert('Scheduling free doctor call...')}>
+                <div className="animate-fade-in-up" style={{ marginTop: '12px', background: '#f0f5fa', padding: '12px', borderRadius: '8px', border: '1px solid #94bce0', textAlign: 'center' }}>
+                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#224c82', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
+                  <button className="btn btn-primary btn-sm" style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => alert('Scheduling free doctor call...')}>
                     📞 Schedule Free Doctor Call
                   </button>
                 </div>
@@ -394,7 +373,7 @@ const HealthWellnessHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent(labPackagesData.find(p => p.id === labPackage)?.name + ' at Home')}&price=${labPackagesData.find(p => p.id === labPackage)?.price}`}
+              to={`/customer/book?service=${encodeURIComponent(labPackagesData.find(p => p.id === labPackage)?.name + ' at Home')}&serviceId=lab-diagnostics&category=health-wellness&price=${labPackagesData.find(p => p.id === labPackage)?.price}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#3b82f6', borderColor: '#3b82f6' }}
             >
@@ -414,7 +393,7 @@ const HealthWellnessHub = () => {
           flexDirection: 'column'
         }}>
           <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#10b981', fontSize: '1.4rem' }}>💊</span> Express Pharmacy
+            <span style={{ color: '#3b7dc1', fontSize: '1.4rem' }}>💊</span> Express Pharmacy
           </h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
             Upload your prescription for 30-minute doorstep medicine delivery.
@@ -436,7 +415,7 @@ const HealthWellnessHub = () => {
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
-            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#10b981'; e.currentTarget.style.background = '#f0fdf4'; }}
+            onMouseOver={(e) => { e.currentTarget.style.borderColor = '#3b7dc1'; e.currentTarget.style.background = '#f0fdf4'; }}
             onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--gray-300)'; e.currentTarget.style.background = '#f8fafc'; }}
             onClick={() => alert('Opening File Picker for Prescription...')}
             >
@@ -517,7 +496,7 @@ const HealthWellnessHub = () => {
           <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>👵🦴</div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
-          <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#10b981', background: '#10b981', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#3b7dc1', background: '#3b7dc1', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
             Consult & Subscribe
           </Link>
         </div>

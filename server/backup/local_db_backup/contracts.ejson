@@ -1,0 +1,112 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe11f"
+    },
+    "contractId": "CON-1001",
+    "partner": {
+      "$oid": "6a5f4c92437c4810f45fe0f9"
+    },
+    "partnerName": "Green Valley Society",
+    "contractType": "monthly_cleaning",
+    "services": [
+      {
+        "name": "Lobby Cleaning",
+        "frequency": "Daily",
+        "pricePerUnit": 500,
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe120"
+        }
+      },
+      {
+        "name": "Garden Maintenance",
+        "frequency": "Weekly",
+        "pricePerUnit": 2000,
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe121"
+        }
+      }
+    ],
+    "locations": [
+      {
+        "name": "Block A",
+        "address": "Green Valley, Satellite",
+        "city": "Ahmedabad",
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe122"
+        }
+      },
+      {
+        "name": "Block B",
+        "address": "Green Valley, Satellite",
+        "city": "Ahmedabad",
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe123"
+        }
+      }
+    ],
+    "totalValue": 25000,
+    "startDate": {
+      "$date": "2026-01-01T00:00:00Z"
+    },
+    "endDate": {
+      "$date": "2026-12-31T00:00:00Z"
+    },
+    "status": "active",
+    "autoRenew": true,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.616Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.616Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe124"
+    },
+    "contractId": "CON-1002",
+    "partner": {
+      "$oid": "6a5f4c92437c4810f45fe0f9"
+    },
+    "partnerName": "Green Valley Society",
+    "contractType": "quarterly_maintenance",
+    "services": [
+      {
+        "name": "Pest Control",
+        "frequency": "Quarterly",
+        "pricePerUnit": 5000,
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe125"
+        }
+      }
+    ],
+    "locations": [
+      {
+        "name": "All Blocks",
+        "address": "Green Valley, Satellite",
+        "city": "Ahmedabad",
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe126"
+        }
+      }
+    ],
+    "totalValue": 20000,
+    "startDate": {
+      "$date": "2026-04-01T00:00:00Z"
+    },
+    "endDate": {
+      "$date": "2027-03-31T00:00:00Z"
+    },
+    "status": "active",
+    "autoRenew": false,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.616Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.616Z"
+    },
+    "__v": 0
+  }
+]

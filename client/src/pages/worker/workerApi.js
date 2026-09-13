@@ -92,17 +92,33 @@ export const fetchWorkerJobs = async (token, status) => {
 };
 
 export const respondToJobRequest = async (token, bookingId, action) => {
-  return apiRequest(`/bookings/${bookingId}/respond`, {
+  const endpoint = action === 'accept' ? 'accept' : 'reject';
+  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
     method: 'PATCH',
     token,
-    body: { action },
   });
 };
 
 export const updateWorkerJobStatus = async (token, bookingId, status) => {
-  return apiRequest(`/bookings/${bookingId}`, {
+  const endpointByStatus = {
+    'en-route': 'en-route',
+    arrived: 'arrive',
+    completed: 'complete',
+  };
+  const endpoint = endpointByStatus[status];
+  if (!endpoint) throw new Error(`Unsupported worker status action: ${status}`);
+
+  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
     method: 'PATCH',
     token,
-    body: { status },
+  });
+};
+
+export const verifyWorkerOtp = async (token, bookingId, type, otp) => {
+  const endpoint = type === 'start' ? 'start-otp/verify' : 'end-otp/verify';
+  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
+    method: 'POST',
+    token,
+    body: { otp },
   });
 };

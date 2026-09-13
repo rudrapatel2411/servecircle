@@ -224,11 +224,14 @@ const LiveTracking = () => {
   return (
     <div className="page-content" style={{ minHeight: 'calc(100vh - 128px)', display: 'flex', flexDirection: 'column', paddingBottom: '12px' }}>
 
-      <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0 }}>
+      <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
           <p className="page-subtitle" style={{ fontSize: '0.85rem' }}>{t('liveTracking.subtitle', 'Watch your service expert arrive in real-time.')}</p>
         </div>
+        <Link to="/customer/bookings" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
+          📋 View My Bookings
+        </Link>
       </div>
 
       <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.8fr', gap: '20px', flex: 1, marginBottom: '10px' }}>
@@ -355,30 +358,46 @@ const LiveTracking = () => {
           
           <div className="card" style={{ padding: '24px 20px', textAlign: 'center', background: 'white', flex: 1.2, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0, border: '1px solid var(--gray-200)' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Assigned Professional
+              Assigned Team (Verify Faces)
             </span>   
-            <div style={{
-              width: '64px', height: '64px', borderRadius: '50%',
-              background: '#334155', color: 'white',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.6rem', fontWeight: 800, margin: '12px auto 8px'
-            }}>
-              {getInitials(workerName)}
+            
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', margin: '16px 0 8px' }}>
+              {/* Senior Worker */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{
+                  width: '60px', height: '60px', borderRadius: '50%',
+                  background: 'var(--primary-700)', color: 'white', border: '3px solid var(--primary-200)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.4rem', fontWeight: 800
+                }}>
+                  {getInitials(workerName)}
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', margin: '6px 0 2px' }}>{workerName}</h4>
+                <div style={{ fontSize: '0.65rem', color: 'var(--primary-700)', background: 'var(--primary-50)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                  Senior Pro
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px' }}>💼 1,500+ jobs</div>
+              </div>
+
+              {/* Trainee (Mock Data) */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{
+                  width: '60px', height: '60px', borderRadius: '50%',
+                  background: '#dc2626', color: 'white', border: '3px solid #fecaca',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.4rem', fontWeight: 800
+                }}>
+                  KP
+                </div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', margin: '6px 0 2px' }}>Karan Patel</h4>
+                <div style={{ fontSize: '0.65rem', color: '#b91c1c', background: '#fee2e2', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
+                  Trainee
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px' }}>🎓 7 shadow jobs</div>
+              </div>
             </div>
 
-            <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-800)', margin: '4px 0' }}>{workerName}</h4>
-            <div style={{ margin: '4px 0' }}>
-              <span style={{ fontSize: '0.7rem', color: 'var(--primary-700)', background: 'var(--primary-50)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                Verified Specialist
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', margin: '8px 0', fontSize: '0.78rem', color: 'var(--navy-600)' }}>
-              <span>⭐ <strong>4.9</strong> (180+)</span>
-              <span>💼 <strong>Pro</strong> (1,500+)</span>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
               <button
                 className="btn btn-outline"
                 style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}

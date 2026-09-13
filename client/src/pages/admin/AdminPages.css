@@ -33,18 +33,18 @@
 
 /* Stat Change */
 .stat-change { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full); margin-left: auto; }
-.stat-change.positive { background: #d1fae5; color: #065f46; }
+.stat-change.positive { background: #e1ebf5; color: #065f46; }
 .stat-change.negative { background: #fee2e2; color: #991b1b; }
 
 /* Verification Cards */
-.verification-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+.verification-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr)); gap: 20px; }
 .verification-card {
   background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg);
   padding: 24px; transition: all var(--transition-base); position: relative;
 }
 .verification-card:hover { box-shadow: var(--shadow-md); }
 .verification-card.status-pending { border-left: 4px solid #f59e0b; }
-.verification-card.status-verified { border-left: 4px solid #10b981; }
+.verification-card.status-verified { border-left: 4px solid #3b7dc1; }
 .verification-card.status-rejected { border-left: 4px solid #ef4444; opacity: 0.7; }
 .vc-header { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; }
 .vc-avatar {
@@ -65,7 +65,7 @@
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-full);
   font-size: 0.8rem; font-weight: 600; margin-top: 12px;
 }
-.vc-status-badge.verified { background: #d1fae5; color: #065f46; }
+.vc-status-badge.verified { background: #e1ebf5; color: #065f46; }
 .vc-status-badge.rejected { background: #fee2e2; color: #991b1b; }
 
 /* Analytics */
@@ -101,7 +101,7 @@
 .status-pct { font-size: 0.75rem; color: var(--gray-400); width: 35px; text-align: right; }
 
 /* Coupons Grid */
-.coupons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.coupons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 16px; }
 .coupon-card {
   background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg); padding: 20px;
   transition: all var(--transition-base); position: relative;
@@ -153,12 +153,12 @@
 .complaint-booking { font-size: 0.85rem; color: var(--gray-500); margin-bottom: 12px; }
 .complaint-resolution {
   display: flex; align-items: flex-start; gap: 8px; padding: 12px 16px;
-  background: #d1fae5; border-radius: var(--radius-md); font-size: 0.85rem; color: #065f46; margin-bottom: 12px;
+  background: #e1ebf5; border-radius: var(--radius-md); font-size: 0.85rem; color: #065f46; margin-bottom: 12px;
 }
 .complaint-actions { display: flex; gap: 10px; }
 
 /* Partners */
-.partners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; }
+.partners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr)); gap: 16px; }
 .partner-card {
   background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-lg);
   padding: 24px; transition: all var(--transition-base);
@@ -194,4 +194,74 @@
   .form-grid { grid-template-columns: 1fr; }
   .bar-chart { height: 180px; }
   .bar-fill { width: 32px; }
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS ADDITIONS — Admin Pages
+   ========================================================================== */
+
+/* 480px: grid cards don't overflow */
+@media (max-width: 480px) {
+  .verification-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .coupons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .partners-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Bar chart scrollable on mobile */
+  .bar-chart {
+    overflow-x: auto;
+    height: 160px;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .bar-fill {
+    width: 28px;
+  }
+
+  /* Notif card: stack icon and content */
+  .notif-card {
+    gap: 12px;
+  }
+
+  /* Complaint meta: wrap */
+  .complaint-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Verification card actions: wrap */
+  .vc-actions {
+    flex-wrap: wrap;
+  }
+
+  .vc-contact {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* 360px: further compression */
+@media (max-width: 360px) {
+  .vc-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .admin-form-card {
+    padding: 16px;
+  }
+
+  .coupon-code {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
 }

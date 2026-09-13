@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineMagnifyingGlass, HiOutlineFunnel, HiOutlineEye,
@@ -6,21 +6,15 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
-
-const mockBookings = [
-  { id: '#SC-2841', service: 'AC Servicing', category: 'Home Repairs', customer: 'Rudra Shah', customerPhone: '9876543210', worker: 'Ramesh Kumar', date: '14 May 2026', time: '10:00 AM', address: 'Satellite, Ahmedabad', amount: 500, status: 'completed', payment: 'paid' },
-  { id: '#SC-2840', service: 'Deep Cleaning', category: 'Cleaning', customer: 'Rudra Shah', customerPhone: '9876543210', worker: 'Sunita Mehra', date: '15 May 2026', time: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', amount: 1200, status: 'active', payment: 'pending' },
-  { id: '#SC-2839', service: 'Plumbing Fix', category: 'Home Repairs', customer: 'Rudra Shah', customerPhone: '9876543210', worker: 'Ajay Patel', date: '10 May 2026', time: '11:00 AM', address: 'Satellite, Ahmedabad', amount: 350, status: 'completed', payment: 'paid' },
-  { id: '#SC-2838', service: 'Electrical Wiring', category: 'Home Repairs', customer: 'Priya Desai', customerPhone: '9876543211', worker: 'Ramesh Kumar', date: '16 May 2026', time: '4:30 PM', address: 'SG Highway, Ahmedabad', amount: 600, status: 'pending', payment: 'pending' },
-  { id: '#SC-2837', service: 'Pest Control', category: 'Cleaning', customer: 'Priya Desai', customerPhone: '9876543211', worker: 'Sunita Mehra', date: '8 May 2026', time: '9:00 AM', address: 'Bopal, Ahmedabad', amount: 900, status: 'completed', payment: 'paid' },
-  { id: '#SC-2836', service: 'Car Washing', category: 'Vehicle', customer: 'Amit Patel', customerPhone: '9876543212', worker: 'Deepak Singh', date: '12 May 2026', time: '7:00 AM', address: 'Vastrapur, Ahmedabad', amount: 250, status: 'completed', payment: 'paid' },
-  { id: '#SC-2835', service: 'Birthday Party', category: 'Events', customer: 'Amit Patel', customerPhone: '9876543212', worker: 'Pending', date: '20 May 2026', time: '5:00 PM', address: 'Thaltej, Ahmedabad', amount: 5000, status: 'pending', payment: 'pending' },
-  { id: '#SC-2830', service: 'Pest Control', category: 'Cleaning', customer: 'Priya Desai', customerPhone: '9876543211', worker: 'Sunita Mehra', date: '5 May 2026', time: '9:00 AM', address: 'Bopal, Ahmedabad', amount: 900, status: 'cancelled', payment: 'refunded' },
-];
+import { getSession, requestApi } from '../../utils/authSession.js';
 
 const statusConfig = {
   completed: { label: 'Completed', color: 'success' },
-  active: { label: 'Active', color: 'primary' },
+  assigned: { label: 'Assigned', color: 'primary' },
+  accepted: { label: 'Accepted', color: 'primary' },
+  'en-route': { label: 'En route', color: 'primary' },
+  arrived: { label: 'Arrived', color: 'primary' },
+  started: { label: 'Started', color: 'primary' },
   pending: { label: 'Pending', color: 'warning' },
   cancelled: { label: 'Cancelled', color: 'danger' },
 };
@@ -30,12 +24,28 @@ const AdminBookings = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const filtered = mockBookings.filter((b) => {
+  useEffect(() => {
+    const session = getSession();
+    if (!session?.token) return;
+
+    requestApi('/bookings', { token: session.token })
+      .then((data) => setBookings(data?.bookings || []))
+      .catch((requestError) => setError(requestError.message || 'Unable to load bookings'))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const filtered = bookings.filter((b) => {
+    const bookingId = b.bookingId || b._id;
+    const customerName = b.customer?.name || '';
+    const workerName = b.worker?.name || '';
     if (statusFilter !== 'all' && b.status !== statusFilter) return false;
     if (search) {
       const q = search.toLowerCase();
-      return b.id.toLowerCase().includes(q) || b.service.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.worker.toLowerCase().includes(q);
+      return bookingId.toLowerCase().includes(q) || b.service.toLowerCase().includes(q) || customerName.toLowerCase().includes(q) || workerName.toLowerCase().includes(q);
     }
     return true;
   });
@@ -45,7 +55,7 @@ const AdminBookings = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('admin.bookings')} 📋</h1>
-          <p className="page-subtitle">{mockBookings.length} total bookings</p>
+          <p className="page-subtitle">{bookings.length} total bookings</p>
         </div>
       </div>
 
@@ -59,12 +69,19 @@ const AdminBookings = () => {
           <select className="filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
-            <option value="active">Active</option>
+            <option value="assigned">Assigned</option>
+            <option value="accepted">Accepted</option>
+            <option value="en-route">En route</option>
+            <option value="arrived">Arrived</option>
+            <option value="started">Started</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
         </div>
       </div>
+
+      {isLoading && <div className="empty-state"><p>Loading bookings...</p></div>}
+      {error && <div className="empty-state"><p>{error}</p></div>}
 
       <div className="admin-table-wrap">
         <table className="data-table">
@@ -74,20 +91,21 @@ const AdminBookings = () => {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((b) => {
-              const cfg = statusConfig[b.status];
+            {!isLoading && filtered.map((b) => {
+              const bookingId = b.bookingId || b._id;
+              const cfg = statusConfig[b.status] || { label: b.status, color: 'warning' };
               return (
-                <tr key={b.id} className={expandedId === b.id ? 'row-expanded' : ''}>
-                  <td><strong>{b.id}</strong></td>
+                <tr key={bookingId} className={expandedId === bookingId ? 'row-expanded' : ''}>
+                  <td><strong>{bookingId}</strong></td>
                   <td>{b.service}</td>
-                  <td>{b.customer}</td>
-                  <td>{b.worker}</td>
-                  <td><small>{b.date}, {b.time}</small></td>
+                  <td>{b.customer?.name || 'Unknown customer'}</td>
+                  <td>{b.worker?.name || 'Pending assignment'}</td>
+                  <td><small>{b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString('en-IN') : 'Not scheduled'}, {b.scheduledTime || 'Flexible'}</small></td>
                   <td><strong>₹{b.amount}</strong></td>
                   <td><span className={`badge badge-${cfg.color}`}>{cfg.label}</span></td>
-                  <td><span className={`badge badge-${b.payment === 'paid' ? 'success' : b.payment === 'refunded' ? 'warning' : 'danger'}`}>{b.payment}</span></td>
+                  <td><span className={`badge badge-${b.paymentStatus === 'paid' ? 'success' : b.paymentStatus === 'refunded' ? 'warning' : 'danger'}`}>{b.paymentStatus}</span></td>
                   <td>
-                    <button className="btn-icon-sm" onClick={() => setExpandedId(expandedId === b.id ? null : b.id)}><HiOutlineEye /></button>
+                    <button className="btn-icon-sm" onClick={() => setExpandedId(expandedId === bookingId ? null : bookingId)}><HiOutlineEye /></button>
                   </td>
                 </tr>
               );

@@ -49,36 +49,15 @@ const FoodKitchenHub = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('foodKitchen.backToDirectory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #ea580c 0%, #9a3412 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #facc15',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>🍳</span>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('foodKitchen.title')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#ffedd5', fontSize: '0.9rem', marginTop: '4px' }}>
-              {t('foodKitchen.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       <div style={{
         display: 'grid',
@@ -109,7 +88,7 @@ const FoodKitchenHub = () => {
             {/* Macro Tags */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.65rem', background: '#fff7ed', color: '#c2410c', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}><HiOutlineFire /> High Protein (35g)</span>
-              <span style={{ fontSize: '0.65rem', background: '#ecfdf5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>{t('foodKitchenExt.lowCalorie')}</span>
+              <span style={{ fontSize: '0.65rem', background: '#f0f5fa', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>{t('foodKitchenExt.lowCalorie')}</span>
             </div>
 
             {/* Diet type */}
@@ -231,7 +210,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Daily Tiffin Meal Plan Subscription')}&price=${calculateTiffinPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Daily Tiffin Meal Plan Subscription')}&serviceId=tiffin-subscription&category=food-kitchen&price=${calculateTiffinPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -317,7 +296,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&price=${calculateChefPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&serviceId=home-chef&category=food-kitchen&price=${calculateChefPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -405,7 +384,7 @@ const FoodKitchenHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Grand Birthday Theme Decor')}&price=${cakeStyle === 'minimalist' ? 1499 : cakeStyle === 'fruit' ? 1799 : 2999}`}
+              to={`/customer/book?service=${encodeURIComponent('Celebration Custom Cake Designer')}&serviceId=custom-cake&category=food-kitchen&price=${cakeStyle === 'minimalist' ? 1499 : cakeStyle === 'fruit' ? 1799 : 2999}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >

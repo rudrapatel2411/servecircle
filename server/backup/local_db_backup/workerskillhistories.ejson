@@ -1,0 +1,68 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c16604"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "service": "Electrical Repair",
+    "category": "Home Repairs",
+    "jobCount": 1,
+    "successCount": 1,
+    "failureCount": 0,
+    "averageRating": 0,
+    "_sumRating": 0,
+    "_ratingCount": 0,
+    "averageDurationMs": 371,
+    "_sumDurationMs": 371,
+    "repeatCustomers": 0,
+    "uniqueCustomerIds": [
+      {
+        "$oid": "6a6596ed883d88f76414fa26"
+      }
+    ],
+    "beforePhotosCount": 0,
+    "afterPhotosCount": 0,
+    "lastPerformed": {
+      "$date": "2026-07-31T09:19:25.289Z"
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:25.289Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c167a0"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "service": "Electrical Repair",
+    "category": "Home Repairs",
+    "jobCount": 1,
+    "successCount": 1,
+    "failureCount": 0,
+    "averageRating": 0,
+    "_sumRating": 0,
+    "_ratingCount": 0,
+    "averageDurationMs": 347,
+    "_sumDurationMs": 347,
+    "repeatCustomers": 0,
+    "uniqueCustomerIds": [
+      {
+        "$oid": "6a6596ed883d88f76414fa26"
+      }
+    ],
+    "beforePhotosCount": 0,
+    "afterPhotosCount": 0,
+    "lastPerformed": {
+      "$date": "2026-07-31T09:19:59.243Z"
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.243Z"
+    },
+    "__v": 0
+  }
+]

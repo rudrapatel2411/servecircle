@@ -57,8 +57,8 @@
 }
 
 .stepper-item.completed .stepper-icon {
-  border-color: #10b981;
-  background: #10b981;
+  border-color: #3b7dc1;
+  background: #3b7dc1;
   color: white;
 }
 
@@ -285,5 +285,71 @@
   
   .empowerment-card h3 {
     justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS ADDITIONS — Worker Pages
+   ========================================================================== */
+
+/* Ensure empowerment card icon doesn't overflow */
+.empowerment-card {
+  overflow: hidden;
+}
+
+/* Move call floating button above bottom nav on customer pages */
+@media (max-width: 768px) {
+  /* Worker call floating button: not on bottom-nav panels, so keep at bottom */
+  /* But add safe area clearance */
+  .call-floating-btn {
+    bottom: calc(24px + var(--safe-bottom));
+  }
+
+  /* Empowerment card: reduce icon size */
+  .empowerment-icon-bg {
+    font-size: 6rem;
+  }
+
+  /* Worker action buttons: ensure they wrap on very small screens */
+  .worker-action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .worker-action-buttons button {
+    min-width: 0;
+    flex: 1 1 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .empowerment-icon-bg {
+    font-size: 4rem;
+    right: -10px;
+    bottom: -20px;
+  }
+
+  .stepper-label {
+    font-size: 0.8rem;
+  }
+
+  .stepper-sub {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .worker-stepper {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .stepper-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .empowerment-card h3 {
+    font-size: 1.2rem;
   }
 }

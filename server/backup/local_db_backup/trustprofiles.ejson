@@ -1,0 +1,114 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689d09ec34fd5c975d6c"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "__v": 0,
+    "acceptanceRate": 1,
+    "accountAge": 0,
+    "adminWarnings": {
+      "count": 0,
+      "reasons": []
+    },
+    "averageArrivalTimeMs": 106,
+    "averageCompletionTimeMs": 0,
+    "averageRating": 0,
+    "averageResponseTimeMs": 185,
+    "cancellationRate": 0,
+    "complaintRate": 0,
+    "completionRate": 0,
+    "documentVerification": {
+      "status": "none"
+    },
+    "fraudFlags": {
+      "otpAbuse": false,
+      "reportedByCustomers": 0,
+      "suspiciousPatterns": false
+    },
+    "identityVerification": {
+      "status": "none"
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:25.285Z"
+    },
+    "profileCompleteness": 0,
+    "ratingBreakdown": {
+      "cleanliness": 0,
+      "communication": 0,
+      "overall": 0,
+      "professionalism": 0,
+      "punctuality": 0,
+      "quality": 0,
+      "valueForMoney": 0
+    },
+    "refundRate": 0,
+    "rejectionRate": 0,
+    "repeatCustomerRate": 0,
+    "skillVerification": {
+      "status": "none"
+    },
+    "walletFlags": {
+      "suspiciousTopup": false,
+      "unusualWithdrawal": false
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bf09ec34fd5c975d6d"
+    },
+    "workerId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "__v": 0,
+    "acceptanceRate": 1,
+    "accountAge": 0,
+    "adminWarnings": {
+      "count": 0,
+      "reasons": []
+    },
+    "averageArrivalTimeMs": 53.666666666666664,
+    "averageCompletionTimeMs": 112,
+    "averageRating": 0,
+    "averageResponseTimeMs": 88.66666666666667,
+    "cancellationRate": 0,
+    "complaintRate": 0,
+    "completionRate": 0.5,
+    "documentVerification": {
+      "status": "none"
+    },
+    "fraudFlags": {
+      "otpAbuse": false,
+      "reportedByCustomers": 0,
+      "suspiciousPatterns": false
+    },
+    "identityVerification": {
+      "status": "none"
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.409Z"
+    },
+    "profileCompleteness": 0,
+    "ratingBreakdown": {
+      "cleanliness": 0,
+      "communication": 0,
+      "overall": 0,
+      "professionalism": 0,
+      "punctuality": 0,
+      "quality": 0,
+      "valueForMoney": 0
+    },
+    "refundRate": 0,
+    "rejectionRate": 0,
+    "repeatCustomerRate": 0,
+    "skillVerification": {
+      "status": "none"
+    },
+    "walletFlags": {
+      "suspiciousTopup": false,
+      "unusualWithdrawal": false
+    }
+  }
+]

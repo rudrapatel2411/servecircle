@@ -1,0 +1,63 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c652f09ec34fd5c975d67"
+    },
+    "customerId": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "__v": 0,
+    "_sumRatingGiven": 0,
+    "avgDaysBetweenBookings": 0,
+    "avgRatingGiven": 0,
+    "avgSpendPerJob": 666.6666666666666,
+    "cancelledBookings": 0,
+    "completedBookings": 3,
+    "emergencyBookings": 0,
+    "favoriteCategories": [
+      {
+        "category": "Home Repairs",
+        "count": 3,
+        "_id": {
+          "$oid": "6a6c652fbd7ef589ff6df1d5"
+        }
+      }
+    ],
+    "firstBookingAt": {
+      "$date": "2026-07-31T09:04:47.084Z"
+    },
+    "highestSpend": 0,
+    "isRepeatCustomer": true,
+    "lastBookingAt": {
+      "$date": "2026-07-31T09:19:58.307Z"
+    },
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.233Z"
+    },
+    "lowestSpend": 0,
+    "preferredWorkers": [
+      {
+        "workerId": {
+          "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+        },
+        "bookingsCount": 2,
+        "_id": {
+          "$oid": "6a6c6530bd7ef589ff6df2c9"
+        }
+      },
+      {
+        "workerId": {
+          "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+        },
+        "bookingsCount": 1,
+        "_id": {
+          "$oid": "6a6c689ded35f87422c16609"
+        }
+      }
+    ],
+    "repeatServiceCount": 0,
+    "totalBookings": 3,
+    "totalReviews": 0,
+    "totalSpend": 2000
+  }
+]

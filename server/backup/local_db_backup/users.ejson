@@ -1,0 +1,680 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "name": "Admin",
+    "email": "admin@servecircle.in",
+    "phone": "9999900000",
+    "password": "$2b$12$o87bo/HmUyjVppBHv10KleKhy8OXrdOz8CskvcsdzkdZG/VYf8W/O",
+    "role": "admin",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:16.227Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:16.227Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "name": "Rudra Shah",
+    "email": "rudra@test.com",
+    "phone": "9876543210",
+    "password": "$2b$12$1o1Ny0AT.Jj0iG.5HtPJvu2d/u1xiDazUkOGc0jM3fMTo78ex3YjS",
+    "role": "customer",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "gold",
+    "walletBalance": 2450,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c90437c4810f45fe0ea"
+    },
+    "name": "Priya Desai",
+    "email": "priya@test.com",
+    "phone": "9876543211",
+    "password": "$2b$12$Ml4J9fp5fsA7y70bSKOxeOsxK9oBGraKV92wdGs5WyoOZ5lr9XnCy",
+    "role": "customer",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "silver",
+    "walletBalance": 800,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c90437c4810f45fe0eb"
+    },
+    "name": "Amit Patel",
+    "email": "amit@test.com",
+    "phone": "9876543212",
+    "password": "$2b$12$X8GlutH6M1l/vURj0nJgDe2dMT4QW2wQhDx35kYhZ29Oc7TDHddZG",
+    "role": "customer",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:16.474Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c91437c4810f45fe0ef"
+    },
+    "name": "Ramesh Kumar",
+    "email": "ramesh@test.com",
+    "phone": "9876500001",
+    "password": "$2b$12$21rBOXm3I1t93bj9508VaO8AwoQzR9idFv3hZsvU628QaxkifI5g2",
+    "role": "worker",
+    "skills": [
+      "Electrician",
+      "AC Repair & Service"
+    ],
+    "serviceCategory": "Home Repairs",
+    "city": "Ahmedabad",
+    "experience": "🏆 5+ Years (Expert Level)",
+    "workerStatus": "approved_senior",
+    "isVerified": true,
+    "completedJobs": 38,
+    "shadowJobsDone": 0,
+    "rating": 4.5,
+    "isProBadge": false,
+    "earnings": 42000,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c91437c4810f45fe0f0"
+    },
+    "name": "Sunita Mehra",
+    "email": "sunita@test.com",
+    "phone": "9876500002",
+    "password": "$2b$12$EECK6r.XkV7fwfV5PMzpkulEhERASdcjKzveKQgttf5ylTYaxPzQy",
+    "role": "worker",
+    "skills": [
+      "Home Deep Cleaning",
+      "Pest Control"
+    ],
+    "serviceCategory": "Cleaning & Hygiene",
+    "city": "Ahmedabad",
+    "experience": "💼 3–5 Years Experience",
+    "workerStatus": "approved_junior",
+    "isVerified": true,
+    "completedJobs": 52,
+    "shadowJobsDone": 0,
+    "rating": 4.8,
+    "isProBadge": true,
+    "earnings": 58000,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c91437c4810f45fe0f1"
+    },
+    "name": "Ajay Patel",
+    "email": "ajay@test.com",
+    "phone": "9876500003",
+    "password": "$2b$12$Q4Mu3PLBBI4tTYtH6NykcOVA/pLlS4O8UhaDebFWTiY4Rbxa2rwqi",
+    "role": "worker",
+    "skills": [
+      "Plumber"
+    ],
+    "serviceCategory": "Home Repairs",
+    "city": "Ahmedabad",
+    "experience": "⭐ 1–2 Years Experience",
+    "workerStatus": "approved_rookie",
+    "isVerified": true,
+    "completedJobs": 5,
+    "shadowJobsDone": 5,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 8000,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c91437c4810f45fe0f2"
+    },
+    "name": "Deepak Singh",
+    "email": "deepak@test.com",
+    "phone": "9876500004",
+    "password": "$2b$12$vy7ORgmd78Aen26ggNuWxuq/w9/K1sqe046L/D9vNsifkgyc7OMdO",
+    "role": "worker",
+    "skills": [
+      "Car Washing & Detailing",
+      "Car Mechanic"
+    ],
+    "serviceCategory": "Vehicle Services",
+    "city": "Ahmedabad",
+    "experience": "⭐ 1–2 Years Experience",
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c91437c4810f45fe0f3"
+    },
+    "name": "Meena Devi",
+    "email": "meena@test.com",
+    "phone": "9876500005",
+    "password": "$2b$12$d57v0nXp/h1ZXqpGEW1EIOQIYGRg9T9WENfZ3O1c765xR6cFinI/e",
+    "role": "worker",
+    "skills": [
+      "Home Deep Cleaning",
+      "Sofa / Carpet Cleaning"
+    ],
+    "serviceCategory": "Cleaning & Hygiene",
+    "city": "Surat",
+    "experience": "💼 3–5 Years Experience",
+    "workerStatus": "interview_done",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:17.171Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe0f9"
+    },
+    "name": "Green Valley Manager",
+    "email": "gv@test.com",
+    "phone": "9876600001",
+    "password": "$2b$12$NAuRIlZYSUcmXnlM6vJy7eDLcdHwX53qqhb54qT5ZoGCrFXnweT0G",
+    "role": "b2b",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "companyName": "Green Valley Society",
+    "locations": [
+      {
+        "name": "Block A",
+        "address": "Green Valley, Satellite, Ahmedabad",
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe0fa"
+        }
+      },
+      {
+        "name": "Block B",
+        "address": "Green Valley, Satellite, Ahmedabad",
+        "_id": {
+          "$oid": "6a5f4c92437c4810f45fe0fb"
+        }
+      }
+    ],
+    "subscription": "basic",
+    "walletBalance": 0,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.339Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.339Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4de543fbb14cec0eb6fb"
+    },
+    "name": "abcd",
+    "email": "abcd@gmail.com",
+    "phone": "1234567890",
+    "password": "$2b$12$GHaqYxoakUjRg3xqMj0F5uZAWqme1HybHfPsgQgUYa6LqXfFlWtsy",
+    "role": "worker",
+    "skills": [
+      "Packer & Mover"
+    ],
+    "serviceCategory": "Shifting & Relocation",
+    "city": "BHAVNAGAR",
+    "experience": "🎓 Fresher (No experience — will learn)",
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:45:57.274Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:45:57.274Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4ee843fbb14cec0eb6fe"
+    },
+    "name": "Aniket Test",
+    "email": "karan@vendorbridge.testaniket_test@test.com",
+    "phone": "9900990099",
+    "password": "$2b$12$WiQUYXXOi6Xq16.fpdK3q.Cf6sp3G9ln9ayqe/hXiFyJLxenp1OdW",
+    "role": "worker",
+    "skills": [
+      "AC Repair & Service"
+    ],
+    "serviceCategory": "Home Repairs",
+    "city": "Ahmedabad",
+    "experience": "🎓 Fresher (No experience — will learn)",
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "locations": [],
+    "createdAt": {
+      "$date": "2026-07-21T10:50:16.114Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:50:16.114Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6596ed883d88f76414fa25"
+    },
+    "name": "Test Admin",
+    "email": "admin_b2@sc.com",
+    "password": "$2b$10$nFTXQiaun8Oinv5SkLlBcOPJITpyOvAuZmEt/chzVigyihPpaXyE6",
+    "role": "admin",
+    "skills": [],
+    "isVerified": true,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "isDeleted": false,
+    "locations": [],
+    "availability": [],
+    "createdAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "name": "Test Customer",
+    "email": "cust_b2test@sc.com",
+    "password": "$2b$10$nFTXQiaun8Oinv5SkLlBcOPJITpyOvAuZmEt/chzVigyihPpaXyE6",
+    "role": "customer",
+    "skills": [],
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "isDeleted": false,
+    "locations": [],
+    "availability": [],
+    "createdAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6596ed883d88f76414fa27"
+    },
+    "name": "Test Worker",
+    "email": "work_b2test@sc.com",
+    "password": "$2b$10$nFTXQiaun8Oinv5SkLlBcOPJITpyOvAuZmEt/chzVigyihPpaXyE6",
+    "role": "worker",
+    "skills": [],
+    "serviceCategory": "Electrical",
+    "city": "Mumbai",
+    "workerStatus": "approved_junior",
+    "isVerified": true,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "isDeleted": false,
+    "locations": [],
+    "availability": [],
+    "createdAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:11:09.294Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "name": "Worker RR 1",
+    "email": "w1_rr@sc.com",
+    "password": "$2b$10$MO8gIk/03O70HX1Nl0y56eybrxgDKa5uUkIKmbcAjfv7u0EISpqKm",
+    "role": "worker",
+    "skills": [
+      "Plumbing"
+    ],
+    "serviceCategory": "Home Repairs",
+    "city": "Mumbai",
+    "workerStatus": "approved_senior",
+    "isVerified": true,
+    "completedJobs": 10,
+    "rating": 4.8,
+    "isDeleted": false,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        72.8777,
+        19.076
+      ]
+    },
+    "availability": [
+      {
+        "day": "Monday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Tuesday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Wednesday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Thursday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Friday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Saturday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      }
+    ],
+    "lastAssignedAt": {
+      "$date": "2026-07-31T09:19:58.327Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-26T05:33:49.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T09:19:58.327Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "name": "Worker RR 2",
+    "email": "w2_rr@sc.com",
+    "password": "$2b$10$MO8gIk/03O70HX1Nl0y56eybrxgDKa5uUkIKmbcAjfv7u0EISpqKm",
+    "role": "worker",
+    "skills": [
+      "Plumbing"
+    ],
+    "serviceCategory": "Home Repairs",
+    "city": "Mumbai",
+    "workerStatus": "approved_junior",
+    "isVerified": true,
+    "completedJobs": 5,
+    "rating": 5,
+    "isDeleted": false,
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        72.878,
+        19.0762
+      ]
+    },
+    "availability": [
+      {
+        "day": "Monday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Tuesday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Wednesday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Thursday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Friday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      },
+      {
+        "day": "Saturday",
+        "startTime": "08:00",
+        "endTime": "18:00"
+      }
+    ],
+    "lastAssignedAt": {
+      "$date": "2026-07-31T09:19:24.253Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-26T05:33:49.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T09:19:24.253Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c60e96c6015580ecee282"
+    },
+    "name": "TempUserSoftDel",
+    "email": "softdeltest@test.com",
+    "password": "$2b$12$dZah8ZQBZsawwa0I7J9VsOEp3w3W/b9A0VQsF/hXKszAB7h88gxBm",
+    "role": "customer",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "lastAssignedAt": null,
+    "isDeleted": true,
+    "deletedAt": {
+      "$date": "2026-07-31T08:46:33.398Z"
+    },
+    "locations": [],
+    "availability": [],
+    "createdAt": {
+      "$date": "2026-07-31T08:46:33.075Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T08:46:33.399Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c615bce0c59444cbedf6d"
+    },
+    "name": "NoLocUser",
+    "email": "nolocuserZ@test.com",
+    "password": "$2b$12$yMCKck.pf2.F.227lqHKouE5rWMeIDttwqVAWeklo8eRX11tpVUJ6",
+    "role": "customer",
+    "skills": [],
+    "workerStatus": "pending_interview",
+    "isVerified": false,
+    "completedJobs": 0,
+    "shadowJobsDone": 0,
+    "rating": 0,
+    "isProBadge": false,
+    "earnings": 0,
+    "subscription": "basic",
+    "walletBalance": 0,
+    "lastAssignedAt": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "locations": [],
+    "availability": [],
+    "createdAt": {
+      "$date": "2026-07-31T08:48:27.940Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T08:48:28.262Z"
+    },
+    "__v": 0
+  }
+]

@@ -51,7 +51,7 @@ const TrustSafety = () => {
     {
       title: '₹10,000 Damage Insurance',
       desc: 'Any accidental home damage caused during service execution is fully covered up to ₹10,000 by ServeCircle insurance partners.',
-      icon: <HiOutlineBuildingLibrary style={{ color: '#10b981' }} />
+      icon: <HiOutlineBuildingLibrary style={{ color: '#3b7dc1' }} />
     },
     {
       title: '100% Satisfaction SLA',
@@ -128,7 +128,7 @@ const TrustSafety = () => {
                         </p>
                       </div>
 
-                      <HiOutlineCheckCircle style={{ color: '#10b981', fontSize: '1.2rem' }} />
+                      <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.2rem' }} />
                     </div>
 
                     {isActive && (

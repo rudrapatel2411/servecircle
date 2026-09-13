@@ -1,67 +1,205 @@
+/* ==========================================================================
+   DashboardNavbar — Emerald Neomorphism
+   ========================================================================== */
+
 .dash-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
-  background: white;
-  border-bottom: 1px solid var(--gray-200);
+  padding: 0 24px;
+  background: var(--card-bg);
+  box-shadow: 0 2px 20px rgba(59, 125, 193, 0.08),
+              0 1px 0 rgba(59, 125, 193, 0.06);
   position: sticky;
   top: 0;
   z-index: 800;
+  height: 64px;
+  flex-shrink: 0;
 }
 
-.dash-navbar-search {
+/* ── Brand ── */
+.dash-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-full);
-  padding: 8px 16px;
-  color: var(--gray-400);
+  text-decoration: none;
+  flex-shrink: 0;
+  margin-right: 24px;
+}
+
+.dash-brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--gradient-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  font-family: var(--font-heading);
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.35),
+              -2px -2px 6px rgba(255, 255, 255, 0.8);
+  transition: all var(--transition-base);
+}
+
+.dash-brand:hover .dash-brand-icon {
+  transform: rotate(-5deg) scale(1.06);
+  box-shadow: 4px 4px 12px rgba(59, 125, 193, 0.4),
+              -3px -3px 8px rgba(255, 255, 255, 0.9);
+}
+
+.dash-brand-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* ── Non-Customer Panel Title ── */
+.dash-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
-  max-width: 420px;
 }
 
-.dash-search-input {
-  border: none;
-  background: transparent;
-  outline: none;
+.dash-panel-badge {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dash-panel-label {
   font-size: 0.9rem;
-  color: var(--gray-800);
-  width: 100%;
-  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--gray-500);
 }
 
-.dash-search-input::placeholder {
-  color: var(--gray-400);
+/* ── Customer Top Nav (centered) ── */
+.customer-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  /* Prevent overflow on narrow viewports before mobile breakpoint */
+  max-width: calc(100vw - 300px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 1;
 }
 
+.customer-top-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.customer-top-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.customer-top-nav-link:hover {
+  color: var(--primary-700);
+  background: var(--primary-50);
+}
+
+.customer-top-nav-link--active {
+  color: white !important;
+  background: var(--gradient-primary) !important;
+  font-weight: 700;
+  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.28);
+}
+
+/* Emergency link */
+.customer-top-nav-link--emergency {
+  color: #ef4444 !important;
+}
+
+.customer-top-nav-link--emergency:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #dc2626 !important;
+}
+
+.customer-top-nav-link--emergency.customer-top-nav-link--active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: white !important;
+  box-shadow: 3px 3px 8px rgba(239, 68, 68, 0.3);
+}
+
+.customer-top-nav-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+}
+
+.customer-top-nav-label {
+  display: block;
+}
+
+
+/* ── Right Actions ── */
 .dash-navbar-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .dash-icon-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--gray-200);
-  background: white;
+  border: none;
+  background: var(--neo-bg);
   color: var(--gray-600);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .dash-icon-btn:hover {
-  background: var(--gray-50);
+  box-shadow: var(--shadow-md);
   color: var(--primary-600);
+}
+
+.dash-icon-btn:active {
+  box-shadow: var(--shadow-inset);
+}
+
+.dash-ai-btn {
+  color: var(--primary-700);
 }
 
 .notif-dot {
@@ -72,7 +210,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--danger);
-  border: 2px solid white;
+  border: 2px solid var(--neo-bg);
 }
 
 .dash-avatar {
@@ -87,9 +225,11 @@
   font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
+  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.3),
+              -2px -2px 6px rgba(255, 255, 255, 0.7);
 }
 
-/* Profile Dropdown Container */
+/* ── Profile Dropdown ── */
 .dash-profile-container {
   position: relative;
 }
@@ -105,7 +245,7 @@
 }
 
 .dash-avatar-btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .dash-profile-dropdown {
@@ -113,16 +253,17 @@
   top: calc(100% + 12px);
   right: 0;
   width: 280px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  background: var(--neo-bg);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   z-index: 1000;
+  /* Prevent going off-screen on narrow devices */
+  max-width: calc(100vw - 24px);
 }
 
 .dropdown-user-info {
@@ -142,7 +283,9 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.3),
+              -2px -2px 6px rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
 }
 
 .user-details {
@@ -155,7 +298,7 @@
 .user-name {
   margin: 0;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--navy-800);
   white-space: nowrap;
   overflow: hidden;
@@ -174,9 +317,9 @@
   align-self: flex-start;
   font-size: 0.6rem;
   font-weight: 700;
-  background: var(--primary-50);
+  background: var(--primary-100);
   color: var(--primary-700);
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   margin-top: 2px;
@@ -184,7 +327,7 @@
 
 .dropdown-divider {
   height: 1px;
-  background: var(--gray-100);
+  background: var(--primary-100);
   margin: 2px 0;
 }
 
@@ -198,14 +341,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
   color: var(--gray-700);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
   transition: all var(--transition-fast);
-  background: none;
+  background: transparent;
   border: none;
   text-align: left;
   width: 100%;
@@ -213,8 +356,8 @@
 }
 
 .dropdown-link:hover {
-  background: var(--gray-50);
-  color: var(--primary-600);
+  background: var(--primary-50);
+  color: var(--primary-700);
 }
 
 .dropdown-link-icon {
@@ -237,25 +380,142 @@
 
 .logout-btn {
   margin-top: 4px;
-  border-top: 1px solid var(--gray-100);
+  border-top: 1px solid var(--primary-100);
   border-radius: 0;
   padding-top: 12px;
 }
 
+/* ── Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .customer-top-nav-label {
+    display: block;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Hide labels at tablet to give more room before breakpoint */
+  .customer-top-nav-label {
+    display: none;
+  }
+
+  .customer-top-nav-link {
+    padding: 7px 10px;
+  }
 }
 
 @media (max-width: 768px) {
   .dash-navbar {
-    padding: 12px 16px;
+    padding: 0 12px;
   }
-  .dash-navbar-search {
-    display: none;
+
+  /* Make brand icon smaller */
+  .dash-brand-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  /* Show brand text but make it small (user asked for small space) */
+  .dash-brand-text {
+    display: block;
+    font-size: 0.85rem;
+    /* Prevent brand text from wrapping */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+  }
+
+  .dash-brand {
+    margin-right: 4px;
+  }
+
+  /* Bottom Navigation Bar for Mobile */
+  .customer-top-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    height: calc(var(--bottom-nav-height) + var(--safe-bottom));
+    transform: none; /* Reset transform */
+    background: var(--card-bg);
+    box-shadow: 0 -4px 20px rgba(59, 125, 193, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    /* Shift items up within the taller bar, safe area space goes to bottom */
+    padding: 0 4px;
+    padding-bottom: var(--safe-bottom);
+    z-index: 999;
+    border-top: 1px solid var(--primary-50);
+    /* Reset overflow from desktop rule */
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .customer-top-nav-link {
+    flex-direction: column;
+    flex: 1;
+    padding: 10px 6px 8px;
+    gap: 3px;
+    border-radius: var(--radius-lg);
+    background: transparent !important;
+    box-shadow: none !important;
+    /* Ensure touch targets are large enough */
+    min-height: 44px;
+  }
+
+  .customer-top-nav-icon {
+    font-size: 1.4rem;
+  }
+
+  .customer-top-nav-label {
+    display: none; /* Hide labels as requested */
+  }
+
+  /* Subtle indicator for active state instead of full background */
+  .customer-top-nav-link--active .customer-top-nav-icon {
+    color: var(--primary-600);
+    transform: scale(1.1);
+    transition: all 0.2s;
+  }
+
+  /* Reduce navbar action button sizes on mobile */
+  .dash-icon-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  /* Profile dropdown: ensure it doesn't go off-screen */
+  .dash-profile-dropdown {
+    right: -4px;
+    width: min(280px, calc(100vw - 16px));
+  }
+}
+
+@media (max-width: 360px) {
+  .dash-navbar {
+    padding: 0 8px;
+  }
+
+  .dash-brand-text {
+    display: none; /* Hide brand text on very small phones to save space */
+  }
+
+  .dash-icon-btn {
+    width: 30px;
+    height: 30px;
   }
 }

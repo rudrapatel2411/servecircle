@@ -39,11 +39,11 @@ const seed = async () => {
     ]);
 
     const workers = await User.create([
-      { name: 'Ramesh Kumar', email: 'ramesh@test.com', phone: '9876500001', password: 'test123', role: 'worker', skills: ['Electrician', 'AC Repair'], isVerified: true, completedJobs: 38, rating: 4.5, earnings: 42000 },
-      { name: 'Sunita Mehra', email: 'sunita@test.com', phone: '9876500002', password: 'test123', role: 'worker', skills: ['Cleaning', 'Pest Control'], isVerified: true, completedJobs: 52, rating: 4.8, isProBadge: true, earnings: 58000 },
-      { name: 'Ajay Patel', email: 'ajay@test.com', phone: '9876500003', password: 'test123', role: 'worker', skills: ['Plumber'], isVerified: true, completedJobs: 27, rating: 4.2, earnings: 28000 },
-      { name: 'Deepak Singh', email: 'deepak@test.com', phone: '9876500004', password: 'test123', role: 'worker', skills: ['Car Repair', 'Car Washing'], isVerified: false, completedJobs: 0, rating: 0 },
-      { name: 'Meena Devi', email: 'meena@test.com', phone: '9876500005', password: 'test123', role: 'worker', skills: ['Cooking', 'Tailoring'], isVerified: false, completedJobs: 0, rating: 0 },
+      { name: 'Ramesh Kumar', email: 'ramesh@test.com', phone: '9876500001', password: 'test123', role: 'worker', skills: ['Electrician', 'AC Repair & Service'], serviceCategory: 'Home Repairs', city: 'Ahmedabad', experience: '🏆 5+ Years (Expert Level)', workerStatus: 'approved_senior', isVerified: true, completedJobs: 38, rating: 4.5, earnings: 42000 },
+      { name: 'Sunita Mehra', email: 'sunita@test.com', phone: '9876500002', password: 'test123', role: 'worker', skills: ['Home Deep Cleaning', 'Pest Control'], serviceCategory: 'Cleaning & Hygiene', city: 'Ahmedabad', experience: '💼 3–5 Years Experience', workerStatus: 'approved_junior', isVerified: true, completedJobs: 52, rating: 4.8, isProBadge: true, earnings: 58000 },
+      { name: 'Ajay Patel', email: 'ajay@test.com', phone: '9876500003', password: 'test123', role: 'worker', skills: ['Plumber'], serviceCategory: 'Home Repairs', city: 'Ahmedabad', experience: '⭐ 1–2 Years Experience', workerStatus: 'approved_rookie', isVerified: true, completedJobs: 5, shadowJobsDone: 5, rating: 0, earnings: 8000 },
+      { name: 'Deepak Singh', email: 'deepak@test.com', phone: '9876500004', password: 'test123', role: 'worker', skills: ['Car Washing & Detailing', 'Car Mechanic'], serviceCategory: 'Vehicle Services', city: 'Ahmedabad', experience: '⭐ 1–2 Years Experience', workerStatus: 'pending_interview', isVerified: false, completedJobs: 0, rating: 0 },
+      { name: 'Meena Devi', email: 'meena@test.com', phone: '9876500005', password: 'test123', role: 'worker', skills: ['Home Deep Cleaning', 'Sofa / Carpet Cleaning'], serviceCategory: 'Cleaning & Hygiene', city: 'Surat', experience: '💼 3–5 Years Experience', workerStatus: 'interview_done', isVerified: false, completedJobs: 0, rating: 0 },
     ]);
 
     const b2b = await User.create([
@@ -55,7 +55,7 @@ const seed = async () => {
     // ===== BOOKINGS =====
     const bookings = await Booking.create([
       { bookingId: 'SC-2841', customer: customers[0]._id, worker: workers[0]._id, service: 'AC Servicing', category: 'Home Repairs', scheduledDate: new Date('2026-05-14'), scheduledTime: '10:00 AM', address: 'Satellite, Ahmedabad', status: 'completed', amount: 500, paymentStatus: 'paid', paymentMethod: 'wallet' },
-      { bookingId: 'SC-2840', customer: customers[0]._id, worker: workers[1]._id, service: 'Deep Cleaning', category: 'Cleaning & Hygiene', scheduledDate: new Date('2026-05-15'), scheduledTime: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', status: 'active', amount: 1200, paymentStatus: 'pending' },
+      { bookingId: 'SC-2840', customer: customers[0]._id, worker: workers[1]._id, service: 'Deep Cleaning', category: 'Cleaning & Hygiene', scheduledDate: new Date('2026-05-15'), scheduledTime: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', status: 'started', amount: 1200, paymentStatus: 'pending' },
       { bookingId: 'SC-2839', customer: customers[0]._id, worker: workers[2]._id, service: 'Plumbing Fix', category: 'Home Repairs', scheduledDate: new Date('2026-05-10'), scheduledTime: '11:00 AM', address: 'Satellite, Ahmedabad', status: 'completed', amount: 350, paymentStatus: 'paid', paymentMethod: 'UPI' },
       { bookingId: 'SC-2838', customer: customers[1]._id, worker: workers[0]._id, service: 'Electrical Wiring', category: 'Home Repairs', scheduledDate: new Date('2026-05-16'), scheduledTime: '4:30 PM', address: 'SG Highway, Ahmedabad', status: 'pending', amount: 600, paymentStatus: 'pending' },
       { bookingId: 'SC-2837', customer: customers[1]._id, worker: workers[1]._id, service: 'Pest Control', category: 'Cleaning & Hygiene', scheduledDate: new Date('2026-05-08'), scheduledTime: '9:00 AM', address: 'Bopal, Ahmedabad', status: 'completed', amount: 900, paymentStatus: 'paid', paymentMethod: 'card' },

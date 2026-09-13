@@ -1,0 +1,68 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe137"
+    },
+    "title": "Welcome to ServeCircle!",
+    "message": "Thank you for joining ServeCircle. Book your first service and get 50% off!",
+    "type": "broadcast",
+    "targetAudience": "all",
+    "targetUsers": [],
+    "readBy": [],
+    "sentBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "isActive": true,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe138"
+    },
+    "title": "Summer Cleaning Offer",
+    "message": "Get 20% off on all cleaning services this month. Use code CLEAN20.",
+    "type": "promotion",
+    "targetAudience": "customers",
+    "targetUsers": [],
+    "readBy": [],
+    "sentBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "isActive": true,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe139"
+    },
+    "title": "New Jobs Available",
+    "message": "There are 5 new job requests in your area. Check them out!",
+    "type": "alert",
+    "targetAudience": "workers",
+    "targetUsers": [],
+    "readBy": [],
+    "sentBy": {
+      "$oid": "6a5f4c90437c4810f45fe0e7"
+    },
+    "isActive": true,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.639Z"
+    },
+    "__v": 0
+  }
+]

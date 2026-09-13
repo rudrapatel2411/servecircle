@@ -21,43 +21,15 @@ const SocietyManagementHub = () => {
     <div className="page-content" style={{ minHeight: '92vh', background: '#f8fafc', paddingBottom: '60px' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('societyManagement.backToDirectory', 'Back to Directory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #3b82f6',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            padding: '16px',
-            borderRadius: '16px',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <HiOutlineHomeModern style={{ fontSize: '2.5rem', color: '#60a5fa' }} />
-          </div>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('societyManagement.title', 'ServeCircle Society & RWA Portals 🤝')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '0.95rem', marginTop: '8px', maxWidth: '600px', lineHeight: '1.5' }}>
-              {t('societyManagement.subtitle', 'Exclusive maintenance, security, and cleaning solutions designed for residential societies with heavy group discounts.')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       {/* Live Trackers & Dues Section */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', marginBottom: '40px' }}>
@@ -65,7 +37,7 @@ const SocietyManagementHub = () => {
         {/* Live Staff Tracker */}
         <div className="card" style={{ background: 'white', padding: '28px', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--gray-200)' }}>
           <h3 style={{ margin: '0 0 16px 0', fontSize: '1.2rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-             <HiOutlineCheckCircle style={{ color: '#10b981', fontSize: '1.5rem' }}/> {t('societyManagement.liveStaffTracker', 'Live Staff Tracker')}
+             <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.5rem' }}/> {t('societyManagement.liveStaffTracker', 'Live Staff Tracker')}
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ padding: '12px', borderRadius: '12px', border: '1px solid #bbf7d0', background: '#f0fdf4', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -242,7 +214,7 @@ const SocietyManagementHub = () => {
 
       {/* Premium Society Experiences */}
       <div style={{ marginTop: '60px', marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #10b981' }}>
+        <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #3b7dc1' }}>
           {t('societyManagement.premiumExperiences', 'Premium Society Experiences')}
         </h2>
         <div style={{

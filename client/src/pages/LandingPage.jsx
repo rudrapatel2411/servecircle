@@ -18,7 +18,7 @@ const LandingPage = () => {
     { icon: <HiOutlineSparkles />, key: 'cleaning', color: '#06b6d4' },
     { icon: <HiOutlineStar />, key: 'events', color: '#f59e0b' },
     { icon: <HiOutlinePaintBrush />, key: 'furniture', color: '#ec4899' },
-    { icon: <HiOutlineSun />, key: 'garden', color: '#10b981' },
+    { icon: <HiOutlineSun />, key: 'garden', color: '#3b7dc1' },
     { icon: <HiOutlineBolt />, key: 'emergency', color: '#ef4444' },
     { icon: <HiOutlineAcademicCap />, key: 'learningSupport', color: '#84cc16' },
   ];
@@ -207,7 +207,7 @@ const LandingPage = () => {
               <p>{t('impact.localHeroDesc')}</p>
             </Link>
             <Link to="/about/ngo-partners" className="impact-card animate-fade-in-up stagger-4" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="impact-icon" style={{ background: '#d1fae5', color: '#059669' }}><HiOutlineGlobeAlt /></div>
+              <div className="impact-icon" style={{ background: '#e1ebf5', color: '#2960a0' }}><HiOutlineGlobeAlt /></div>
               <h3>{t('impact.ngo')}</h3>
               <p>{t('impact.ngoDesc')}</p>
             </Link>

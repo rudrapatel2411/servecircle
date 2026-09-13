@@ -1,33 +1,56 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineCalendarDays, HiOutlineClock, HiOutlineMapPin,
   HiOutlineCurrencyRupee, HiOutlineStar, HiOutlineEye
 } from 'react-icons/hi2';
+import { Link } from 'react-router-dom';
 import '../Dashboard.css';
 import './CustomerPages.css';
-
-const mockBookings = [
-  { id: '#SC-2841', service: 'AC Servicing', category: 'Home Repairs', worker: 'Ramesh Kumar', workerPhone: '9876500001', date: '14 May 2026', time: '10:00 AM', address: 'Satellite, Ahmedabad', amount: 500, status: 'completed', paymentStatus: 'paid', rating: 5 },
-  { id: '#SC-2840', service: 'Deep Cleaning', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', workerPhone: '9876500002', date: '15 May 2026', time: '2:00 PM', address: 'Prahlad Nagar, Ahmedabad', amount: 1200, status: 'active', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2839', service: 'Plumbing Fix', category: 'Home Repairs', worker: 'Ajay Patel', workerPhone: '9876500003', date: '10 May 2026', time: '11:00 AM', address: 'Satellite, Ahmedabad', amount: 350, status: 'completed', paymentStatus: 'paid', rating: 4 },
-  { id: '#SC-2838', service: 'Electrical Wiring', category: 'Home Repairs', worker: 'Ramesh Kumar', workerPhone: '9876500001', date: '16 May 2026', time: '4:30 PM', address: 'SG Highway, Ahmedabad', amount: 600, status: 'pending', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2836', service: 'Car Washing', category: 'Vehicle Services', worker: 'Deepak Singh', workerPhone: '9876500004', date: '12 May 2026', time: '7:00 AM', address: 'Vastrapur, Ahmedabad', amount: 250, status: 'completed', paymentStatus: 'paid', rating: 4 },
-  { id: '#SC-2835', service: 'Birthday Party', category: 'Events', worker: 'Pending Assignment', workerPhone: '', date: '20 May 2026', time: '5:00 PM', address: 'Thaltej, Ahmedabad', amount: 5000, status: 'pending', paymentStatus: 'pending', rating: null },
-  { id: '#SC-2830', service: 'Pest Control', category: 'Cleaning & Hygiene', worker: 'Sunita Mehra', workerPhone: '9876500002', date: '5 May 2026', time: '9:00 AM', address: 'Bopal, Ahmedabad', amount: 900, status: 'cancelled', paymentStatus: 'refunded', rating: null },
-];
+import { getSession, requestApi } from '../../utils/authSession.js';
 
 const statusConfig = {
   completed: { label: 'Completed', color: 'success' },
-  active: { label: 'Active', color: 'primary' },
+  started: { label: 'In progress', color: 'primary' },
+  arrived: { label: 'Worker arrived', color: 'primary' },
+  'en-route': { label: 'Worker en route', color: 'primary' },
+  accepted: { label: 'Accepted', color: 'primary' },
+  assigned: { label: 'Assigned', color: 'primary' },
   pending: { label: 'Pending', color: 'warning' },
   cancelled: { label: 'Cancelled', color: 'danger' },
 };
+
+const normalizeBooking = (booking) => ({
+  id: booking.bookingId || booking._id,
+  service: booking.service,
+  category: booking.category,
+  worker: booking.worker?.name || 'Pending assignment',
+  date: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString('en-IN') : 'Not scheduled',
+  time: booking.scheduledTime || 'Not specified',
+  address: booking.address,
+  amount: booking.amount,
+  status: booking.status,
+  paymentStatus: booking.paymentStatus,
+  rating: booking.rating || null,
+});
 
 const BookingHistory = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const session = getSession();
+    if (!session?.token) return;
+
+    requestApi('/bookings/my', { token: session.token })
+      .then((data) => setBookings(Array.isArray(data) ? data.map(normalizeBooking) : []))
+      .catch((requestError) => setError(requestError.message || 'Unable to load bookings'))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const tabs = [
     { key: 'all', label: 'All' },
@@ -37,14 +60,18 @@ const BookingHistory = () => {
     { key: 'cancelled', label: t('customer.cancelled') },
   ];
 
-  const filtered = activeTab === 'all' ? mockBookings : mockBookings.filter((b) => b.status === activeTab);
+  const filtered = activeTab === 'all'
+    ? bookings
+    : activeTab === 'active'
+      ? bookings.filter((booking) => ['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status))
+      : bookings.filter((booking) => booking.status === activeTab);
 
   return (
     <div className="page-content">
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('customer.myBookings')} 📋</h1>
-          <p className="page-subtitle">{mockBookings.length} total bookings</p>
+          <p className="page-subtitle">{bookings.length} total bookings</p>
         </div>
       </div>
 
@@ -58,16 +85,23 @@ const BookingHistory = () => {
           >
             {tab.label}
             <span className="tab-count">
-              {tab.key === 'all' ? mockBookings.length : mockBookings.filter((b) => b.status === tab.key).length}
+              {tab.key === 'all'
+                ? bookings.length
+                : tab.key === 'active'
+                  ? bookings.filter((booking) => ['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status)).length
+                  : bookings.filter((booking) => booking.status === tab.key).length}
             </span>
           </button>
         ))}
       </div>
 
+      {isLoading && <div className="empty-state"><p>Loading bookings...</p></div>}
+      {error && <div className="empty-state"><p>{error}</p></div>}
+
       {/* Booking Cards */}
       <div className="bookings-list">
-        {filtered.map((booking) => {
-          const config = statusConfig[booking.status];
+        {!isLoading && filtered.map((booking) => {
+          const config = statusConfig[booking.status] || { label: booking.status, color: 'warning' };
           const isExpanded = expandedId === booking.id;
           return (
             <div key={booking.id} className={`booking-card ${isExpanded ? 'expanded' : ''}`}>
@@ -121,9 +155,9 @@ const BookingHistory = () => {
                       </div>
                     )}
                   </div>
-                  {booking.status === 'active' && (
+                  {['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status) && (
                     <div className="booking-actions">
-                      <button className="btn btn-sm btn-outline">Track Worker 📍</button>
+                      <Link to={`/customer/live-tracking?bookingId=${encodeURIComponent(booking.id)}&service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-outline">Track Live 📍</Link>
                       <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: '#fecaca' }}>Cancel</button>
                     </div>
                   )}

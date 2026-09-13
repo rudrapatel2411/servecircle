@@ -8,6 +8,10 @@ const CallMeBackWidget = () => {
   const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const [isRequested, setIsRequested] = useState(() => {
+    return localStorage.getItem('callRequested') === 'true';
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!phone || phone.length < 10) {
@@ -18,22 +22,21 @@ const CallMeBackWidget = () => {
     setTimeout(() => {
       alert(t('callMeBack.successCallbackAlert', '🎉 Call request received! Our support agent is dialing your number right now.'));
       setIsOpen(false);
-      setPhone('');
-      setSubmitted(false);
+      setIsRequested(true);
+      localStorage.setItem('callRequested', 'true');
     }, 1000);
   };
+
+  if (isRequested) return null;
 
   return (
     <>
       {/* Floating Button with HSL pulse animation */}
       <div
         onClick={() => setIsOpen(true)}
+        className="call-me-back-float"
         style={{
-          position: 'fixed',
-          bottom: '30px',
-          left: '30px',
-          zIndex: 1000,
-          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+          background: 'linear-gradient(135deg, #3b7dc1 0%, #2960a0 100%)',
           color: 'white',
           width: '60px',
           height: '60px',
@@ -41,7 +44,7 @@ const CallMeBackWidget = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 30px rgba(16, 185, 129, 0.4)',
+          boxShadow: '0 8px 30px rgba(59, 125, 193, 0.4)',
           cursor: 'pointer',
           userSelect: 'none',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -53,7 +56,7 @@ const CallMeBackWidget = () => {
           width: '100%',
           height: '100%',
           borderRadius: '50%',
-          border: '3px solid #10b981',
+          border: '3px solid #3b7dc1',
           animation: 'ping 1.5s infinite',
           opacity: 0.6
         }} />
@@ -116,8 +119,8 @@ const CallMeBackWidget = () => {
                 width: '56px',
                 height: '56px',
                 borderRadius: '50%',
-                background: '#ecfdf5',
-                color: '#10b981',
+                background: '#f0f5fa',
+                color: '#3b7dc1',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -153,7 +156,7 @@ const CallMeBackWidget = () => {
                   color: 'var(--navy-800)',
                   transition: 'border-color 0.2s'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#10b981'}
+                onFocus={(e) => e.target.style.borderColor = '#3b7dc1'}
                 onBlur={(e) => e.target.style.borderColor = 'var(--gray-300)'}
               />
 
@@ -161,7 +164,7 @@ const CallMeBackWidget = () => {
                 type="submit"
                 disabled={submitted}
                 style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: 'linear-gradient(135deg, #3b7dc1 0%, #2960a0 100%)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '12px',
@@ -169,7 +172,7 @@ const CallMeBackWidget = () => {
                   fontSize: '0.95rem',
                   fontWeight: 800,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                  boxShadow: '0 4px 12px rgba(59, 125, 193, 0.2)',
                   transition: 'all 0.2s'
                 }}
               >

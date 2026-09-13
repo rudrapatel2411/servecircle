@@ -28,36 +28,15 @@ const TravelCommuteHub = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('travelCommute.backToDirectory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #10b981',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>🚗</span>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('travelCommute.title')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#ccfbf1', fontSize: '0.9rem', marginTop: '4px' }}>
-              {t('travelCommute.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       <div style={{
         display: 'grid',
@@ -155,7 +134,7 @@ const TravelCommuteHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Guaranteed Airport Drop & Pick')}&price=${calculateAirportPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Guaranteed Airport Drop & Pick')}&serviceId=airport-transfer&category=travel-commute&price=${calculateAirportPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e' }}
             >
@@ -258,7 +237,7 @@ const TravelCommuteHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Multi-Day Outstation Chauffeur')}&price=${calculateOutstationPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent('Multi-Day Outstation Chauffeur')}&serviceId=outstation-chauffeur&category=travel-commute&price=${calculateOutstationPrice()}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e' }}
             >
@@ -379,7 +358,7 @@ const TravelCommuteHub = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ background: '#10b981', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+              <span style={{ background: '#3b7dc1', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
                 <HiOutlineShieldCheck size={24} />
               </span>
               {t('travelCommuteExt.safetyShield')}

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  HiOutlineBolt, HiOutlineShieldCheck, HiOutlineExclamationTriangle, HiOutlineMapPin
+  HiOutlineBolt, HiOutlineShieldCheck, HiOutlineExclamationTriangle, HiOutlineMapPin,
+  HiOutlineMagnifyingGlass, HiOutlineXMark
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -103,45 +104,37 @@ const EmergencyHub = () => {
   const getPresetService = (preset) => t(`emergencyHub.presets.${presetKeyMap[preset.id]}.service`, preset.service);
 
   const handleBookEmergency = (preset) => {
-    navigate(`/customer/book?service=${encodeURIComponent(getPresetService(preset))}&price=${preset.price}&expressMode=true`);
+    const cat = preset.id === 'vehicle-breakdown' ? 'vehicle-services' : 'home-repairs';
+    navigate(`/customer/book?service=${encodeURIComponent(getPresetService(preset))}&category=${cat}&price=${preset.price}&expressMode=true`);
   };
+
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredPresets = emergencyPresets.filter((p) =>
+    getPresetName(p).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    getPresetDesc(p).toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
-      
-      {/* GLOWING CRIMSON URGENCY HERO */}
-      <div style={{
-        background: 'linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        position: 'relative',
-        overflow: 'hidden',
-        boxShadow: '0 0 25px rgba(239, 68, 68, 0.25)',
-        border: '2.5px solid #ef4444'
-      }}>
-        {/* Pulsing Neon Warning Ring */}
-        <div style={{
-          position: 'absolute', top: '12px', right: '16px',
-          display: 'flex', alignItems: 'center', gap: '8px',
-          background: 'rgba(239, 68, 68, 0.25)',
-          padding: '4px 12px', borderRadius: 'var(--radius-full)',
-          fontSize: '0.75rem', fontWeight: 800, border: '1px solid #f87171'
-        }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'block', animation: 'pulse 1s infinite' }} />
-          <span>{t('emergencyHub.priorityActive')}</span>
-        </div>
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '640px' }}>
-          <h1 className="page-title" style={{ color: 'white', fontSize: '2.2rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <HiOutlineBolt style={{ animation: 'bounce 2s infinite', color: '#f59e0b' }} /> {t('customer.emergencyHub')} 🚨
-          </h1>
-          <p style={{ color: '#fca5a5', fontSize: '0.95rem', marginTop: '8px', lineHeight: 1.5 }}>
-            {t('emergencyHub.emergencySubtitle')}
-          </p>
-        </div>
+      {/* SEARCH BAR */}
+      <div className="hub-search-bar">
+        <HiOutlineMagnifyingGlass className="hub-search-icon" />
+        <input
+          type="text"
+          placeholder="Search emergency services..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="hub-search-input"
+        />
+        {searchQuery && (
+          <button className="hub-search-clear" onClick={() => setSearchQuery('')} aria-label="Clear">
+            <HiOutlineXMark />
+          </button>
+        )}
       </div>
+
 
       {/* Preset Grid Selection */}
       <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)', background: 'white', marginBottom: '24px' }}>
@@ -150,7 +143,12 @@ const EmergencyHub = () => {
         </h3>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-          {emergencyPresets.map((preset) => (
+        {(filteredPresets.length === 0) && (
+          <div style={{ textAlign: 'center', padding: '24px', color: 'var(--gray-400)', gridColumn: '1 / -1' }}>
+            No emergency services match your search.
+          </div>
+        )}
+        {filteredPresets.map((preset) => (
             <div
               key={preset.id}
               onClick={() => handleBookEmergency(preset)}

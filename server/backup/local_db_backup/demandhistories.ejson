@@ -1,0 +1,25 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c689c09ec34fd5c975d6a"
+    },
+    "date": {
+      "$date": "2026-07-31T00:00:00Z"
+    },
+    "city": "unknown",
+    "hour": 9,
+    "serviceCategory": "Home Repairs",
+    "__v": 0,
+    "_sumArrivalTimeMs": 0,
+    "_sumPrice": 3000,
+    "assignedCount": 2,
+    "averageArrivalTimeMs": 0,
+    "averagePrice": 750,
+    "bookingCount": 4,
+    "cancelledCount": 0,
+    "completedCount": 2,
+    "emergencyCount": 0,
+    "subCategory": "",
+    "unassignedCount": 0
+  }
+]

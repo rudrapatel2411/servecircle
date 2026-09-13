@@ -16,7 +16,7 @@ const categoryMeta = {
   'cleaning': { nameKey: 'categories.cleaning', descKey: 'categories.cleaningDesc', icon: '🧹', color: '#06b6d4', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80' },
   'home-it': { nameKey: 'categories.homeIT', descKey: 'categories.homeITDesc', icon: '💻', color: '#f59e0b', image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=400&q=80' },
   'care-family': { nameKey: 'categories.careFamily', descKey: 'categories.careFamilyDesc', icon: '❤️', color: '#ec4899', image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=400&q=80' },
-  'utility-daily': { nameKey: 'categories.utilityDaily', descKey: 'categories.utilityDailyDesc', icon: '🕒', color: '#10b981', image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=400&q=80' },
+  'utility-daily': { nameKey: 'categories.utilityDaily', descKey: 'categories.utilityDailyDesc', icon: '🕒', color: '#3b7dc1', image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=400&q=80' },
   'learning-support': { nameKey: 'categories.learningSupport', descKey: 'categories.learningSupportDesc', icon: '🎓', color: '#84cc16', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=80' },
   'property-services': { nameKey: 'categories.propertyServices', descKey: 'categories.propertyServicesDesc', icon: '🏢', color: '#4b5563', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&q=80' },
   'festive-seasonal': { nameKey: 'categories.festiveSeasonal', descKey: 'categories.festiveSeasonalDesc', icon: '✨', color: '#f97316', image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=400&q=80' }
@@ -33,7 +33,7 @@ const CategoryHub = () => {
     nameKey: 'common.loading',
     descKey: 'common.loading',
     icon: '📂',
-    color: '#10b981'
+    color: '#3b7dc1'
   };
 
   const categoryServices = servicesRegistry.filter((s) => s.category === category);

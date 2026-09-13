@@ -1,0 +1,68 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c68bf09ec34fd5c975d6e"
+    },
+    "entityId": null,
+    "entityType": "global",
+    "__v": 0,
+    "_sumResolutionTimeMs": 62,
+    "averageResolutionTimeMs": 62,
+    "complaintCategories": [
+      {
+        "category": "delay",
+        "count": 1,
+        "_id": {
+          "$oid": "6a6c68bfed35f87422c16805"
+        }
+      }
+    ],
+    "customerComplaints": 0,
+    "falseComplaints": 0,
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.436Z"
+    },
+    "pendingComplaints": 1,
+    "repeatComplaintPattern": {
+      "maxComplaintsFromSingleUser": 0,
+      "usersWithMultipleComplaints": 0
+    },
+    "resolvedComplaints": 1,
+    "totalComplaints": 1,
+    "workerComplaints": 1
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bf09ec34fd5c975d6f"
+    },
+    "entityType": "worker",
+    "entityId": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "__v": 0,
+    "_sumResolutionTimeMs": 0,
+    "averageResolutionTimeMs": 0,
+    "complaintCategories": [
+      {
+        "category": "delay",
+        "count": 1,
+        "_id": {
+          "$oid": "6a6c68bfed35f87422c16809"
+        }
+      }
+    ],
+    "customerComplaints": 0,
+    "falseComplaints": 0,
+    "lastUpdated": {
+      "$date": "2026-07-31T09:19:59.437Z"
+    },
+    "pendingComplaints": 1,
+    "repeatComplaintPattern": {
+      "maxComplaintsFromSingleUser": 0,
+      "usersWithMultipleComplaints": 0
+    },
+    "resolvedComplaints": 1,
+    "totalComplaints": 1,
+    "workerComplaints": 0
+  }
+]

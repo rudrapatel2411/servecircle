@@ -50,8 +50,8 @@ const SocietyPremiumFlow = () => {
   const handleDirectBooking = (serviceName, priceString, serviceId) => {
     setLoadingId(serviceId);
     setTimeout(() => {
-      const price = parseInt(priceString.replace(/[^\\d]/g, ''), 10);
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      const price = parseInt(priceString.replace(/[^\d]/g, ''), 10);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=society-management&price=${price}`);
     }, 800);
   };
 
@@ -123,7 +123,7 @@ const SocietyPremiumFlow = () => {
         price = packageLevel === 'Standard' ? 9999 : 19999;
       }
       
-      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&price=${price}`);
+      navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=society-management&price=${price}`);
     }, 1200);
   };
 
@@ -151,7 +151,7 @@ const SocietyPremiumFlow = () => {
       };
       case 'ev-charger': return { 
         title: 'EV Charger Setup', icon: <HiOutlineBolt size={40} color="white" />,
-        gradient: 'linear-gradient(135deg, #10b981 0%, #047857 100%)', color: '#10b981', bgSoft: '#ecfdf5', borderActive: '#10b981', shadowActive: '0 4px 14px rgba(16, 185, 129, 0.15)'
+        gradient: 'linear-gradient(135deg, #3b7dc1 0%, #224c82 100%)', color: '#3b7dc1', bgSoft: '#f0f5fa', borderActive: '#3b7dc1', shadowActive: '0 4px 14px rgba(59, 125, 193, 0.15)'
       };
       case 'waterless-wash': return { 
         title: 'Waterless Car Wash', icon: <HiOutlineSparkles size={40} color="white" />,

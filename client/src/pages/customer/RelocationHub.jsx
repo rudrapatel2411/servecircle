@@ -70,36 +70,15 @@ const RelocationHub = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
       {/* Back Button */}
-      <Link to="/customer/services" className="sidebar-link" style={{
+      <Link to="/customer/general-services" className="sidebar-link" style={{
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem',
         textDecoration: 'none', marginBottom: '20px', width: 'fit-content'
       }}>
-        <HiOutlineArrowLeft /> {t('relocation.backToDirectory')}
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      {/* Header */}
-      <div className="page-header" style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        borderLeft: '5px solid #8b5cf6',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>📦</span>
-          <div>
-            <h1 className="page-title" style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>
-              {t('relocation.title')}
-            </h1>
-            <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '4px' }}>
-              {t('relocation.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       {/* Premium Features Demo Banner */}
       <div style={{ marginBottom: '32px', padding: '24px', background: 'linear-gradient(135deg, #0ea5e9, #2563eb)', borderRadius: '16px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.4)' }}>
@@ -277,7 +256,7 @@ const RelocationHub = () => {
                 </span>
               </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&price=${dynamicPrice}`}
+                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&serviceId=${transitType === 'full' ? 'full-home-shifting' : 'single-item-transport'}&category=relocation&price=${dynamicPrice}`}
                 className="btn btn-primary btn-sm"
                 style={{ padding: '8px 16px', background: '#8b5cf6', borderColor: '#8b5cf6' }}
               >
@@ -330,10 +309,10 @@ const RelocationHub = () => {
             {/* Trust List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
               <span style={{ fontSize: '0.78rem', color: 'var(--navy-700)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HiOutlineShieldCheck style={{ color: '#10b981' }} /> {t('relocation.insuredCover')}
+                <HiOutlineShieldCheck style={{ color: '#3b7dc1' }} /> {t('relocation.insuredCover')}
               </span>
               <span style={{ fontSize: '0.78rem', color: 'var(--navy-700)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HiOutlineSparkles style={{ color: '#10b981' }} /> {t('relocation.treatedVault')}
+                <HiOutlineSparkles style={{ color: '#3b7dc1' }} /> {t('relocation.treatedVault')}
               </span>
             </div>
           </div>
@@ -354,7 +333,7 @@ const RelocationHub = () => {
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Digital Secure Storage Vault')}&price=${vaultSpace * vaultPricePerSqFt}`}
+              to={`/customer/book?service=${encodeURIComponent('Digital Secure Storage Vault')}&serviceId=storage-vault&category=relocation&price=${vaultSpace * vaultPricePerSqFt}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#8b5cf6', borderColor: '#8b5cf6' }}
             >
@@ -397,7 +376,7 @@ const RelocationHub = () => {
           <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>♻️🛋️</div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.scrapRemoval')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.scrapRemovalDesc')}</p>
-          <Link to="/customer/book?service=Junk Removal Evaluation&price=0" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
+          <Link to={`/customer/book?service=${encodeURIComponent('Junk Removal Evaluation')}&category=relocation&price=0`} className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
             Schedule Pickup
           </Link>
         </div>

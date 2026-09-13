@@ -51,7 +51,7 @@ const modules = [
 
 const WorkerTraining = () => {
   const { t } = useTranslation();
-  const { token, isAuthenticated, signIn, authError, authLoading } = useWorkerAuth();
+  const { token, user, isAuthenticated, signIn, authError, authLoading, workerStatus } = useWorkerAuth();
 
   const [profile, setProfile] = useState(null);
   const [jobs, setJobs] = useState([]);
@@ -121,7 +121,7 @@ const WorkerTraining = () => {
   };
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (
@@ -144,7 +144,7 @@ const WorkerTraining = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#d1fae5', color: '#047857' }}>
+          <div className="stat-icon" style={{ background: '#e1ebf5', color: '#224c82' }}>
             <HiOutlineCheckCircle />
           </div>
           <div>
@@ -195,7 +195,7 @@ const WorkerTraining = () => {
                 <div className="progress-fill" style={{ width: `${badgeProgress}%`, background: '#7c3aed' }} />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, color: 'var(--gray-500)', fontSize: '0.9rem' }}>
-                <span>Status: {isProUnlocked ? <strong style={{ color: '#10b981' }}>Unlocked!</strong> : 'In progress'}</span>
+                <span>Status: {isProUnlocked ? <strong style={{ color: '#3b7dc1' }}>Unlocked!</strong> : 'In progress'}</span>
                 <span>{completedJobs} / 50 Jobs</span>
               </div>
               
@@ -213,8 +213,8 @@ const WorkerTraining = () => {
               {modules.map((module) => {
                 const done = watched.includes(module.id);
                 return (
-                  <div key={module.id} className="training-card" style={{ border: done ? '1px solid #10b981' : '1px solid var(--gray-200)' }}>
-                    <div className="training-thumb" style={{ background: done ? '#d1fae5' : '#f1f5f9', color: done ? '#10b981' : '#64748b' }}>
+                  <div key={module.id} className="training-card" style={{ border: done ? '1px solid #3b7dc1' : '1px solid var(--gray-200)' }}>
+                    <div className="training-thumb" style={{ background: done ? '#e1ebf5' : '#f1f5f9', color: done ? '#3b7dc1' : '#64748b' }}>
                       <HiOutlinePlayCircle />
                     </div>
                     <div className="training-info">
@@ -228,7 +228,7 @@ const WorkerTraining = () => {
                         <button
                           className={done ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
                           onClick={() => toggleWatched(module.id)}
-                          style={done ? { borderColor: '#10b981', color: '#10b981' } : {}}
+                          style={done ? { borderColor: '#3b7dc1', color: '#3b7dc1' } : {}}
                         >
                           {done ? 'Watched' : 'Watch Now'}
                         </button>

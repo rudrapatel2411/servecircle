@@ -13,7 +13,7 @@ import '../Dashboard.css';
 
 const WorkerSchedule = () => {
   const { t } = useTranslation();
-  const { token, isAuthenticated, signIn, authError, authLoading } = useWorkerAuth();
+  const { token, user, isAuthenticated, signIn, authError, authLoading, workerStatus } = useWorkerAuth();
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,7 @@ const WorkerSchedule = () => {
   }, [upcomingJobs]);
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (
@@ -104,7 +104,7 @@ const WorkerSchedule = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#d1fae5', color: '#047857' }}>
+          <div className="stat-icon" style={{ background: '#e1ebf5', color: '#224c82' }}>
             <HiOutlineCalendarDays />
           </div>
           <div>

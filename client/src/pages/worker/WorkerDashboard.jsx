@@ -14,8 +14,12 @@ import {
   HiOutlineStar,
   HiOutlineSparkles,
   HiOutlineHeart,
+  HiOutlineAcademicCap,
+  HiOutlineLockClosed,
+  HiOutlineLockOpen,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
+import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
@@ -26,12 +30,13 @@ import './WorkerPages.css';
 
 const WorkerDashboard = () => {
   const { t } = useTranslation();
-  const { token, user, isAuthenticated, signIn, authError, authLoading } = useWorkerAuth();
+  const { token, user, isAuthenticated, workerStatus, workerTier, signIn, authError, authLoading } = useWorkerAuth();
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState('');
+  const [showIdCardModal, setShowIdCardModal] = useState(false);
 
   const loadJobs = async () => {
     if (!token) return;
@@ -72,7 +77,7 @@ const WorkerDashboard = () => {
 
   const stats = [
     { icon: <HiOutlineBriefcase />, value: String(todayJobs.length), label: t('worker.todayJobs', 'Today\'s Jobs'), color: '#3b82f6', bg: '#dbeafe' },
-    { icon: <HiOutlineBanknotes />, value: formatInr(weeklyEarnings), label: t('worker.weeklyEarnings', 'Weekly Earnings'), color: '#10b981', bg: '#d1fae5' },
+    { icon: <HiOutlineBanknotes />, value: formatInr(weeklyEarnings), label: t('worker.weeklyEarnings', 'Weekly Earnings'), color: '#3b7dc1', bg: '#e1ebf5' },
     { icon: <HiOutlineClipboardDocumentCheck />, value: String(pendingJobs.length), label: t('worker.pendingRequests', 'Pending Requests'), color: '#f59e0b', bg: '#fef3c7' },
     { icon: <HiOutlineTrophy />, value: `${completedJobs.length}/50`, label: t('worker.proBadge', 'Pro Badge'), color: '#8b5cf6', bg: '#ede9fe' },
   ];
@@ -91,26 +96,140 @@ const WorkerDashboard = () => {
     }
   };
 
-  // Determine current step for growth path (1 to 5)
-  let currentStep = 1;
-  if (completedJobs.length >= 1) currentStep = 2; // Completed first job
-  if (completedJobs.length >= 10) currentStep = 3; // Got reviews
-  if (completedJobs.length >= 50) currentStep = 4; // Pro Badge unlocked
-  if (completedJobs.length >= 100) currentStep = 5; // Premium Listing unlocked
+  // Derive tier info from useWorkerAuth (workerTier is computed there based on workerStatus)
+  const tier = workerTier || { label: 'Junior Pro', color: '#2563eb', bg: '#dbeafe', emoji: '⭐', canSoloJob: true };
+  const isRookie = workerStatus === 'approved_rookie';
+  const isSenior = workerStatus === 'approved_senior';
+  // Shadow jobs done: from user profile in real app
+  const shadowJobsDone = user?.shadowJobsDone ?? 8;
+  const shadowJobsTarget = 15;
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (
     <div className="page-content worker-page-content" style={{ paddingBottom: '100px' }}>
+
+      {/* Demo Mode Notice */}
+      {isDemoMode && (
+        <div style={{
+          background: 'linear-gradient(135deg, #422006, #92400e)',
+          borderRadius: 'var(--radius-md)',
+          padding: '10px 16px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          color: 'white',
+          fontSize: '0.82rem',
+        }}>
+          <span style={{ fontSize: '1rem' }}>🔧</span>
+          <span><strong>Demo Mode:</strong> Showing mock data. Login with <code style={{ background: 'rgba(255,255,255,0.15)', padding: '1px 6px', borderRadius: '4px' }}>ramesh@test.com / test123</code> to use real data.</span>
+        </div>
+      )}
+
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('common.welcome', 'Welcome')}, {user?.name || 'Worker'}</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {t('common.welcome', 'Welcome')}, {user?.name || 'Worker'}
+            <span style={{ background: tier.bg, color: tier.color, fontSize: '0.7rem', padding: '3px 12px', borderRadius: '100px', fontWeight: 800, letterSpacing: '0.04em' }}>
+              {tier.emoji} {tier.label}
+            </span>
+          </h1>
           <p className="page-subtitle">You have {pendingJobs.length} new job requests waiting for you.</p>
         </div>
-        <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setShowIdCardModal(true)}>
+            🪪 View ID Card
+          </button>
+          <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
+        </div>
       </div>
+
+      {/* ===== TIER STATUS CARD ===== */}
+      {isRookie && (
+        <div style={{
+          background: 'linear-gradient(135deg, #1e3a5f, #1d4ed8)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '18px 20px',
+          marginBottom: '16px',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <HiOutlineAcademicCap style={{ fontSize: '1.8rem', opacity: 0.9 }} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>🎓 Rookie Mode — Shadow Training Active</div>
+              <div style={{ fontSize: '0.78rem', opacity: 0.85 }}>You will be sent with a Senior Pro for your first {shadowJobsTarget} jobs. Complete them to unlock Solo Jobs.</div>
+            </div>
+          </div>
+          {/* Progress Bar */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', opacity: 0.9, marginBottom: '4px' }}>
+              <span>Shadow Jobs Completed</span>
+              <span>{shadowJobsDone} / {shadowJobsTarget}</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,0.2)', borderRadius: '100px', height: '8px' }}>
+              <div style={{
+                background: '#4ade80',
+                borderRadius: '100px',
+                height: '8px',
+                width: `${(shadowJobsDone / shadowJobsTarget) * 100}%`,
+                transition: 'width 0.5s ease',
+              }} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', fontSize: '0.75rem', opacity: 0.85, alignItems: 'center' }}>
+            <HiOutlineLockClosed style={{ fontSize: '0.9rem' }} />
+            <span>Solo jobs are locked until training is complete + ServeCircle Hub Interview passed.</span>
+          </div>
+        </div>
+      )}
+
+      {!isRookie && !isSenior && (
+        <div style={{
+          background: '#eff6ff',
+          border: '1px solid #bfdbfe',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 18px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          fontSize: '0.85rem',
+          color: '#1e40af',
+        }}>
+          <HiOutlineLockOpen style={{ fontSize: '1.4rem', flexShrink: 0 }} />
+          <div>
+            <strong>⭐ Junior Pro — Solo Jobs Unlocked!</strong>
+            <div style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '2px' }}>Complete 50 jobs to reach Senior Pro status and earn a bonus on each job + trainee bonus.</div>
+          </div>
+          <div style={{ marginLeft: 'auto', fontWeight: 800, color: '#3b82f6', fontSize: '0.9rem' }}>{completedJobs.length}/50</div>
+        </div>
+      )}
+
+      {isSenior && (
+        <div style={{
+          background: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '14px 18px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          color: 'white',
+          fontSize: '0.85rem',
+        }}>
+          <HiOutlineTrophy style={{ fontSize: '1.6rem', flexShrink: 0 }} />
+          <div>
+            <strong>🏆 Senior Pro — Top Tier!</strong>
+            <div style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '2px' }}>You can now mentor Rookies and earn ₹50 extra per shadow job. Keep your rating above 4.5.</div>
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="card" style={{ borderColor: '#fecaca', color: '#991b1b', padding: '16px' }}>
@@ -200,7 +319,7 @@ const WorkerDashboard = () => {
               <div className="job-meta">
                 <span><HiOutlineMapPin /> {job.address}</span>
                 <span><HiOutlineClock /> {job.scheduledTime || 'Flexible'}</span>
-                <span style={{ color: '#10b981', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
+                <span style={{ color: '#3b7dc1', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
               </div>
             </div>
             <div className="worker-action-buttons">
@@ -226,6 +345,12 @@ const WorkerDashboard = () => {
 
 
 
+      {showIdCardModal && (
+        <WorkerIDCardModal
+          worker={user}
+          onClose={() => setShowIdCardModal(false)}
+        />
+      )}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
   HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
+import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import { useWorkerAuth } from './useWorkerAuth';
 import {
   fetchWorkerJobs,
@@ -21,7 +22,9 @@ const WorkerProfile = () => {
   const { t } = useTranslation();
   const {
     token,
+    user,
     isAuthenticated,
+    workerStatus,
     signIn,
     authError,
     authLoading,
@@ -34,6 +37,7 @@ const WorkerProfile = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showIdCardModal, setShowIdCardModal] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -124,7 +128,7 @@ const WorkerProfile = () => {
   };
 
   if (!isAuthenticated) {
-    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} />;
+    return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
   }
 
   return (
@@ -162,7 +166,7 @@ const WorkerProfile = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#d1fae5', color: '#047857' }}>
+          <div className="stat-icon" style={{ background: '#e1ebf5', color: '#224c82' }}>
             <HiOutlineCheckBadge />
           </div>
           <div>
@@ -259,7 +263,7 @@ const WorkerProfile = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
                   <strong style={{ color: 'var(--navy-600)' }}>Verification</strong>
-                  <span style={{ color: profile.isVerified ? '#10b981' : '#f59e0b', fontWeight: 700 }}>
+                  <span style={{ color: profile.isVerified ? '#3b7dc1' : '#f59e0b', fontWeight: 700 }}>
                     {profile.isVerified ? 'Verified' : 'Pending Verification'}
                   </span>
                 </div>
@@ -275,8 +279,27 @@ const WorkerProfile = () => {
                 </div>
               </div>
               
+              {/* OFFICIAL ID CARD SECTION */}
+              <div className="card" style={{ marginTop: '20px', background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)', color: 'white', borderRadius: '16px', border: '1.5px solid #38bdf8', padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'white' }}>Official ServeCircle ID Card 🪪</h4>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#93c5fd' }}>
+                      Worker ID: <strong>{profile.workerIdCode || 'SC-W-1001'}</strong> • QR Scannable
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary"
+                    style={{ background: '#2563eb', padding: '8px 16px', fontSize: '0.85rem', fontWeight: 800 }}
+                    onClick={() => setShowIdCardModal(true)}
+                  >
+                    View & Print ID Card
+                  </button>
+                </div>
+              </div>
+
               {isProUnlocked && (
-                <div className="card" style={{ marginTop: '24px', background: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', borderColor: '#d8b4fe', textAlign: 'center' }}>
+                <div className="card" style={{ marginTop: '20px', background: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', borderColor: '#d8b4fe', textAlign: 'center' }}>
                   <HiOutlineShieldCheck style={{ fontSize: '3rem', color: '#9333ea', margin: '0 auto 12px' }} />
                   <h4 style={{ color: '#6b21a8', margin: '0 0 8px 0' }}>Verified Pro Status Active</h4>
                   <p style={{ color: '#7e22ce', fontSize: '0.9rem', margin: 0 }}>You are receiving priority job requests and premium listings in your service area.</p>
@@ -285,6 +308,13 @@ const WorkerProfile = () => {
             </div>
           )}
         </div>
+      )}
+
+      {showIdCardModal && (
+        <WorkerIDCardModal
+          worker={profile || user}
+          onClose={() => setShowIdCardModal(false)}
+        />
       )}
     </div>
   );

@@ -1,0 +1,291 @@
+[
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb58d"
+    },
+    "name": "Electrical Work",
+    "category": "Home Repairs",
+    "description": "Wiring, switches, fans, lights",
+    "basePrice": 300,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "⚡",
+    "image": "",
+    "tags": [
+      "electrician",
+      "wiring",
+      "switches",
+      "lights"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.787Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.787Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb58e"
+    },
+    "name": "Plumbing",
+    "category": "Home Repairs",
+    "description": "Pipe repair, tap fix, leakage",
+    "basePrice": 350,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🚰",
+    "image": "",
+    "tags": [
+      "plumber",
+      "pipe",
+      "leakage",
+      "tap"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb58f"
+    },
+    "name": "Carpentry",
+    "category": "Home Repairs",
+    "description": "Door/window repair, furniture fix",
+    "basePrice": 400,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🔨",
+    "image": "",
+    "tags": [
+      "carpenter",
+      "door",
+      "window",
+      "furniture"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb590"
+    },
+    "name": "AC & Appliance Repair",
+    "category": "Home Repairs",
+    "description": "AC service, fridge, washing machine",
+    "basePrice": 500,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "❄️",
+    "image": "",
+    "tags": [
+      "ac",
+      "appliance",
+      "fridge",
+      "washing machine"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb591"
+    },
+    "name": "Painting",
+    "category": "Home Repairs",
+    "description": "Wall painting, waterproofing",
+    "basePrice": 600,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🎨",
+    "image": "",
+    "tags": [
+      "painting",
+      "wall",
+      "waterproofing"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb592"
+    },
+    "name": "Car Repair",
+    "category": "Vehicle Services",
+    "description": "Engine, brakes, suspension",
+    "basePrice": 800,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🚗",
+    "image": "",
+    "tags": [
+      "car",
+      "mechanic",
+      "engine",
+      "brakes"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb593"
+    },
+    "name": "Bike Repair",
+    "category": "Vehicle Services",
+    "description": "Engine, chain, brakes",
+    "basePrice": 400,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🏍️",
+    "image": "",
+    "tags": [
+      "bike",
+      "mechanic",
+      "chain",
+      "brakes"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb594"
+    },
+    "name": "Home Deep Cleaning",
+    "category": "Cleaning & Hygiene",
+    "description": "Full house thorough cleaning",
+    "basePrice": 1200,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🧹",
+    "image": "",
+    "tags": [
+      "cleaning",
+      "deep clean",
+      "house"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb595"
+    },
+    "name": "Pest Control",
+    "category": "Cleaning & Hygiene",
+    "description": "Cockroach, termite, mosquito control",
+    "basePrice": 900,
+    "estimatedDuration": 60,
+    "isActive": true,
+    "icon": "🐜",
+    "image": "",
+    "tags": [
+      "pest",
+      "termite",
+      "cockroach"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": false,
+    "deletedAt": null,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:13.788Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6a659dbdee09d9f3132eb59a"
+    },
+    "name": "Solar Panel Installation",
+    "category": "Home Repairs",
+    "subCategory": "Green Energy",
+    "description": "Roof solar panel mounting and wiring",
+    "basePrice": 2700,
+    "estimatedDuration": 180,
+    "isActive": false,
+    "icon": "🔧",
+    "image": "",
+    "tags": [
+      "solar",
+      "green",
+      "roof"
+    ],
+    "serviceRadius": 20,
+    "isDeleted": true,
+    "deletedAt": {
+      "$date": "2026-07-26T05:40:14.047Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-26T05:40:13.895Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-26T05:40:14.047Z"
+    },
+    "__v": 0
+  }
+]

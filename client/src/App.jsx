@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import i18next from 'i18next';
 
 // Global override for Number formatting to support localized digits
@@ -19,23 +19,28 @@ import DashboardLayout from './components/DashboardLayout';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import WorkerRegister from './pages/auth/WorkerRegister';
 import ImpactDetail from './pages/ImpactDetail';
 
 /* Customer */
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import BrowseServices from './pages/customer/BrowseServices';
+import GeneralServicesPage from './pages/customer/GeneralServicesPage';
+// RepairServicesComingSoon and CleaningServicesComingSoon replaced by real Hubs
 import CategoryHub from './pages/customer/CategoryHub';
 import ServiceDetail from './pages/customer/ServiceDetail';
 import EmergencyHub from './pages/customer/EmergencyHub';
 import EventsHub from './pages/customer/EventsHub';
 import MyHomeDashboard from './pages/customer/MyHomeDashboard';
 import TrustSafety from './pages/customer/TrustSafety';
+import SecureWorkerVerification from './pages/customer/SecureWorkerVerification';
 import BookingFlow from './pages/customer/BookingFlow';
 import BookingHistory from './pages/customer/BookingHistory';
 import CustomerWallet from './pages/customer/CustomerWallet';
 import CustomerSubscriptions from './pages/customer/CustomerSubscriptions';
 import CustomerReviews from './pages/customer/CustomerReviews';
 import AISmartDiagnosis from './pages/customer/AISmartDiagnosis';
+import CustomerAIChat from './pages/customer/CustomerAIChat';
 import HomeFixrWarranty from './pages/customer/HomeFixrWarranty';
 import VideoConsultation from './pages/customer/VideoConsultation';
 import GroupBooking from './pages/customer/GroupBooking';
@@ -52,6 +57,7 @@ import CleaningHygieneHub from './pages/customer/CleaningHygieneHub';
 import FurnitureDecorHub from './pages/customer/FurnitureDecorHub';
 import GardenOutdoorHub from './pages/customer/GardenOutdoorHub';
 import PostServiceReview from './pages/customer/PostServiceReview';
+import OrderedServices from './pages/customer/OrderedServices';
 import PackersDemo from './pages/customer/PackersDemo';
 import PetRelocationDemo from './pages/customer/PetRelocationDemo';
 import VehicleRelocationDemo from './pages/customer/VehicleRelocationDemo';
@@ -105,10 +111,33 @@ function App() {
         <Route path="/about/:id" element={<><Navbar /><ImpactDetail /></>} />
         <Route path="/login" element={<><Navbar /><LoginPage /></>} />
         <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
+        <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
+        <Route path="/ai-chat" element={<Navigate to="/customer/ai-chat" replace />} />
+        <Route path="/chat" element={<Navigate to="/customer/ai-chat" replace />} />
+        <Route path="/ai-diagnosis" element={<Navigate to="/customer/ai-diagnosis" replace />} />
 
         <Route path="/customer" element={<DashboardLayout panel="customer" />}>
           <Route index element={<CustomerDashboard />} />
+
+          {/* Primary top-nav destinations */}
           <Route path="services" element={<BrowseServices />} />
+          <Route path="events" element={<EventsHub />} />
+          <Route path="emergency" element={<EmergencyHub />} />
+
+          {/* General Services hub + sub-category pages */}
+          <Route path="general-services" element={<GeneralServicesPage />} />
+          <Route path="general-services/repair-services" element={<HomeRepairsHub />} />
+          <Route path="general-services/cleaning-services" element={<CleaningHygieneHub />} />
+
+          {/* General Services category pages (existing routes preserved) */}
+          <Route path="travel-commute" element={<TravelCommuteHub />} />
+          <Route path="food-kitchen" element={<FoodKitchenHub />} />
+          <Route path="pet-services" element={<PetHub />} />
+          <Route path="health-wellness" element={<HealthWellnessHub />} />
+          <Route path="society-management" element={<SocietyManagementHub />} />
+          <Route path="relocation" element={<RelocationHub />} />
+
+          {/* Legacy category routes under services */}
           <Route path="services/home-repairs" element={<HomeRepairsHub />} />
           <Route path="services/vehicle-services" element={<VehicleServicesHub />} />
           <Route path="services/cleaning" element={<CleaningHygieneHub />} />
@@ -116,8 +145,8 @@ function App() {
           <Route path="services/garden-outdoor" element={<GardenOutdoorHub />} />
           <Route path="services/:category" element={<CategoryHub />} />
           <Route path="services/:category/:serviceId" element={<ServiceDetail />} />
-          <Route path="emergency" element={<EmergencyHub />} />
-          <Route path="events" element={<EventsHub />} />
+
+          {/* Account & tools */}
           <Route path="my-home" element={<MyHomeDashboard />} />
           <Route path="trust-safety" element={<TrustSafety />} />
           <Route path="book" element={<BookingFlow />} />
@@ -126,17 +155,16 @@ function App() {
           <Route path="subscriptions" element={<CustomerSubscriptions />} />
           <Route path="reviews" element={<CustomerReviews />} />
           <Route path="ai-diagnosis" element={<AISmartDiagnosis />} />
+          <Route path="ai-chat" element={<CustomerAIChat />} />
           <Route path="homefixr" element={<HomeFixrWarranty />} />
           <Route path="video-consultation" element={<VideoConsultation />} />
           <Route path="group-booking" element={<GroupBooking />} />
           <Route path="live-tracking" element={<LiveTracking />} />
           <Route path="review/:bookingId" element={<PostServiceReview />} />
-          <Route path="relocation" element={<RelocationHub />} />
-          <Route path="health-wellness" element={<HealthWellnessHub />} />
-          <Route path="pet-services" element={<PetHub />} />
-          <Route path="food-kitchen" element={<FoodKitchenHub />} />
-          <Route path="travel-commute" element={<TravelCommuteHub />} />
-          <Route path="society-management" element={<SocietyManagementHub />} />
+          <Route path="ordered-services" element={<OrderedServices />} />
+          <Route path="verify-worker" element={<SecureWorkerVerification />} />
+
+          {/* Demo & premium flows */}
           <Route path="packers-demo" element={<PackersDemo />} />
           <Route path="pet-demo" element={<PetRelocationDemo />} />
           <Route path="vehicle-demo" element={<VehicleRelocationDemo />} />
@@ -184,6 +212,10 @@ function App() {
           <Route path="history" element={<B2BClientHistory />} />
           <Route path="support" element={<B2BClientSupport />} />
         </Route>
+
+        {/* Public QR Code Verification Routes */}
+        <Route path="/verify-worker" element={<SecureWorkerVerification />} />
+        <Route path="/verify/worker/:workerIdCode" element={<SecureWorkerVerification />} />
       </Routes>
     </BrowserRouter>
   );

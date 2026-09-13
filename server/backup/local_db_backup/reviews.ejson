@@ -1,0 +1,131 @@
+[
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe10b"
+    },
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe0fd"
+    },
+    "customer": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "worker": {
+      "$oid": "6a5f4c91437c4810f45fe0ef"
+    },
+    "service": "AC Servicing",
+    "rating": 5,
+    "comment": "Excellent work! AC is running perfectly now.",
+    "isEdited": false,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe10d"
+    },
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe101"
+    },
+    "customer": {
+      "$oid": "6a5f4c90437c4810f45fe0ea"
+    },
+    "worker": {
+      "$oid": "6a5f4c91437c4810f45fe0f0"
+    },
+    "service": "Pest Control",
+    "rating": 5,
+    "comment": "Very thorough pest control. No bugs since!",
+    "isEdited": false,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe10c"
+    },
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe0ff"
+    },
+    "customer": {
+      "$oid": "6a5f4c90437c4810f45fe0e9"
+    },
+    "worker": {
+      "$oid": "6a5f4c91437c4810f45fe0f1"
+    },
+    "service": "Plumbing Fix",
+    "rating": 4,
+    "comment": "Good job, fixed the leak quickly.",
+    "isEdited": false,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a5f4c92437c4810f45fe10e"
+    },
+    "booking": {
+      "$oid": "6a5f4c92437c4810f45fe102"
+    },
+    "customer": {
+      "$oid": "6a5f4c90437c4810f45fe0eb"
+    },
+    "worker": {
+      "$oid": "6a5f4c91437c4810f45fe0f1"
+    },
+    "service": "Car Washing",
+    "rating": 4,
+    "comment": "Car looks brand new. Will book again.",
+    "isEdited": false,
+    "createdAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-21T10:40:18.593Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c5fe5381e873616c5d7f7"
+    },
+    "booking": {
+      "$oid": "6a6c5fe4381e873616c5d770"
+    },
+    "customer": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "worker": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "service": "Plumbing",
+    "rating": 5,
+    "comment": "Excellent!",
+    "isEdited": false,
+    "isDeleted": true,
+    "deletedAt": {
+      "$date": "2026-07-31T08:42:13.450Z"
+    },
+    "createdAt": {
+      "$date": "2026-07-31T08:42:13.379Z"
+    },
+    "updatedAt": {
+      "$date": "2026-07-31T08:42:13.450Z"
+    },
+    "__v": 0
+  }
+]

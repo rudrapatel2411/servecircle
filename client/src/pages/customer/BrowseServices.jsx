@@ -17,17 +17,17 @@ const categoriesList = [
   { id: 'cleaning', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineSparkles />, labelKey: 'categories.cleaning', descKey: 'categories.cleaningDesc', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.08)' },
   { id: 'home-it', image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineCpuChip />, labelKey: 'categories.homeIT', descKey: 'categories.homeITDesc', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.08)' },
   { id: 'care-family', image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineHeart />, labelKey: 'categories.careFamily', descKey: 'categories.careFamilyDesc', color: '#ec4899', bg: 'rgba(236, 72, 153, 0.08)' },
-  { id: 'utility-daily', image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineClock />, labelKey: 'categories.utilityDaily', descKey: 'categories.utilityDailyDesc', color: '#10b981', bg: 'rgba(16, 185, 129, 0.08)' },
+  { id: 'utility-daily', image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineClock />, labelKey: 'categories.utilityDaily', descKey: 'categories.utilityDailyDesc', color: '#3b7dc1', bg: 'rgba(59, 125, 193, 0.08)' },
   { id: 'learning-support', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineAcademicCap />, labelKey: 'categories.learningSupport', descKey: 'categories.learningSupportDesc', color: '#84cc16', bg: 'rgba(132, 204, 22, 0.08)' },
   { id: 'property-services', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineBuildingOffice />, labelKey: 'categories.propertyServices', descKey: 'categories.propertyServicesDesc', color: '#4b5563', bg: 'rgba(75, 85, 99, 0.08)' },
   { id: 'festive-seasonal', image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineSparkles />, labelKey: 'categories.festiveSeasonal', descKey: 'categories.festiveSeasonalDesc', color: '#f97316', bg: 'rgba(249, 115, 22, 0.08)' },
   { id: 'furniture-decor', image: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineWrench />, labelKey: 'categories.furnitureDecor', descKey: 'categories.furnitureDecorDesc', color: '#ec4899', bg: 'rgba(236, 72, 153, 0.08)' },
-  { id: 'garden-outdoor', image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineSparkles />, labelKey: 'categories.gardenOutdoor', descKey: 'categories.gardenOutdoorDesc', color: '#10b981', bg: 'rgba(16, 185, 129, 0.08)' },
+  { id: 'garden-outdoor', image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineSparkles />, labelKey: 'categories.gardenOutdoor', descKey: 'categories.gardenOutdoorDesc', color: '#3b7dc1', bg: 'rgba(59, 125, 193, 0.08)' },
   { id: 'relocation', image: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineTruck />, labelKey: 'categories.relocation', descKey: 'categories.relocationDesc', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.08)', isBespoke: true, bespokePath: '/customer/relocation' },
   { id: 'health-wellness', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineHeart />, labelKey: 'categories.healthWellness', descKey: 'categories.healthWellnessDesc', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.08)', isBespoke: true, bespokePath: '/customer/health-wellness' },
   { id: 'kids-elderly', image: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineUserGroup />, labelKey: 'categories.kidsElderly', descKey: 'categories.kidsElderlyDesc', color: '#eab308', bg: 'rgba(234, 179, 8, 0.08)' },
   { id: 'pet-services', image: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineSparkles />, labelKey: 'categories.petServices', descKey: 'categories.petServicesDesc', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.08)', isBespoke: true, bespokePath: '/customer/pet-services' },
-  { id: 'food-kitchen', image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineBuildingOffice />, labelKey: 'categories.foodKitchen', descKey: 'categories.foodKitchenDesc', color: '#10b981', bg: 'rgba(16, 185, 129, 0.08)', isBespoke: true, bespokePath: '/customer/food-kitchen' },
+  { id: 'food-kitchen', image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineBuildingOffice />, labelKey: 'categories.foodKitchen', descKey: 'categories.foodKitchenDesc', color: '#3b7dc1', bg: 'rgba(59, 125, 193, 0.08)', isBespoke: true, bespokePath: '/customer/food-kitchen' },
   { id: 'travel-commute', image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineTruck />, labelKey: 'categories.travelCommute', descKey: 'categories.travelCommuteDesc', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.08)', isBespoke: true, bespokePath: '/customer/travel-commute' },
   { id: 'society-management', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=400&q=80', icon: <HiOutlineUserGroup />, labelKey: 'categories.societyManagement', descKey: 'categories.societyManagementDesc', color: '#84cc16', bg: 'rgba(132, 204, 22, 0.08)', isBespoke: true, bespokePath: '/customer/society-management' }
 ];
@@ -151,31 +151,7 @@ const BrowseServices = () => {
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
       
-      {/* ===== HERO STRATEGIC DISPLAY ===== */}
-      <div className="page-header" style={{
-        background: 'var(--gradient-primary, linear-gradient(135deg, #0f172a 0%, #1e293b 100%))',
-        borderRadius: 'var(--radius-xl)',
-        padding: '36px 30px',
-        color: 'white',
-        marginBottom: '32px',
-        position: 'relative',
-        overflow: 'hidden',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <h1 className="page-title" style={{ color: 'white', fontSize: '2.25rem', fontWeight: 900, letterSpacing: '-0.5px' }}>
-            {t('browseServices.title', 'Choose Your Funnel & Services 🚀')}
-          </h1>
-          <p className="page-subtitle" style={{ color: '#94a3b8', fontSize: '1rem', marginTop: '6px', maxWidth: '600px' }}>
-            {t('browseServices.subtitle', 'Access top-tier verified professionals, emergency instant dispatches, seasonal maintenance bundles, and our unique AI smart diagnostic tools.')}
-          </p>
-        </div>
-        <div style={{
-          position: 'absolute', right: '-50px', bottom: '-50px',
-          width: '200px', height: '200px', borderRadius: '50%',
-          background: 'rgba(16, 185, 129, 0.08)', filter: 'blur(30px)'
-        }} />
-      </div>
+
 
       {/* ===== SEARCH BANNER ===== */}
       <div style={{ position: 'relative', marginBottom: '32px' }}>
@@ -297,7 +273,7 @@ const BrowseServices = () => {
           gap: '18px'
         }}>
           {/* AI Scan */}
-          <Link to="/customer/ai-diagnosis" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(16, 185, 129, 0.02)' }}>
+          <Link to="/customer/ai-diagnosis" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(59, 125, 193, 0.02)' }}>
             <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', color: 'var(--primary-600)', fontSize: '1.4rem' }}>
               <HiOutlineCpuChip />
             </div>
@@ -310,7 +286,7 @@ const BrowseServices = () => {
           </Link>
 
           {/* HomeFixr */}
-          <Link to="/customer/my-home" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(16, 185, 129, 0.02)' }}>
+          <Link to="/customer/my-home" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(59, 125, 193, 0.02)' }}>
             <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', color: 'var(--primary-600)', fontSize: '1.4rem' }}>
               <HiOutlineShieldCheck />
             </div>
@@ -321,7 +297,7 @@ const BrowseServices = () => {
           </Link>
 
           {/* Video Consult */}
-          <Link to="/customer/video-consultation" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(16, 185, 129, 0.02)' }}>
+          <Link to="/customer/video-consultation" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(59, 125, 193, 0.02)' }}>
             <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', color: 'var(--primary-600)', fontSize: '1.4rem' }}>
               <HiOutlineVideoCamera />
             </div>
@@ -332,7 +308,7 @@ const BrowseServices = () => {
           </Link>
 
           {/* Group Booking */}
-          <Link to="/customer/group-booking" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(16, 185, 129, 0.02)' }}>
+          <Link to="/customer/group-booking" className="card hover-lift" style={{ padding: '20px', border: '1px solid var(--primary-100)', display: 'flex', gap: '14px', alignItems: 'flex-start', background: 'rgba(59, 125, 193, 0.02)' }}>
             <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(16,185,129,0.1)', color: 'var(--primary-600)', fontSize: '1.4rem' }}>
               <HiOutlineUserGroup />
             </div>
@@ -474,7 +450,7 @@ const BrowseServices = () => {
                   <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>₹{b.price}</div>
                 </div>
                 <Link
-                  to={`/customer/book?service=${encodeURIComponent(b.title)}&price=${b.price}`}
+                  to={`/customer/book?service=${encodeURIComponent(b.title)}&category=home-repairs&price=${b.price}`}
                   className="btn btn-primary btn-sm"
                   style={{ padding: '8px 16px' }}
                 >

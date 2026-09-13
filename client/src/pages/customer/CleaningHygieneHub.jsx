@@ -14,23 +14,24 @@ const CleaningHygieneHub = () => {
 
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
-      <Link to="/customer/services" className="sidebar-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', marginBottom: '20px' }}>
-        <HiOutlineArrowLeft /> {t('common.viewAll', 'Back to Directory')}
+      <Link to="/customer/general-services" className="back-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', marginBottom: '20px' }}>
+        <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-      <div className="page-header" style={{ background: 'linear-gradient(135deg, #047857 0%, #059669 100%)', borderRadius: 'var(--radius-xl)', padding: '36px 30px', color: 'white', marginBottom: '32px', borderLeft: '5px solid #10b981', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem' }}>✨</span>
+      <div style={{ marginBottom: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+            <HiOutlineSparkles />
+          </div>
           <div>
-            <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: 900 }}>{t('categories.cleaning')}</h1>
-            <p style={{ color: '#a7f3d0', fontSize: '0.9rem', marginTop: '4px' }}>{t('categories.cleaningDesc')}</p>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>Cleaning Services</h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>Deep cleaning, sofa, carpet, bathroom &amp; more</p>
           </div>
         </div>
       </div>
-
       <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
         {categoryServices.map((service) => (
-          <Link key={service.id} to={`/customer/services/cleaning/${service.id}`} className="service-card hover-lift" style={{ '--card-accent': '#10b981', display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', background: 'white', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid var(--gray-200)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}>
+          <Link key={service.id} to={`/customer/services/cleaning/${service.id}`} className="service-card hover-lift" style={{ '--card-accent': '#3b7dc1', display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', background: 'white', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid var(--gray-200)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}>
             <div style={{ height: '220px', width: '100%', position: 'relative' }}>
               <ServiceImage serviceId={service.id} alt={t(service.nameKey)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', padding: '6px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-900)', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>

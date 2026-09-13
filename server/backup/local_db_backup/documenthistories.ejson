@@ -1,0 +1,1259 @@
+[
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df1c4"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 1,
+    "changedFields": [
+      "bookingId",
+      "customer",
+      "trainee",
+      "service",
+      "category",
+      "scheduledDate",
+      "scheduledTime",
+      "address",
+      "status",
+      "amount",
+      "paymentStatus",
+      "startOtpVerified",
+      "endOtpVerified",
+      "startOtpExpiresAt",
+      "endOtpExpiresAt",
+      "startOtpAttempts",
+      "endOtpAttempts",
+      "startOtpLocked",
+      "endOtpLocked",
+      "assignedAt",
+      "acceptedAt",
+      "rejectedAt",
+      "enRouteAt",
+      "arrivedAt",
+      "startedAt",
+      "completedAt",
+      "paidAt",
+      "closedAt",
+      "cancelledAt",
+      "workerReadyAt",
+      "jobStartedAt",
+      "jobCompletedAt",
+      "cancelledBy",
+      "cancellationReason",
+      "workerTier",
+      "beforePhotos",
+      "afterPhotos",
+      "timeline",
+      "isEmergency",
+      "cantResolveReason",
+      "isDeleted",
+      "deletedAt",
+      "_id",
+      "beforePhotoMetadata",
+      "afterPhotoMetadata",
+      "createdAt",
+      "updatedAt"
+    ],
+    "newValues": {
+      "bookingId": "SC-2801",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-15T10:00:00Z"
+      },
+      "scheduledTime": "10:00 AM",
+      "address": "100 Phase2 Ave",
+      "status": "pending",
+      "amount": 500,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:04:47.078Z"
+          },
+          "metadata": {
+            "service": "Plumbing",
+            "category": "Home Repairs",
+            "amount": 500
+          },
+          "_id": {
+            "$oid": "6a6c652fbd7ef589ff6df1bc"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c652fbd7ef589ff6df1bb"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:04:47.084Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:04:47.084Z"
+      }
+    },
+    "snapshot": {
+      "bookingId": "SC-2801",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Plumbing",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-15T10:00:00Z"
+      },
+      "scheduledTime": "10:00 AM",
+      "address": "100 Phase2 Ave",
+      "status": "pending",
+      "amount": 500,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:04:47.078Z"
+          },
+          "metadata": {
+            "service": "Plumbing",
+            "category": "Home Repairs",
+            "amount": 500
+          },
+          "_id": {
+            "$oid": "6a6c652fbd7ef589ff6df1bc"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c652fbd7ef589ff6df1bb"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:04:47.084Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:04:47.084Z"
+      },
+      "__v": 0
+    },
+    "changedBy": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "changedByRole": "customer",
+    "changeReason": "BOOKING_CREATED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.109Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df1fe"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 2,
+    "changedFields": [
+      "status",
+      "worker"
+    ],
+    "oldValues": {
+      "status": "pending"
+    },
+    "newValues": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+      }
+    },
+    "snapshot": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ASSIGNED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.146Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df218"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 3,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "assigned"
+    },
+    "newValues": {
+      "status": "accepted"
+    },
+    "snapshot": {
+      "status": "accepted"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ACCEPTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.278Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df237"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 4,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "accepted"
+    },
+    "newValues": {
+      "status": "en-route"
+    },
+    "snapshot": {
+      "status": "en-route"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_EN_ROUTE",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.316Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df25b"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 5,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "en-route"
+    },
+    "newValues": {
+      "status": "arrived"
+    },
+    "snapshot": {
+      "status": "arrived"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ARRIVED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.360Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c652fbd7ef589ff6df290"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 6,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "arrived"
+    },
+    "newValues": {
+      "status": "started"
+    },
+    "snapshot": {
+      "status": "started"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_STARTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:47.711Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c6530bd7ef589ff6df2c4"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c652fbd7ef589ff6df1bb"
+    },
+    "version": 7,
+    "changedFields": [
+      "status",
+      "jobCompletedAt"
+    ],
+    "oldValues": {
+      "status": "started"
+    },
+    "newValues": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:04:48.038Z"
+      }
+    },
+    "snapshot": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:04:48.038Z"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_COMPLETED",
+    "timestamp": {
+      "$date": "2026-07-31T09:04:48.048Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c164f1"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 1,
+    "changedFields": [
+      "bookingId",
+      "customer",
+      "trainee",
+      "service",
+      "category",
+      "scheduledDate",
+      "scheduledTime",
+      "address",
+      "status",
+      "amount",
+      "paymentStatus",
+      "startOtpVerified",
+      "endOtpVerified",
+      "startOtpExpiresAt",
+      "endOtpExpiresAt",
+      "startOtpAttempts",
+      "endOtpAttempts",
+      "startOtpLocked",
+      "endOtpLocked",
+      "assignedAt",
+      "acceptedAt",
+      "rejectedAt",
+      "enRouteAt",
+      "arrivedAt",
+      "startedAt",
+      "completedAt",
+      "paidAt",
+      "closedAt",
+      "cancelledAt",
+      "workerReadyAt",
+      "jobStartedAt",
+      "jobCompletedAt",
+      "cancelledBy",
+      "cancellationReason",
+      "workerTier",
+      "beforePhotos",
+      "afterPhotos",
+      "timeline",
+      "isEmergency",
+      "cantResolveReason",
+      "isDeleted",
+      "deletedAt",
+      "_id",
+      "beforePhotoMetadata",
+      "afterPhotoMetadata",
+      "createdAt",
+      "updatedAt"
+    ],
+    "newValues": {
+      "bookingId": "SC-2802",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-20T14:00:00Z"
+      },
+      "scheduledTime": "02:00 PM",
+      "address": "200 Feature Lane",
+      "status": "pending",
+      "amount": 750,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:19:24.199Z"
+          },
+          "metadata": {
+            "service": "Electrical Repair",
+            "category": "Home Repairs",
+            "amount": 750
+          },
+          "_id": {
+            "$oid": "6a6c689ced35f87422c164e5"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c689ced35f87422c164e4"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:19:24.205Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:19:24.205Z"
+      }
+    },
+    "snapshot": {
+      "bookingId": "SC-2802",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-20T14:00:00Z"
+      },
+      "scheduledTime": "02:00 PM",
+      "address": "200 Feature Lane",
+      "status": "pending",
+      "amount": 750,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:19:24.199Z"
+          },
+          "metadata": {
+            "service": "Electrical Repair",
+            "category": "Home Repairs",
+            "amount": 750
+          },
+          "_id": {
+            "$oid": "6a6c689ced35f87422c164e5"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c689ced35f87422c164e4"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:19:24.205Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:19:24.205Z"
+      },
+      "__v": 0
+    },
+    "changedBy": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "changedByRole": "customer",
+    "changeReason": "BOOKING_CREATED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.233Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c16532"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 2,
+    "changedFields": [
+      "status",
+      "worker"
+    ],
+    "oldValues": {
+      "status": "pending"
+    },
+    "newValues": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+      }
+    },
+    "snapshot": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_ASSIGNED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.274Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c1654d"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 3,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "assigned"
+    },
+    "newValues": {
+      "status": "accepted"
+    },
+    "snapshot": {
+      "status": "accepted"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_ACCEPTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.454Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c1656c"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 4,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "accepted"
+    },
+    "newValues": {
+      "status": "en-route"
+    },
+    "snapshot": {
+      "status": "en-route"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_EN_ROUTE",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.516Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c16590"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 5,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "en-route"
+    },
+    "newValues": {
+      "status": "arrived"
+    },
+    "snapshot": {
+      "status": "arrived"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_ARRIVED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.557Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ced35f87422c165c5"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 6,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "arrived"
+    },
+    "newValues": {
+      "status": "started"
+    },
+    "snapshot": {
+      "status": "started"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_STARTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:24.912Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c689ded35f87422c165ff"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c689ced35f87422c164e4"
+    },
+    "version": 7,
+    "changedFields": [
+      "status",
+      "jobCompletedAt"
+    ],
+    "oldValues": {
+      "status": "started"
+    },
+    "newValues": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:19:25.273Z"
+      }
+    },
+    "snapshot": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:19:25.273Z"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f4"
+    },
+    "changeReason": "BOOKING_COMPLETED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:25.287Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c16687"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 1,
+    "changedFields": [
+      "bookingId",
+      "customer",
+      "trainee",
+      "service",
+      "category",
+      "scheduledDate",
+      "scheduledTime",
+      "address",
+      "status",
+      "amount",
+      "paymentStatus",
+      "startOtpVerified",
+      "endOtpVerified",
+      "startOtpExpiresAt",
+      "endOtpExpiresAt",
+      "startOtpAttempts",
+      "endOtpAttempts",
+      "startOtpLocked",
+      "endOtpLocked",
+      "assignedAt",
+      "acceptedAt",
+      "rejectedAt",
+      "enRouteAt",
+      "arrivedAt",
+      "startedAt",
+      "completedAt",
+      "paidAt",
+      "closedAt",
+      "cancelledAt",
+      "workerReadyAt",
+      "jobStartedAt",
+      "jobCompletedAt",
+      "cancelledBy",
+      "cancellationReason",
+      "workerTier",
+      "beforePhotos",
+      "afterPhotos",
+      "timeline",
+      "isEmergency",
+      "cantResolveReason",
+      "isDeleted",
+      "deletedAt",
+      "_id",
+      "beforePhotoMetadata",
+      "afterPhotoMetadata",
+      "createdAt",
+      "updatedAt"
+    ],
+    "newValues": {
+      "bookingId": "SC-2803",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-20T14:00:00Z"
+      },
+      "scheduledTime": "02:00 PM",
+      "address": "200 Feature Lane",
+      "status": "pending",
+      "amount": 750,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:19:58.305Z"
+          },
+          "metadata": {
+            "service": "Electrical Repair",
+            "category": "Home Repairs",
+            "amount": 750
+          },
+          "_id": {
+            "$oid": "6a6c68beed35f87422c1667a"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c68beed35f87422c16679"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:19:58.307Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:19:58.307Z"
+      }
+    },
+    "snapshot": {
+      "bookingId": "SC-2803",
+      "customer": {
+        "$oid": "6a6596ed883d88f76414fa26"
+      },
+      "trainee": null,
+      "service": "Electrical Repair",
+      "category": "Home Repairs",
+      "scheduledDate": {
+        "$date": "2026-08-20T14:00:00Z"
+      },
+      "scheduledTime": "02:00 PM",
+      "address": "200 Feature Lane",
+      "status": "pending",
+      "amount": 750,
+      "paymentStatus": "pending",
+      "startOtpVerified": false,
+      "endOtpVerified": false,
+      "startOtpExpiresAt": null,
+      "endOtpExpiresAt": null,
+      "startOtpAttempts": 0,
+      "endOtpAttempts": 0,
+      "startOtpLocked": false,
+      "endOtpLocked": false,
+      "assignedAt": null,
+      "acceptedAt": null,
+      "rejectedAt": null,
+      "enRouteAt": null,
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "paidAt": null,
+      "closedAt": null,
+      "cancelledAt": null,
+      "workerReadyAt": null,
+      "jobStartedAt": null,
+      "jobCompletedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "workerTier": "junior",
+      "beforePhotos": [],
+      "afterPhotos": [],
+      "timeline": [
+        {
+          "event": "BOOKING_CREATED",
+          "actor": {
+            "$oid": "6a6596ed883d88f76414fa26"
+          },
+          "actorRole": "customer",
+          "timestamp": {
+            "$date": "2026-07-31T09:19:58.305Z"
+          },
+          "metadata": {
+            "service": "Electrical Repair",
+            "category": "Home Repairs",
+            "amount": 750
+          },
+          "_id": {
+            "$oid": "6a6c68beed35f87422c1667a"
+          }
+        }
+      ],
+      "isEmergency": false,
+      "cantResolveReason": null,
+      "isDeleted": false,
+      "deletedAt": null,
+      "_id": {
+        "$oid": "6a6c68beed35f87422c16679"
+      },
+      "beforePhotoMetadata": [],
+      "afterPhotoMetadata": [],
+      "createdAt": {
+        "$date": "2026-07-31T09:19:58.307Z"
+      },
+      "updatedAt": {
+        "$date": "2026-07-31T09:19:58.307Z"
+      },
+      "__v": 0
+    },
+    "changedBy": {
+      "$oid": "6a6596ed883d88f76414fa26"
+    },
+    "changedByRole": "customer",
+    "changeReason": "BOOKING_CREATED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.313Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c166ca"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 2,
+    "changedFields": [
+      "status",
+      "worker"
+    ],
+    "oldValues": {
+      "status": "pending"
+    },
+    "newValues": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+      }
+    },
+    "snapshot": {
+      "status": "assigned",
+      "worker": {
+        "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ASSIGNED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.337Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c166e6"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 3,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "assigned"
+    },
+    "newValues": {
+      "status": "accepted"
+    },
+    "snapshot": {
+      "status": "accepted"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ACCEPTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.463Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c16707"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 4,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "accepted"
+    },
+    "newValues": {
+      "status": "en-route"
+    },
+    "snapshot": {
+      "status": "en-route"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_EN_ROUTE",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.503Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c1672c"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 5,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "en-route"
+    },
+    "newValues": {
+      "status": "arrived"
+    },
+    "snapshot": {
+      "status": "arrived"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_ARRIVED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.545Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68beed35f87422c16761"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 6,
+    "changedFields": [
+      "status"
+    ],
+    "oldValues": {
+      "status": "arrived"
+    },
+    "newValues": {
+      "status": "started"
+    },
+    "snapshot": {
+      "status": "started"
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_STARTED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:58.891Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6a6c68bfed35f87422c1679b"
+    },
+    "collection": "bookings",
+    "documentId": {
+      "$oid": "6a6c68beed35f87422c16679"
+    },
+    "version": 7,
+    "changedFields": [
+      "status",
+      "jobCompletedAt"
+    ],
+    "oldValues": {
+      "status": "started"
+    },
+    "newValues": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:19:59.226Z"
+      }
+    },
+    "snapshot": {
+      "status": "completed",
+      "jobCompletedAt": {
+        "$date": "2026-07-31T09:19:59.226Z"
+      }
+    },
+    "changedBy": {
+      "$oid": "6a659c3d7a79e5dbcf8ef2f3"
+    },
+    "changeReason": "BOOKING_COMPLETED",
+    "timestamp": {
+      "$date": "2026-07-31T09:19:59.240Z"
+    },
+    "__v": 0
+  }
+]

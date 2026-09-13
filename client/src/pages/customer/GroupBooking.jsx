@@ -70,7 +70,7 @@ const GroupBooking = () => {
             <div className="success-row"><HiOutlineSparkles /> <span>Service: {selectedService.name}</span></div>
             <div className="success-row"><HiOutlineCurrencyRupee /> <span>Coordinated Price: ₹{pricePerFlat}/flat (Total: ₹{totalAmount})</span></div>
             <div className="success-row" style={{ color: 'var(--success)', fontWeight: 700 }}><HiOutlineCheckCircle /> <span>Group Savings: ₹{totalSavings} ({discountPercent}% off!)</span></div>
-            <div className="success-row" style={{ color: '#059669' }}><HiOutlineGlobeAmericas /> <span>Eco-Impact: Saves ~{travelKmSaved}km of worker commuting!</span></div>
+            <div className="success-row" style={{ color: '#2960a0' }}><HiOutlineGlobeAmericas /> <span>Eco-Impact: Saves ~{travelKmSaved}km of worker commuting!</span></div>
           </div>
 
           <p className="success-note">Group Request ID: <strong>#SC-GRP-{Math.floor(1000 + Math.random() * 9000)}</strong></p>
@@ -180,7 +180,7 @@ const GroupBooking = () => {
                 background: 'rgba(16,185,129,0.06)',
                 border: '1px solid rgba(16,185,129,0.15)',
                 borderRadius: 'var(--radius-md)',
-                color: '#047857',
+                color: '#224c82',
                 fontSize: '0.8rem'
               }}>
                 <HiOutlineGlobeAmericas style={{ fontSize: '1.6rem', flexShrink: 0 }} />
