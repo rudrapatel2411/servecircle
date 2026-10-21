@@ -65,7 +65,7 @@ const TrustSafety = () => {
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.trustSafety')} 🛡️</h1>
+          <h1 className="page-title">{t('customer.trustSafety')}</h1>
           <p className="page-subtitle">Your safety is our absolute priority. Learn about our 5-tier verification process, caller-privacy protocols, and cash protection guarantees.</p>
         </div>
       </div>
@@ -133,7 +133,7 @@ const TrustSafety = () => {
 
                     {isActive && (
                       <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--gray-200)', fontSize: '0.75rem', color: 'var(--gray-600)', lineHeight: 1.5, background: 'white', padding: '10px', borderRadius: '4px' }}>
-                        📋 <strong>Implementation Detail:</strong> {step.details}
+                        <strong>Implementation Detail:</strong> {step.details}
                       </div>
                     )}
                   </div>

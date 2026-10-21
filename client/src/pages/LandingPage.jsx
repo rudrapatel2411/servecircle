@@ -5,7 +5,8 @@ import {
   HiOutlinePaintBrush, HiOutlineSun, HiOutlineBolt, HiOutlineBriefcase,
   HiOutlineMagnifyingGlass, HiOutlineMapPin, HiOutlineCheckCircle,
   HiOutlineHeart, HiOutlineUserGroup, HiOutlineAcademicCap, HiOutlineGlobeAlt,
-  HiOutlineShieldCheck, HiOutlineClock, HiOutlineChatBubbleLeftRight
+  HiOutlineShieldCheck, HiOutlineClock, HiOutlineChatBubbleLeftRight,
+  HiOutlineArrowRight
 } from 'react-icons/hi2';
 import './LandingPage.css';
 
@@ -13,36 +14,36 @@ const LandingPage = () => {
   const { t } = useTranslation();
 
   const categories = [
-    { icon: <HiOutlineWrench />, key: 'homeRepairs', color: '#3b82f6' },
-    { icon: <HiOutlineTruck />, key: 'vehicleServices', color: '#8b5cf6' },
-    { icon: <HiOutlineSparkles />, key: 'cleaning', color: '#06b6d4' },
-    { icon: <HiOutlineStar />, key: 'events', color: '#f59e0b' },
-    { icon: <HiOutlinePaintBrush />, key: 'furniture', color: '#ec4899' },
-    { icon: <HiOutlineSun />, key: 'garden', color: '#3b7dc1' },
-    { icon: <HiOutlineBolt />, key: 'emergency', color: '#ef4444' },
-    { icon: <HiOutlineAcademicCap />, key: 'learningSupport', color: '#84cc16' },
+    { icon: <HiOutlineWrench />, key: 'homeRepairs', color: '#1e40af' },
+    { icon: <HiOutlineTruck />, key: 'vehicleServices', color: '#4338ca' },
+    { icon: <HiOutlineSparkles />, key: 'cleaning', color: '#0e7490' },
+    { icon: <HiOutlineStar />, key: 'events', color: '#b45309' },
+    { icon: <HiOutlinePaintBrush />, key: 'furniture', color: '#be185d' },
+    { icon: <HiOutlineSun />, key: 'garden', color: '#047857' },
+    { icon: <HiOutlineBolt />, key: 'emergency', color: '#b91c1c' },
+    { icon: <HiOutlineAcademicCap />, key: 'learningSupport', color: '#4d7c0f' },
   ];
 
   const plans = [
     {
       key: 'basic', price: t('pricing.free'), priceNum: null,
       features: ['Standard pricing', 'Basic support', 'Service history tracking'],
-      color: 'var(--gray-500)',
+      color: '#475569',
     },
     {
       key: 'silver', price: '₹199', priceNum: 199,
       features: ['10% discount on all services', 'Priority booking slot', 'Dedicated helpline', '1 free consultation/month'],
-      color: '#9ca3af',
+      color: '#475569',
     },
     {
-      key: 'gold', price: '₹1499', priceNum: 1499, popular: true,
+      key: 'gold', price: '₹499', priceNum: 499, popular: true,
       features: ['20% discount on all services', 'Priority emergency response', 'Free quarterly AC/geyser check', 'Warranty tracker + reminders', '2 free video consultations/month'],
-      color: '#f59e0b',
+      color: '#1e40af',
     },
     {
-      key: 'platinum', price: '₹1999', priceNum: 1999,
+      key: 'platinum', price: '₹999', priceNum: 999,
       features: ['30% discount on all services', 'Dedicated personal manager', 'Unlimited consultations', 'Free annual home health audit', 'VIP emergency — 15 min response'],
-      color: '#8b5cf6',
+      color: '#4338ca',
     },
   ];
 
@@ -58,20 +59,19 @@ const LandingPage = () => {
     <div className="landing">
       {/* ===== HERO ===== */}
       <section className="hero">
-        <div className="hero-bg-pattern" />
         <div className="hero-content container">
           <div className="hero-text">
-            <span className="hero-badge animate-fade-in-up">{t('hero.badge')}</span>
-            <h1 className="hero-title animate-fade-in-up stagger-1">
+            <span className="hero-badge">{t('hero.badge')}</span>
+            <h1 className="hero-title">
               {t('hero.title')} <br />
               <span className="hero-highlight">{t('hero.titleHighlight')}</span>
             </h1>
-            <p className="hero-subtitle animate-fade-in-up stagger-2">{t('hero.subtitle')}</p>
-            <div className="hero-actions animate-fade-in-up stagger-3">
+            <p className="hero-subtitle">{t('hero.subtitle')}</p>
+            <div className="hero-actions">
               <Link to="/customer" className="btn btn-primary btn-lg">{t('hero.cta')}</Link>
               <Link to="/worker" className="btn btn-outline btn-lg">{t('hero.ctaSecondary')}</Link>
             </div>
-            <div className="hero-trust animate-fade-in-up stagger-4">
+            <div className="hero-trust">
               <div className="trust-item"><HiOutlineShieldCheck /> {t('landing.verifiedWorkers')}</div>
               <div className="trust-item"><HiOutlineClock /> {t('landing.response30Min')}</div>
               <div className="trust-item"><HiOutlineChatBubbleLeftRight /> {t('landing.support247')}</div>
@@ -85,7 +85,7 @@ const LandingPage = () => {
         <div className="container">
           <div className="stats-grid">
             {stats.map((stat, i) => (
-              <div key={i} className="stat-item animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div key={i} className="stat-item">
                 <span className="stat-number">{stat.value}</span>
                 <span className="stat-text">{stat.label}</span>
               </div>
@@ -100,9 +100,9 @@ const LandingPage = () => {
           <h2 className="section-title">{t('categories.title')}</h2>
           <p className="section-subtitle">{t('categories.subtitle')}</p>
           <div className="categories-grid">
-            {categories.map((cat, i) => (
-              <div key={cat.key} className="category-card animate-fade-in-up" style={{ animationDelay: `${i * 0.08}s` }}>
-                <div className="category-icon" style={{ background: `${cat.color}15`, color: cat.color }}>
+            {categories.map((cat) => (
+              <div key={cat.key} className="category-card">
+                <div className="category-icon" style={{ background: '#f8fafc', color: cat.color }}>
                   {cat.icon}
                 </div>
                 <h3 className="category-name">{t(`categories.${cat.key}`)}</h3>
@@ -111,7 +111,7 @@ const LandingPage = () => {
                   to={cat.key === 'emergency' ? '/customer/emergency' : cat.key === 'events' ? '/customer/events' : '/customer/services'} 
                   className="category-link"
                 >
-                  {t('common.bookNow')} →
+                  {t('common.bookNow')} <HiOutlineArrowRight style={{ display: 'inline', marginLeft: '4px', verticalAlign: 'middle' }} />
                 </Link>
               </div>
             ))}
@@ -125,27 +125,25 @@ const LandingPage = () => {
           <h2 className="section-title">{t('howItWorks.title')}</h2>
           <p className="section-subtitle">{t('howItWorks.subtitle')}</p>
           <div className="steps-grid">
-            <div className="step-card animate-fade-in-up stagger-1">
+            <div className="step-card">
               <div className="step-number">1</div>
               <div className="step-icon-wrap"><HiOutlineMagnifyingGlass /></div>
               <h3>{t('howItWorks.step1Title')}</h3>
               <p>{t('howItWorks.step1Desc')}</p>
             </div>
             <div className="step-connector">
-              <div className="connector-line" />
               <div className="connector-arrow">→</div>
             </div>
-            <div className="step-card animate-fade-in-up stagger-2">
+            <div className="step-card">
               <div className="step-number">2</div>
               <div className="step-icon-wrap"><HiOutlineMapPin /></div>
               <h3>{t('howItWorks.step2Title')}</h3>
               <p>{t('howItWorks.step2Desc')}</p>
             </div>
             <div className="step-connector">
-              <div className="connector-line" />
               <div className="connector-arrow">→</div>
             </div>
-            <div className="step-card animate-fade-in-up stagger-3">
+            <div className="step-card">
               <div className="step-number">3</div>
               <div className="step-icon-wrap"><HiOutlineCheckCircle /></div>
               <h3>{t('howItWorks.step3Title')}</h3>
@@ -161,8 +159,8 @@ const LandingPage = () => {
           <h2 className="section-title">{t('pricing.title')}</h2>
           <p className="section-subtitle">{t('pricing.subtitle')}</p>
           <div className="pricing-grid">
-            {plans.map((plan, i) => (
-              <div key={plan.key} className={`pricing-card ${plan.popular ? 'pricing-popular' : ''} animate-fade-in-up`} style={{ animationDelay: `${i * 0.1}s` }}>
+            {plans.map((plan) => (
+              <div key={plan.key} className={`pricing-card ${plan.popular ? 'pricing-popular' : ''}`}>
                 {plan.popular && <div className="popular-badge">{t('pricing.popular')}</div>}
                 <div className="plan-header">
                   <h3 className="plan-name" style={{ color: plan.color }}>{t(`pricing.${plan.key}`)}</h3>
@@ -176,7 +174,7 @@ const LandingPage = () => {
                     <li key={j}><HiOutlineCheckCircle className="check-icon" /> {f}</li>
                   ))}
                 </ul>
-                <button className="btn btn-primary plan-btn" style={plan.popular ? {} : { background: 'var(--gray-800)' }}>
+                <button className={`btn ${plan.popular ? 'btn-primary' : 'btn-outline'} plan-btn`}>
                   {t('pricing.choosePlan')}
                 </button>
               </div>
@@ -191,23 +189,23 @@ const LandingPage = () => {
           <h2 className="section-title">{t('impact.title')}</h2>
           <p className="section-subtitle">{t('impact.subtitle')}</p>
           <div className="impact-grid">
-            <Link to="/about/women-empowerment" className="impact-card animate-fade-in-up stagger-1" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="impact-icon" style={{ background: '#fce7f3', color: '#db2777' }}><HiOutlineHeart /></div>
+            <Link to="/about/women-empowerment" className="impact-card">
+              <div className="impact-icon" style={{ background: '#fdf2f8', color: '#be185d' }}><HiOutlineHeart /></div>
               <h3>{t('impact.women')}</h3>
               <p>{t('impact.womenDesc')}</p>
             </Link>
-            <Link to="/about/first-job" className="impact-card animate-fade-in-up stagger-2" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="impact-icon" style={{ background: '#dbeafe', color: '#2563eb' }}><HiOutlineBriefcase /></div>
+            <Link to="/about/first-job" className="impact-card">
+              <div className="impact-icon" style={{ background: '#eff6ff', color: '#1d4ed8' }}><HiOutlineBriefcase /></div>
               <h3>{t('impact.firstJob')}</h3>
               <p>{t('impact.firstJobDesc')}</p>
             </Link>
-            <Link to="/about/local-heroes" className="impact-card animate-fade-in-up stagger-3" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="impact-icon" style={{ background: '#fef3c7', color: '#d97706' }}><HiOutlineUserGroup /></div>
+            <Link to="/about/local-heroes" className="impact-card">
+              <div className="impact-icon" style={{ background: '#fffbeb', color: '#b45309' }}><HiOutlineUserGroup /></div>
               <h3>{t('impact.localHero')}</h3>
               <p>{t('impact.localHeroDesc')}</p>
             </Link>
-            <Link to="/about/ngo-partners" className="impact-card animate-fade-in-up stagger-4" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-              <div className="impact-icon" style={{ background: '#e1ebf5', color: '#2960a0' }}><HiOutlineGlobeAlt /></div>
+            <Link to="/about/ngo-partners" className="impact-card">
+              <div className="impact-icon" style={{ background: '#f0fdf4', color: '#15803d' }}><HiOutlineGlobeAlt /></div>
               <h3>{t('impact.ngo')}</h3>
               <p>{t('impact.ngoDesc')}</p>
             </Link>
@@ -223,7 +221,7 @@ const LandingPage = () => {
             <p>{t('hero.tagline')}</p>
             <div className="cta-actions">
               <Link to="/register" className="btn btn-primary btn-lg">{t('nav.register')}</Link>
-              <Link to="/worker" className="btn btn-outline btn-lg" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}>{t('hero.ctaSecondary')}</Link>
+              <Link to="/worker" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: '#ffffff', borderColor: 'rgba(255,255,255,0.4)' }}>{t('hero.ctaSecondary')}</Link>
             </div>
           </div>
         </div>
@@ -235,10 +233,10 @@ const LandingPage = () => {
           <div className="footer-grid">
             <div className="footer-brand">
               <div className="navbar-logo" style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '36px', height: '36px', background: 'var(--primary-600)', color: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                  <HiOutlineSparkles />
+                <div style={{ width: '32px', height: '32px', background: 'var(--primary-700)', color: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 700 }}>
+                  SC
                 </div>
-                <span className="logo-text" style={{ color: 'white' }}>ServeCircle</span>
+                <span className="logo-text" style={{ color: '#ffffff' }}>ServeCircle</span>
               </div>
               <p className="footer-tagline">{t('footer.tagline')}</p>
             </div>

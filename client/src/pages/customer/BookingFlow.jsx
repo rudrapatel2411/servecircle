@@ -193,7 +193,7 @@ const BookingFlow = () => {
               address: cleanSegments.join(', '),
               city: city
             }));
-            showToast('🗺️ Live location auto-filled successfully!');
+            showToast('Live location auto-filled successfully.');
           } else {
             showToast('Could not determine address from location.');
           }
@@ -337,7 +337,7 @@ const BookingFlow = () => {
 
     // Cash on Delivery — instant order placement!
     if (price === 0 || isSellingService || paymentMethod === 'Cash') {
-      showToast('⚡ Placing order with Cash on Delivery...');
+      showToast('Placing order with Cash on Delivery...');
       handleBook('Cash');
     } else if (paymentMethod === 'UPI') {
       setModalError('');
@@ -407,10 +407,10 @@ const BookingFlow = () => {
   const getModalSubmitText = () => {
     if (isProcessingPayment) return '⏳ Processing...';
     if (activePaymentModal === 'UPI') {
-      return '⚡ Instant Test Payment (Approve & Book)';
+      return 'Instant Test Payment (Approve & Book)';
     }
     if (activePaymentModal === 'Card') {
-      return `⚡ Pay ₹${totalAmount} (Demo Card)`;
+      return `Pay ₹${totalAmount} (Demo Card)`;
     }
     if (activePaymentModal === 'Wallet') {
       return `Deduct & Pay ₹${totalAmount}`;
@@ -449,7 +449,7 @@ const BookingFlow = () => {
 
       const bookingId = booking?._id || booking?.id;
       if (!bookingId) throw new Error('Booking was created without an ID');
-      showToast('🎉 Booking confirmed successfully!');
+      showToast('Booking confirmed successfully.');
       navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(bookingId)}&service=${encodeURIComponent(formData.service)}&worker=${encodeURIComponent(workerName)}&price=${totalAmount || price}`);
     } catch (bookingError) {
       showToast(bookingError.message || 'Unable to create booking. Please try again.');
@@ -482,7 +482,7 @@ const BookingFlow = () => {
             <HiOutlineArrowLeft /> {t('bookingFlow.back', 'Back')}
           </button>
           <h2 className="page-title" style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-            {isExpressMode && <span style={{ background: '#fee2e2', color: '#ef4444', padding: '2px 6px', borderRadius: '6px', fontSize: '0.8rem' }}>⚡ Express</span>}
+            {isExpressMode && <span style={{ background: '#fee2e2', color: '#ef4444', padding: '2px 6px', borderRadius: '6px', fontSize: '0.8rem' }}>Express</span>}
             {t('bookingFlow.checkout', 'Secure Checkout')}
           </h2>
         </div>
@@ -513,7 +513,7 @@ const BookingFlow = () => {
                     disabled={isLocating}
                     style={{ padding: '4px 8px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', background: 'white' }}
                   >
-                    {isLocating ? '⏳' : '📍 Auto GPS'}
+                    {isLocating ? 'Locating...' : 'Auto GPS'}
                   </button>
                 </div>
                 
@@ -538,7 +538,7 @@ const BookingFlow = () => {
                 onClick={handleConfirmBooking} 
                 style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 800, background: '#ef4444' }}
               >
-                ⚡ Confirm 1-Click Booking
+                Confirm 1-Click Booking
               </button>
             </div>
           ) : (
@@ -640,7 +640,7 @@ const BookingFlow = () => {
                       cursor: isLocating ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    {isLocating ? '⏳ Locating...' : '📍 Auto GPS'}
+                    {isLocating ? 'Locating...' : 'Auto GPS'}
                   </button>
                 </div>
 
@@ -672,7 +672,7 @@ const BookingFlow = () => {
                     />
                   </div>
                   <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '8px', border: '1px solid #bbf7d0', marginTop: '4px', display: 'flex', gap: '10px', alignItems: 'flex-start', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
-                    <span style={{ fontSize: '1.2rem', marginTop: '2px' }}>📝</span>
+                    
                     <div style={{ flex: 1 }}>
                       <strong style={{ fontSize: '0.75rem', color: '#166534', display: 'block', marginBottom: '4px' }}>Special Instructions (Optional)</strong>
                       <textarea 
@@ -775,7 +775,7 @@ const BookingFlow = () => {
 
               {isSellingService ? (
                  <div style={{ background: '#f0fdf4', padding: '14px', borderRadius: '8px', border: '1px dashed #22c55e', textAlign: 'center' }}>
-                   <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💰</div>
+                   <div style={{ fontSize: '1.5rem', marginBottom: '8px', color: 'var(--primary-600)' }}>✓</div>
                    <h4 style={{ color: '#166534', fontWeight: 800, margin: '0 0 8px 0' }}>Get Paid for Junk!</h4>
                    <p style={{ color: '#15803d', fontSize: '0.85rem', margin: 0, lineHeight: 1.4 }}>Our expert will evaluate your items during the visit and pay you instantly via UPI or Cash before pickup.</p>
                  </div>
@@ -928,9 +928,9 @@ const BookingFlow = () => {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-900)', fontWeight: 800, margin: 0 }}>
-                {activePaymentModal === 'UPI' && '⚡ Demo UPI Payment Simulator'}
-                {activePaymentModal === 'Card' && '⚡ Demo Card Payment Simulator'}
-                {activePaymentModal === 'Wallet' && '⚡ ServeCircle Wallet (Demo)'}
+                {activePaymentModal === 'UPI' && 'Demo UPI Payment Simulator'}
+                {activePaymentModal === 'Card' && 'Demo Card Payment Simulator'}
+                {activePaymentModal === 'Wallet' && 'ServeCircle Wallet (Demo)'}
               </h3>
               <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#dbeafe', color: '#1d4ed8', padding: '2px 8px', borderRadius: '12px' }}>
                 Testing Mode
@@ -939,7 +939,7 @@ const BookingFlow = () => {
 
             {modalError && (
               <div style={{ color: 'var(--danger, #ef4444)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px', background: '#fee2e2', padding: '8px 12px', borderRadius: '6px' }}>
-                ⚠️ {modalError}
+                {modalError}
               </div>
             )}
 
@@ -972,7 +972,7 @@ const BookingFlow = () => {
                   disabled={isProcessingPayment}
                   style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                 >
-                  {isProcessingPayment ? '⏳ Completing Demo Booking...' : '⚡ Instant Approve Demo Payment'}
+                  {isProcessingPayment ? 'Completing Demo Booking...' : 'Instant Approve Demo Payment'}
                 </button>
               </div>
             )}
@@ -1042,7 +1042,7 @@ const BookingFlow = () => {
                   disabled={isProcessingPayment}
                   style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                 >
-                  {isProcessingPayment ? '⏳ Processing Demo Card...' : `⚡ Pay ₹${totalAmount} (Demo Card)`}
+                  {isProcessingPayment ? 'Processing Demo Card...' : `Pay ₹${totalAmount} (Demo Card)`}
                 </button>
               </div>
             )}
@@ -1067,7 +1067,7 @@ const BookingFlow = () => {
                   </div>
                   {walletBalance < totalAmount && (
                     <div style={{ color: 'var(--danger-600)', fontSize: '0.72rem', fontWeight: 700, marginTop: '8px', textAlign: 'center' }}>
-                      ⚠️ Insufficient balance in wallet!
+                      Insufficient balance in wallet!
                     </div>
                   )}
                 </div>
@@ -1078,7 +1078,7 @@ const BookingFlow = () => {
                   disabled={isProcessingPayment || walletBalance < totalAmount}
                   style={{ width: '100%', padding: '12px', fontSize: '0.9rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                 >
-                  {isProcessingPayment ? '⏳ Deducting...' : `⚡ Deduct & Pay ₹${totalAmount}`}
+                  {isProcessingPayment ? 'Deducting...' : `Deduct & Pay ₹${totalAmount}`}
                 </button>
               </div>
             )}

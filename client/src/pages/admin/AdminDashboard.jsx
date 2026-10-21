@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Admin Dashboard 🏢</h1>
+          <h1 className="page-title">Admin Dashboard</h1>
           <p className="page-subtitle">Platform overview and management tools.</p>
         </div>
       </div>
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
       <div className="dash-section">
         <h3 className="dash-section-title"><HiOutlineArrowTrendingUp style={{ verticalAlign: 'middle' }} /> Revenue Trend</h3>
         <div className="chart-placeholder">
-          <p>📊 Revenue chart will render here with Recharts integration</p>
+          <p>Revenue chart will render here with Recharts integration</p>
         </div>
       </div>
 

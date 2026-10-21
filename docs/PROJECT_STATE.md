@@ -1,6 +1,6 @@
 # ServeCircle Current Project State
 
-Last updated: 2026-09-11
+Last updated: 2026-10-14
 Source of truth for the current state. Update this file whenever a workflow, domain boundary, runtime root, or priority changes.
 
 Feature truth classification is maintained in `docs/IMPLEMENTATION_STATUS_REPORT.md`.
@@ -11,7 +11,7 @@ Feature truth classification is maintained in `docs/IMPLEMENTATION_STATUS_REPORT
 - API: Express 5 + Mongoose + Socket.IO in `server/`.
 - Database: MongoDB Atlas first, local Mongo fallback.
 - AI provider: Groq (Qwen 3.8 27B Multimodal/Vision) active primary; Gemini configured as secondary fallback.
-- Mobile: Flutter project removed completely from `mobile/`.
+- Mobile: Flutter foundation initialized in `mobile/` (`com.servecircle.app`, Riverpod ProviderScope, Neomorphism v2.0 design tokens, AppConfig build-time settings, CoreBootstrapScreen); passes analyze and test.
 
 ## Current runtime roots
 

@@ -167,7 +167,7 @@ const WorkerIDCardModal = ({ worker, onClose }) => {
             <h2>ServeCircle Verified Worker ID Card</h2>
             <p>Ready to print or save as PDF (CR80 Standard Standard Badge Size)</p>
             <button onclick="window.print()" style="margin-top:12px; padding:10px 20px; background:#2563eb; color:white; border:none; border-radius:6px; font-weight:700; cursor:pointer;">
-              🖨️ Trigger Printer / Save PDF
+              Print / Save as PDF
             </button>
           </div>
 
@@ -221,7 +221,7 @@ const WorkerIDCardModal = ({ worker, onClose }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         style={{
-          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(6px)',
+          position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.8)', 
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100, padding: '20px',
         }}
       >
@@ -313,7 +313,7 @@ const WorkerIDCardModal = ({ worker, onClose }) => {
                 border: '1px solid #bfdbfe',
               }}
             >
-              🔗 Click to test verification page directly ({workerIdCode}) ↗
+              Click to view verification page directly ({workerIdCode}) ↗
             </a>
           </div>
 

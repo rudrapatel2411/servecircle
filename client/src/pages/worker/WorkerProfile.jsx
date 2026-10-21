@@ -184,7 +184,7 @@ const WorkerProfile = () => {
 
       {success && (
         <div className="card" style={{ marginBottom: 16, borderColor: '#bbf7d0', color: '#166534', background: '#f0fdf4' }}>
-          ✅ {success}
+          {success}
         </div>
       )}
 
@@ -283,7 +283,7 @@ const WorkerProfile = () => {
               <div className="card" style={{ marginTop: '20px', background: 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)', color: 'white', borderRadius: '16px', border: '1.5px solid #38bdf8', padding: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'white' }}>Official ServeCircle ID Card 🪪</h4>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'white' }}>Official ServeCircle ID Card</h4>
                     <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#93c5fd' }}>
                       Worker ID: <strong>{profile.workerIdCode || 'SC-W-1001'}</strong> • QR Scannable
                     </p>

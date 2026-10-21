@@ -14,7 +14,15 @@ const mockNotifications = [
   { id: 4, title: 'System Maintenance', message: 'Platform will be under maintenance on 18 May from 2-4 AM IST.', type: 'system', audience: 'all', date: '10 May 2026, 11:00 AM', reads: 12400 },
 ];
 
-const typeIcons = { broadcast: '📢', promotion: '🎁', alert: '🔔', system: '⚙️' };
+const renderTypeIcon = (type) => {
+  switch (type) {
+    case 'broadcast': return <HiOutlineMegaphone size={18} />;
+    case 'promotion': return <HiOutlineSparkles size={18} />;
+    case 'alert': return <HiOutlineBell size={18} />;
+    case 'system': return <HiOutlineCog6Tooth size={18} />;
+    default: return <HiOutlineBell size={18} />;
+  }
+};
 const audienceLabels = { all: 'All Users', customers: 'Customers', workers: 'Workers', b2b: 'B2B Partners' };
 
 const AdminNotifications = () => {
@@ -38,7 +46,7 @@ const AdminNotifications = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.notifications')} 🔔</h1>
+          <h1 className="page-title">{t('admin.notifications')}</h1>
           <p className="page-subtitle">Manage broadcast notifications</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}><HiOutlineMegaphone /> New Broadcast</button>
@@ -71,7 +79,7 @@ const AdminNotifications = () => {
       <div className="notifications-list">
         {notifications.map((n) => (
           <div key={n.id} className="notif-card">
-            <div className="notif-icon">{typeIcons[n.type] || '📢'}</div>
+            <div className="notif-icon">{renderTypeIcon(n.type)}</div>
             <div className="notif-content">
               <h4 className="notif-title">{n.title}</h4>
               <p className="notif-message">{n.message}</p>

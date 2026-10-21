@@ -97,7 +97,7 @@ const BecomeAProHub = () => {
       {/* Page Title */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.becomeAPro')} 🚀</h1>
+          <h1 className="page-title">{t('customer.becomeAPro')}</h1>
           <p className="page-subtitle">Zero Commission, Free PMKVY Government Certification, and Safe Earnings for Local Professionals.</p>
         </div>
       </div>
@@ -114,9 +114,9 @@ const BecomeAProHub = () => {
               Whether you are an experienced technician, a student looking for part-time gigs, or a home-based woman wanting to offer culinary/salon services, ServeCircle gives you a premium, commission-free platform to double your income safely.
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>⚡ 0% commission first 5 jobs</span>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>🎓 PMKVY Skills Alliance</span>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>🏠 Women Empowerment Track</span>
+              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>0% Commission First 5 Jobs</span>
+              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>PMKVY Skills Alliance</span>
+              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.15)' }}>Women Empowerment Track</span>
             </div>
           </div>
 
@@ -171,7 +171,7 @@ const BecomeAProHub = () => {
 
             {registered ? (
               <div style={{ textAlign: 'center', padding: '30px 20px', background: '#f0f5fa', border: '1px solid #c2d7ea', borderRadius: 'var(--radius-md)' }}>
-                <span style={{ fontSize: '3rem' }}>🎉</span>
+                
                 <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#065f46', marginTop: '12px' }}>Application Registered!</h4>
                 <p style={{ fontSize: '0.8rem', color: '#224c82', marginTop: '6px', lineHeight: 1.5 }}>
                   Thank you, <strong>{formData.fullName}</strong>. Your candidate ID is <strong>SC-PRO-{Math.floor(Math.random() * 90000) + 10000}</strong>. 
@@ -183,7 +183,7 @@ const BecomeAProHub = () => {
               </div>
             ) : (
               <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {alertMsg && <div style={{ color: 'var(--danger)', fontSize: '0.8rem', fontWeight: 600 }}>⚠️ {alertMsg}</div>}
+                {alertMsg && <div style={{ color: 'var(--danger)', fontSize: '0.8rem', fontWeight: 600 }}>{alertMsg}</div>}
                 
                 <div className="input-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontSize: '0.75rem', fontWeight: 700 }}>Full Name (as in Aadhaar) *</label>
@@ -278,7 +278,7 @@ const BecomeAProHub = () => {
                     </span>
                     <div>
                       <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>
-                        {hero.name} {hero.isWomenTrack && '🚺'}
+                        {hero.name}
                       </h4>
                       <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '2px' }}>
                         {hero.profession}

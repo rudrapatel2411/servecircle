@@ -18,7 +18,7 @@ const mockWorkers = [
   {
     id: 1, name: 'Karan Patel', email: 'karan@test.com', phone: '9876500010',
     skills: ['AC Repair & Service', 'Electrician'],
-    serviceCategory: 'Home Repairs', experience: '🎓 Fresher (No experience — will learn)',
+    serviceCategory: 'Home Repairs', experience: 'Fresher (No experience — will learn)',
     city: 'Ahmedabad', appliedDate: '21 Jul 2026',
     workerStatus: 'pending_interview', workerAdminNote: '',
   },
@@ -32,14 +32,14 @@ const mockWorkers = [
   {
     id: 3, name: 'Meena Devi', email: 'meena@test.com', phone: '9876500005',
     skills: ['Home Deep Cleaning', 'Pest Control'],
-    serviceCategory: 'Cleaning & Hygiene', experience: '💼 3–5 Years Experience',
+    serviceCategory: 'Cleaning & Hygiene', experience: '3–5 Years Experience',
     city: 'Ahmedabad', appliedDate: '19 Jul 2026',
     workerStatus: 'interview_done', workerAdminNote: 'Visited hub on 20 Jul. Good practical skills.',
   },
   {
     id: 4, name: 'Ramesh Kumar', email: 'ramesh@test.com', phone: '9876500001',
     skills: ['Electrician', 'AC Repair & Service'],
-    serviceCategory: 'Home Repairs', experience: '🏆 5+ Years (Expert Level)',
+    serviceCategory: 'Home Repairs', experience: '5+ Years (Expert Level)',
     city: 'Ahmedabad', appliedDate: '1 Jan 2026',
     workerStatus: 'approved_senior', workerAdminNote: 'Passed with excellent rating.',
     rating: 4.5, completedJobs: 38,
@@ -47,7 +47,7 @@ const mockWorkers = [
   {
     id: 5, name: 'Sunita Mehra', email: 'sunita@test.com', phone: '9876500002',
     skills: ['Home Deep Cleaning', 'Sofa / Carpet Cleaning'],
-    serviceCategory: 'Cleaning & Hygiene', experience: '💼 3–5 Years Experience',
+    serviceCategory: 'Cleaning & Hygiene', experience: '3–5 Years Experience',
     city: 'Ahmedabad', appliedDate: '15 Dec 2025',
     workerStatus: 'approved_junior', workerAdminNote: 'Completed rookie phase.',
     rating: 4.8, completedJobs: 52,
@@ -62,21 +62,21 @@ const mockWorkers = [
 ];
 
 const STATUS_CONFIG = {
-  pending_interview: { label: 'Awaiting Hub Visit',  color: '#d97706', bg: '#fef3c7', icon: '📅' },
-  interview_done:    { label: 'Interview Done',       color: '#2563eb', bg: '#dbeafe', icon: '✅' },
-  approved_rookie:   { label: 'Approved — Rookie',    color: '#7c3aed', bg: '#ede9fe', icon: '🎓' },
+  pending_interview: { label: 'Awaiting Hub Visit',  color: '#d97706', bg: '#fef3c7', icon: '' },
+  interview_done:    { label: 'Interview Done',       color: '#2563eb', bg: '#dbeafe', icon: '' },
+  approved_rookie:   { label: 'Approved — Rookie',    color: '#7c3aed', bg: '#ede9fe', icon: '' },
   approved_junior:   { label: 'Approved — Junior',    color: '#0891b2', bg: '#cffafe', icon: '⭐' },
-  approved_senior:   { label: 'Approved — Senior',    color: '#16a34a', bg: '#dcfce7', icon: '🏆' },
-  rejected:          { label: 'Rejected',             color: '#dc2626', bg: '#fef2f2', icon: '❌' },
+  approved_senior:   { label: 'Approved — Senior',    color: '#16a34a', bg: '#dcfce7', icon: '' },
+  rejected:          { label: 'Rejected',             color: '#dc2626', bg: '#fef2f2', icon: '' },
 };
 
 const TABS = [
-  { key: 'pending_interview', label: '📅 Awaiting Visit' },
-  { key: 'interview_done',    label: '✅ Interview Done' },
-  { key: 'approved_rookie',   label: '🎓 Rookie' },
+  { key: 'pending_interview', label: 'Awaiting Visit' },
+  { key: 'interview_done',    label: 'Interview Done' },
+  { key: 'approved_rookie',   label: 'Rookie' },
   { key: 'approved_junior',   label: '⭐ Junior' },
-  { key: 'approved_senior',   label: '🏆 Senior' },
-  { key: 'rejected',          label: '❌ Rejected' },
+  { key: 'approved_senior',   label: 'Senior' },
+  { key: 'rejected',          label: 'Rejected' },
 ];
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -103,12 +103,12 @@ const WorkerVerification = () => {
         });
         if (!res.ok) throw new Error('Failed to regenerate QR');
         const data = await res.json();
-        alert(`✅ QR Code regenerated for ${worker.name}. New QR Token: ${data.qrCodeData}`);
+        alert(`QR Code regenerated for ${worker.name}. New QR Token: ${data.qrCodeData}`);
         fetchWorkers(adminToken);
       } else {
         const newQr = `SCQR-${Math.random().toString(36).substring(2, 10)}`;
         setWorkers((prev) => prev.map((w) => (w.id === worker.id ? { ...w, qrToken: newQr, qrActive: true } : w)));
-        alert(`✅ QR Code regenerated for ${worker.name}. New QR Token: ${newQr}`);
+        alert(`QR Code regenerated for ${worker.name}. New QR Token: ${newQr}`);
       }
     } catch (err) {
       alert(err.message || 'Error regenerating QR');
@@ -295,7 +295,7 @@ const WorkerVerification = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Worker Onboarding 🛡️</h1>
+          <h1 className="page-title">Worker Onboarding</h1>
           <p className="page-subtitle">
             {workers.filter((w) => ['pending_interview', 'interview_done'].includes(w.workerStatus)).length} pending actions
             &nbsp;·&nbsp;
@@ -311,13 +311,13 @@ const WorkerVerification = () => {
         display: 'flex', gap: '24px', flexWrap: 'wrap', color: 'white', fontSize: '0.8rem',
       }}>
         {[
-          { icon: '📝', label: 'Registered', key: 'pending_interview' },
+          { icon: '1', label: 'Registered', key: 'pending_interview' },
           { icon: '→' },
-          { icon: '🏢', label: 'Hub Visit + Interview', key: 'interview_done' },
+          { icon: '2', label: 'Hub Visit & Interview', key: 'interview_done' },
           { icon: '→' },
-          { icon: '✅', label: 'Admin Approves as Rookie / Junior', key: 'approved_rookie' },
+          { icon: '', label: 'Admin Approves as Rookie / Junior', key: 'approved_rookie' },
           { icon: '→' },
-          { icon: '🏆', label: 'Upgrades to Senior (50+ jobs)', key: 'approved_senior' },
+          { icon: '', label: 'Upgrades to Senior (50+ jobs)', key: 'approved_senior' },
         ].map((item, idx) => (
           item.icon === '→'
             ? <span key={idx} style={{ opacity: 0.5, alignSelf: 'center' }}>→</span>

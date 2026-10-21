@@ -24,11 +24,15 @@ import {
 } from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
 import WorkerVerifyModal from './WorkerVerifyModal';
-import { socket } from '../socket';
+import { socket, joinUserRoom, leaveUserRoom } from '../socket';
+import { getSession, clearSession } from '../utils/authSession';
 import './DashboardNavbar.css';
 
 const DashboardNavbar = ({ panel }) => {
   const { t } = useTranslation();
+  const session = getSession();
+  const sessionUser = session?.user;
+
   const [notifications, setNotifications] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [latestToast, setLatestToast] = useState(null);
@@ -38,23 +42,47 @@ const DashboardNavbar = ({ panel }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (panel === 'admin') {
-      socket.connect();
-      socket.emit('join_admin');
+    joinUserRoom(sessionUser, panel);
 
-      socket.on('admin_notification', (data) => {
-        setNotifications((prev) => [data, ...prev]);
-        setLatestToast(data);
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 5000);
-      });
+    const handleNotification = (data) => {
+      setNotifications((prev) => [data, ...prev]);
+      setLatestToast(data);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+    };
 
-      return () => {
-        socket.off('admin_notification');
-        socket.disconnect();
+    const handleStatusChange = (data) => {
+      const toastPayload = {
+        title: 'Booking Update',
+        message: `Booking #${data.bookingId} is now ${data.currentStatus?.replace(/_/g, ' ') || 'updated'}.`,
       };
+      setNotifications((prev) => [toastPayload, ...prev]);
+      setLatestToast(toastPayload);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+    };
+
+    if (panel === 'admin') {
+      socket.on('admin_notification', handleNotification);
+    } else if (panel === 'worker') {
+      socket.on('worker_notification', handleNotification);
+    } else if (panel === 'customer') {
+      socket.on('customer_notification', handleNotification);
     }
-  }, [panel]);
+
+    socket.on('booking_status_changed', handleStatusChange);
+
+    return () => {
+      if (panel === 'admin') {
+        socket.off('admin_notification', handleNotification);
+      } else if (panel === 'worker') {
+        socket.off('worker_notification', handleNotification);
+      } else if (panel === 'customer') {
+        socket.off('customer_notification', handleNotification);
+      }
+      socket.off('booking_status_changed', handleStatusChange);
+    };
+  }, [panel, sessionUser?.id, sessionUser?._id]);
 
   // Click outside close
   useEffect(() => {
@@ -70,6 +98,14 @@ const DashboardNavbar = ({ panel }) => {
   }, []);
 
   const getProfileInitials = () => {
+    if (sessionUser?.name) {
+      return sessionUser.name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
     if (panel === 'admin') return 'A';
     if (panel === 'worker') return 'R'; // Ramesh
     if (panel === 'b2b') return 'G'; // Green Valley
@@ -77,6 +113,9 @@ const DashboardNavbar = ({ panel }) => {
   };
 
   const getUserDetails = () => {
+    if (sessionUser?.name && sessionUser?.email) {
+      return { name: sessionUser.name, email: sessionUser.email };
+    }
     switch (panel) {
       case 'admin':
         return { name: 'System Admin', email: 'admin@servecircle.in' };
@@ -306,6 +345,8 @@ const DashboardNavbar = ({ panel }) => {
                   className="dropdown-link logout-btn"
                   onClick={() => {
                     setIsProfileOpen(false);
+                    leaveUserRoom();
+                    clearSession();
                     navigate('/login');
                   }}
                 >

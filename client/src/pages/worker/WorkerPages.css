@@ -171,7 +171,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,7 +180,7 @@
 
 .sos-modal {
   background: white;
-  border-radius: 20px;
+  border-radius: 12px; border: 1px solid var(--navy-100);
   padding: 32px;
   width: 90%;
   max-width: 400px;
@@ -289,7 +289,7 @@
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVENESS ADDITIONS — Worker Pages
+   MOBILE RESPONSIVENESS ADDITIONS ï¿½ Worker Pages
    ========================================================================== */
 
 /* Ensure empowerment card icon doesn't overflow */

@@ -68,10 +68,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
 
   return (
     <div style={{
-      background: 'rgba(15, 23, 42, 0.4)',
-      backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      borderRadius: '24px',
+      background: 'var(--navy-900)', border: '1px solid var(--navy-800)', borderRadius: 'var(--radius-lg)',
       padding: '28px',
       boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
       color: 'white',

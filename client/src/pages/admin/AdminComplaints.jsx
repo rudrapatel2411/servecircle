@@ -34,7 +34,7 @@ const AdminComplaints = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.complaints')} ⚠️</h1>
+          <h1 className="page-title">{t('admin.complaints')}</h1>
           <p className="page-subtitle">{complaints.filter((c) => ['open', 'in_progress', 'escalated'].includes(c.status)).length} active complaints</p>
         </div>
       </div>

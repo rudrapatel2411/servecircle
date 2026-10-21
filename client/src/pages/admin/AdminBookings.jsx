@@ -54,7 +54,7 @@ const AdminBookings = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.bookings')} 📋</h1>
+          <h1 className="page-title">{t('admin.bookings')}</h1>
           <p className="page-subtitle">{bookings.length} total bookings</p>
         </div>
       </div>

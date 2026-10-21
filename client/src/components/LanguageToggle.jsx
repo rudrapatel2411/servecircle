@@ -29,7 +29,11 @@ const LanguageToggle = () => {
           {languages.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => { i18n.changeLanguage(lang.code); setIsOpen(false); }}
+              onClick={() => {
+                i18n.changeLanguage(lang.code);
+                localStorage.setItem('servecircle_language', lang.code);
+                setIsOpen(false);
+              }}
               style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', background: i18n.language === lang.code ? 'var(--primary-50)' : 'transparent', color: i18n.language === lang.code ? 'var(--primary-700)' : 'var(--navy-700)', border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
               onMouseOver={(e) => { if(i18n.language !== lang.code) e.currentTarget.style.background = 'var(--gray-50)'; }}
               onMouseOut={(e) => { if(i18n.language !== lang.code) e.currentTarget.style.background = 'transparent'; }}

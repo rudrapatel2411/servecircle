@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,18 +8,61 @@ import {
 } from 'react-icons/hi2';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { socket } from '../../socket';
+import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 import './CustomerPages.css';
+
+const statusToStep = (status) => {
+  switch (status) {
+    case 'pending':
+    case 'confirmed':
+    case 'assigned':
+      return { step: 0, text: 'Professional is dispatched and preparing tools.', eta: 15, otp: false };
+    case 'on_the_way':
+      return { step: 1, text: 'Worker is en route to your location.', eta: 8, otp: false };
+    case 'arrived':
+      return { step: 2, text: 'Arrived at your doorstep! 🚪', eta: 0, otp: true };
+    case 'in_progress':
+    case 'started':
+      return { step: 3, text: 'Job in progress... 🛠️', eta: 0, otp: false };
+    case 'completed':
+      return { step: 4, text: 'Job completed successfully! 🎉', eta: 0, otp: false };
+    default:
+      return { step: 0, text: 'Professional is dispatched and preparing tools.', eta: 15, otp: false };
+  }
+};
 
 const LiveTracking = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
+
+  const session = getSession();
+  const token = session?.token;
 
   // Dynamic parameters from checkout / bookings
   const bookingId = searchParams.get('bookingId') || 'SC-2839';
   const serviceName = searchParams.get('service') || 'AC Servicing';
   const workerName = searchParams.get('worker') || 'Ramesh Kumar';
   const price = searchParams.get('price') || '499';
+
+  const [bookingData, setBookingData] = useState(null);
+  const [isRealTracking, setIsRealTracking] = useState(false);
+  const [hasRealGps, setHasRealGps] = useState(false);
+
+  // Deterministic demo OTP fallback
+  const deterministicOtp = useMemo(() => {
+    if (!bookingId) return '8492';
+    if (bookingId === 'SC-2839') return '8492';
+    let hash = 0;
+    for (let i = 0; i < bookingId.length; i++) {
+      hash = (hash << 5) - hash + bookingId.charCodeAt(i);
+      hash |= 0;
+    }
+    return String(Math.abs(hash % 9000) + 1000);
+  }, [bookingId]);
+
+  const currentOtp = bookingData?.startOtp || deterministicOtp;
 
   const getInitials = (name) => {
     return name
@@ -32,13 +75,61 @@ const LiveTracking = () => {
 
   const [eta, setEta] = useState(15);
   const [activeStep, setActiveStep] = useState(0); // 0: Dispatched, 1: Arriving, 2: Arrived, 3: Job Started, 4: Finished
-
   const [currentStatusText, setCurrentStatusText] = useState('Professional is dispatched and preparing tools.');
-  
-  // New Expert Features
   const [otpVisible, setOtpVisible] = useState(false);
-  const startOTP = '8492';
-  
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchBookingDetails = async () => {
+      if (!token) return;
+      try {
+        const myBookings = await requestApi('/bookings/my', { token });
+        if (isMounted && Array.isArray(myBookings)) {
+          const match = myBookings.find(
+            (b) => b.bookingId === bookingId || b._id === bookingId || String(b.bookingId).includes(bookingId)
+          );
+          if (match) {
+            setBookingData(match);
+            setIsRealTracking(true);
+            const mapping = statusToStep(match.status);
+            setActiveStep(mapping.step);
+            setCurrentStatusText(mapping.text);
+            setEta(mapping.eta);
+            setOtpVisible(mapping.otp);
+
+            if (match.workerArrivalLocation?.coordinates?.length === 2) {
+              setHasRealGps(true);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Backend booking lookup failed, preserving demo simulation:', err);
+      }
+    };
+
+    fetchBookingDetails();
+    return () => { isMounted = false; };
+  }, [bookingId, token]);
+
+  useEffect(() => {
+    const handleStatusUpdate = (data) => {
+      if (!data) return;
+      if (data.bookingId === bookingId || (bookingData && data.bookingId === bookingData.bookingId)) {
+        setIsRealTracking(true);
+        const mapping = statusToStep(data.currentStatus);
+        setActiveStep(mapping.step);
+        setCurrentStatusText(mapping.text);
+        setEta(mapping.eta);
+        setOtpVisible(mapping.otp);
+      }
+    };
+
+    socket.on('booking_status_changed', handleStatusUpdate);
+    return () => {
+      socket.off('booking_status_changed', handleStatusUpdate);
+    };
+  }, [bookingId, bookingData]);
+
   // Leaflet refs
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -136,6 +227,14 @@ const LiveTracking = () => {
     };
 
     const animateWorker = (pathCoords) => {
+      if (hasRealGps && bookingData?.workerArrivalLocation?.coordinates?.length === 2) {
+        const [wLng, wLat] = bookingData.workerArrivalLocation.coordinates;
+        if (workerMarkerRef.current) {
+          workerMarkerRef.current.setLatLng([wLat, wLng]);
+        }
+        return;
+      }
+
       let startTime = null;
       const duration = 15000; // 15 seconds to travel the whole path
       
@@ -226,7 +325,20 @@ const LiveTracking = () => {
 
       <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
+            <span style={{
+              fontSize: '0.72rem',
+              padding: '3px 10px',
+              borderRadius: '12px',
+              fontWeight: 700,
+              background: isRealTracking ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
+              color: isRealTracking ? '#16a34a' : '#ca8a04',
+              border: `1px solid ${isRealTracking ? '#bbf7d0' : '#fef08a'}`
+            }}>
+              {isRealTracking ? (hasRealGps ? '● Live GPS Tracking' : '● Real-Time Booking Data') : '○ Demo Simulation Mode'}
+            </span>
+          </div>
           <p className="page-subtitle" style={{ fontSize: '0.85rem' }}>{t('liveTracking.subtitle', 'Watch your service expert arrive in real-time.')}</p>
         </div>
         <Link to="/customer/bookings" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
@@ -323,8 +435,10 @@ const LiveTracking = () => {
                   animate={{ opacity: 1, y: 0 }}
                   style={{ marginTop: '16px', padding: '12px', background: '#fef2f2', border: '1px dashed #ef4444', borderRadius: '8px', textAlign: 'center' }}
                 >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c' }}>🔐 SHARE SECURE START OTP</span>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>{startOTP}</div>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c' }}>
+                    🔐 {bookingData?.startOtp ? 'VERIFIED BOOKING START OTP' : 'DEMO EXHIBITION START OTP'}
+                  </span>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>{currentOtp}</div>
                   <p style={{ fontSize: '0.7rem', color: '#7f1d1d', margin: 0 }}>Do not share this OTP until the professional has arrived and you are ready to begin.</p>
                 </motion.div>
               )}

@@ -1,9 +1,11 @@
-﻿import express from 'express';
+import express from 'express';
+import mongoose from 'mongoose';
 import Invoice from '../models/Invoice.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
+import { DEMO_INVOICES } from '../utils/demoDataStore.js';
 
 const router = express.Router();
 
@@ -12,6 +14,10 @@ router.get(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+      return res.json(DEMO_INVOICES);
+    }
+
     const invoices = await Invoice.find()
       .populate('partner', 'name companyName')
       .populate('contract', 'contractId contractType')
@@ -23,9 +29,20 @@ router.get(
 router.get(
   '/',
   protect,
-  authorize('b2b'),
+  authorize('b2b', 'admin'),
   asyncHandler(async (req, res) => {
-    const query = { partner: req.user._id };
+    if (mongoose.connection.readyState !== 1) {
+      let list = [...DEMO_INVOICES];
+      if (req.user.role === 'b2b') {
+        list = list.filter((inv) => String(inv.partner) === String(req.user._id));
+      }
+      if (req.query.status) {
+        list = list.filter((inv) => inv.status === req.query.status);
+      }
+      return res.json(list);
+    }
+
+    const query = req.user.role === 'admin' ? {} : { partner: req.user._id };
     if (req.query.status) query.status = req.query.status;
     const invoices = await Invoice.find(query)
       .populate('contract', 'contractId contractType')
@@ -39,13 +56,33 @@ router.post(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    const count = await Invoice.countDocuments();
-    const invoiceId = `INV-${count + 5001}`;
     const items = req.body.items || [];
     const subtotal = items.reduce((s, i) => s + (i.total || i.quantity * i.unitPrice), 0);
     const tax = req.body.tax || Math.round(subtotal * 0.18);
     const discount = req.body.discount || 0;
     const totalAmount = subtotal + tax - discount;
+
+    if (mongoose.connection.readyState !== 1) {
+      const count = DEMO_INVOICES.length;
+      const invoiceId = `INV-${count + 5001}`;
+      const newInvoice = {
+        _id: `inv_${Date.now()}`,
+        ...req.body,
+        invoiceId,
+        items,
+        subtotal,
+        tax,
+        discount,
+        totalAmount,
+        status: req.body.status || 'sent',
+        createdAt: new Date(),
+      };
+      DEMO_INVOICES.unshift(newInvoice);
+      return res.status(StatusCodes.CREATED).json(newInvoice);
+    }
+
+    const count = await Invoice.countDocuments();
+    const invoiceId = `INV-${count + 5001}`;
     const invoice = await Invoice.create({
       ...req.body,
       invoiceId,
@@ -64,6 +101,14 @@ router.put(
   protect,
   authorize('admin', 'b2b'),
   asyncHandler(async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+      const inv = DEMO_INVOICES.find((i) => i._id === req.params.id || i.invoiceId === req.params.id);
+      if (!inv) throw new AppError('Invoice not found', StatusCodes.NOT_FOUND);
+      Object.assign(inv, req.body);
+      if (req.body.status === 'paid') inv.paidDate = new Date();
+      return res.json(inv);
+    }
+
     const updates = { ...req.body };
     if (req.body.status === 'paid') updates.paidDate = new Date();
     const invoice = await Invoice.findByIdAndUpdate(req.params.id, updates, { new: true });

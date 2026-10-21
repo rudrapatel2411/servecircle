@@ -20,7 +20,7 @@ const CallMeBackWidget = () => {
     }
     setSubmitted(true);
     setTimeout(() => {
-      alert(t('callMeBack.successCallbackAlert', '🎉 Call request received! Our support agent is dialing your number right now.'));
+      alert(t('callMeBack.successCallbackAlert', 'Call request received. Our support agent is dialing your number now.'));
       setIsOpen(false);
       setIsRequested(true);
       localStorage.setItem('callRequested', 'true');
@@ -72,7 +72,7 @@ const CallMeBackWidget = () => {
           right: 0,
           bottom: 0,
           background: 'rgba(15, 23, 42, 0.75)',
-          backdropFilter: 'blur(8px)',
+          
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
@@ -176,7 +176,7 @@ const CallMeBackWidget = () => {
                   transition: 'all 0.2s'
                 }}
               >
-                {submitted ? t('common.loading', 'Requesting...') : t('callMeBack.requestCallbackButton', 'Request Call Back 📞')}
+                {submitted ? t('common.loading', 'Requesting...') : t('callMeBack.requestCallbackButton', 'Request Call Back')}
               </button>
             </form>
 

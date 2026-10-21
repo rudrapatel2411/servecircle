@@ -37,7 +37,7 @@ const AdminCoupons = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.coupons')} 🎟️</h1>
+          <h1 className="page-title">{t('admin.coupons')}</h1>
           <p className="page-subtitle">{coupons.length} coupons • {coupons.filter((c) => c.active).length} active</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}><HiOutlinePlusCircle /> Create Coupon</button>

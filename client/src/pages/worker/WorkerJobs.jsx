@@ -205,7 +205,7 @@ const WorkerJobs = () => {
   const submitCantResolve = () => {
     if (!cantResolveReason.trim()) return;
     // In production: send to backend with reason
-    alert(`📞 Support team notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
+    alert(`Support team notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
     setCantResolveModal(null);
     loadJobs(activeTab);
   };
@@ -237,13 +237,13 @@ const WorkerJobs = () => {
         gap: '12px',
         color: 'white',
       }}>
-        <span style={{ fontSize: '1.5rem' }}>📡</span>
+        
         <div>
           <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Live Job Broadcast Active</div>
           <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>New jobs within 15 km radius will appear here. Accept fast — first come, first served!</div>
         </div>
         <div style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.15)', borderRadius: '100px', padding: '4px 14px', fontSize: '0.8rem', fontWeight: 800 }}>
-          🟢 Online
+          Online
         </div>
       </div>
 
@@ -283,7 +283,7 @@ const WorkerJobs = () => {
               <div className="job-info">
                 <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {job.service}
-                  {isEmergency && <span style={{ background: '#fef2f2', color: '#ef4444', padding: '2px 8px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>🚨 EMERGENCY: 2x PAY</span>}
+                  {isEmergency && <span style={{ background: '#fef2f2', color: '#ef4444', padding: '2px 8px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>EMERGENCY: 2x PAY</span>}
                 </h4>
                 <div className="job-meta" style={{ flexWrap: 'wrap' }}>
                   <span><HiOutlineCalendarDays /> {formatDate(job.scheduledDate)}</span>
@@ -294,7 +294,7 @@ const WorkerJobs = () => {
                   <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
                   {job.trainee && (
                     <span style={{ background: '#f0fdf4', color: '#166534', padding: '2px 10px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700 }}>
-                      🎓 Training: {job.trainee?.name || 'Trainee'}
+                      Training: {job.trainee?.name || 'Trainee'}
                     </span>
                   )}
                 </div>
@@ -311,7 +311,7 @@ const WorkerJobs = () => {
                       onClick={() => handleRespond(job._id, 'accept')}
                       disabled={actionLoading === `${job._id}-accept`}
                     >
-                      {actionLoading === `${job._id}-accept` ? '...' : '✅ Accept Job'}
+                      {actionLoading === `${job._id}-accept` ? '...' : 'Accept Job'}
                     </button>
                     <button
                       className="btn btn-outline"
@@ -338,7 +338,7 @@ const WorkerJobs = () => {
                       disabled={actionLoading === `${job._id}-en-route`}
                     >
                       <HiOutlineTruck style={{ marginRight: '6px' }} />
-                      {actionLoading === `${job._id}-en-route` ? 'Updating...' : '🚗 Ready to Go — Start Journey'}
+                      {actionLoading === `${job._id}-en-route` ? 'Updating...' : 'Ready to Go — Start Journey'}
                     </button>
                   </div>
                 )}
@@ -351,7 +351,7 @@ const WorkerJobs = () => {
                       <span>You are en-route. Mark arrival first, then ask the customer for the <strong>Start OTP</strong>.</span>
                     </div>
                     <button className="btn btn-primary" onClick={() => handleStatus(job._id, 'arrived')} disabled={actionLoading === `${job._id}-arrived`} style={{ width: '100%', marginBottom: '10px' }}>
-                      {actionLoading === `${job._id}-arrived` ? 'Updating...' : '📍 Mark Arrived'}
+                      {actionLoading === `${job._id}-arrived` ? 'Updating...' : 'Mark Arrived'}
                     </button>
                   </div>
                 )}
@@ -393,7 +393,7 @@ const WorkerJobs = () => {
                   <div>
                     <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>Job is in progress 🛠️. When work is done, get the <strong>End OTP</strong> from the customer to close this job.</span>
+                      <span>Job is in progress. When work is done, get the <strong>End OTP</strong> from the customer to close this job.</span>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
                       <input
@@ -415,7 +415,7 @@ const WorkerJobs = () => {
                         disabled={actionLoading === `${job._id}-end`}
                         style={{ padding: '10px 20px', background: '#16a34a' }}
                       >
-                        {actionLoading === `${job._id}-end` ? '...' : '✅ Done'}
+                        {actionLoading === `${job._id}-end` ? '...' : 'Done'}
                       </button>
                     </div>
                     {otpError[job._id] && (
@@ -439,14 +439,14 @@ const WorkerJobs = () => {
                     <button
                       className="btn btn-outline"
                       style={{ flex: 1, fontSize: '0.8rem', padding: '8px' }}
-                      onClick={() => alert(`📞 Calling ${job.customer?.name || 'Customer'}...`)}
+                      onClick={() => alert(`Calling ${job.customer?.name || 'Customer'}...`)}
                     >
                       <HiOutlinePhone /> Call
                     </button>
                     <button
                       className="btn btn-outline"
                       style={{ flex: 1, fontSize: '0.8rem', padding: '8px' }}
-                      onClick={() => alert(`💬 Opening chat with ${job.customer?.name || 'Customer'}...`)}
+                      onClick={() => alert(`Opening chat with ${job.customer?.name || 'Customer'}...`)}
                     >
                       <HiOutlineChatBubbleLeftRight /> Chat
                     </button>
@@ -512,7 +512,7 @@ const WorkerJobs = () => {
                   onClick={submitCantResolve}
                   disabled={!cantResolveReason.trim()}
                 >
-                  📞 Notify Support & Exit
+                  Notify Support & Exit
                 </button>
               </div>
             </motion.div>

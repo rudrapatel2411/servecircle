@@ -264,7 +264,7 @@ const FoodPremiumFlow = () => {
             <div style={{ 
               background: 'rgba(255,255,255,0.2)', 
               padding: '16px', borderRadius: '20px', display: 'flex',
-              backdropFilter: 'blur(10px)'
+              /* backdropFilter removed */
             }}>
               {theme.icon}
             </div>

@@ -208,9 +208,9 @@ export function classifyIntent({ text = '', hasImage = false, conversation = [] 
   }
 
   // Service keywords for ALL ServeCircle platform hubs: English, Hindi/Hinglish, Gujarati
-  const serviceKeywordsEN = /\b(leak|leaking|leakage|pipe|water|tap|sink|bathroom|toilet|drain|ac|cooling|fan|socket|switch|light|power|sparks|mcb|wire|lock|door|key|geyser|fridge|washing machine|repair|broken|cleaning|pest|cockroach|seepage|short circuit|driver|chauffeur|airport|cab|commute|carpool|cook|chef|tiffin|catering|pet|dog|cat|vet|grooming|nurse|nursing|doctor|physio|physiotherapy|physiotherapist|caretaker|elder|health|society|security guard|birthday|party|event|dj|photographer|car|bike|motorcycle|engine|car wash|detailing|mechanic|shifting|moving|relocation|packers|emergency|paint|painting|wall|carpenter|carpentry|furniture|sofa|whitewash|putty|waterproofing|appliance|plumber|electrician|service)\b/.test(normalized);
-  const serviceKeywordsHI = /\b(pani|paani|tapak|bijli|bijjli|nali|nalka|nal|darwaza|khidki|kidki|chabi|chaabi|gizer|geysar|frij|safai|safaai|kida|chuha|toot|kharab|kharaab|band ho|nahi chal|kaam nahi|nahi aa rahi|problem hai|theek karo|repair karo|service chahiye|driver|driver chahiye|gaadi chalane|gadi chalana|outstation driver|khana|rasoi|tiffin|kutta|billi|dawa|doctor|nurse|caretaker|security guard|bday|party|dj|car wash|gadi wash|mechanic|puncture|shifting|samaan shifting|relocation|physio|paint|painting|rang|rangwana|deewar|wall|car|gadi|gaadi|bike|motorcycle|engine|chalu nahi|start nahi|badhiya|plumber|carpenter|electrician|badhai)\b/.test(normalized);
-  const serviceKeywordsGU = /\b(pani|nali|nal|door|khidki|chaabi|tamaro|tamari|ghar ma problem|mara ghar|koi toot|saru nathi|joie che|madad joie|electrician joie|plumber joie|repair joie|safai joie|driver joie|gadi chalavva|chauffeur|rasoi|khana|pet|vet|doctor|nurse|bday|party|gadi wash|car wash|mechanic|shifting|physio|paint|rang|color|car|bike|gadi|motor|service)\b/.test(normalized);
+  const serviceKeywordsEN = /\b(leak|leaking|leakage|pipe|water|tap|sink|bathroom|toilet|drain|ac|cooling|fan|socket|switch|light|power|sparks|mcb|wire|wiring|lock|door|key|geyser|fridge|refrigerator|washing machine|repair|broken|cleaning|clean|pest|cockroach|seepage|short circuit|driver|chauffeur|airport|cab|commute|carpool|cook|chef|tiffin|catering|pet|dog|cat|vet|grooming|nurse|nursing|doctor|physio|physiotherapy|physiotherapist|caretaker|elder|health|society|security|security guard|guard|watchman|birthday|party|event|dj|photographer|car|bike|motorcycle|engine|car wash|detailing|mechanic|shifting|moving|relocation|packers|emergency|sos|paint|painting|wall|carpenter|carpentry|furniture|sofa|carpet|whitewash|putty|waterproofing|appliance|plumber|electrician|cctv|camera|wifi|router|laptop|computer|internet|tv|setup|install|installation|garden|gardener|lawn|service|book)\b/.test(normalized);
+  const serviceKeywordsHI = /\b(pani|paani|tapak|bijli|bijjli|nali|nalka|nal|darwaza|khidki|kidki|chabi|chaabi|gizer|geysar|frij|safai|safaai|kida|chuha|toot|kharab|kharaab|band ho|nahi chal|kaam nahi|nahi aa rahi|problem hai|theek karo|repair karo|service chahiye|chahiye|lagwana|lagana|driver|driver chahiye|gaadi chalane|gadi chalana|outstation driver|khana|rasoi|tiffin|kutta|billi|dawa|doctor|nurse|caretaker|security guard|guard|watchman|society|bday|party|dj|car wash|gadi wash|mechanic|puncture|shifting|samaan shifting|relocation|packers|physio|paint|painting|rang|rangwana|deewar|wall|car|gadi|gaadi|bike|motorcycle|engine|chalu nahi|start nahi|badhiya|plumber|carpenter|electrician|badhai|cctv|camera|wifi|net|computer|sofa|carpet|mali|bagicha|plant)\b/.test(normalized);
+  const serviceKeywordsGU = /\b(pani|nali|nal|door|khidki|chaabi|tamaro|tamari|ghar ma problem|mara ghar|koi toot|saru nathi|joie che|chahiye|madad joie|electrician joie|plumber joie|repair joie|safai joie|driver joie|gadi chalavva|chauffeur|rasoi|khana|pet|vet|doctor|nurse|guard|security|bday|party|gadi wash|car wash|mechanic|shifting|packers|physio|paint|rang|color|car|bike|gadi|motor|cctv|camera|wifi|sofa|mali|service)\b/.test(normalized);
 
   if (serviceKeywordsEN || serviceKeywordsHI || serviceKeywordsGU) return 'SERVICE_PROBLEM';
 
@@ -278,17 +278,10 @@ export function routeLeakageService({ text = '', conversation = [] } = {}) {
     };
   }
 
-  const plumbingFallback = buildResolvedRoute({
-    problemCategory: 'plumbing',
-    problemName: 'Water Leakage & Plumbing Issue',
-    confidence: 0.90,
-  });
-
   return {
-    ...plumbingFallback,
-    intent: 'SERVICE_PROBLEM',
-    message: 'Samajh gaya. Water leakage ke liye hamare verified Plumbers available hain. Aap leakage source select kar sakte hain ya direct booking confirm kar sakte hain:',
-    showServiceRecommendation: true,
+    intent: 'FOLLOW_UP',
+    message: 'Samajh gaya. Water leakage ke liye source confirm karna zaroori hai. Kya leakage pipe se hai, tap/sink se, bathroom/drain se, ya AC/appliance se?',
+    showServiceRecommendation: false,
     followUpQuestions: [
       'Pipe se leak ho raha hai',
       'Tap ya sink se leak ho raha hai',
@@ -669,103 +662,291 @@ router.post(
     try {
       await AIProviderManager.initialize();
 
-      // Run high-intelligence chat via active provider (Groq Qwen 3.8 27B)
-      const aiResponse = await AIProviderManager.chatWithCustomer({
-        text,
-        image,
-        conversation,
-        customerContext: {
-          ...customerContext,
-          ...bookingContext,
-        },
-      });
+      let aiResponse = null;
+      try {
+        // Run high-intelligence chat via active provider (Groq Qwen 3.8 27B)
+        aiResponse = await AIProviderManager.chatWithCustomer({
+          text,
+          image,
+          conversation,
+          customerContext: {
+            ...customerContext,
+            ...bookingContext,
+          },
+        });
+      } catch (providerErr) {
+        console.warn('[customerAi /chat] Provider failed, running graceful local fallback:', providerErr.message);
+        aiResponse = null;
+      }
 
-      const showRecommendation = Boolean(aiResponse.showServiceRecommendation && aiResponse.serviceName);
+      // Comprehensive canonical catalog mapper covering all ServeCircle services
+      const CANONICAL_SERVICES = [
+        {
+          keywords: ['plumb', 'leak', 'pipe', 'tap', 'drain', 'toilet', 'water', 'nali', 'nalka', 'tapak', 'washbasin', 'flush', 'sink', 'geyser', 'tank'],
+          name: 'Plumbing',
+          category: 'Home Repairs',
+          skill: 'Plumber',
+          price: 350,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['electric', 'wire', 'switch', 'power', 'light', 'fan', 'bijli', 'socket', 'fuse', 'mcb', 'short circuit', 'spark', 'board', 'wiring'],
+          name: 'Electrical Work',
+          category: 'Home Repairs',
+          skill: 'Electrician',
+          price: 300,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['ac', 'air condition', 'appliance', 'fridge', 'refrigerator', 'washing', 'cool', 'microwave', 'cooler', 'oven', 'purifier'],
+          name: 'AC & Appliance Repair',
+          category: 'Home Repairs',
+          skill: 'AC Technician',
+          price: 499,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['carpent', 'wood', 'furniture', 'door', 'window', 'darwaza', 'khidki', 'lock', 'handle', 'hinge', 'almirah', 'wardrobe', 'drawer', 'bed', 'chabi', 'chaabi'],
+          name: 'Carpentry',
+          category: 'Home Repairs',
+          skill: 'Carpenter',
+          price: 400,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['paint', 'wall', 'color', 'rang', 'putty', 'primer', 'whitewash', 'seepage', 'dampness', 'waterproof'],
+          name: 'Painting & Waterproofing',
+          category: 'Home Repairs',
+          skill: 'Painter',
+          price: 600,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['sofa', 'carpet', 'couch', 'upholstery', 'mattress'],
+          name: 'Sofa & Carpet Cleaning',
+          category: 'Cleaning & Hygiene',
+          skill: 'Cleaning Specialist',
+          price: 599,
+          targetHubRoute: '/customer/general-services/cleaning-services',
+        },
+        {
+          keywords: ['clean', 'deep clean', 'safai', 'house cleaning', 'flat clean', 'home clean', 'bathroom clean', 'kitchen clean'],
+          name: 'Home Deep Cleaning',
+          category: 'Cleaning & Hygiene',
+          skill: 'Cleaning Specialist',
+          price: 1200,
+          targetHubRoute: '/customer/general-services/cleaning-services',
+        },
+        {
+          keywords: ['pest', 'termite', 'cockroach', 'khatmal', 'bed bug', 'deemak', 'mosquito', 'insect', 'chuha', 'rat', 'rodent', 'kida'],
+          name: 'Pest Control',
+          category: 'Cleaning & Hygiene',
+          skill: 'Pest Controller',
+          price: 899,
+          targetHubRoute: '/customer/general-services/cleaning-services',
+        },
+        {
+          keywords: ['shift', 'pack', 'relocat', 'mover', 'packers', 'transport', 'samaan', 'room shift', 'house shift'],
+          name: 'Relocation & Packers',
+          category: 'Relocation & Packers',
+          skill: 'Movers & Packers',
+          price: 2500,
+          targetHubRoute: '/customer/relocation',
+        },
+        {
+          keywords: ['driver', 'chauffeur', 'cab', 'airport', 'outstation', 'gadi chalane', 'gaadi driver'],
+          name: 'Driver & Chauffeur Service',
+          category: 'Travel & Commute',
+          skill: 'Driver',
+          price: 599,
+          targetHubRoute: '/customer/travel-commute',
+        },
+        {
+          keywords: ['cook', 'chef', 'khana', 'rasoi', 'catering', 'tiffin', 'meal', 'bhojan'],
+          name: 'Home Cook & Catering',
+          category: 'Food & Kitchen',
+          skill: 'Cook',
+          price: 499,
+          targetHubRoute: '/customer/food-kitchen',
+        },
+        {
+          keywords: ['pet', 'dog', 'cat', 'kutta', 'billi', 'groom', 'vet', 'dog walk', 'pet bath'],
+          name: 'Pet Grooming & Care',
+          category: 'Pet Services',
+          skill: 'Pet Care Specialist',
+          price: 450,
+          targetHubRoute: '/customer/pet-services',
+        },
+        {
+          keywords: ['doctor', 'nurse', 'physio', 'physiotherapy', 'health', 'patient', 'elder', 'caretaker', 'dawa', 'medical'],
+          name: 'Doctor & Healthcare at Home',
+          category: 'Health & Wellness',
+          skill: 'Healthcare Professional',
+          price: 699,
+          targetHubRoute: '/customer/health-wellness',
+        },
+        {
+          keywords: ['society', 'security guard', 'gate', 'watchman', 'rwa', 'building', 'guard'],
+          name: 'Society Security & Maintenance',
+          category: 'Society Management',
+          skill: 'Security Guard',
+          price: 1500,
+          targetHubRoute: '/customer/society-management',
+        },
+        {
+          keywords: ['event', 'birthday', 'party', 'decor', 'dj', 'sound', 'celebration', 'photographer', 'wedding'],
+          name: 'Events & Celebrations',
+          category: 'Events & Celebrations',
+          skill: 'Event Coordinator',
+          price: 2499,
+          targetHubRoute: '/customer/events',
+        },
+        {
+          keywords: ['car wash', 'gadi wash', 'foam wash', 'detailing'],
+          name: 'Car Wash & Detailing',
+          category: 'Vehicle Services',
+          skill: 'Car Detailer',
+          price: 399,
+          targetHubRoute: '/customer/services/vehicle-services',
+        },
+        {
+          keywords: ['car repair', 'car mechanic', 'engine', 'four wheeler', 'car breakdown', 'car puncture', 'car service'],
+          name: 'Car Repair',
+          category: 'Vehicle Services',
+          skill: 'Car Mechanic',
+          price: 799,
+          targetHubRoute: '/customer/services/vehicle-services',
+        },
+        {
+          keywords: ['bike', 'motorcycle', 'scooter', 'two wheeler', 'puncture', 'activa'],
+          name: 'Bike Repair',
+          category: 'Vehicle Services',
+          skill: 'Bike Mechanic',
+          price: 399,
+          targetHubRoute: '/customer/services/vehicle-services',
+        },
+        {
+          keywords: ['cctv', 'camera', 'wifi', 'router', 'laptop', 'computer', 'internet', 'smart tv'],
+          name: 'Home IT & CCTV Support',
+          category: 'Home IT & Tech Support',
+          skill: 'IT Technician',
+          price: 449,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['garden', 'lawn', 'plant', 'grass', 'pot', 'pruning', 'gardener', 'mali'],
+          name: 'Gardener & Lawn Care',
+          category: 'Garden & Outdoor',
+          skill: 'Gardener',
+          price: 399,
+          targetHubRoute: null,
+        },
+        {
+          keywords: ['emergency', 'urgent', 'sos', 'immediately', 'turant', 'breakdown'],
+          name: 'Emergency SOS Repair',
+          category: 'Emergency Services',
+          skill: 'Emergency Technician',
+          price: 499,
+          targetHubRoute: '/customer/emergency',
+        },
+      ];
+
+      const searchSignals = `${text || ''} ${aiResponse?.serviceName || ''} ${aiResponse?.category || ''}`.toLowerCase();
+      let matchedCanonical = CANONICAL_SERVICES.find((s) =>
+        s.keywords.some((kw) => searchSignals.includes(kw))
+      );
+
+      // Determine if service recommendation should be shown
+      const classified = classifyIntent({ text, hasImage: Boolean(image), conversation });
+      let showRecommendation = Boolean(
+        (aiResponse && aiResponse.showServiceRecommendation && aiResponse.serviceName) ||
+        (matchedCanonical && (classified === 'SERVICE_PROBLEM' || image || hasLeakageSignal(text)))
+      );
+
+      // If user clearly describes a problem/service but AI set showRecommendation to false, override it!
+      if (!showRecommendation && matchedCanonical && (text.length > 3 || image)) {
+        showRecommendation = true;
+      }
 
       let dbService = null;
-      if (showRecommendation && aiResponse.serviceName && mongoose.connection.readyState === 1) {
+      if (showRecommendation && mongoose.connection.readyState === 1) {
         try {
-          // Find canonical service in MongoDB
-          dbService = await Service.findOne({
-            name: { $regex: new RegExp(aiResponse.serviceName.trim(), 'i') },
-          }).lean().catch(() => null);
-
-          if (!dbService) {
-            // Fallback mapper for common service terms
-            const term = (aiResponse.serviceName + ' ' + (aiResponse.category || '') + ' ' + text).toLowerCase();
-            if (term.includes('plumb') || term.includes('leak') || term.includes('pipe') || term.includes('tap') || term.includes('drain') || term.includes('toilet') || term.includes('water')) {
-              dbService = await Service.findOne({ name: 'Plumbing' }).lean().catch(() => null);
-            } else if (term.includes('electric') || term.includes('wire') || term.includes('switch') || term.includes('power') || term.includes('light') || term.includes('fan') || term.includes('bijli')) {
-              dbService = await Service.findOne({ name: 'Electrical Work' }).lean().catch(() => null);
-            } else if (term.includes('ac ') || term.includes('appliance') || term.includes('fridge') || term.includes('washing') || term.includes('cool')) {
-              dbService = await Service.findOne({ name: 'AC & Appliance Repair' }).lean().catch(() => null);
-            } else if (term.includes('paint') || term.includes('wall') || term.includes('color')) {
-              dbService = await Service.findOne({ name: 'Painting' }).lean().catch(() => null);
-            } else if (term.includes('clean') || term.includes('hygiene') || term.includes('safai')) {
-              dbService = await Service.findOne({ name: 'Home Deep Cleaning' }).lean().catch(() => null);
-            } else if (term.includes('pest') || term.includes('termite') || term.includes('cockroach')) {
-              dbService = await Service.findOne({ name: 'Pest Control' }).lean().catch(() => null);
-            } else if (term.includes('carpent') || term.includes('wood') || term.includes('furniture') || term.includes('door') || term.includes('window')) {
-              dbService = await Service.findOne({ name: 'Carpentry' }).lean().catch(() => null);
-            } else if (term.includes('car ') || term.includes('engine') || term.includes('four wheeler')) {
-              dbService = await Service.findOne({ name: 'Car Repair' }).lean().catch(() => null);
-            } else if (term.includes('bike') || term.includes('motorcycle') || term.includes('two wheeler')) {
-              dbService = await Service.findOne({ name: 'Bike Repair' }).lean().catch(() => null);
-            }
+          const lookupName = matchedCanonical?.name || aiResponse?.serviceName || '';
+          if (lookupName) {
+            dbService = await Service.findOne({
+              name: { $regex: new RegExp(lookupName.trim(), 'i') },
+            }).lean().catch(() => null);
           }
         } catch {
           dbService = null;
         }
       }
 
-      const serviceName = dbService ? dbService.name : (aiResponse.serviceName || 'Home Service');
-      const serviceCategory = dbService ? dbService.category : (aiResponse.category || 'Home Repairs');
-      const servicePrice = dbService ? (dbService.basePrice || dbService.price || 350) : (aiResponse.estimatedPrice || 350);
+      const serviceName = dbService ? dbService.name : (matchedCanonical?.name || aiResponse?.serviceName || 'Home Service');
+      const serviceCategory = dbService ? dbService.category : (matchedCanonical?.category || aiResponse?.category || 'Home Repairs');
+      const servicePrice = dbService ? (dbService.basePrice || dbService.price || 350) : (matchedCanonical?.price || aiResponse?.estimatedPrice || 350);
+      const serviceSkill = matchedCanonical?.skill || aiResponse?.requiredWorkerSkill || 'Technician';
+      const targetHubRoute = matchedCanonical?.targetHubRoute || null;
       const serviceId = dbService ? dbService._id.toString() : '';
+
+      const language = detectLanguage(text);
+      let replyMessage = aiResponse?.reply;
+      if (!replyMessage) {
+        if (showRecommendation) {
+          replyMessage = language === 'gujarati'
+            ? `Samajh gayu. ${serviceName} mate verified worker ready che. Niche aapi card mathi direct book karo:`
+            : language === 'hindi'
+            ? `Samajh gaya! ${serviceName} ke liye verified professional available hain. Aap neeche card se direct booking confirm kar sakte hain:`
+            : `Understood! We have verified professionals ready for ${serviceName}. You can book directly below:`;
+        } else {
+          replyMessage = generalMessage(text);
+        }
+      }
 
       const payload = {
         status: 'success',
-        intent: aiResponse.intent || (showRecommendation ? 'SERVICE_PROBLEM' : 'GENERAL_CONVERSATION'),
-        message: aiResponse.reply || 'Main ServeCircle AI hoon. Main aapki kya madad kar sakta hoon?',
+        intent: showRecommendation ? 'SERVICE_PROBLEM' : (aiResponse?.intent || 'GENERAL_CONVERSATION'),
+        message: replyMessage,
         showServiceRecommendation: showRecommendation,
-        followUpQuestions: Array.isArray(aiResponse.followUpQuestions) && aiResponse.followUpQuestions.length > 0
+        followUpQuestions: Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
           ? aiResponse.followUpQuestions
-          : ['Plumbing & Water Leakage', 'Electrical & Wiring Fault', 'Home Deep Cleaning & Pest Control'],
+          : ['Plumbing & Water Leakage', 'Electrical & Wiring Fault', 'AC Repair & Servicing', 'Local House Shifting'],
         analysis: showRecommendation ? {
           multimodal: {
             problemAnalysis: {
               problemCategory: serviceCategory,
               confidence: 0.96,
               aiAnalysisRaw: {
-                problemType: aiResponse.problemType || serviceName,
-                urgency: aiResponse.urgency || 'Standard',
-                recommendedActions: aiResponse.safetyPrecautions || [],
-                followUpQuestions: aiResponse.followUpQuestions || [],
+                problemType: aiResponse?.problemType || serviceName,
+                urgency: aiResponse?.urgency || 'Standard',
+                recommendedActions: aiResponse?.safetyPrecautions || [],
+                followUpQuestions: aiResponse?.followUpQuestions || [],
               },
             },
             serviceResolution: {
               resolved: true,
               service: serviceName,
               category: serviceCategory,
-              requiredWorkerSkill: aiResponse.requiredWorkerSkill || 'Technician',
+              requiredWorkerSkill: serviceSkill,
               priceRangeInr: { min: servicePrice },
               estimatedPrice: servicePrice,
               serviceId,
-              safetyPrecautions: aiResponse.safetyPrecautions || [],
+              targetHubRoute,
+              safetyPrecautions: aiResponse?.safetyPrecautions || [],
             },
             recommendation: {
               recommendedService: {
                 name: serviceName,
                 category: serviceCategory,
                 estimatedPrice: servicePrice,
-                requiredSkill: { primary: aiResponse.requiredWorkerSkill || 'Technician' },
-                safetyPrecautions: aiResponse.safetyPrecautions || [],
+                requiredSkill: { primary: serviceSkill },
+                safetyPrecautions: aiResponse?.safetyPrecautions || [],
               },
               confidence: { overall: 0.96 },
             },
             summary: {
-              topProblem: aiResponse.problemType || serviceName,
-              urgencyLevel: aiResponse.urgency || 'Standard',
+              topProblem: aiResponse?.problemType || serviceName,
+              urgencyLevel: aiResponse?.urgency || 'Standard',
             },
           },
         } : null,
@@ -773,11 +954,16 @@ router.post(
 
       res.status(StatusCodes.OK).json(payload);
     } catch (err) {
-      console.error('[customerAi /chat] Error:', err);
-      res.status(err.statusCode || StatusCodes.SERVICE_UNAVAILABLE).json({
-        status: 'error',
-        message: sanitizeError(err),
-        retryable: true,
+      console.error('[customerAi /chat] Critical error:', err);
+      // Even in catch block, provide a warm fallback if text indicates a service!
+      const classified = classifyIntent({ text: req.body?.text || '', hasImage: Boolean(req.file) });
+      res.status(StatusCodes.OK).json({
+        status: 'success',
+        intent: classified || 'GENERAL_CONVERSATION',
+        message: generalMessage(req.body?.text || ''),
+        showServiceRecommendation: false,
+        followUpQuestions: ['Plumbing & Water Leakage', 'Electrical Work', 'AC Repair', 'Deep Cleaning'],
+        analysis: null,
       });
     }
   })

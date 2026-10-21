@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import i18n from './i18n/index.js'
 import './index.css'
+import './styles/ui-improvements.css'
 import App from './App.jsx'
 import installCustomAlert from './utils/customAlert.js'
 

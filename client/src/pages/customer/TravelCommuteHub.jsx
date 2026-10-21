@@ -67,8 +67,8 @@ const TravelCommuteHub = () => {
             {/* Premium Fleet Carousel */}
             <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '16px' }}>
               {[
-                { id: 'sedan', name: t('travelCommute.premiumSedan'), seats: '4', icon: '🚙', price: 799, tags: ['Wifi', 'Water'] },
-                { id: 'suv', name: t('travelCommute.luxurySuv'), seats: '6', icon: '🚐', price: 1499, tags: ['Extra Legroom', 'TV'] }
+                { id: 'sedan', name: t('travelCommute.premiumSedan'), seats: '4', icon: '', price: 799, tags: ['Wifi', 'Water'] },
+                { id: 'suv', name: t('travelCommute.luxurySuv'), seats: '6', icon: '', price: 1499, tags: ['Extra Legroom', 'TV'] }
               ].map(car => (
                 <div key={car.id} onClick={() => setCarType(car.id)} style={{
                   flex: 1,

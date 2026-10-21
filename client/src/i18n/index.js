@@ -4,6 +4,12 @@ import en from './en.js';
 import hi from './hi.js';
 import gu from './gu.js';
 
+const LANGUAGE_STORAGE_KEY = 'servecircle_language';
+
+const savedLanguage = typeof window !== 'undefined'
+  ? localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'en'
+  : 'en';
+
 const i18nInstance = i18n.createInstance();
 
 i18nInstance.use({
@@ -27,7 +33,7 @@ i18nInstance.use(initReactI18next).init({
     hi: { translation: hi },
     gu: { translation: gu },
   },
-  lng: 'en',
+  lng: savedLanguage,
   fallbackLng: 'en',
   interpolation: {
     escapeValue: false,
@@ -36,6 +42,16 @@ i18nInstance.use(initReactI18next).init({
     useSuspense: false,
   },
   postProcess: ['localizeNumbers']
+});
+
+i18nInstance.on('languageChanged', (lng) => {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+    } catch (e) {
+      console.warn('Failed to persist language preference:', e);
+    }
+  }
 });
 
 export default i18nInstance;

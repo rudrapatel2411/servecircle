@@ -98,8 +98,8 @@ const SocietyManagementHub = () => {
                 {t('societyManagement.rwaCleanupsDesc', 'Book shared park cleanup, lift lobby pressure washing, or boundary wall paint touch-ups. Join with neighbors for discounts!')}
               </p>
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', fontSize: '0.8rem', color: 'var(--navy-700)', fontWeight: 600, border: '1px dashed #cbd5e1' }}>
-                💡 {t('societyManagement.oneHomeOff', '1 Home = 5% Off')}<br/>
-                🔥 {t('societyManagement.twentyFiveHomes', '25 Homes =')} <span style={{ color: '#ef4444' }}>{t('societyManagement.twentyOff', '20% Off')}</span>
+                {t('societyManagement.oneHomeOff', '1 Home = 5% Off')}<br/>
+                {t('societyManagement.twentyFiveHomes', '25 Homes =')} <span style={{ color: '#ef4444' }}>{t('societyManagement.twentyOff', '20% Off')}</span>
               </div>
             </div>
             <Link to="/customer/society-flow?type=cleanups" className="btn" style={{ marginTop: '24px', background: '#16a34a', color: 'white', fontWeight: 700, padding: '12px', borderRadius: '12px', textAlign: 'center', textDecoration: 'none' }}>
@@ -199,9 +199,9 @@ const SocietyManagementHub = () => {
                 {t('societyManagement.customPackagesDesc', "Tailor-made service bundles based on your society's size. Enjoy scalable pricing and priority support.")}
               </p>
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', fontSize: '0.8rem', color: 'var(--navy-700)', fontWeight: 600, border: '1px dashed #cbd5e1' }}>
-                🏢 {t('societyManagement.smallGroup', 'Small: 5+ Homes')}<br/>
-                🏘️ {t('societyManagement.mediumGroup', 'Medium: 10+ Homes')}<br/>
-                🏙️ {t('societyManagement.megaGroup', 'Mega: 15+ Homes')}
+                {t('societyManagement.smallGroup', 'Small: 5+ Homes')}<br/>
+                {t('societyManagement.mediumGroup', 'Medium: 10+ Homes')}<br/>
+                {t('societyManagement.megaGroup', 'Mega: 15+ Homes')}
               </div>
             </div>
             <Link to="/customer/society-flow?type=packages" className="btn" style={{ marginTop: '24px', background: '#c026d3', color: 'white', fontWeight: 700, padding: '12px', borderRadius: '12px', textAlign: 'center', textDecoration: 'none' }}>
@@ -237,7 +237,7 @@ const SocietyManagementHub = () => {
           }}>
             <div>
               <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {t('societyManagement.yoga', 'Community Yoga & Zumba')} 🧘‍♀️
+                {t('societyManagement.yoga', 'Community Yoga & Zumba')} 
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
                 {t('societyManagement.yogaDesc', 'Hire a professional fitness instructor to come to your society park. Split costs with neighbors.')}
@@ -266,7 +266,7 @@ const SocietyManagementHub = () => {
           }}>
             <div>
               <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {t('societyManagement.evCharger', 'EV Charger Installation')} ⚡
+                {t('societyManagement.evCharger', 'EV Charger Installation')} 
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
                 {t('societyManagement.evChargerDesc', 'Hassle-free Electric Vehicle charger setup at your personal parking spot with RWA NOC included.')}
@@ -295,7 +295,7 @@ const SocietyManagementHub = () => {
           }}>
             <div>
               <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {t('societyManagement.waterWash', 'Waterless Car Wash')} 🚗✨
+                {t('societyManagement.waterWash', 'Waterless Car Wash')} 
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
                 {t('societyManagement.waterWashDesc', 'Eco-friendly, RWA-approved daily car cleaning subscription right in your parking spot.')}

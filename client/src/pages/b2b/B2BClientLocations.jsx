@@ -199,7 +199,7 @@ const B2BClientLocations = () => {
                   </div>
                   {block.manager && (
                     <p style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginTop: '6px' }}>
-                      👤 {block.manager}
+                      {block.manager}
                     </p>
                   )}
                   <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>

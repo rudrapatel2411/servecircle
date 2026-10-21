@@ -1,31 +1,31 @@
 /**
- * ServeCircle Custom Premium Alert System
- * Overrides standard browser window.alert with a gorgeous, high-end glassmorphic modal
+ * ServeCircle Corporate Modal Alert System
+ * Professional, clean dialog system replacing default browser alert()
  */
 
-const installCustomAlert = () => {
+export const installCustomAlert = () => {
   if (typeof window === 'undefined') return;
 
-  // Add styles dynamically to document head
+  // Prevent multiple installations
+  if (window.__serveCircleAlertInstalled) return;
+  window.__serveCircleAlertInstalled = true;
+
+  // Inject CSS Styles into head
   const styleEl = document.createElement('style');
-  styleEl.textContent = `
-    /* Custom Alert Overlay Styling */
+  styleEl.id = 'servecircle-custom-alert-styles';
+  styleEl.innerHTML = `
     .custom-alert-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(15, 23, 42, 0.35);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      z-index: 100000;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 99999999;
+      padding: 16px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.15s ease;
     }
 
     .custom-alert-overlay.active {
@@ -33,116 +33,93 @@ const installCustomAlert = () => {
       pointer-events: auto;
     }
 
-    /* Custom Alert Modal Window */
     .custom-alert-modal {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 
-        0 4px 30px rgba(0, 0, 0, 0.03),
-        0 30px 60px -15px rgba(15, 23, 42, 0.18),
-        0 0 50px rgba(99, 102, 241, 0.08);
-      border-radius: 32px;
-      width: 92%;
+      background: #ffffff;
+      width: 100%;
       max-width: 440px;
-      padding: 36px 30px;
+      border-radius: 12px;
+      padding: 28px 24px 24px;
       text-align: center;
-      transform: scale(0.85) translateY(24px);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      transform: scale(0.98);
+      transition: transform 0.15s ease;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     .custom-alert-overlay.active .custom-alert-modal {
-      transform: scale(1) translateY(0);
+      transform: scale(1);
     }
 
-    /* Floating Animated Icon Box */
     .custom-alert-icon-box {
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 22px;
-      border-radius: 24px;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 18px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.3rem;
-      background: white;
-      border: 1px solid rgba(0, 0, 0, 0.03);
-      box-shadow: 
-        0 10px 25px -5px rgba(0, 0, 0, 0.05),
-        0 8px 10px -6px rgba(0, 0, 0, 0.05);
-      animation: floatIcon 3.5s ease-in-out infinite;
-      position: relative;
+      font-size: 1.5rem;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
     }
 
-    /* Dynamic Glow Ring behind icon */
-    .custom-alert-icon-box::before {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 28px;
-      background: inherit;
-      filter: blur(12px);
-      opacity: 0.15;
-      z-index: -1;
-    }
-
-    @keyframes floatIcon {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(2deg); }
-    }
-
-    /* Modal Text Content */
     .custom-alert-title {
-      font-size: 1.45rem;
-      font-weight: 900;
+      font-size: 1.15rem;
+      font-weight: 700;
       color: #0f172a;
-      margin-bottom: 12px;
-      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
 
     .custom-alert-message {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #475569;
-      line-height: 1.6;
-      margin-bottom: 28px;
-      font-weight: 500;
+      line-height: 1.55;
+      margin-bottom: 24px;
+      word-break: break-word;
     }
 
-    /* Premium Glow Button */
     .custom-alert-btn {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-      color: white;
-      border: none;
-      padding: 12px 38px;
-      border-radius: 9999px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 0.9rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      background: #1e40af;
+      color: #ffffff;
+      border: 1px solid #1e40af;
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.875rem;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+      transition: background-color 0.12s ease;
       outline: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-width: 120px;
     }
 
     .custom-alert-btn:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 14px 30px rgba(79, 70, 229, 0.5);
+      background: #1d4ed8;
+      border-color: #1d4ed8;
     }
 
     .custom-alert-btn:active {
-      transform: translateY(-1px) scale(0.98);
+      background: #1e3a8a;
     }
   `;
   document.head.appendChild(styleEl);
 
-  // Create alert DOM elements
+  // SVG Icons
+  const SVG_ICONS = {
+    success: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    danger: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    warning: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    info: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+  };
+
+  // Build Modal Elements in DOM
   const overlay = document.createElement('div');
   overlay.className = 'custom-alert-overlay';
 
@@ -160,9 +137,8 @@ const installCustomAlert = () => {
 
   const btn = document.createElement('button');
   btn.className = 'custom-alert-btn';
-  btn.textContent = 'Acknowledge';
+  btn.textContent = 'OK';
 
-  // Assemble Modal
   modal.appendChild(iconBox);
   modal.appendChild(titleEl);
   modal.appendChild(messageEl);
@@ -170,93 +146,61 @@ const installCustomAlert = () => {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // Close functionality
+  // Close logic
   const closeAlert = () => {
     overlay.classList.remove('active');
   };
 
   btn.addEventListener('click', closeAlert);
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
+    if (e.target === overlay) closeAlert();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('active')) {
       closeAlert();
     }
   });
 
-  // Keep a reference to original alert (just in case)
-  const originalAlert = window.alert;
-
   // Override window.alert
   window.alert = (message) => {
-    // String conversion
     const msgStr = String(message || '');
 
-    // Defaults
-    let emoji = 'ℹ️';
-    let title = 'System Notification';
-    let themeColor = 'rgba(99, 102, 241, 0.15)'; // Default Indigo
+    let iconHtml = SVG_ICONS.info;
+    let title = 'Notification';
+    let iconBg = '#eff6ff';
+    let iconBorder = '#bfdbfe';
 
-    // Extract potential leading emoji or parse keywords
-    if (msgStr.includes('🎉') || msgStr.toLowerCase().includes('success') || msgStr.toLowerCase().includes('complete')) {
-      emoji = '🎉';
-      title = 'Action Completed!';
-      themeColor = 'rgba(59, 125, 193, 0.2)'; // Green
-    } else if (msgStr.includes('🚨') || msgStr.toLowerCase().includes('sos') || msgStr.toLowerCase().includes('alarm')) {
-      emoji = '🚨';
-      title = 'Safety Alert Dispatch';
-      themeColor = 'rgba(239, 68, 68, 0.2)'; // Red
-    } else if (msgStr.includes('⚠️') || msgStr.toLowerCase().includes('warning') || msgStr.toLowerCase().includes('please')) {
-      emoji = '⚠️';
-      title = 'Attention Required';
-      themeColor = 'rgba(245, 158, 11, 0.2)'; // Orange
-    } else if (msgStr.includes('📞') || msgStr.toLowerCase().includes('dialing') || msgStr.toLowerCase().includes('call')) {
-      emoji = '📞';
-      title = 'Voice Call Masking';
-      themeColor = 'rgba(59, 130, 246, 0.2)'; // Blue
-    } else if (msgStr.includes('💬') || msgStr.toLowerCase().includes('chat') || msgStr.toLowerCase().includes('message')) {
-      emoji = '💬';
-      title = 'Secure Message Box';
-      themeColor = 'rgba(139, 92, 246, 0.2)'; // Purple
-    } else if (msgStr.includes('📄') || msgStr.toLowerCase().includes('download') || msgStr.toLowerCase().includes('invoice')) {
-      emoji = '📄';
-      title = 'Document Generator';
-      themeColor = 'rgba(6, 182, 212, 0.2)'; // Cyan
+    const lower = msgStr.toLowerCase();
+
+    if (lower.includes('success') || lower.includes('complete') || lower.includes('confirmed') || lower.includes('accepted')) {
+      iconHtml = SVG_ICONS.success;
+      title = 'Success';
+      iconBg = '#ecfdf5';
+      iconBorder = '#a7f3d0';
+    } else if (lower.includes('sos') || lower.includes('alarm') || lower.includes('emergency') || lower.includes('danger') || lower.includes('error') || lower.includes('failed')) {
+      iconHtml = SVG_ICONS.danger;
+      title = 'Alert';
+      iconBg = '#fef2f2';
+      iconBorder = '#fecaca';
+    } else if (lower.includes('warning') || lower.includes('attention') || lower.includes('please')) {
+      iconHtml = SVG_ICONS.warning;
+      title = 'Notice';
+      iconBg = '#fffbeb';
+      iconBorder = '#fde68a';
     }
 
-    // Strip leading emoji from message text if redundant
-    let cleanMessage = msgStr;
-    const emojiRegex = /^[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g;
-    if (emojiRegex.test(cleanMessage.substring(0, 3))) {
-      cleanMessage = cleanMessage.replace(emojiRegex, '').trim();
-    }
+    // Strip emoji characters from message text
+    let cleanMessage = msgStr.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F0A0}-\u{1F0FF}]/gu, '').trim();
 
-    // Set content and styles
-    iconBox.textContent = emoji;
-    iconBox.style.background = themeColor;
+    iconBox.innerHTML = iconHtml;
+    iconBox.style.background = iconBg;
+    iconBox.style.borderColor = iconBorder;
     titleEl.textContent = title;
     messageEl.textContent = cleanMessage;
 
-    // Apply specific gradient to button based on type
-    if (themeColor.includes('16, 185, 129')) {
-      btn.style.background = 'linear-gradient(135deg, #3b7dc1 0%, #2960a0 100%)';
-      btn.style.boxShadow = '0 8px 24px rgba(59, 125, 193, 0.35)';
-    } else if (themeColor.includes('239, 68, 68')) {
-      btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-      btn.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.35)';
-    } else if (themeColor.includes('245, 158, 11')) {
-      btn.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-      btn.style.boxShadow = '0 8px 24px rgba(245, 158, 11, 0.35)';
-    } else {
-      btn.style.background = 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)';
-      btn.style.boxShadow = '0 8px 24px rgba(79, 70, 229, 0.35)';
-    }
-
-    // Open overlay
     overlay.classList.add('active');
-    
-    // Auto-focus ok button
-    setTimeout(() => {
-      btn.focus();
-    }, 50);
+    btn.focus();
   };
 };
 

@@ -8,11 +8,89 @@
     <meta name="keywords" content="ServeCircle, home services, plumber, electrician, cleaning, events, India" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <title>ServeCircle — Har Kaam, Har Seva, Ek Circle Mein</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <title>ServeCircle — Enterprise Home & Community Services</title>
+    <style>
+      /* Pre-hydration instant loader to avoid blank screen or layout pop-in */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      .app-initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8fafc;
+        z-index: 99999;
+      }
+      .app-loader-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .app-loader-icon {
+        width: 52px;
+        height: 52px;
+        background: #1e40af;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+      }
+      .app-loader-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+      .app-loader-bar {
+        width: 140px;
+        height: 3px;
+        background: #e2e8f0;
+        border-radius: 9999px;
+        overflow: hidden;
+        position: relative;
+      }
+      .app-loader-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 40%;
+        background: #2563eb;
+        border-radius: 9999px;
+        animation: appLoaderSlide 1.2s ease-in-out infinite;
+      }
+      @keyframes appLoaderSlide {
+        0% { left: -40%; width: 30%; }
+        50% { left: 40%; width: 50%; }
+        100% { left: 100%; width: 30%; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="app-initial-loader">
+        <div class="app-loader-card">
+          <div class="app-loader-icon">SC</div>
+          <h1 class="app-loader-title">ServeCircle</h1>
+          <div class="app-loader-bar"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

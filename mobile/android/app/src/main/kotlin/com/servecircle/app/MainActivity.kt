@@ -1,4 +1,4 @@
-package com.servecircle.servecircle_mobile
+package com.servecircle.app
 
 import io.flutter.embedding.android.FlutterActivity
 

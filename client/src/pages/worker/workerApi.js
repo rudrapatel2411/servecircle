@@ -1,3 +1,5 @@
+import { isTokenExpired } from '../../utils/authSession.js';
+
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const WORKER_SESSION_KEY = 'servecircle_worker_session';
 
@@ -24,6 +26,13 @@ const apiRequest = async (path, { method = 'GET', token, body } = {}) => {
     body: body ? JSON.stringify(body) : undefined,
   });
 
+  if (response.status === 401) {
+    clearWorkerSession();
+    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+      window.dispatchEvent(new CustomEvent('servecircle:session-expired'));
+    }
+  }
+
   const data = await readJson(response);
 
   if (!response.ok) {
@@ -35,12 +44,19 @@ const apiRequest = async (path, { method = 'GET', token, body } = {}) => {
 };
 
 export const getWorkerSession = () => {
-  const raw = localStorage.getItem(WORKER_SESSION_KEY);
+  let raw = localStorage.getItem(WORKER_SESSION_KEY);
+  if (!raw) {
+    raw = localStorage.getItem('servecircle_session');
+  }
   if (!raw) return null;
 
   try {
     const parsed = JSON.parse(raw);
     if (!parsed?.token || parsed?.user?.role !== 'worker') return null;
+    if (isTokenExpired(parsed.token)) {
+      clearWorkerSession();
+      return null;
+    }
     return parsed;
   } catch {
     return null;
@@ -49,10 +65,22 @@ export const getWorkerSession = () => {
 
 export const setWorkerSession = (session) => {
   localStorage.setItem(WORKER_SESSION_KEY, JSON.stringify(session));
+  localStorage.setItem('servecircle_session', JSON.stringify(session));
 };
 
 export const clearWorkerSession = () => {
   localStorage.removeItem(WORKER_SESSION_KEY);
+  const general = localStorage.getItem('servecircle_session');
+  if (general) {
+    try {
+      const parsed = JSON.parse(general);
+      if (parsed?.user?.role === 'worker') {
+        localStorage.removeItem('servecircle_session');
+      }
+    } catch {
+      // ignore
+    }
+  }
 };
 
 export const loginWorker = async (email, password) => {

@@ -95,31 +95,42 @@ function getAnalysisParts(response) {
 function ctaLabel(analysis) {
   const skill = String(analysis?.skill || '').toLowerCase();
   const category = String(analysis?.category || '').toLowerCase();
+  const name = String(analysis?.serviceName || '').toLowerCase();
 
-  if (category.includes('travel') || skill.includes('driver')) return 'Explore Driver & Travel Hub 🚗';
-  if (category.includes('food') || skill.includes('cook') || skill.includes('chef')) return 'Explore Food & Kitchen Hub 🍳';
-  if (category.includes('pet') || skill.includes('pet')) return 'Explore Pet Services Hub 🐶';
-  if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor')) return 'Explore Health & Wellness 🩺';
-  if (category.includes('event') || skill.includes('event')) return 'Explore Events & Celebrations 🎈';
-  if (category.includes('vehicle') || skill.includes('detailer') || skill.includes('mechanic')) return 'Explore Vehicle Services 🚗';
-  if (category.includes('moving') || skill.includes('moving')) return 'Explore Relocation Hub 📦';
-  if (skill.includes('plumb')) return 'Book Plumber 🔧';
-  if (skill.includes('ac')) return 'Book AC Technician ❄️';
-  if (skill.includes('electric')) return 'Book Electrician ⚡';
-  if (skill.includes('clean')) return 'Book Cleaning Service 🧹';
+  if (category.includes('travel') || skill.includes('driver') || name.includes('driver')) return 'Book Driver & Travel 🚗';
+  if (category.includes('food') || skill.includes('cook') || skill.includes('chef') || name.includes('cook')) return 'Book Cook & Kitchen 🍳';
+  if (category.includes('pet') || skill.includes('pet') || name.includes('pet') || name.includes('dog')) return 'Book Pet Services 🐶';
+  if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor') || name.includes('doctor') || name.includes('physio')) return 'Book Healthcare at Home 🩺';
+  if (category.includes('event') || skill.includes('event') || name.includes('event') || name.includes('party')) return 'Book Events & Decor 🎈';
+  if (category.includes('vehicle') || skill.includes('detailer') || skill.includes('mechanic') || name.includes('car') || name.includes('bike')) return 'Book Vehicle Service 🚗';
+  if (category.includes('moving') || category.includes('relocation') || skill.includes('moving') || name.includes('packers') || name.includes('shifting')) return 'Book Relocation & Packers 📦';
+  if (category.includes('society') || skill.includes('security') || name.includes('security') || name.includes('guard')) return 'Book Society Security 🏢';
+  if (category.includes('it') || skill.includes('cctv') || name.includes('cctv') || name.includes('wifi')) return 'Book IT & CCTV Support 📹';
+  if (skill.includes('plumb') || name.includes('plumb') || name.includes('tap') || name.includes('leak') || name.includes('pipe')) return 'Book Plumber 🔧';
+  if (skill.includes('ac') || name.includes('ac') || name.includes('appliance') || name.includes('fridge') || name.includes('washing')) return 'Book AC Technician ❄️';
+  if (skill.includes('electric') || name.includes('electric') || name.includes('wire') || name.includes('switch') || name.includes('fan')) return 'Book Electrician ⚡';
+  if (skill.includes('clean') || name.includes('clean') || name.includes('deep clean') || name.includes('sofa')) return 'Book Cleaning Service 🧹';
+  if (skill.includes('paint') || name.includes('paint')) return 'Book Painter 🎨';
+  if (skill.includes('carpent') || name.includes('carpent') || name.includes('lock')) return 'Book Carpenter 🪚';
+  if (skill.includes('pest') || name.includes('pest')) return 'Book Pest Control 🐜';
+  if (skill.includes('garden') || name.includes('garden')) return 'Book Gardener 🌿';
 
-  return 'Explore Service Menu ➔';
+  return `Book ${analysis?.serviceName || 'Service'} ➔`;
 }
 
 const QUICK_SUGGESTIONS = [
   { label: '❄️ AC Repair / Cooling', prompt: 'AC is blowing warm air, need urgent cooling repair' },
   { label: '🔧 Tap & Pipe Leakage', prompt: 'Bathroom pipe se water leak ho raha hai, plumber chahiye' },
   { label: '⚡ Fan / Switch Repair', prompt: 'Ceiling fan is not running and switch board sparked' },
+  { label: '📦 Packers & Movers', prompt: 'Need packers and movers for 2BHK house shifting' },
   { label: '🚗 Need a Driver', prompt: 'Need a verified driver for outstation travel' },
   { label: '🐶 Pet Grooming / Bath', prompt: 'Need dog grooming and bathing service at home' },
   { label: '🧹 Deep Cleaning', prompt: 'Need complete deep cleaning for 2BHK flat' },
+  { label: '🛋️ Sofa & Carpet Clean', prompt: 'Need sofa shampoo and carpet dry cleaning at home' },
   { label: '🚪 Door Lock / Carpentry', prompt: 'Main door wooden lock is jammed, need carpenter' },
   { label: '🍳 Home Cook / Chef', prompt: 'Need daily home cook service for family meals' },
+  { label: '📹 CCTV & IT Setup', prompt: 'Need CCTV camera installation and WiFi setup' },
+  { label: '🩺 Doctor / Physio', prompt: 'Need doctor consultation and physiotherapy at home' },
 ];
 
 const CustomerAIChat = () => {
@@ -364,12 +375,10 @@ const CustomerAIChat = () => {
   };
 
   const bookRecommended = (analysis) => {
-    if (analysis.targetHubRoute) {
-      navigate(analysis.targetHubRoute);
-      return;
-    }
-    const price = analysis.rawPrice || 499;
-    navigate(`/customer/book?service=${encodeURIComponent(analysis.serviceName)}&category=${encodeURIComponent(analysis.category)}&price=${price}`);
+    const serviceName = analysis?.serviceName || 'Home Service';
+    const category = analysis?.category || 'Home Repairs';
+    const price = analysis?.rawPrice || 499;
+    navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=${encodeURIComponent(category)}&price=${price}`);
   };
 
   return (
@@ -460,9 +469,27 @@ const CustomerAIChat = () => {
                       ))}
                     </div>
                   )}
-                  <button className="ai-book-btn" onClick={() => bookRecommended(message.analysis)}>
-                    {ctaLabel(message.analysis)}
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                    <button
+                      type="button"
+                      className="ai-book-btn"
+                      style={{ flex: 1, marginTop: 0 }}
+                      onClick={() => bookRecommended(message.analysis)}
+                    >
+                      {ctaLabel(message.analysis)}
+                    </button>
+                    {message.analysis.targetHubRoute && message.analysis.targetHubRoute !== '/customer/services' && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        style={{ padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap' }}
+                        onClick={() => navigate(message.analysis.targetHubRoute)}
+                        title="View Category Hub"
+                      >
+                        Hub ➔
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
               {!message.analysis && message.followUpQuestions?.length > 0 && (

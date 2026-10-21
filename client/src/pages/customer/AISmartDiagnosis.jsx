@@ -226,18 +226,14 @@ const AISmartDiagnosis = () => {
   };
 
   const navigateToRecommended = () => {
-    if (result?.targetHubRoute) {
-      navigate(result.targetHubRoute);
-    } else {
-      navigate(`/customer/book?service=${encodeURIComponent(result.service)}&category=${encodeURIComponent(result.category)}&price=${result.price}`);
-    }
+    navigate(`/customer/book?service=${encodeURIComponent(result.service)}&category=${encodeURIComponent(result.category)}&price=${result.price}`);
   };
 
   return (
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.aiDiagnosis')} 🤖</h1>
+          <h1 className="page-title">{t('customer.aiDiagnosis')}</h1>
           <p className="page-subtitle">Upload a photo/video or select a common issue to diagnose instantly with ServeCircle AI.</p>
         </div>
       </div>
@@ -403,7 +399,7 @@ const AISmartDiagnosis = () => {
               >
                 {apiError && (
                   <div style={{ background: '#fff7f7', border: '1px solid #fecaca', color: '#b91c1c', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.8rem' }}>
-                    ⚠️ {apiError}
+                    {apiError}
                   </div>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--gray-100)', paddingBottom: '16px' }}>
@@ -442,7 +438,7 @@ const AISmartDiagnosis = () => {
                     <div className="card" style={{ border: '1.5px solid var(--primary-200)', background: 'var(--primary-50)', padding: '20px', textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
                         <h4 style={{ fontSize: '0.8rem', color: 'var(--primary-800)', textTransform: 'uppercase', fontWeight: 700 }}>MATCHED SERVICE</h4>
-                        <div style={{ fontSize: '2.5rem', margin: '14px 0' }}>🔧</div>
+                        <div style={{ fontSize: '2.5rem', margin: '14px 0', color: 'var(--primary-600)' }}>✓</div>
                         <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800 }}>{result.service}</h3>
                         <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '6px' }}>Category: {result.category}</p>
                       </div>
@@ -452,13 +448,26 @@ const AISmartDiagnosis = () => {
                         <span style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--primary-700)' }}>₹{result.price}</span>
                       </div>
 
-                      <button
-                        className="btn btn-primary"
-                        style={{ width: '100%', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                        onClick={navigateToRecommended}
-                      >
-                        {result.targetHubRoute ? 'Explore Service Hub ➔' : 'Book Recommended Service'} <HiOutlineArrowRight />
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          className="btn btn-primary"
+                          style={{ flex: 1, padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                          onClick={navigateToRecommended}
+                        >
+                          Book Recommended Service <HiOutlineArrowRight />
+                        </button>
+                        {result.targetHubRoute && result.targetHubRoute !== '/customer/services' && (
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            style={{ padding: '12px 16px', fontWeight: 600, whiteSpace: 'nowrap' }}
+                            onClick={() => navigate(result.targetHubRoute)}
+                            title="View Category Hub"
+                          >
+                            Hub ➔
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

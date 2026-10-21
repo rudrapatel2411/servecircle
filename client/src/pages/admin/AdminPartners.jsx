@@ -35,7 +35,7 @@ const AdminPartners = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.partners')} 🤝</h1>
+          <h1 className="page-title">{t('admin.partners')}</h1>
           <p className="page-subtitle">{partners.length} partners & NGOs</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}><HiOutlinePlusCircle /> Add Partner</button>

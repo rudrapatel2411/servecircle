@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineWallet, HiOutlineArrowUpCircle, HiOutlineArrowDownCircle,
   HiOutlinePlusCircle, HiOutlineGift, HiOutlineBanknotes, HiOutlineSparkles
 } from 'react-icons/hi2';
+import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -27,24 +28,93 @@ const typeConfig = {
 
 const CustomerWallet = () => {
   const { t } = useTranslation();
+  const session = getSession();
+  const token = session?.token;
+  const user = session?.user;
+
   const [showTopup, setShowTopup] = useState(false);
   const [topupAmount, setTopupAmount] = useState('');
-  const [walletBalance, setWalletBalance] = useState(2450);
+  const [walletBalance, setWalletBalance] = useState(() => user?.walletBalance ?? 2450);
   const [transactions, setTransactions] = useState(mockTransactions);
+  const [isLiveSource, setIsLiveSource] = useState(false);
 
   // ServePoints states
   const [servePoints, setServePoints] = useState(450); // Starting points
   const pointsRedeemRate = 1; // 1 Point = 1 Rupee
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchWallet = async () => {
+      if (!token) return;
+      try {
+        const data = await requestApi('/wallet', { token });
+        if (isMounted && data) {
+          if (typeof data.balance === 'number') {
+            setWalletBalance(data.balance);
+            setIsLiveSource(true);
+          }
+          if (Array.isArray(data.transactions) && data.transactions.length > 0) {
+            const mapped = data.transactions.map((tx, idx) => ({
+              id: tx._id || idx,
+              type: tx.type || (tx.amount > 0 ? 'topup' : 'payment'),
+              amount: tx.amount,
+              balance: tx.balanceAfter ?? data.balance,
+              desc: tx.description || 'Wallet transaction',
+              date: tx.createdAt
+                ? new Date(tx.createdAt).toLocaleString([], { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : new Date().toLocaleString(),
+              method: tx.paymentMethod || 'Wallet',
+            }));
+            setTransactions(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn('Backend wallet unavailable, using demo balance:', err);
+      }
+    };
+
+    fetchWallet();
+    return () => { isMounted = false; };
+  }, [token]);
 
   const totalSpent = transactions.filter(t => t.type === 'payment').reduce((s, t) => s + Math.abs(t.amount), 0);
   const totalEarned = transactions.filter(t => ['topup', 'bonus', 'refund', 'points_redeem'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
 
   const quickAmounts = [500, 1000, 2000, 5000];
 
-  const handleTopup = (e) => {
+  const handleTopup = async (e) => {
     e.preventDefault();
     const amt = parseInt(topupAmount);
     if (isNaN(amt) || amt <= 0) return;
+
+    if (token) {
+      try {
+        const res = await requestApi('/wallet/topup', {
+          method: 'POST',
+          token,
+          body: { amount: amt, paymentMethod: 'UPI' },
+        });
+        if (res && typeof res.balance === 'number') {
+          setWalletBalance(res.balance);
+          setIsLiveSource(true);
+          const newTx = {
+            id: res.transaction?._id || Date.now(),
+            type: 'topup',
+            amount: amt,
+            balance: res.balance,
+            desc: res.transaction?.description || `Wallet top-up via UPI`,
+            date: new Date().toLocaleString([], { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            method: 'UPI',
+          };
+          setTransactions((prev) => [newTx, ...prev]);
+          setTopupAmount('');
+          setShowTopup(false);
+          return;
+        }
+      } catch (err) {
+        console.warn('Real topup failed, applying to local demo state:', err);
+      }
+    }
 
     const newTxn = {
       id: Date.now(),
@@ -83,7 +153,7 @@ const CustomerWallet = () => {
 
   // Determine loyalty tier badge
   const getTierDetails = (points) => {
-    if (points >= 1000) return { name: 'Diamond Pro', color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.1)', nextTier: 'Max Tier Achieved! 🏆' };
+    if (points >= 1000) return { name: 'Diamond Pro', color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.1)', nextTier: 'Max Tier Achieved' };
     if (points >= 500) return { name: 'Gold Tier', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', nextTier: `${1000 - points} points to Diamond Pro` };
     if (points >= 200) return { name: 'Silver Tier', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)', nextTier: `${500 - points} points to Gold` };
     return { name: 'Bronze Tier', color: '#b45309', bg: 'rgba(180, 83, 9, 0.1)', nextTier: `${200 - points} points to Silver` };
@@ -95,7 +165,7 @@ const CustomerWallet = () => {
     <div className="page-content" style={{ minHeight: '92vh' }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.wallet')} 💰</h1>
+          <h1 className="page-title">{t('customer.wallet')}</h1>
           <p className="page-subtitle">Manage your wallet balance, transaction ledger, and premium loyalty ServePoints.</p>
         </div>
       </div>
@@ -109,13 +179,24 @@ const CustomerWallet = () => {
         {/* Wallet Balance Card */}
         <div className="wallet-hero" style={{ height: '100%', margin: 0 }}>
           <div className="wallet-balance-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <div className="wallet-balance-top">
-                <HiOutlineWallet className="wallet-icon" />
-                <span className="wallet-label">Available Balance</span>
+              <div className="wallet-balance-top" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <HiOutlineWallet className="wallet-icon" />
+                  <span className="wallet-label">Available Balance</span>
+                </div>
+                <span style={{
+                  fontSize: '0.68rem',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  background: isLiveSource ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
+                  color: isLiveSource ? '#16a34a' : '#ca8a04',
+                  border: `1px solid ${isLiveSource ? '#bbf7d0' : '#fef08a'}`
+                }}>
+                  {isLiveSource ? '● Live Backend' : '○ Demo Balance'}
+                </span>
               </div>
               <div className="wallet-amount" style={{ fontSize: '2.5rem' }}>₹{walletBalance.toLocaleString()}</div>
-            </div>
             <div className="wallet-stats-row" style={{ margin: '16px 0' }}>
               <div className="wallet-stat">
                 <span className="wallet-stat-label">Total Added</span>
@@ -134,9 +215,7 @@ const CustomerWallet = () => {
 
         {/* ServePoints Loyalty Ledger */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.45)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--navy-900)', border: '1px solid var(--navy-800)',
           borderRadius: 'var(--radius-xl)',
           padding: '24px',
           color: 'white',
@@ -184,7 +263,7 @@ const CustomerWallet = () => {
               marginBottom: '20px'
             }}>
               ⭐ <strong>Earn 50 Points</strong> on every booking completed!<br />
-              🎁 <strong>Instant Cash Redeem</strong>: 1 Point = ₹1 directly into Wallet balance.
+              <strong>Instant Cash Redeem</strong>: 1 Point = ₹1 directly into Wallet balance.
             </div>
           </div>
 
@@ -210,7 +289,7 @@ const CustomerWallet = () => {
                 gap: '8px'
               }}
             >
-              🚀 Redeem 100 Points for ₹100 Cashback
+              Redeem 100 Points for ₹100 Cashback
             </button>
             {servePoints < 100 && (
               <span style={{ display: 'block', textAlign: 'center', fontSize: '0.68rem', color: '#64748b', marginTop: '6px' }}>

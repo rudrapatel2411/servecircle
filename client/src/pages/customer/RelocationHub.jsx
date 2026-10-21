@@ -180,11 +180,11 @@ const RelocationHub = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[
-              { id: 'sofa', name: 'Luxury Sofa / Couch 🛋️' },
-              { id: 'doubleBed', name: 'Double Bed Set 🛏️' },
-              { id: 'refrigerator', name: 'Smart Refrigerator ❄️' },
-              { id: 'wardrobe', name: 'Modular Wardrobe 🚪' },
-              { id: 'box', name: 'Heavy Carton Box 📦' }
+              { id: 'sofa', name: 'Luxury Sofa / Couch ' },
+              { id: 'doubleBed', name: 'Double Bed Set ' },
+              { id: 'refrigerator', name: 'Smart Refrigerator ' },
+              { id: 'wardrobe', name: 'Modular Wardrobe ' },
+              { id: 'box', name: 'Heavy Carton Box ' }
             ].map((item) => (
               <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.9rem', color: 'var(--navy-700)', fontWeight: 650 }}>{t('relocation.' + item.id)}</span>
@@ -353,7 +353,7 @@ const RelocationHub = () => {
       }}>
         {/* Vehicle Relocation */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🚗🏍️</div>
+          
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.vehicleRelocation')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.vehicleRelocationDesc')}</p>
           <Link to="/customer/vehicle-demo" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: '#1d4ed8', borderColor: '#1d4ed8', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', background: '#dbeafe' }}>
@@ -363,7 +363,7 @@ const RelocationHub = () => {
 
         {/* Pet Relocation */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🐶✈️</div>
+          
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.petRelocation')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.petRelocationDesc')}</p>
           <Link to="/customer/pet-demo" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: '#c026d3', borderColor: '#c026d3', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', background: '#fae8ff' }}>
@@ -373,7 +373,7 @@ const RelocationHub = () => {
 
         {/* Junk Removal */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>♻️🛋️</div>
+          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>♻️</div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.scrapRemoval')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.scrapRemovalDesc')}</p>
           <Link to={`/customer/book?service=${encodeURIComponent('Junk Removal Evaluation')}&category=relocation&price=0`} className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>

@@ -79,7 +79,7 @@ const VehicleRelocationDemo = () => {
           <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <div style={{ width: '48px', height: '48px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#2563eb' }}>
-                🚗
+                
               </div>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Vehicle Details & Inspection</h2>
@@ -98,7 +98,7 @@ const VehicleRelocationDemo = () => {
                   padding: '16px', fontSize: '1.2rem', fontWeight: 800
                 }}
               >
-                🚘 Car
+                Car
               </button>
               <button 
                 className="btn"
@@ -110,7 +110,7 @@ const VehicleRelocationDemo = () => {
                   padding: '16px', fontSize: '1.2rem', fontWeight: 800
                 }}
               >
-                🏍️ Bike
+                Bike
               </button>
             </div>
 
@@ -162,7 +162,7 @@ const VehicleRelocationDemo = () => {
           <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <div style={{ width: '48px', height: '48px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#2563eb' }}>
-                🚛
+                
               </div>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Select Carrier Type</h2>
@@ -172,7 +172,7 @@ const VehicleRelocationDemo = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
-                { id: 'open', title: 'Open Carrier', desc: 'Standard multi-car transport trailer.', price: 4999, icon: '🚛' },
+                { id: 'open', title: 'Open Carrier', desc: 'Standard multi-car transport trailer.', price: 4999, icon: '' },
                 { id: 'closed', title: 'Closed AC Container', desc: 'Fully enclosed. Safe from weather and dust.', price: 9999, icon: '📦' },
                 { id: 'vip', title: 'VIP Dedicated Flatbed', desc: 'Single-vehicle direct transport. Fastest.', price: 15999, icon: '🚀' }
               ].map(mode => (

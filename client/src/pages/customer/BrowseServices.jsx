@@ -35,7 +35,7 @@ const categoriesList = [
 const bundlesData = [
   {
     id: 'new-home-setup',
-    title: 'New Home Setup Combo 🏡',
+    title: 'New Home Setup Combo',
     description: 'Wi-Fi mesh setup, smart doorbell install, and deep cleaning for move-in readiness.',
     price: 3299,
     originalPrice: 3999,
@@ -45,7 +45,7 @@ const bundlesData = [
   },
   {
     id: 'monsoon-prep',
-    title: 'Monsoon Waterproofing Prep 🌧️',
+    title: 'Monsoon Waterproofing Prep',
     description: 'Balcony/roof elastomeric compound waterproofing, drainage check, and monsoon AC tuning.',
     price: 2999,
     originalPrice: 3499,
@@ -55,7 +55,7 @@ const bundlesData = [
   },
   {
     id: 'senior-care-pack',
-    title: 'Senior Citizen Support Combo 👵🏼',
+    title: 'Senior Citizen Support Combo',
     description: 'Weekly elder care attendant visits + interactive senior smartphone/computer support coaching.',
     price: 1199,
     originalPrice: 1398,
@@ -165,7 +165,7 @@ const BrowseServices = () => {
           gap: '12px',
           boxShadow: 'var(--shadow-sm)'
         }}>
-          <span style={{ fontSize: '1.2rem', color: 'var(--gray-400)' }}>🤖</span>
+          <span style={{ fontSize: '1.2rem', color: 'var(--primary-600)', display: 'flex', alignItems: 'center' }}><HiOutlineCpuChip /></span>
           <input
             type="text"
             placeholder={t('browseServices.conciergePlaceholder', "Tell our AI Concierge what you need (e.g. My AC is not cooling)...")}
@@ -221,7 +221,7 @@ const BrowseServices = () => {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h4 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--navy-900)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', background: 'var(--primary-100)', color: 'var(--primary-700)', borderRadius: '50%', fontSize: '0.8rem' }}>✨</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', background: 'var(--primary-50)', color: 'var(--primary-700)', borderRadius: '50%', fontSize: '0.8rem' }}><HiOutlineCpuChip /></span>
                 AI Concierge Suggestions
               </h4>
               <span style={{ fontSize: '0.75rem', color: 'var(--primary-600)', background: 'var(--primary-50)', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>Auto-Routing</span>
@@ -231,11 +231,11 @@ const BrowseServices = () => {
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
               {[
-                { icon: '❄️', label: 'My AC is making a weird noise' },
-                { icon: '💧', label: 'Bathroom tap is leaking' },
-                { icon: '🧹', label: 'I need a deep clean before the festival' },
-                { icon: '🔌', label: 'Power went out in one room' },
-                { icon: '💅', label: 'Book a relaxing spa at home' }
+                { icon: '', label: 'My AC is making a weird noise' },
+                { icon: '', label: 'Bathroom tap is leaking' },
+                { icon: '', label: 'I need a deep clean before the festival' },
+                { icon: '', label: 'Power went out in one room' },
+                { icon: '', label: 'Book a relaxing spa at home' }
               ].map((tag, i) => (
                 <button
                   key={i}
@@ -265,7 +265,7 @@ const BrowseServices = () => {
       {/* ===== UNIQUE PREMIUM DIFFERENTIATION WIDGETS ===== */}
       <div style={{ marginBottom: '40px' }}>
         <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>🌟</span> {t('browseServices.smartFeatures', 'Custom Diagnostic & Smart Features')}
+          {t('browseServices.smartFeatures', 'Custom Diagnostic & Smart Features')}
         </h3>
         <div style={{
           display: 'grid',
@@ -323,7 +323,7 @@ const BrowseServices = () => {
       {/* ===== CATEGORIES DIRECTORY ===== */}
       <div style={{ marginBottom: '40px' }}>
         <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '18px' }}>
-          📂 {t('browseServices.categoryDirectories', 'Category Directories')}
+          {t('browseServices.categoryDirectories', 'Category Directories')}
         </h3>
         <div className="category-directories-grid">
           {sortedCategories.map((cat) => (
@@ -384,7 +384,7 @@ const BrowseServices = () => {
       <div style={{ marginBottom: '40px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
           <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800 }}>
-            📦 Super Saver Combo Bundles
+            Super Saver Combo Bundles
           </h3>
           <span style={{ fontSize: '0.8rem', color: 'var(--primary-600)', fontWeight: 700 }}>Flat discounts applied</span>
         </div>

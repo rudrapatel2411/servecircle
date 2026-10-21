@@ -90,7 +90,7 @@ const B2BClientInvoices = () => {
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button className="btn btn-outline" onClick={() => alert('Exporting all invoices to CSV...')}>
-            📊 Export CSV
+            Export CSV
           </button>
           <button className="btn btn-primary" onClick={() => { setPdfFileName('Consolidated_Statement_Jul_2026.pdf'); setActivePdfInvoice(null); setPdfModalOpen(true); }}>
             <HiOutlineDocumentArrowDown style={{ verticalAlign: 'middle', marginRight: '6px' }} />

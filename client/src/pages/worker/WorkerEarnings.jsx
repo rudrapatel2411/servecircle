@@ -148,7 +148,7 @@ const WorkerEarnings = () => {
 
       {withdrawSuccess && (
         <div className="card" style={{ borderColor: '#86efac', background: '#f0fdf4', color: '#166534', padding: '16px' }}>
-          ✅ <strong>Success!</strong> Your instant withdrawal request of {formatInr(pendingPayout)} has been processed. The amount will reflect in your registered bank account within 2 hours.
+          <strong>Success!</strong> Your instant withdrawal request of {formatInr(pendingPayout)} has been processed. The amount will reflect in your registered bank account within 2 hours.
         </div>
       )}
 

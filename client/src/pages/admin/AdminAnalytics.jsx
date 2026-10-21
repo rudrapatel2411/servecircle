@@ -38,7 +38,7 @@ const AdminAnalytics = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('admin.analytics')} 📊</h1>
+          <h1 className="page-title">{t('admin.analytics')}</h1>
           <p className="page-subtitle">Platform performance and insights</p>
         </div>
       </div>

@@ -30,7 +30,7 @@ import './WorkerPages.css';
 
 const WorkerDashboard = () => {
   const { t } = useTranslation();
-  const { token, user, isAuthenticated, workerStatus, workerTier, signIn, authError, authLoading } = useWorkerAuth();
+  const { token, user, isAuthenticated, workerStatus, workerTier, signIn, authError, authLoading, isDemoMode } = useWorkerAuth();
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -103,6 +103,7 @@ const WorkerDashboard = () => {
   // Shadow jobs done: from user profile in real app
   const shadowJobsDone = user?.shadowJobsDone ?? 8;
   const shadowJobsTarget = 15;
+  const currentStep = completedJobs.length >= 50 ? 5 : completedJobs.length >= 25 ? 4 : completedJobs.length >= 10 ? 3 : completedJobs.length >= 5 ? 2 : 1;
 
   if (!isAuthenticated) {
     return <WorkerAuthPrompt onSignIn={signIn} loading={authLoading} error={authError} currentUser={user} workerStatus={workerStatus} />;
@@ -124,7 +125,7 @@ const WorkerDashboard = () => {
           color: 'white',
           fontSize: '0.82rem',
         }}>
-          <span style={{ fontSize: '1rem' }}>🔧</span>
+          
           <span><strong>Demo Mode:</strong> Showing mock data. Login with <code style={{ background: 'rgba(255,255,255,0.15)', padding: '1px 6px', borderRadius: '4px' }}>ramesh@test.com / test123</code> to use real data.</span>
         </div>
       )}
@@ -134,14 +135,14 @@ const WorkerDashboard = () => {
           <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {t('common.welcome', 'Welcome')}, {user?.name || 'Worker'}
             <span style={{ background: tier.bg, color: tier.color, fontSize: '0.7rem', padding: '3px 12px', borderRadius: '100px', fontWeight: 800, letterSpacing: '0.04em' }}>
-              {tier.emoji} {tier.label}
+              {tier.label}
             </span>
           </h1>
           <p className="page-subtitle">You have {pendingJobs.length} new job requests waiting for you.</p>
         </div>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setShowIdCardModal(true)}>
-            🪪 View ID Card
+            View ID Card
           </button>
           <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
         </div>
@@ -162,7 +163,7 @@ const WorkerDashboard = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <HiOutlineAcademicCap style={{ fontSize: '1.8rem', opacity: 0.9 }} />
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>🎓 Rookie Mode — Shadow Training Active</div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Rookie Mode — Shadow Training Active</div>
               <div style={{ fontSize: '0.78rem', opacity: 0.85 }}>You will be sent with a Senior Pro for your first {shadowJobsTarget} jobs. Complete them to unlock Solo Jobs.</div>
             </div>
           </div>
@@ -225,7 +226,7 @@ const WorkerDashboard = () => {
         }}>
           <HiOutlineTrophy style={{ fontSize: '1.6rem', flexShrink: 0 }} />
           <div>
-            <strong>🏆 Senior Pro — Top Tier!</strong>
+            <strong>Senior Pro — Top Tier</strong>
             <div style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '2px' }}>You can now mentor Rookies and earn ₹50 extra per shadow job. Keep your rating above 4.5.</div>
           </div>
         </div>
@@ -241,7 +242,7 @@ const WorkerDashboard = () => {
       <div className="empowerment-card">
         <div className="empowerment-content">
           <span className="empowerment-tag">Women Empowerment Initiative</span>
-          <h3>Verified & Safe Workplaces 🛡️</h3>
+          <h3>Verified & Safe Workplaces</h3>
           <p>
             You are enrolled in our safe zone program. You will only receive job requests from Aadhar-verified customers, ensuring 100% safety and dignity. Perfect for home tutors, beauticians, and tailors.
           </p>
@@ -305,7 +306,7 @@ const WorkerDashboard = () => {
       <div className="dash-section" style={{ margin: 0 }}>
         <div className="dash-section-header">
           <h3 className="dash-section-title">{t('worker.jobRequests', 'Pending Job Requests')}</h3>
-          <Link to="/worker/jobs" className="dash-view-all">{t('common.viewAll', 'View All')} +</Link>
+          <Link to="/worker/jobs" className="dash-view-all">{t('common.viewAll', 'View All')} →</Link>
         </div>
 
         {pendingJobs.length === 0 && (

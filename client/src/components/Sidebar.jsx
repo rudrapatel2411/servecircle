@@ -18,13 +18,10 @@ import {
   HiOutlineMapPin,
   HiOutlineUserGroup,
   HiOutlineReceiptPercent,
-  HiOutlineWrench,
-  HiOutlineTruck,
-  HiOutlineSparkles,
-  HiOutlineHeart,
-  HiOutlineMap,
-  HiOutlineClock,
-  HiOutlineShieldCheck,
+  HiOutlineSquares2X2,
+  HiOutlineMagnifyingGlass,
+  HiOutlineCalendarDays,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
 import './Sidebar.css';
@@ -39,6 +36,7 @@ const generalServicesCategories = generalServicesData.map(c => ({
   color: c.color,
   comingSoon: c.comingSoon
 }));
+
 /* =====================================================
    NON-CUSTOMER PANEL SIDEBARS
    ===================================================== */
@@ -50,7 +48,7 @@ const sidebarConfig = {
     { path: '/worker/earnings', icon: <HiOutlineBanknotes />, labelKey: 'worker.earnings' },
     { path: '/worker/training', icon: <HiOutlineAcademicCap />, labelKey: 'worker.training' },
     { path: '/worker/profile', icon: <HiOutlineUserCircle />, labelKey: 'worker.profile' },
-    { path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#f97316' }} />, labelKey: 'customer.becomeAPro' },
+    { path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro' },
   ],
   admin: [
     { path: '/admin', icon: <HiOutlineHome />, labelKey: 'admin.dashboard', end: true },
@@ -61,7 +59,7 @@ const sidebarConfig = {
     { path: '/admin/complaints', icon: <HiOutlineExclamationTriangle />, labelKey: 'admin.complaints' },
     { path: '/admin/partners', icon: <HiOutlineBuildingOffice2 />, labelKey: 'admin.partners' },
     { path: '/admin/notifications', icon: <HiOutlineBell />, labelKey: 'admin.notifications' },
-    { path: '/admin/b2b', icon: <HiOutlineDocumentText style={{ color: '#8b5cf6' }} />, labelKey: 'admin.b2bPortal' },
+    { path: '/admin/b2b', icon: <HiOutlineDocumentText style={{ color: '#2563eb' }} />, labelKey: 'admin.b2bPortal' },
     { path: '/admin/b2b/contracts', icon: <HiOutlineDocumentText />, labelKey: 'b2b.contracts' },
     { path: '/admin/b2b/locations', icon: <HiOutlineMapPin />, labelKey: 'b2b.locations' },
     { path: '/admin/b2b/invoices', icon: <HiOutlineReceiptPercent />, labelKey: 'b2b.invoices' },
@@ -94,30 +92,24 @@ const GeneralServicesSidebar = () => {
     <aside className="sidebar sidebar--category">
       <div className="sidebar-header">
         <div className="category-sidebar-title">
-          <span className="category-sidebar-icon">🛍️</span>
+          <span className="category-sidebar-icon">
+            <HiOutlineSquares2X2 size={20} />
+          </span>
           <div>
             <div className="category-sidebar-heading">General Services</div>
             <div className="category-sidebar-sub">Choose a category</div>
           </div>
         </div>
-
       </div>
 
       <nav className="sidebar-nav">
         <div className="category-nav-label">Categories</div>
         {generalServicesCategories.map((cat) => {
-          const isActive = location.pathname.startsWith(cat.path) ||
-            (cat.path === '/customer/travel-commute' && location.pathname === '/customer/travel-commute') ||
-            (cat.path === '/customer/food-kitchen' && location.pathname === '/customer/food-kitchen') ||
-            (cat.path === '/customer/pet-services' && location.pathname === '/customer/pet-services') ||
-            (cat.path === '/customer/health-wellness' && location.pathname === '/customer/health-wellness') ||
-            (cat.path === '/customer/society-management' && location.pathname === '/customer/society-management');
-
           if (cat.comingSoon) {
             return (
               <div
                 key={cat.path}
-                className={`category-sidebar-link category-sidebar-link--disabled`}
+                className="category-sidebar-link category-sidebar-link--disabled"
                 title="Coming Soon"
               >
                 <span className="category-sidebar-link-icon" style={{ color: cat.color }}>
@@ -164,7 +156,6 @@ const Sidebar = ({ panel }) => {
   const links = sidebarConfig[panel] || [];
   const panelInfo = panelLabels[panel];
 
-  // Customer panel: sidebar rendered conditionally by DashboardLayout, not here
   if (panel === 'customer') {
     return <GeneralServicesSidebar />;
   }
@@ -177,8 +168,8 @@ const Sidebar = ({ panel }) => {
           <span className="logo-text">ServeCircle</span>
         </NavLink>
         <div className="sidebar-panel-badge">
-          <span>{panelInfo?.icon}</span>
-          <span>{panelInfo?.label}</span>
+          <span className="panel-badge-abbr">{panelInfo?.icon}</span>
+          <span className="panel-badge-name">{panelInfo?.label}</span>
         </div>
       </div>
 

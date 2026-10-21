@@ -222,21 +222,21 @@ const B2BClientContracts = () => {
               }}>
                 {t('b2bClient.contracts.detail.serviceHistory')}
               </button>
-              <button className="btn btn-outline" onClick={() => alert(`📄 ${t('b2bClient.contracts.detail.pdfGenerating').replace('Contract PDF', `"${selectedContract.name}" PDF`)}`)}>
+              <button className="btn btn-outline" onClick={() => alert(`${t('b2bClient.contracts.detail.pdfGenerating').replace('Contract PDF', `"${selectedContract.name}" PDF`)}`)}>
                 {t('b2bClient.contracts.detail.downloadPdf')}
               </button>
               {selectedContract.vendor && (
-                <button className="btn btn-outline" onClick={() => alert(`📞 ${t('b2bClient.contracts.detail.connectingVendor').replace('Connecting you to vendor', `Connecting you to ${selectedContract.vendor}`)}`)}>
+                <button className="btn btn-outline" onClick={() => alert(`${t('b2bClient.contracts.detail.connectingVendor').replace('Connecting you to vendor', `Connecting you to ${selectedContract.vendor}`)}`)}>
                   {t('b2bClient.contracts.detail.contactVendor')}
                 </button>
               )}
               {selectedContract.status === 'renewal_due' && (
-                <button className="btn btn-primary" style={{ background: '#eab308' }} onClick={() => alert(`🔄 ${t('b2bClient.contracts.renewalRequestSent')} "${selectedContract.name}". ${t('b2bClient.contracts.salesTeamContact')}`)}>
+                <button className="btn btn-primary" style={{ background: '#eab308' }} onClick={() => alert(`${t('b2bClient.contracts.renewalRequestSent')} "${selectedContract.name}". ${t('b2bClient.contracts.salesTeamContact')}`)}>
                   {t('b2bClient.contracts.detail.renewContract')}
                 </button>
               )}
               {selectedContract.status === 'active' && (
-                <button className="btn btn-outline" style={{ color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => alert(`⚠️ ${t('b2bClient.contracts.detail.cancelRequest')} ("${selectedContract.name}")`)}>
+                <button className="btn btn-outline" style={{ color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => alert(`${t('b2bClient.contracts.detail.cancelRequest')} ("${selectedContract.name}")`)}>
                   {t('b2bClient.contracts.detail.requestCancellation')}
                 </button>
               )}

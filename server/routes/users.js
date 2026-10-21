@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
@@ -15,8 +16,7 @@ import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js
 import { ensureWorkerMetrics, ensureCustomerMetrics } from '../services/metricsService.js';
 import { captureSnapshot } from '../services/historyService.js';
 import { updateTrustVerification, syncTrustProfile } from '../services/featureService.js';
-
-
+import { DEMO_USERS, IN_MEMORY_USERS, findFallbackUserById } from '../utils/demoAuthStore.js';
 
 const router = express.Router();
 
@@ -25,8 +25,13 @@ router.get(
   '/me',
   protect,
   asyncHandler(async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+      const fallback = findFallbackUserById(req.user._id) || req.user;
+      const { password, ...safeUser } = fallback;
+      return res.json(safeUser);
+    }
     const user = await User.findById(req.user._id).select('-password');
-    res.json(user);
+    res.json(user || req.user);
   })
 );
 
@@ -42,12 +47,19 @@ router.put(
       if (req.body[field] !== undefined) updates[field] = req.body[field];
     });
 
+    if (mongoose.connection.readyState !== 1) {
+      const fallback = findFallbackUserById(req.user._id) || req.user;
+      Object.assign(fallback, updates);
+      Object.assign(req.user, updates);
+      const { password, ...safeUser } = fallback;
+      return res.json(safeUser);
+    }
+
     const user = await User.findByIdAndUpdate(req.user._id, updates, { new: true }).select('-password');
     logEvent({ eventType: EVENT_TYPES.USER_PROFILE_UPDATED, entityType: ENTITY_TYPES.USER, entityId: req.user._id, actorId: req.user._id, actorRole: req.user.role, metadata: updates, ...req.reqCtx });
     res.json(user);
   })
 );
-
 
 // PUT change password
 router.put(
@@ -56,8 +68,17 @@ router.put(
   validateChangePassword,
   asyncHandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user._id);
 
+    if (mongoose.connection.readyState !== 1) {
+      const fallback = findFallbackUserById(req.user._id) || req.user;
+      if (fallback.password && fallback.password !== currentPassword) {
+        throw new AppError('Current password is incorrect', StatusCodes.BAD_REQUEST);
+      }
+      fallback.password = newPassword;
+      return res.json({ message: 'Password updated successfully' });
+    }
+
+    const user = await User.findById(req.user._id);
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) throw new AppError('Current password is incorrect', StatusCodes.BAD_REQUEST);
 
@@ -74,6 +95,15 @@ router.put(
   validateSubscription,
   asyncHandler(async (req, res) => {
     const { plan } = req.body;
+
+    if (mongoose.connection.readyState !== 1) {
+      const fallback = findFallbackUserById(req.user._id) || req.user;
+      fallback.subscription = plan;
+      req.user.subscription = plan;
+      const { password, ...safeUser } = fallback;
+      return res.json(safeUser);
+    }
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { subscription: plan },
@@ -92,6 +122,23 @@ router.get(
   authorize('admin'),
   asyncHandler(async (req, res) => {
     const { role, search, page = 1, limit = 20 } = req.query;
+
+    if (mongoose.connection.readyState !== 1) {
+      let list = [...DEMO_USERS, ...IN_MEMORY_USERS].map(({ password, ...u }) => u);
+      if (role) list = list.filter((u) => u.role === role);
+      if (search) {
+        const q = search.toLowerCase();
+        list = list.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
+      }
+      const total = list.length;
+      return res.json({
+        users: list.slice((page - 1) * limit, page * limit),
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / limit) || 1,
+      });
+    }
+
     const query = {};
     if (role) query.role = role;
     if (search) {
@@ -120,6 +167,15 @@ router.get(
   authorize('admin'),
   asyncHandler(async (req, res) => {
     const { status } = req.query;
+
+    if (mongoose.connection.readyState !== 1) {
+      let workers = [...DEMO_USERS, ...IN_MEMORY_USERS]
+        .filter((u) => u.role === 'worker')
+        .map(({ password, ...u }) => u);
+      if (status) workers = workers.filter((w) => w.workerStatus === status);
+      return res.json(workers);
+    }
+
     const query = { role: 'worker' };
     if (status) query.workerStatus = status;
     const workers = await User.find(query).select('-password').sort('-createdAt');
@@ -136,6 +192,18 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { workerStatus, workerAdminNote } = req.body;
 
+    if (mongoose.connection.readyState !== 1) {
+      const worker = findFallbackUserById(req.params.id);
+      if (!worker) throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
+      worker.workerStatus = workerStatus;
+      if (workerAdminNote !== undefined) worker.workerAdminNote = workerAdminNote;
+      if (['approved_rookie', 'approved_junior', 'approved_senior'].includes(workerStatus)) {
+        worker.isVerified = true;
+      }
+      const { password, ...safeUser } = worker;
+      return res.json(safeUser);
+    }
+
     const updates = { workerStatus };
     if (workerAdminNote !== undefined) updates.workerAdminNote = workerAdminNote;
     if (['approved_rookie', 'approved_junior', 'approved_senior'].includes(workerStatus)) {
@@ -150,7 +218,6 @@ router.patch(
 
     if (!worker) throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
 
-    // Phase 2
     if (['approved_rookie', 'approved_junior', 'approved_senior'].includes(workerStatus)) {
       ensureWorkerMetrics(worker._id);
     }
@@ -162,8 +229,6 @@ router.patch(
   })
 );
 
-
-
 // PUT verify worker (admin) - legacy route kept for compatibility
 router.put(
   '/:id/verify',
@@ -172,6 +237,15 @@ router.put(
   validateMongoIdParam('id'),
   asyncHandler(async (req, res) => {
     const { isVerified } = req.body;
+
+    if (mongoose.connection.readyState !== 1) {
+      const worker = findFallbackUserById(req.params.id);
+      if (!worker) throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
+      worker.isVerified = isVerified;
+      const { password, ...safeUser } = worker;
+      return res.json(safeUser);
+    }
+
     const worker = await User.findOneAndUpdate(
       { _id: req.params.id, role: 'worker' },
       { isVerified },
@@ -190,6 +264,14 @@ router.delete(
   authorize('admin'),
   validateMongoIdParam('id'),
   asyncHandler(async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+      const user = findFallbackUserById(req.params.id);
+      if (!user) throw new AppError('User not found', StatusCodes.NOT_FOUND);
+      user.isDeleted = true;
+      user.deletedAt = new Date();
+      return res.json({ message: 'User soft-deleted successfully', userId: user._id });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { $set: { isDeleted: true, deletedAt: new Date() } },
@@ -201,7 +283,6 @@ router.delete(
   })
 );
 
-
 // POST /users/:id/restore — restore a soft-deleted user (admin only)
 router.post(
   '/:id/restore',
@@ -209,7 +290,15 @@ router.post(
   authorize('admin'),
   validateMongoIdParam('id'),
   asyncHandler(async (req, res) => {
-    // Use collection directly to bypass the soft-delete pre-find Mongoose hook
+    if (mongoose.connection.readyState !== 1) {
+      const user = findFallbackUserById(req.params.id);
+      if (!user) throw new AppError('Deleted user not found', StatusCodes.NOT_FOUND);
+      user.isDeleted = false;
+      user.deletedAt = null;
+      const { password, ...safeUser } = user;
+      return res.json({ message: 'User restored successfully', user: safeUser });
+    }
+
     const { ObjectId } = (await import('mongodb')).default;
     const result = await User.collection.findOneAndUpdate(
       { _id: new ObjectId(req.params.id), isDeleted: true },
@@ -223,7 +312,4 @@ router.post(
   })
 );
 
-
-
 export default router;
-

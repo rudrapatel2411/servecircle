@@ -92,7 +92,7 @@ const VideoConsultation = () => {
 
     setBookedConsultations((prev) => [newBooking, ...prev]);
     setSelectedTimeSlot('');
-    alert(`🎉 ${t('videoConsultation.bookedSuccess', 'Video consultation successfully scheduled!')}`);
+    alert(`${t('videoConsultation.bookedSuccess', 'Video consultation successfully scheduled!')}`);
   };
 
   const startMockCall = (consultant) => {
@@ -152,7 +152,7 @@ const VideoConsultation = () => {
           >
             <div className="page-header">
               <div>
-                <h1 className="page-title">{t('customer.videoConsultation')} 📹</h1>
+                <h1 className="page-title">{t('customer.videoConsultation')}</h1>
                 <p className="page-subtitle">{t('videoConsultation.certifiedSubtitle')}</p>
               </div>
             </div>
@@ -262,7 +262,7 @@ const VideoConsultation = () => {
                               <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{getConsultantName(bc.consultant)}</h4>
                               <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>{getConsultantSpecialty(bc.consultant)}</p>
                               <div style={{ display: 'flex', gap: '10px', marginTop: '6px', fontSize: '0.75rem', color: 'var(--gray-600)' }}>
-                                <span>📅 {getBookingDateLabel(bc.date)}</span>
+                                <span>{getBookingDateLabel(bc.date)}</span>
                                 <span>⏰ {bc.time}</span>
                               </div>
                             </div>
@@ -373,7 +373,7 @@ const VideoConsultation = () => {
                   )}
 
                   <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem' }}>
-                    Rudra ({t('videoConsultation.you')}) {micActive ? '🎙️' : '🔇'}
+                    Rudra ({t('videoConsultation.you')}) {micActive ? 'Active' : 'Muted'}
                   </div>
                 </div>
 

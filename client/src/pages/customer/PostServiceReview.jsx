@@ -56,7 +56,7 @@ const PostServiceReview = () => {
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
       <div className="page-header" style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h1 className="page-title">{t('postReview.serviceCompleted')} 🎉</h1>
+        <h1 className="page-title">{t('postReview.serviceCompleted')}</h1>
         <p className="page-subtitle">{t('postReview.serviceCompletedDesc')}</p>
       </div>
 
@@ -172,7 +172,7 @@ const PostServiceReview = () => {
               <div style={{ position: 'relative', zIndex: 1 }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <HiOutlineHeart style={{ color: tip > 0 ? '#3b7dc1' : 'var(--danger)', fontSize: tip > 0 ? '1.4rem' : '1.2rem', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)', transform: tip > 0 ? 'scale(1.2)' : 'scale(1)' }} /> 
-                  {tip > 0 ? `Thank you for tipping ₹${tip}! 🎉` : t('postReview.addTip', 'Add a tip for the professional')}
+                  {tip > 0 ? `Thank you for tipping ₹${tip}!` : t('postReview.addTip', 'Add a tip for the professional')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginBottom: '16px' }}>100% of your tip goes directly to {worker}.</p>
                 
@@ -208,7 +208,7 @@ const PostServiceReview = () => {
                         transform: tip === amt ? 'scale(1.1) translateY(-4px)' : 'scale(1)'
                       }}
                     >
-                      {tip === amt ? '❤️ ' : ''}₹{amt}
+                      ₹{amt}
                     </button>
                   ))}
                 </div>

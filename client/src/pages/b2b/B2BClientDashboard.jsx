@@ -55,7 +55,7 @@ const B2BClientDashboard = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title" style={{ fontSize: '1.6rem' }}>
-            {t('b2bClient.dashboard.greeting')} {greeting}, Rajesh 👋
+            {t('b2bClient.dashboard.greeting')} {greeting}, Rajesh
           </h1>
           <p className="page-subtitle">
             {t('b2bClient.dashboard.welcomeTo')} <strong>Green Valley Society</strong> {t('b2bClient.dashboard.servicePortal')}
@@ -146,7 +146,7 @@ const B2BClientDashboard = () => {
                     background: svc.status === 'confirmed' ? '#dcfce7' : '#fef9c3',
                     color: svc.status === 'confirmed' ? '#166534' : '#854d0e',
                   }}>
-                    {svc.status === 'confirmed' ? `✓ ${t('b2bClient.common.confirmed')}` : `⏳ ${t('b2bClient.common.pending')}`}
+                    {svc.status === 'confirmed' ? `✓ ${t('b2bClient.common.confirmed')}` : `${t('b2bClient.common.pending')}`}
                   </span>
                 </div>
               </div>

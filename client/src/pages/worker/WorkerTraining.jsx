@@ -173,7 +173,7 @@ const WorkerTraining = () => {
       {completedJobs < 5 && (
         <div className="card" style={{ background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', borderColor: '#f59e0b', color: '#b45309' }}>
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 8px 0', fontSize: '1.2rem', color: '#92400e' }}>
-            🎉 First Job Initiative: 0% Commission
+            First Job Initiative: 0% Commission
           </h3>
           <p style={{ margin: 0, fontSize: '0.95rem' }}>
             You have completed {completedJobs} out of 5 jobs. Your first 5 jobs on ServeCircle are completely commission-free! Keep up the great work and build your portfolio.

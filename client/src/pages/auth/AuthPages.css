@@ -1,16 +1,12 @@
-/* =========================================
-   Auth Pages — Emerald Neomorphism
-   Login / Register
-   ========================================= */
+/* ==========================================================================
+   Auth Pages — Classic & Professional
+   ========================================================================== */
 
 .auth-page {
   min-height: calc(100vh - var(--navbar-height));
   padding-top: calc(var(--navbar-height) + 32px);
-  padding-bottom: 40px;
-  background-color: var(--neo-bg);
-  background-image: var(--bg-pattern-image);
-  background-size: 100% 100%, 100% 100%, 100% 100%;
-  background-attachment: fixed;
+  padding-bottom: 48px;
+  background-color: #f8fafc;
 }
 
 .auth-grid {
@@ -19,40 +15,43 @@
   gap: 24px;
 }
 
-/* Neomorphic panel */
+/* Classic clean panel */
 .auth-panel {
-  background: var(--neo-bg);
-  border: none;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: 32px;
+  background: #ffffff;
+  border: 1px solid var(--navy-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 36px;
 }
 
 .auth-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  background: var(--neo-bg);
-  box-shadow: var(--shadow-sm);
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-50);
+  border: 1px solid var(--primary-100);
   color: var(--primary-700);
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.4px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
 
 .auth-title {
-  font-size: 1.9rem;
+  font-size: 1.75rem;
+  font-weight: 800;
   line-height: 1.2;
   margin-bottom: 8px;
   color: var(--navy-900);
+  letter-spacing: -0.02em;
 }
 
 .auth-subtitle {
-  color: var(--gray-500);
+  color: var(--navy-500);
+  font-size: 0.9375rem;
   margin-bottom: 24px;
 }
 
@@ -60,28 +59,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 12px;
   gap: 12px;
   flex-wrap: wrap;
 }
 
 .auth-hint {
-  color: var(--gray-500);
+  color: var(--navy-500);
   font-size: 0.85rem;
 }
 
 .auth-alt-link {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.85rem;
-  color: var(--primary-600);
-}
-
-.auth-alt-link:hover {
   color: var(--primary-700);
 }
 
+.auth-alt-link:hover {
+  color: var(--primary-800);
+}
+
 .auth-side-title {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
   margin-bottom: 12px;
   color: var(--navy-900);
 }
@@ -92,26 +92,20 @@
   gap: 12px;
 }
 
-/* Neomorphic role card */
+/* Clean role card */
 .auth-role-card {
-  border: none;
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--navy-200);
+  border-radius: var(--radius-md);
   padding: 16px;
-  background: var(--neo-bg);
-  box-shadow: var(--shadow-sm);
+  background: #ffffff;
   text-decoration: none;
   color: inherit;
-  transition: all var(--transition-base);
+  transition: all var(--transition-fast);
 }
 
 .auth-role-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.auth-role-card:active {
-  box-shadow: var(--shadow-inset);
-  transform: translateY(0);
+  border-color: var(--primary-300);
+  background: var(--navy-50);
 }
 
 .auth-role-head {
@@ -123,35 +117,35 @@
 
 .auth-role-name {
   font-weight: 700;
-  color: var(--navy-800);
+  color: var(--navy-900);
+  font-size: 0.95rem;
 }
 
 .auth-role-text {
-  color: var(--gray-500);
-  font-size: 0.85rem;
+  color: var(--navy-500);
+  font-size: 0.8125rem;
 }
 
 .auth-note {
   margin-top: 16px;
-  font-size: 0.82rem;
-  color: var(--gray-500);
-  line-height: 1.6;
+  font-size: 0.8125rem;
+  color: var(--navy-500);
+  line-height: 1.5;
 }
 
 /* Error state */
 .auth-error {
   margin-top: -4px;
-  margin-bottom: 14px;
-  color: #991b1b;
-  background: rgba(239, 68, 68, 0.08);
-  border: none;
+  margin-bottom: 16px;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-inset);
   padding: 12px 14px;
   font-size: 0.85rem;
 }
 
-/* ── Responsive ── */
+/* Responsive */
 @media (max-width: 980px) {
   .auth-grid {
     grid-template-columns: 1fr;
@@ -160,50 +154,16 @@
 
 @media (max-width: 640px) {
   .auth-page {
-    padding-top: calc(var(--navbar-height) + 18px);
+    padding-top: calc(var(--navbar-height) + 16px);
   }
 
   .auth-panel {
-    padding: 22px;
+    padding: 24px 20px;
   }
 }
-
-/* ==========================================================================
-   MOBILE RESPONSIVENESS ADDITIONS � Auth Pages
-   ========================================================================== */
 
 @media (max-width: 480px) {
-  .auth-page {
-    padding-top: calc(var(--navbar-height) + 16px);
-    padding-bottom: 32px;
-  }
-
-  .auth-panel {
-    padding: 20px 16px;
-  }
-
   .auth-title {
-    font-size: 1.5rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .auth-panel {
-    padding: 16px 12px;
-  }
-
-  .auth-title {
-    font-size: 1.3rem;
-  }
-
-  .auth-kicker {
-    font-size: 0.68rem;
-    padding: 5px 10px;
-  }
-
-  .auth-form-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    font-size: 1.45rem;
   }
 }

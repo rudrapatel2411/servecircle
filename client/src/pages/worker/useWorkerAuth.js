@@ -7,13 +7,12 @@ import {
   setWorkerSession,
 } from './workerApi';
 
-// ─── APPROVED STATUSES ────────────────────────────────────────────────────────
+// APPROVED STATUSES
 // Only these statuses can access the worker panel
-const APPROVED_STATUSES = ['approved_rookie', 'approved_junior', 'approved_senior'];
+const APPROVED_STATUSES = ['approved_rookie', 'approved_junior', 'approved_senior', 'approved', 'active'];
 
 // Return true only for the real demo token so real logins are never affected.
 const isDemoToken = (token) => token === 'demo-token-worker';
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const useWorkerAuth = () => {
   const [session, setSession] = useState(() => getWorkerSession());
@@ -38,9 +37,12 @@ export const useWorkerAuth = () => {
   const workerTier = useMemo(() => {
     if (!user) return null;
     switch (user.workerStatus) {
-      case 'approved_rookie': return { label: 'Rookie (Trainee)', color: '#dc2626', bg: '#fee2e2', emoji: '🎓', canSoloJob: false };
-      case 'approved_junior': return { label: 'Junior Pro', color: '#2563eb', bg: '#dbeafe', emoji: '⭐', canSoloJob: true };
-      case 'approved_senior': return { label: 'Senior Pro', color: '#7c3aed', bg: '#ede9fe', emoji: '🏆', canSoloJob: true };
+      case 'approved_rookie': return { label: 'Rookie (Trainee)', color: '#dc2626', bg: '#fee2e2', canSoloJob: false };
+      case 'approved_junior': return { label: 'Junior Pro', color: '#2563eb', bg: '#dbeafe', canSoloJob: true };
+      case 'approved_senior': return { label: 'Senior Pro', color: '#7c3aed', bg: '#ede9fe', canSoloJob: true };
+      case 'approved':
+      case 'active':
+        return { label: 'Verified Pro', color: '#16a34a', bg: '#dcfce7', canSoloJob: true };
       default: return null;
     }
   }, [user]);

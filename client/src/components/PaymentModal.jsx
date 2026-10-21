@@ -149,7 +149,7 @@ const PaymentModal = ({ isOpen, onClose, onSuccess, amount = 0 }) => {
         <div style={{ padding: '20px' }}>
           {error && (
             <div style={{ color: 'var(--danger, #ef4444)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '16px', textAlign: 'center', background: '#fef2f2', padding: '8px', borderRadius: '8px' }}>
-              ⚠️ {error}
+              {error}
             </div>
           )}
 

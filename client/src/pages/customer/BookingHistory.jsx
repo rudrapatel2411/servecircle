@@ -70,7 +70,7 @@ const BookingHistory = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.myBookings')} 📋</h1>
+          <h1 className="page-title">{t('customer.myBookings')}</h1>
           <p className="page-subtitle">{bookings.length} total bookings</p>
         </div>
       </div>
@@ -157,13 +157,13 @@ const BookingHistory = () => {
                   </div>
                   {['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status) && (
                     <div className="booking-actions">
-                      <Link to={`/customer/live-tracking?bookingId=${encodeURIComponent(booking.id)}&service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-outline">Track Live 📍</Link>
+                      <Link to={`/customer/live-tracking?bookingId=${encodeURIComponent(booking.id)}&service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-outline">Track Live</Link>
                       <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: '#fecaca' }}>Cancel</button>
                     </div>
                   )}
                   {booking.status === 'completed' && !booking.rating && (
                     <div className="booking-actions">
-                      <button className="btn btn-sm btn-primary">Leave Review ⭐</button>
+                      <Link to={`/customer/review/${encodeURIComponent(booking.id)}?service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-primary">Leave Review ⭐</Link>
                     </div>
                   )}
                 </div>

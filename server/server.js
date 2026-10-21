@@ -94,7 +94,8 @@ const connectDB = async () => {
     console.log(`✅ Local MongoDB Connected Successfully (Database: ${mongoose.connection.name})`);
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
-    console.log('⚠️ Running in demo fallback mode');
+    mongoose.set('bufferCommands', false);
+    console.log('⚠️ Running in resilient demo fallback mode (bufferCommands disabled for instant responses)');
   }
 };
 

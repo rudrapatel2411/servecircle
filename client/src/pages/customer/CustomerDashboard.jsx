@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   HiOutlineCalendarDays, HiOutlineWallet, HiOutlineClipboardDocumentCheck,
   HiOutlineStar, HiOutlineWrench, HiOutlineSparkles, HiOutlineTruck, HiOutlineBolt,
-  HiOutlineClock, HiOutlineArrowRight, HiOutlineArrowUpRight, HiOutlineMapPin
+  HiOutlineClock, HiOutlineArrowRight, HiOutlineArrowUpRight, HiOutlineMapPin, HiOutlineInbox
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 
@@ -92,8 +92,8 @@ const CustomerDashboard = () => {
       <div className="dash-section" style={{ margin: 0 }}>
         <div className="dash-section-header">
           <div>
-            <h3 className="dash-section-title">
-              <span style={{ fontSize: '1.4rem' }}>⚡</span> Express Booking
+            <h3 className="dash-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <HiOutlineBolt style={{ color: 'var(--primary-700)' }} /> Express Booking
             </h3>
             <p style={{ margin: '4px 0 0 0', color: 'var(--navy-500)', fontSize: '0.85rem', fontWeight: 500 }}>
               Book instant-matching services in under 15 seconds.
@@ -202,7 +202,7 @@ const CustomerDashboard = () => {
             ))
           ) : (
             <div className="empty-tracking-card" style={{ maxWidth: '640px' }}>
-              <span className="empty-tracking-icon">📭</span>
+              <span className="empty-tracking-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--navy-400)' }}><HiOutlineInbox size={32} /></span>
               <span className="empty-tracking-text">No active tracking alerts right now.</span>
             </div>
           )}

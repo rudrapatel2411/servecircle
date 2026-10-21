@@ -1,6 +1,6 @@
-/* =========================================
-   Navbar — Emerald Neomorphism
-   ========================================= */
+/* ==========================================================================
+   Navbar — Classic & Professional
+   ========================================================================== */
 
 .navbar {
   position: fixed;
@@ -9,16 +9,13 @@
   right: 0;
   z-index: 1000;
   height: var(--navbar-height);
-  transition: all var(--transition-base);
-  background: transparent;
+  background: #ffffff;
+  border-bottom: 1px solid var(--navy-200);
+  transition: box-shadow var(--transition-fast);
 }
 
 .navbar-scrolled {
-  background: rgba(237, 247, 243, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 20px rgba(59, 125, 193, 0.08),
-              0 1px 0 rgba(255,255,255,0.8);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
 .navbar-inner {
@@ -26,121 +23,119 @@
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  gap: 32px;
+  gap: 28px;
+  min-width: 0;
 }
 
-/* ── Logo ── */
+/* Brand Logo */
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 10px;
   font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.3rem;
-  color: var(--navy-800);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--navy-900);
   text-decoration: none;
   flex-shrink: 0;
 }
 
-.logo-icon {
-  width: 38px;
-  height: 38px;
+.navbar-logo-icon {
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
-  background: var(--gradient-primary);
-  color: white;
+  background: var(--primary-700);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.35),
-              -2px -2px 6px rgba(255, 255, 255, 0.8);
-  transition: all var(--transition-base);
-}
-
-.navbar-logo:hover .logo-icon {
-  box-shadow: 5px 5px 12px rgba(59, 125, 193, 0.4),
-              -3px -3px 8px rgba(255, 255, 255, 0.9);
-  transform: rotate(-5deg) scale(1.05);
+  flex-shrink: 0;
 }
 
 .logo-text {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--navy-900);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
-/* ── Nav Links ── */
+/* Nav Links */
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .navbar-links a {
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--gray-600);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--navy-600);
   transition: all var(--transition-fast);
   text-decoration: none;
 }
 
 .navbar-links a:hover {
-  color: var(--primary-700);
-  background: var(--primary-50);
+  color: var(--navy-900);
+  background: var(--navy-100);
 }
 
 .navbar-links a.active {
-  color: white;
-  background: var(--gradient-primary);
-  box-shadow: 3px 3px 8px rgba(59, 125, 193, 0.3);
+  color: var(--primary-700);
+  background: var(--primary-50);
+  font-weight: 600;
 }
 
-/* ── Actions ── */
+/* Actions */
 .navbar-actions {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .navbar-toggle {
   display: none;
-  background: var(--neo-bg);
-  border: none;
-  color: var(--primary-700);
+  background: #ffffff;
+  border: 1px solid var(--navy-300);
+  color: var(--navy-700);
   cursor: pointer;
   padding: 6px;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .navbar-toggle:hover {
-  box-shadow: var(--shadow-md);
+  background: var(--navy-50);
 }
 
-/* ── Mobile ── */
-@media (max-width: 768px) {
+/* Mobile Responsive */
+@media (max-width: 820px) {
+  .navbar-inner {
+    gap: 10px;
+  }
+
+  .navbar-actions {
+    gap: 6px;
+  }
+
+  .navbar-actions .btn {
+    display: none !important;
+  }
+
   .navbar-links {
     display: none;
     position: absolute;
     top: var(--navbar-height);
     left: 0;
     right: 0;
-    background: rgba(237, 247, 243, 0.97);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
     flex-direction: column;
-    padding: 8px 12px 16px;
-    box-shadow: 0 8px 24px rgba(59, 125, 193, 0.12);
-    border-bottom: 1px solid var(--primary-100);
-    gap: 2px;
-    /* Prevent overflow on mobile */
-    overflow: hidden;
+    padding: 12px 16px 20px;
+    border-bottom: 1px solid var(--navy-200);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.08);
+    gap: 4px;
   }
 
   .navbar-links-open {
@@ -149,37 +144,17 @@
 
   .navbar-links a {
     width: 100%;
-    padding: 12px 16px;
-    /* Ensure minimum tap target height */
-    min-height: 44px;
-    display: flex;
-    align-items: center;
+    padding: 10px 14px;
     border-radius: var(--radius-md);
   }
 
   .navbar-toggle {
-    display: block;
-    /* Increase touch target */
-    min-width: 40px;
-    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Hide CTA buttons, but keep smaller elements like language toggle visible */
   .navbar-actions .btn {
     display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar-inner {
-    gap: 8px;
-  }
-
-  .logo-text {
-    /* Allow hiding logo text on very small phones to save space */
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }

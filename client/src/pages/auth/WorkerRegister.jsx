@@ -13,6 +13,8 @@ import {
   HiOutlineShieldCheck,
   HiOutlineMapPin,
   HiOutlineCalendarDays,
+  HiOutlineTv,
+  HiOutlineCube,
 } from 'react-icons/hi2';
 import './AuthPages.css';
 
@@ -23,46 +25,46 @@ const SERVICE_CATEGORIES = [
   {
     id: 'home_repairs',
     label: 'Home Repairs',
-    icon: '🔧',
+    icon: HiOutlineWrenchScrewdriver,
     skills: ['AC Repair & Service', 'Electrician', 'Plumber', 'Carpenter', 'Painter', 'Mason / Construction'],
   },
   {
     id: 'cleaning',
     label: 'Cleaning & Hygiene',
-    icon: '🧹',
+    icon: HiOutlineSparkles,
     skills: ['Home Deep Cleaning', 'Sofa / Carpet Cleaning', 'Pest Control', 'Water Tank Cleaning'],
   },
   {
     id: 'vehicle',
     label: 'Vehicle Services',
-    icon: '🚗',
+    icon: HiOutlineTruck,
     skills: ['Car Washing & Detailing', 'Bike Repair', 'Car Mechanic', 'Tyre Puncture'],
   },
   {
     id: 'beauty',
     label: 'Beauty & Wellness',
-    icon: '💆',
+    icon: HiOutlineHeart,
     skills: ['Mens Salon / Barber', 'Ladies Beauty', 'Massage Therapy', 'Yoga Instructor'],
   },
   {
     id: 'appliances',
     label: 'Appliance Repair',
-    icon: '📺',
+    icon: HiOutlineTv,
     skills: ['Washing Machine Repair', 'Refrigerator Repair', 'Microwave / Oven Repair', 'TV / LED Repair'],
   },
   {
     id: 'shifting',
     label: 'Shifting & Relocation',
-    icon: '📦',
+    icon: HiOutlineCube,
     skills: ['Packer & Mover', 'Loading / Unloading', 'Furniture Assembly'],
   },
 ];
 
 const EXPERIENCE_OPTIONS = [
-  { value: 'fresher', label: '🎓 Fresher (No experience — will learn)' },
+  { value: 'fresher', label: 'Fresher (No experience — will learn)' },
   { value: '1_2_years', label: '⭐ 1–2 Years Experience' },
-  { value: '3_5_years', label: '💼 3–5 Years Experience' },
-  { value: '5_plus', label: '🏆 5+ Years (Expert Level)' },
+  { value: '3_5_years', label: '3–5 Years Experience' },
+  { value: '5_plus', label: '5+ Years (Expert Level)' },
 ];
 
 // ── Main Component ──────────────────────────────────────────────────
@@ -141,7 +143,7 @@ const WorkerRegister = () => {
     return (
       <div className="auth-page">
         <div className="container" style={{ maxWidth: '560px', textAlign: 'center', padding: '60px 20px' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎉</div>
+          <div style={{ fontSize: '3rem', marginBottom: '16px', color: 'var(--primary-600)' }}>✓</div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--navy-900)', marginBottom: '12px' }}>
             Application Submitted!
           </h1>
@@ -150,7 +152,7 @@ const WorkerRegister = () => {
           </p>
 
           <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '12px', padding: '20px', marginBottom: '28px', textAlign: 'left' }}>
-            <h3 style={{ fontWeight: 800, color: '#92400e', marginBottom: '12px', fontSize: '0.95rem' }}>📋 What Happens Next?</h3>
+            <h3 style={{ fontWeight: 800, color: '#92400e', marginBottom: '12px', fontSize: '0.95rem' }}>What Happens Next?</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
                 { emoji: '1️⃣', text: 'Visit ServeCircle Hub with your Aadhar Card / ID proof.' },
@@ -286,7 +288,7 @@ const WorkerRegister = () => {
                         gap: '8px',
                       }}
                     >
-                      <span style={{ fontSize: '1.1rem' }}>{cat.icon}</span>
+                      <span style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center' }}><cat.icon size={20} /></span>
                       {cat.label}
                     </button>
                   ))}
@@ -358,7 +360,7 @@ const WorkerRegister = () => {
                 </div>
               </div>
 
-              {error && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '12px' }}>❌ {error}</p>}
+              {error && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '12px' }}>{error}</p>}
 
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button className="btn btn-outline" onClick={() => setStep(1)} style={{ flex: 1 }}>
@@ -382,11 +384,11 @@ const WorkerRegister = () => {
           <h2 className="auth-side-title">How the Process Works</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[
-              { icon: '📝', title: 'Register Online', desc: 'Fill your details and choose your service category & skills.' },
-              { icon: '🏢', title: 'Visit ServeCircle Hub', desc: 'Come to our office with your Aadhar Card for a short interview and skill test.' },
-              { icon: '✅', title: 'Get Approved', desc: 'Our team verifies your skills and activates your account within 24 hours.' },
-              { icon: '🎓', title: 'Rookie Training (Freshers)', desc: 'If new, you\'ll shadow a Senior Pro for 15 jobs — you\'ll earn a small stipend during this phase.' },
-              { icon: '💰', title: 'Start Earning Solo', desc: 'Once training is done, you receive jobs directly and keep your earnings minus the platform commission.' },
+              { icon: '1', title: 'Register Online', desc: 'Fill your details and choose your service category & skills.' },
+              { icon: '2', title: 'Visit ServeCircle Hub', desc: 'Come to our office with your Aadhar Card for a short interview and skill test.' },
+              { icon: '3', title: 'Get Approved', desc: 'Our team verifies your skills and activates your account within 24 hours.' },
+              { icon: '4', title: 'Rookie Training (Freshers)', desc: 'If new, you\'ll shadow a Senior Pro for 15 jobs — you\'ll earn a small stipend during this phase.' },
+              { icon: '5', title: 'Start Earning Solo', desc: 'Once training is done, you receive jobs directly and keep your earnings minus the platform commission.' },
             ].map((item) => (
               <div key={item.title} className="auth-role-card">
                 <div className="auth-role-head">
