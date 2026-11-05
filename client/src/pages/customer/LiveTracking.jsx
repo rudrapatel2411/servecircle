@@ -4,7 +4,10 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlinePhone, HiOutlineChatBubbleLeftRight,
-  HiOutlineClock, HiOutlineShieldCheck
+  HiOutlineClock, HiOutlineShieldCheck, HiOutlineMapPin,
+  HiOutlineClipboardDocumentList, HiOutlineMegaphone,
+  HiOutlineLockClosed, HiOutlineCheckCircle, HiOutlineCheck,
+  HiOutlineBriefcase, HiOutlineAcademicCap
 } from 'react-icons/hi2';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -22,12 +25,12 @@ const statusToStep = (status) => {
     case 'on_the_way':
       return { step: 1, text: 'Worker is en route to your location.', eta: 8, otp: false };
     case 'arrived':
-      return { step: 2, text: 'Arrived at your doorstep! 🚪', eta: 0, otp: true };
+      return { step: 2, text: 'Arrived at your doorstep!', eta: 0, otp: true };
     case 'in_progress':
     case 'started':
-      return { step: 3, text: 'Job in progress... 🛠️', eta: 0, otp: false };
+      return { step: 3, text: 'Job in progress...', eta: 0, otp: false };
     case 'completed':
-      return { step: 4, text: 'Job completed successfully! 🎉', eta: 0, otp: false };
+      return { step: 4, text: 'Job completed successfully!', eta: 0, otp: false };
     default:
       return { step: 0, text: 'Professional is dispatched and preparing tools.', eta: 15, otp: false };
   }
@@ -167,7 +170,7 @@ const LiveTracking = () => {
       const hubLng = userLng - 0.03;
 
       // Custom DivIcons
-      const createPremiumIcon = (emoji, color1, color2, isWorker = false) => L.divIcon({
+      const createPremiumIcon = (iconSvg, color1, color2, isWorker = false, label = '') => L.divIcon({
         className: 'custom-div-icon',
         html: `<div style="
           width: ${isWorker ? '52px' : '48px'}; 
@@ -177,20 +180,23 @@ const LiveTracking = () => {
           border: 3px solid white;
           display: flex; align-items: center; justify-content: center;
           box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-          font-size: ${isWorker ? '1.4rem' : '1.2rem'};
           ${isWorker ? 'animation: pulse 1.5s infinite;' : ''}
         ">
-          ${emoji}
+          ${iconSvg}
         </div>
-        ${!isWorker ? `<span style="font-size: 0.75rem; font-weight: 800; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); color: var(--navy-900); display: inline-block; margin-top: 6px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">${emoji === '🏢' ? 'Hub' : 'Your Location'}</span>` : ''}
+        ${!isWorker ? `<span style="font-size: 0.75rem; font-weight: 800; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); color: var(--navy-900); display: inline-block; margin-top: 6px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: absolute; top: 100%; left: 50%; transform: translateX(-50%);">${label}</span>` : ''}
         `,
         iconSize: isWorker ? [52, 52] : [48, 48],
         iconAnchor: isWorker ? [26, 26] : [24, 24],
       });
 
-      const hubIcon = createPremiumIcon('🏢', '#cbd5e1', '#94a3b8');
-      const homeIcon = createPremiumIcon('🏠', 'var(--navy-700)', 'var(--navy-900)');
-      const workerIcon = createPremiumIcon('👷', '#60a5fa', '#2563eb', true);
+      const hubSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:white;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>`;
+      const homeSvg = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:white;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+      const workerSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:white;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>`;
+
+      const hubIcon = createPremiumIcon(hubSvg, '#64748b', '#475569', false, 'Hub');
+      const homeIcon = createPremiumIcon(homeSvg, 'var(--navy-700)', 'var(--navy-900)', false, 'Your Location');
+      const workerIcon = createPremiumIcon(workerSvg, '#60a5fa', '#2563eb', true);
 
       // Add Hub and Home markers
       L.marker([hubLat, hubLng], { icon: hubIcon }).addTo(mapRef.current);
@@ -254,16 +260,16 @@ const LiveTracking = () => {
            // Arrived
            setActiveStep(2);
            setEta(0);
-           setCurrentStatusText('Arrived at your doorstep! 🚪');
+           setCurrentStatusText('Arrived at your doorstep!');
            setOtpVisible(true);
            
            // Simulate job progression after arrival
            setTimeout(() => {
              setActiveStep(3); // Job Started
-             setCurrentStatusText('Job in progress... 🛠️');
+             setCurrentStatusText('Job in progress...');
              setTimeout(() => {
                setActiveStep(4); // Finished
-               setCurrentStatusText('Job completed successfully! 🎉');
+               setCurrentStatusText('Job completed successfully!');
                setOtpVisible(false);
              }, 4000);
            }, 4000);
@@ -326,7 +332,9 @@ const LiveTracking = () => {
       <div className="page-header" style={{ marginBottom: '16px', flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px' }}>{t('liveTracking.title', 'Live Map Tracking')} 📍</h1>
+            <h1 className="page-title" style={{ fontSize: '1.6rem', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {t('liveTracking.title', 'Live Map Tracking')} <HiOutlineMapPin style={{ color: 'var(--primary-600)' }} />
+            </h1>
             <span style={{
               fontSize: '0.72rem',
               padding: '3px 10px',
@@ -342,7 +350,7 @@ const LiveTracking = () => {
           <p className="page-subtitle" style={{ fontSize: '0.85rem' }}>{t('liveTracking.subtitle', 'Watch your service expert arrive in real-time.')}</p>
         </div>
         <Link to="/customer/bookings" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
-          📋 View My Bookings
+          <HiOutlineClipboardDocumentList /> View My Bookings
         </Link>
       </div>
 
@@ -397,8 +405,8 @@ const LiveTracking = () => {
             <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
               Service Status updates
             </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', marginBottom: '16px', fontWeight: 600 }}>
-              📢 {currentStatusText}
+            <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', marginBottom: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <HiOutlineMegaphone style={{ color: 'var(--primary-600)', fontSize: '1rem', flexShrink: 0 }} /> {currentStatusText}
             </p>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
@@ -418,7 +426,7 @@ const LiveTracking = () => {
                       fontWeight: 700, fontSize: '0.75rem', zIndex: 2,
                       border: isActive ? '3px solid var(--primary-100)' : 'none'
                     }}>
-                      {isPassed ? '✓' : idx + 1}
+                      {isPassed ? <HiOutlineCheck style={{ strokeWidth: 3 }} /> : idx + 1}
                     </div>
                     <div style={{ fontSize: '0.68rem', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--navy-900)' : 'var(--navy-400)', marginTop: '8px' }}>
                       {step}
@@ -435,16 +443,14 @@ const LiveTracking = () => {
                   animate={{ opacity: 1, y: 0 }}
                   style={{ marginTop: '16px', padding: '12px', background: '#fef2f2', border: '1px dashed #ef4444', borderRadius: '8px', textAlign: 'center' }}
                 >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c' }}>
-                    🔐 {bookingData?.startOtp ? 'VERIFIED BOOKING START OTP' : 'DEMO EXHIBITION START OTP'}
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <HiOutlineLockClosed /> {bookingData?.startOtp ? 'VERIFIED BOOKING START OTP' : 'DEMO EXHIBITION START OTP'}
                   </span>
                   <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>{currentOtp}</div>
                   <p style={{ fontSize: '0.7rem', color: '#7f1d1d', margin: 0 }}>Do not share this OTP until the professional has arrived and you are ready to begin.</p>
                 </motion.div>
               )}
             </AnimatePresence>
-
-
 
             <AnimatePresence>
               {activeStep === 4 && (
@@ -456,9 +462,9 @@ const LiveTracking = () => {
                   <Link 
                     to={`/customer/review/${bookingId}?service=${encodeURIComponent(serviceName)}&worker=${encodeURIComponent(workerName)}`} 
                     className="btn btn-primary" 
-                    style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800 }}
+                    style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    🎉 Service Complete — Proceed to Review & Rating
+                    <HiOutlineCheckCircle style={{ fontSize: '1.2rem' }} /> Service Complete — Proceed to Review & Rating
                   </Link>
                 </motion.div>
               )}
@@ -490,7 +496,9 @@ const LiveTracking = () => {
                 <div style={{ fontSize: '0.65rem', color: 'var(--primary-700)', background: 'var(--primary-50)', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
                   Senior Pro
                 </div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px' }}>💼 1,500+ jobs</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <HiOutlineBriefcase /> 1,500+ jobs
+                </div>
               </div>
 
               {/* Trainee (Mock Data) */}
@@ -507,7 +515,9 @@ const LiveTracking = () => {
                 <div style={{ fontSize: '0.65rem', color: '#b91c1c', background: '#fee2e2', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
                   Trainee
                 </div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px' }}>🎓 7 shadow jobs</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--navy-600)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <HiOutlineAcademicCap /> 7 shadow jobs
+                </div>
               </div>
             </div>
 
@@ -516,7 +526,7 @@ const LiveTracking = () => {
                 className="btn btn-outline"
                 style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
                 onClick={() => {
-                  alert(`📞 Masked calling initiated with ${workerName}. Your phone number remains private.`);
+                  alert(`Masked calling initiated with ${workerName}. Your phone number remains private.`);
                 }}
               >
                 <HiOutlinePhone /> Call
@@ -524,7 +534,7 @@ const LiveTracking = () => {
               <button
                 className="btn btn-primary"
                 style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
-                onClick={() => alert(`💬 Secure chat session started with ${workerName}.`)}
+                onClick={() => alert(`Secure chat session started with ${workerName}.`)}
               >
                 <HiOutlineChatBubbleLeftRight /> Chat
               </button>

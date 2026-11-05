@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineExclamationTriangle, HiOutlineMapPin, HiOutlinePhone, HiOutlineBellSnooze } from 'react-icons/hi2';
+import { HiOutlineExclamationTriangle, HiOutlineMapPin, HiOutlinePhone, HiOutlineBellSnooze, HiOutlineBellAlert } from 'react-icons/hi2';
 
 const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
   const { t } = useTranslation();
@@ -78,7 +78,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
           border: '3px solid #ff0000',
           animation: 'ping 1.2s infinite'
         }} />
-        <span style={{ fontSize: '1rem', marginBottom: '-2px' }}>🚨</span>
+        <HiOutlineBellAlert style={{ fontSize: '1.2rem', marginBottom: '-2px' }} />
         {t('sosAlert.floatingText', 'SOS')}
       </div>
 
@@ -199,7 +199,7 @@ const SOSAlertSystem = ({ bookingId = 'SC-840620' }) => {
                   margin: '0 auto 20px auto',
                   animation: 'pulse 1s infinite'
                 }}>
-                  🚨
+                  <HiOutlineBellAlert style={{ fontSize: '2.5rem', color: '#ef4444' }} />
                 </div>
 
                 <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 8px 0' }}>

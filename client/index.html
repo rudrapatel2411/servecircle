@@ -74,6 +74,19 @@
         border-radius: 9999px;
         animation: appLoaderSlide 1.2s ease-in-out infinite;
       }
+      .app-loader-troubleshoot {
+        display: none;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #64748b;
+        text-align: center;
+      }
+      .app-loader-troubleshoot a {
+        color: #1e40af;
+        font-weight: 600;
+        text-decoration: underline;
+        cursor: pointer;
+      }
       @keyframes appLoaderSlide {
         0% { left: -40%; width: 30%; }
         50% { left: 40%; width: 50%; }
@@ -88,9 +101,18 @@
           <div class="app-loader-icon">SC</div>
           <h1 class="app-loader-title">ServeCircle</h1>
           <div class="app-loader-bar"></div>
+          <div id="loader-troubleshoot" class="app-loader-troubleshoot">
+            Taking longer than usual? <a onclick="window.location.reload()">Reload Page</a>
+          </div>
         </div>
       </div>
     </div>
+    <script>
+      setTimeout(function() {
+        var el = document.getElementById('loader-troubleshoot');
+        if (el) el.style.display = 'block';
+      }, 7000);
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

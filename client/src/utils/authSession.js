@@ -103,7 +103,7 @@ export const requestApi = async (path, { method = 'GET', token, body } = {}) => 
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 && isTokenExpired(token)) {
     clearSession();
     if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
       window.dispatchEvent(new CustomEvent('servecircle:session-expired'));

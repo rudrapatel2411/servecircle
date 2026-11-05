@@ -1,13 +1,25 @@
 import { Link } from 'react-router-dom';
-import { HiOutlineSparkles, HiOutlineArrowLeft, HiOutlineBell, HiOutlineEnvelope } from 'react-icons/hi2';
+import {
+  HiOutlineSparkles,
+  HiOutlineArrowLeft,
+  HiOutlineBell,
+  HiOutlineEnvelope,
+  HiOutlineHome,
+  HiOutlineArchiveBox,
+  HiOutlineShieldCheck,
+  HiOutlineCheckBadge,
+  HiOutlineHeart,
+  HiOutlineBuildingOffice2,
+  HiOutlineFire
+} from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
 const cleaningTimeline = [
-  { phase: 'Q2 2027', milestone: 'Deep Home Cleaning', icon: '🏠', status: 'planned' },
-  { phase: 'Q3 2027', milestone: 'Sofa & Carpet Cleaning', icon: '🛋️', status: 'planned' },
-  { phase: 'Q3 2027', milestone: 'Water Tank & Pest Control', icon: '🚿', status: 'planned' },
-  { phase: 'Q4 2027', milestone: 'Full Hygiene Management Suite', icon: '✨', status: 'planned' },
+  { phase: 'Q2 2027', milestone: 'Deep Home Cleaning', icon: <HiOutlineHome />, status: 'planned' },
+  { phase: 'Q3 2027', milestone: 'Sofa & Carpet Cleaning', icon: <HiOutlineArchiveBox />, status: 'planned' },
+  { phase: 'Q3 2027', milestone: 'Water Tank & Pest Control', icon: <HiOutlineShieldCheck />, status: 'planned' },
+  { phase: 'Q4 2027', milestone: 'Full Hygiene Management Suite', icon: <HiOutlineCheckBadge />, status: 'planned' },
 ];
 
 const CleaningServicesComingSoon = () => {
@@ -32,8 +44,8 @@ const CleaningServicesComingSoon = () => {
           <div className="cs-hero-pulse" style={{ background: 'rgba(139, 92, 246, 0.15)' }} />
         </div>
 
-        <div className="cs-badge" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#7c3aed' }}>
-          ✨ Cleaning Services
+        <div className="cs-badge" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#7c3aed', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <HiOutlineSparkles /> Cleaning Services
         </div>
 
         <h1 className="cs-title">
@@ -66,7 +78,7 @@ const CleaningServicesComingSoon = () => {
         <div className="cs-timeline">
           {cleaningTimeline.map((item, i) => (
             <div key={i} className="cs-timeline-item">
-              <div className="cs-timeline-dot" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}>
+              <div className="cs-timeline-dot" style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {item.icon}
               </div>
               {i < cleaningTimeline.length - 1 && <div className="cs-timeline-line" />}
@@ -107,13 +119,13 @@ const CleaningServicesComingSoon = () => {
         <p className="cs-alt-subtitle">While Cleaning Services gets ready, explore these live categories:</p>
         <div className="cs-alt-grid">
           {[
-            { path: '/customer/health-wellness', emoji: '💊', label: 'Health & Wellness', color: '#f43f5e' },
-            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#3b7dc1' },
-            { path: '/customer/pet-services', emoji: '🐾', label: 'Pet Services', color: '#ec4899' },
-            { path: '/customer/society-management', emoji: '🏘️', label: 'Society Management', color: '#84cc16' },
+            { path: '/customer/health-wellness', icon: <HiOutlineShieldCheck />, label: 'Health & Wellness', color: '#f43f5e' },
+            { path: '/customer/food-kitchen', icon: <HiOutlineFire />, label: 'Food & Kitchen', color: '#3b7dc1' },
+            { path: '/customer/pet-services', icon: <HiOutlineHeart />, label: 'Pet Services', color: '#ec4899' },
+            { path: '/customer/society-management', icon: <HiOutlineBuildingOffice2 />, label: 'Society Management', color: '#84cc16' },
           ].map((alt) => (
             <Link key={alt.path} to={alt.path} className="cs-alt-card">
-              <span className="cs-alt-emoji">{alt.emoji}</span>
+              <span className="cs-alt-emoji" style={{ fontSize: '1.25rem', color: alt.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{alt.icon}</span>
               <span className="cs-alt-label" style={{ color: alt.color }}>{alt.label}</span>
             </Link>
           ))}

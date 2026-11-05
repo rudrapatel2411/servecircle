@@ -5,7 +5,10 @@ import {
   HiOutlineCheckCircle, 
   HiOutlineArrowRight,
   HiOutlineCamera,
-  HiOutlineDocumentText
+  HiOutlineDocumentText,
+  HiOutlineTruck,
+  HiOutlineArchiveBox,
+  HiOutlineRocketLaunch
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -172,9 +175,9 @@ const VehicleRelocationDemo = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
-                { id: 'open', title: 'Open Carrier', desc: 'Standard multi-car transport trailer.', price: 4999, icon: '' },
-                { id: 'closed', title: 'Closed AC Container', desc: 'Fully enclosed. Safe from weather and dust.', price: 9999, icon: '📦' },
-                { id: 'vip', title: 'VIP Dedicated Flatbed', desc: 'Single-vehicle direct transport. Fastest.', price: 15999, icon: '🚀' }
+                { id: 'open', title: 'Open Carrier', desc: 'Standard multi-car transport trailer.', price: 4999, icon: <HiOutlineTruck /> },
+                { id: 'closed', title: 'Closed AC Container', desc: 'Fully enclosed. Safe from weather and dust.', price: 9999, icon: <HiOutlineArchiveBox /> },
+                { id: 'vip', title: 'VIP Dedicated Flatbed', desc: 'Single-vehicle direct transport. Fastest.', price: 15999, icon: <HiOutlineRocketLaunch /> }
               ].map(mode => (
                 <div 
                   key={mode.id}
@@ -186,7 +189,7 @@ const VehicleRelocationDemo = () => {
                     display: 'flex', alignItems: 'center', gap: '16px'
                   }}
                 >
-                  <div style={{ fontSize: '2rem' }}>{mode.icon}</div>
+                  <div style={{ fontSize: '1.8rem', color: '#2563eb', display: 'flex', alignItems: 'center' }}>{mode.icon}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                       <h4 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: 0 }}>{mode.title}</h4>

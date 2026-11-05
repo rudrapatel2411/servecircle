@@ -5,12 +5,12 @@ const notificationSchema = new mongoose.Schema({
   message: { type: String, required: true },
   type: {
     type: String,
-    enum: ['broadcast', 'personal', 'booking_update', 'promotion', 'alert', 'system'],
+    enum: ['broadcast', 'personal', 'booking_update', 'promotion', 'alert', 'system', 'call_request'],
     default: 'personal',
   },
   targetAudience: {
     type: String,
-    enum: ['all', 'customers', 'workers', 'b2b', 'specific'],
+    enum: ['all', 'customers', 'workers', 'b2b', 'admin', 'specific'],
     default: 'all',
   },
   targetUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // for specific targeting

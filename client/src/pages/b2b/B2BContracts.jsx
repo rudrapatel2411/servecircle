@@ -5,6 +5,7 @@ import {
   HiOutlineCalendarDays,
   HiOutlineDocumentText,
   HiOutlineMapPin,
+  HiOutlineXMark,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
@@ -223,10 +224,11 @@ const B2BContracts = () => {
               onClick={() => setActiveContract(null)}
               style={{
                 position: 'absolute', top: '20px', right: '20px', background: 'var(--gray-100)',
-                border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer'
+                border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
             >
-              ✕
+              <HiOutlineXMark style={{ fontSize: '1.2rem' }} />
             </button>
             <span className="b2b-contract-type" style={{ display: 'inline-block', marginBottom: '8px' }}>{activeContract.type}</span>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--navy-800)', margin: '0 0 16px 0' }}>{activeContract.name}</h2>

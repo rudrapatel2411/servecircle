@@ -44,11 +44,52 @@ const BookingHistory = () => {
 
   useEffect(() => {
     const session = getSession();
-    if (!session?.token) return;
+
+    let localBookings = [];
+    try {
+      const raw = localStorage.getItem('servecircle_customer_bookings');
+      if (raw) {
+        localBookings = JSON.parse(raw).map(b => ({
+          id: b.id || b.bookingId,
+          service: b.service,
+          category: b.category,
+          worker: b.workerName || b.worker?.name || 'Assigned Professional',
+          date: b.date || 'Today',
+          time: b.time || '11:30 AM',
+          address: `${b.address || ''}, ${b.city || ''}`,
+          amount: b.amount,
+          status: b.status || 'confirmed',
+          paymentStatus: b.paymentStatus?.includes('Paid') ? 'paid' : (b.paymentStatus || 'paid'),
+          rating: null,
+        }));
+      }
+    } catch {}
+
+    if (!session?.token) {
+      if (localBookings.length > 0) setBookings(localBookings);
+      setIsLoading(false);
+      return;
+    }
 
     requestApi('/bookings/my', { token: session.token })
-      .then((data) => setBookings(Array.isArray(data) ? data.map(normalizeBooking) : []))
-      .catch((requestError) => setError(requestError.message || 'Unable to load bookings'))
+      .then((data) => {
+        const apiBookings = Array.isArray(data) ? data.map(normalizeBooking) : [];
+        const existingIds = new Set(apiBookings.map(b => b.id));
+        const merged = [...apiBookings];
+        for (const lb of localBookings) {
+          if (!existingIds.has(lb.id)) {
+            merged.unshift(lb);
+          }
+        }
+        setBookings(merged);
+      })
+      .catch((requestError) => {
+        if (localBookings.length > 0) {
+          setBookings(localBookings);
+        } else {
+          setError(requestError.message || 'Unable to load bookings');
+        }
+      })
       .finally(() => setIsLoading(false));
   }, []);
 

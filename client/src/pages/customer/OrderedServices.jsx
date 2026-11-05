@@ -14,6 +14,17 @@ import {
   HiOutlineAcademicCap,
   HiOutlineQrCode,
   HiOutlineEyeSlash,
+  HiOutlineMagnifyingGlass,
+  HiOutlineTruck,
+  HiOutlineWrenchScrewdriver,
+  HiOutlineCheckBadge,
+  HiOutlineTrophy,
+  HiOutlineArchiveBox,
+  HiOutlineCalendarDays,
+  HiOutlineLockClosed,
+  HiOutlineBriefcase,
+  HiOutlineInbox,
+  HiOutlineCheck,
 } from 'react-icons/hi2';
 import WorkerVerifyModal from '../../components/WorkerVerifyModal';
 import '../Dashboard.css';
@@ -90,18 +101,18 @@ const mockOrders = [
 ];
 
 const statusMeta = {
-  pending:       { label: 'Searching for Worker', color: '#d97706', bg: '#fef3c7', dot: '#f59e0b', emoji: '🔍' },
-  confirmed:     { label: 'Worker Assigned',      color: '#2563eb', bg: '#dbeafe', dot: '#3b82f6', emoji: '✅' },
-  'en-route':    { label: 'Worker En Route',       color: '#0891b2', bg: '#cffafe', dot: '#06b6d4', emoji: '🚗' },
-  active:        { label: 'Work In Progress',      color: '#16a34a', bg: '#dcfce7', dot: '#22c55e', emoji: '🛠️' },
-  completed:     { label: 'Completed',             color: '#7c3aed', bg: '#ede9fe', dot: '#8b5cf6', emoji: '🎉' },
-  'cant-resolve': { label: "Can't Resolve",        color: '#dc2626', bg: '#fef2f2', dot: '#ef4444', emoji: '⚠️' },
+  pending:       { label: 'Searching for Worker', color: '#d97706', bg: '#fef3c7', dot: '#f59e0b', icon: HiOutlineMagnifyingGlass },
+  confirmed:     { label: 'Worker Assigned',      color: '#2563eb', bg: '#dbeafe', dot: '#3b82f6', icon: HiOutlineCheckCircle },
+  'en-route':    { label: 'Worker En Route',       color: '#0891b2', bg: '#cffafe', dot: '#06b6d4', icon: HiOutlineTruck },
+  active:        { label: 'Work In Progress',      color: '#16a34a', bg: '#dcfce7', dot: '#22c55e', icon: HiOutlineWrenchScrewdriver },
+  completed:     { label: 'Completed',             color: '#7c3aed', bg: '#ede9fe', dot: '#8b5cf6', icon: HiOutlineCheckBadge },
+  'cant-resolve': { label: "Can't Resolve",        color: '#dc2626', bg: '#fef2f2', dot: '#ef4444', icon: HiOutlineExclamationTriangle },
 };
 
 const tierConfig = {
-  'Senior Pro':       { color: '#7c3aed', bg: '#ede9fe', emoji: '🏆' },
-  'Junior Pro':       { color: '#2563eb', bg: '#dbeafe', emoji: '⭐' },
-  'Rookie (Trainee)': { color: '#dc2626', bg: '#fee2e2', emoji: '🎓' },
+  'Senior Pro':       { color: '#7c3aed', bg: '#ede9fe', icon: HiOutlineTrophy },
+  'Junior Pro':       { color: '#2563eb', bg: '#dbeafe', icon: HiOutlineStar },
+  'Rookie (Trainee)': { color: '#dc2626', bg: '#fee2e2', icon: HiOutlineAcademicCap },
 };
 
 const steps = ['Searching', 'Confirmed', 'En Route', 'Active', 'Completed'];
@@ -120,17 +131,47 @@ const OrderedServices = () => {
   });
   const [verifyModalBookingId, setVerifyModalBookingId] = useState(null);
 
-  const activeOrders = activeTab === 'all' ? mockOrders
-    : activeTab === 'active' ? mockOrders.filter((o) => !['completed', 'cancelled', 'cant-resolve'].includes(o.status))
-    : mockOrders.filter((o) => o.status === 'completed' || o.status === 'cant-resolve');
+  const [allOrders] = useState(() => {
+    let localBookings = [];
+    try {
+      const raw = localStorage.getItem('servecircle_customer_bookings');
+      if (raw) {
+        localBookings = JSON.parse(raw).map((b) => ({
+          id: b.id?.startsWith('#') ? b.id : `#${b.id || 'SC-2845'}`,
+          service: b.service,
+          category: b.category,
+          date: b.date || 'Today',
+          time: b.time || '11:30 AM',
+          address: `${b.address || ''}, ${b.city || ''}`,
+          amount: b.amount,
+          status: 'confirmed',
+          startOtp: b.startOtp || '8492',
+          endOtp: '3751',
+          worker: {
+            name: b.workerName || b.worker?.name || 'Ramesh Kumar',
+            tier: b.tier || 'Senior Pro',
+            rating: b.worker?.rating || 4.9,
+            jobsSolved: 1240,
+            initials: (b.workerName || 'RK').split(' ').map(n=>n[0]).join('').slice(0,2),
+          },
+          trainee: null,
+        }));
+      }
+    } catch {}
+    return [...localBookings, ...mockOrders];
+  });
+
+  const activeOrders = activeTab === 'all' ? allOrders
+    : activeTab === 'active' ? allOrders.filter((o) => !['completed', 'cancelled', 'cant-resolve'].includes(o.status))
+    : allOrders.filter((o) => o.status === 'completed' || o.status === 'cant-resolve');
 
   const handleVerifyEndOtp = (order) => {
     const entered = endOtpInput[order.id] || '';
     if (entered === order.endOtp) {
       setEndOtpError((prev) => ({ ...prev, [order.id]: '' }));
-      alert(`✅ Job confirmed done! Thank you for using ServeCircle. Please rate ${order.worker.name}.`);
+      alert(`Job confirmed done! Thank you for using ServeCircle. Please rate ${order.worker.name}.`);
     } else {
-      setEndOtpError((prev) => ({ ...prev, [order.id]: '❌ Incorrect OTP. Please check and re-enter.' }));
+      setEndOtpError((prev) => ({ ...prev, [order.id]: 'Incorrect OTP. Please check and re-enter.' }));
     }
   };
 
@@ -150,7 +191,9 @@ const OrderedServices = () => {
 
       <div className="page-header">
         <div>
-          <h1 className="page-title">Ordered Services 📦</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            Ordered Services <HiOutlineArchiveBox style={{ color: 'var(--primary-600)' }} />
+          </h1>
           <p className="page-subtitle">Track live status, view assigned workers, and confirm job completion.</p>
         </div>
       </div>
@@ -158,7 +201,7 @@ const OrderedServices = () => {
       {/* Tabs */}
       <div className="tabs-bar" style={{ marginBottom: '20px' }}>
         {[
-          { key: 'active', label: '🔴 Active Orders' },
+          { key: 'active', label: 'Active Orders', dot: true },
           { key: 'all', label: 'All Orders' },
           { key: 'past', label: 'Past Orders' },
         ].map((tab) => (
@@ -166,7 +209,11 @@ const OrderedServices = () => {
             key={tab.key}
             className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.key)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
+            {tab.dot && (
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
+            )}
             {tab.label}
           </button>
         ))}
@@ -174,7 +221,9 @@ const OrderedServices = () => {
 
       {activeOrders.length === 0 && (
         <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📭</div>
+          <div style={{ fontSize: '2.5rem', marginBottom: '12px', color: 'var(--navy-400)', display: 'flex', justifyContent: 'center' }}>
+            <HiOutlineInbox />
+          </div>
           <div style={{ fontWeight: 700, color: 'var(--navy-700)' }}>No orders here</div>
           <Link to="/customer/services" className="btn btn-primary" style={{ marginTop: '16px', display: 'inline-flex' }}>Browse Services</Link>
         </div>
@@ -187,6 +236,7 @@ const OrderedServices = () => {
           const isExpanded = expandedId === order.id;
           const workerTier = tierConfig[order.worker.tier] || tierConfig['Junior Pro'];
           const traineeTier = order.trainee ? (tierConfig[order.trainee.tier] || tierConfig['Rookie (Trainee)']) : null;
+          const StatusIcon = meta.icon;
 
           return (
             <motion.div
@@ -209,13 +259,13 @@ const OrderedServices = () => {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--navy-900)' }}>{order.service}</span>
-                    <span style={{ background: meta.bg, color: meta.color, fontSize: '0.7rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px' }}>
-                      {meta.emoji} {meta.label}
+                    <span style={{ background: meta.bg, color: meta.color, fontSize: '0.7rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <StatusIcon style={{ fontSize: '0.85rem' }} /> {meta.label}
                     </span>
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--navy-500)', marginTop: '2px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <span>{order.id}</span>
-                    <span>📅 {order.date} at {order.time}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineCalendarDays /> {order.date} at {order.time}</span>
                     <span>₹{order.amount}</span>
                   </div>
                 </div>
@@ -251,7 +301,7 @@ const OrderedServices = () => {
                                     fontWeight: 700, fontSize: '0.7rem',
                                     border: active ? '3px solid var(--primary-100)' : 'none',
                                   }}>
-                                    {done ? '✓' : idx + 1}
+                                    {done ? <HiOutlineCheck style={{ strokeWidth: 3 }} /> : idx + 1}
                                   </div>
                                   <div style={{ fontSize: '0.65rem', fontWeight: active ? 800 : 600, color: active ? 'var(--navy-900)' : 'var(--navy-400)', marginTop: '6px', textAlign: 'center' }}>
                                     {step}
@@ -270,8 +320,8 @@ const OrderedServices = () => {
                           <div>
                             <div style={{ fontWeight: 800, color: '#991b1b', fontSize: '0.9rem' }}>Issue Reported — Can't Resolve</div>
                             <div style={{ fontSize: '0.78rem', color: '#7f1d1d', marginTop: '4px' }}>The worker was unable to resolve this issue. Our support team has been notified and will contact you within 30 minutes.</div>
-                            <button className="btn btn-outline" style={{ marginTop: '10px', fontSize: '0.78rem', padding: '6px 14px', color: '#dc2626', borderColor: '#fecaca' }}>
-                              📞 Call Support
+                            <button className="btn btn-outline" style={{ marginTop: '10px', fontSize: '0.78rem', padding: '6px 14px', color: '#dc2626', borderColor: '#fecaca', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <HiOutlinePhone /> Call Support
                             </button>
                           </div>
                         </div>
@@ -285,8 +335,8 @@ const OrderedServices = () => {
                               background: '#eff6ff', border: '1.5px dashed #3b82f6',
                               borderRadius: '14px', padding: '16px', textAlign: 'center',
                             }}>
-                              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
-                                🛡️ Secure Worker Verification Required
+                              <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                                <HiOutlineShieldCheck style={{ fontSize: '1.1rem' }} /> Secure Worker Verification Required
                               </div>
                               <p style={{ fontSize: '0.78rem', color: '#1d4ed8', margin: '0 0 12px' }}>
                                 Verify worker's ServeCircle physical ID Card QR code before releasing the Start OTP.
@@ -326,8 +376,8 @@ const OrderedServices = () => {
                           borderRadius: '10px', padding: '14px 16px',
                           marginBottom: '16px',
                         }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#166534', marginBottom: '10px' }}>
-                            ✅ Work is in progress. When done, the worker will ask for the End OTP.
+                          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#166534', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <HiOutlineCheckCircle style={{ fontSize: '1rem', flexShrink: 0 }} /> Work is in progress. When done, the worker will ask for the End OTP.
                           </div>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <input
@@ -356,7 +406,7 @@ const OrderedServices = () => {
                           <button
                             className="btn btn-outline"
                             style={{ width: '100%', marginTop: '10px', color: '#dc2626', borderColor: '#fecaca', fontSize: '0.8rem' }}
-                            onClick={() => alert('📞 Connecting to ServeCircle support...')}
+                            onClick={() => alert('Connecting to ServeCircle support...')}
                           >
                             <HiOutlineExclamationTriangle style={{ marginRight: '6px' }} /> Report: Can't Resolve
                           </button>
@@ -367,7 +417,7 @@ const OrderedServices = () => {
                       {order.status !== 'pending' && (
                         <div>
                           <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>🛡️ Assigned Worker Details</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><HiOutlineShieldCheck style={{ color: 'var(--primary-600)' }} /> Assigned Worker Details</span>
                             {!verifiedBookings[order.id] && (
                               <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <HiOutlineEyeSlash /> Contact & Personal Details Hidden Before QR Scan
@@ -398,15 +448,16 @@ const OrderedServices = () => {
                                 ServeCircle Verified Worker
                               </div>
                               <div style={{ fontSize: '0.75rem', color: 'var(--navy-500)', marginTop: '4px', display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                                <span>⭐ {order.worker.rating}</span>
-                                <span>💼 3+ Yrs Exp</span>
-                                <span>⏱️ ETA: {order.time}</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineStar style={{ color: '#eab308' }} /> {order.worker.rating}</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineBriefcase /> 3+ Yrs Exp</span>
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineClock /> ETA: {order.time}</span>
                               </div>
 
                               {/* Hide Phone / Contact / Photo before verification */}
                               {!verifiedBookings[order.id] ? (
-                                <div style={{ marginTop: '10px', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px', fontSize: '0.72rem', color: '#64748b' }}>
-                                  🔒 Scan physical ID Card QR upon worker arrival to unlock contact & full verification profile.
+                                <div style={{ marginTop: '10px', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px', fontSize: '0.72rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', textAlign: 'left' }}>
+                                  <HiOutlineLockClosed style={{ fontSize: '1rem', flexShrink: 0 }} />
+                                  <span>Scan physical ID Card QR upon worker arrival to unlock contact & full verification profile.</span>
                                 </div>
                               ) : (
                                 (order.status === 'en-route' || order.status === 'active') && (
@@ -414,14 +465,14 @@ const OrderedServices = () => {
                                     <button
                                       className="btn btn-outline"
                                       style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
-                                      onClick={() => alert(`📞 Calling ${order.worker.name}...`)}
+                                      onClick={() => alert(`Calling ${order.worker.name}...`)}
                                     >
                                       <HiOutlinePhone /> Call
                                     </button>
                                     <button
                                       className="btn btn-primary"
                                       style={{ flex: 1, padding: '7px', fontSize: '0.75rem' }}
-                                      onClick={() => alert(`💬 Chat opened with ${order.worker.name}`)}
+                                      onClick={() => alert(`Chat opened with ${order.worker.name}`)}
                                     >
                                       <HiOutlineChatBubbleLeftRight />
                                     </button>
@@ -447,11 +498,11 @@ const OrderedServices = () => {
                                   {order.trainee.initials}
                                 </div>
                                 <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--navy-900)' }}>{order.trainee.name}</div>
-                                <div style={{ background: traineeTier.bg, color: traineeTier.color, fontSize: '0.68rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px', display: 'inline-block', margin: '4px 0' }}>
-                                  {traineeTier.emoji} {order.trainee.tier}
+                                <div style={{ background: traineeTier.bg, color: traineeTier.color, fontSize: '0.68rem', fontWeight: 800, padding: '2px 10px', borderRadius: '100px', display: 'inline-flex', alignItems: 'center', gap: '4px', margin: '4px 0' }}>
+                                  <traineeTier.icon style={{ fontSize: '0.85rem' }} /> {order.trainee.tier}
                                 </div>
                                 <div style={{ fontSize: '0.75rem', color: 'var(--navy-500)', marginTop: '4px' }}>
-                                  <span>🎓 {order.trainee.jobsSolved} shadow jobs done</span>
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineAcademicCap /> {order.trainee.jobsSolved} shadow jobs done</span>
                                 </div>
                                 <div style={{ marginTop: '8px', background: '#fef3c7', borderRadius: '6px', padding: '6px 8px', fontSize: '0.7rem', color: '#92400e' }}>
                                   <HiOutlineAcademicCap style={{ verticalAlign: 'middle', marginRight: '4px' }} />

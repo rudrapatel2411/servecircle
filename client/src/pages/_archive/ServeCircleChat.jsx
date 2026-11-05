@@ -304,7 +304,7 @@ const ServeCircleChat = ({ workerName = 'Rajesh Kumar', workerAvatar }) => {
 
           <h3 style={{ fontSize: '1.4rem', fontWeight: 800, margin: '0 0 8px 0' }}>{workerName}</h3>
           <span style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.05)', padding: '4px 12px', borderRadius: '50px' }}>
-            🔒 {t('secureChat.maskedCallLabel')}
+            <HiOutlineLockClosed /> {t('secureChat.maskedCallLabel')}
           </span>
 
           <p style={{

@@ -13,6 +13,7 @@ import {
   HiOutlineArrowRight,
   HiOutlineExclamationTriangle,
   HiOutlineUserCircle,
+  HiOutlineCheck,
 } from 'react-icons/hi2';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || (
@@ -75,7 +76,7 @@ const SecureWorkerVerification = () => {
     );
   }
 
-  // 🔴 CASE 1: WORKER IS SUSPENDED, DELETED, BLOCKED, EXPIRED, OR NOT AUTHORIZED
+  // CASE 1: WORKER IS SUSPENDED, DELETED, BLOCKED, EXPIRED, OR NOT AUTHORIZED
   if (error || (data && !data.isAuthorized)) {
     return (
       <div style={{ maxWidth: '520px', margin: '40px auto', padding: '0 20px' }}>
@@ -128,7 +129,7 @@ const SecureWorkerVerification = () => {
 
   const profile = data?.profile;
 
-  // 🟢 CASE 2: NON-BOOKING QR SCAN (Random Person Scans Worker QR)
+  // CASE 2: NON-BOOKING QR SCAN (Random Person Scans Worker QR)
   if (data && !data.hasActiveBooking) {
     return (
       <div style={{ maxWidth: '460px', margin: '40px auto', padding: '0 20px' }}>
@@ -185,7 +186,7 @@ const SecureWorkerVerification = () => {
     );
   }
 
-  // 🟢 CASE 3: ACTIVE WORKER LINKED TO TODAY'S BOOKING (Full Verification Profile)
+  // CASE 3: ACTIVE WORKER LINKED TO TODAY'S BOOKING (Full Verification Profile)
   return (
     <div style={{ maxWidth: '580px', margin: '30px auto', padding: '0 20px' }}>
       <motion.div
@@ -224,7 +225,7 @@ const SecureWorkerVerification = () => {
               width: '26px', height: '26px', borderRadius: '50%', display: 'flex', alignItems: 'center',
               justifyContent: 'center', fontSize: '0.9rem', border: '2px solid white',
             }}>
-              ✓
+              <HiOutlineCheck style={{ strokeWidth: 3 }} />
             </div>
           </div>
 

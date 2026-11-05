@@ -256,11 +256,11 @@ const WorkerDashboard = () => {
       {loading ? (
         <div className="chart-placeholder">Loading dashboard...</div>
       ) : (
-        <div className="dashboard-grid">
+        <div className="stats-container">
           {stats.map((stat, index) => (
             <div key={index} className="stat-card animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
               <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
-              <div>
+              <div className="stat-details">
                 <div className="stat-value">{stat.value}</div>
                 <div className="stat-label">{stat.label}</div>
               </div>

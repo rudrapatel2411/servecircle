@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineArrowLeft, HiOutlineArchiveBox, HiOutlineCalculator, HiOutlineShieldCheck, HiOutlineSparkles } from 'react-icons/hi2';
+import {
+  HiOutlineArrowLeft, HiOutlineArchiveBox, HiOutlineCalculator,
+  HiOutlineShieldCheck, HiOutlineSparkles, HiOutlineBuildingOffice2,
+  HiOutlineArrowPath, HiOutlineTruck,
+} from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -22,7 +26,8 @@ const RelocationHub = () => {
   const [vaultSpace, setVaultSpace] = useState(50); // Sq Ft
   const vaultPricePerSqFt = 20;
 
-  // New Shifting details
+  // Shifting details & dynamic distance
+  const [distanceKm, setDistanceKm] = useState(25);
   const [pickupCity, setPickupCity] = useState('');
   const [dropCity, setDropCity] = useState('');
   const [hasLift, setHasLift] = useState(true);
@@ -56,15 +61,14 @@ const RelocationHub = () => {
 
   // Dynamic pricing calculation
   const baseRate = transitType === 'full' ? 2999 : 499;
-  const weightCharge = totalWeight * 5; // e.g. ₹5 per kg
+  const weightCharge = totalWeight * 5; // ₹5 per kg
+  const perKmRate = transitType === 'full' ? 16 : 10;
+  const distanceCharge = Math.round(distanceKm * perKmRate);
   const packingCharge = packingType === 'premium' ? (transitType === 'full' ? 1500 : 300) : 0;
   const liftCharge = !hasLift ? 800 : 0;
   const insuranceCharge = addInsurance ? 499 : 0;
   
-  let dynamicPrice = baseRate + weightCharge + packingCharge + liftCharge + insuranceCharge;
-  if (pickupCity && dropCity && pickupCity.toLowerCase().trim() !== dropCity.toLowerCase().trim()) {
-      dynamicPrice += 5000; // Intercity flat charge
-  }
+  let dynamicPrice = baseRate + weightCharge + distanceCharge + packingCharge + liftCharge + insuranceCharge;
 
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
@@ -78,12 +82,12 @@ const RelocationHub = () => {
         <HiOutlineArrowLeft /> Back to General Services
       </Link>
 
-
-
       {/* Premium Features Demo Banner */}
       <div style={{ marginBottom: '32px', padding: '24px', background: 'linear-gradient(135deg, #0ea5e9, #2563eb)', borderRadius: '16px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.4)' }}>
         <div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '6px', color: 'white' }}>✨ {t('relocationExt.expPackers')}</h3>
+          <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '6px', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <HiOutlineSparkles /> {t('relocationExt.expPackers')}
+          </h3>
           <p style={{ fontSize: '0.9rem', color: '#e0f2fe', margin: 0 }}>{t('relocationExt.tryAiScanner')}</p>
         </div>
         <Link to="/customer/packers-demo" className="btn btn-primary" style={{ background: 'white', color: '#2563eb', fontWeight: 800, padding: '12px 24px', borderRadius: '12px', border: 'none', textDecoration: 'none' }}>
@@ -109,7 +113,7 @@ const RelocationHub = () => {
             <HiOutlineCalculator style={{ color: '#8b5cf6' }} /> {t('relocation.volumeEstimator')}
           </h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
             <div>
               <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '4px' }}>{t('relocationExt.pickupCity')}</label>
               <input type="text" className="input-field" placeholder="e.g. Mumbai" value={pickupCity} onChange={(e) => setPickupCity(e.target.value)} style={{ padding: '10px', fontSize: '0.85rem' }} />
@@ -117,6 +121,54 @@ const RelocationHub = () => {
             <div>
               <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '4px' }}>{t('relocationExt.dropCity')}</label>
               <input type="text" className="input-field" placeholder="e.g. Pune" value={dropCity} onChange={(e) => setDropCity(e.target.value)} style={{ padding: '10px', fontSize: '0.85rem' }} />
+            </div>
+          </div>
+
+          {/* Dynamic Transit Distance Slider */}
+          <div style={{ marginBottom: '20px', background: '#f8fafc', padding: '14px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 750, color: 'var(--navy-800)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <HiOutlineTruck style={{ color: '#8b5cf6' }} /> Transit Distance (km):
+              </label>
+              <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#8b5cf6' }}>
+                {distanceKm} km
+              </span>
+            </div>
+            <input
+              type="range"
+              min="5"
+              max="500"
+              step="5"
+              value={distanceKm}
+              onChange={(e) => setDistanceKm(parseInt(e.target.value, 10))}
+              style={{ width: '100%', accentColor: '#8b5cf6', cursor: 'pointer' }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#64748b', marginTop: '4px' }}>
+              <span>5 km (Local)</span>
+              <span>100 km</span>
+              <span>250 km</span>
+              <span>500 km (Intercity)</span>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+              {[15, 35, 75, 150, 300].map((km) => (
+                <button
+                  key={km}
+                  type="button"
+                  onClick={() => setDistanceKm(km)}
+                  style={{
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    border: `1px solid ${distanceKm === km ? '#8b5cf6' : '#cbd5e1'}`,
+                    background: distanceKm === km ? '#8b5cf6' : 'white',
+                    color: distanceKm === km ? 'white' : '#475569',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {km} km
+                </button>
+              ))}
             </div>
           </div>
 
@@ -156,49 +208,53 @@ const RelocationHub = () => {
           </div>
 
           {transitType === 'full' && (
-            <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '12px', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 750, color: 'var(--navy-800)', display: 'block', marginBottom: '12px' }}>{t('relocationExt.autoFill')}</span>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '8px' }}>
+                Quick BHK Presets:
+              </label>
               <div style={{ display: 'flex', gap: '8px' }}>
-                {[1, 2, 3].map(bhk => (
+                {[1, 2, 3].map((bhk) => (
                   <button
                     key={bhk}
+                    type="button"
                     onClick={() => handleBhkSelect(bhk)}
-                    style={{ flex: 1, padding: '8px', background: 'white', border: '1px solid var(--gray-300)', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--navy-700)', cursor: 'pointer' }}
+                    className="btn btn-outline btn-sm"
+                    style={{ flex: 1, borderColor: '#8b5cf6', color: '#8b5cf6', fontWeight: 700 }}
                   >
-                    {bhk} BHK
+                    {bhk} BHK Pack
                   </button>
                 ))}
-                <button
-                  onClick={() => setInventory({ sofa: 0, doubleBed: 0, refrigerator: 0, wardrobe: 0, box: 0 })}
-                  style={{ padding: '8px 12px', background: 'white', border: '1px dashed var(--gray-400)', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 650, color: 'var(--gray-500)', cursor: 'pointer' }}
-                >
-                  Clear
-                </button>
               </div>
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Inventory Items List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
             {[
-              { id: 'sofa', name: 'Luxury Sofa / Couch ' },
-              { id: 'doubleBed', name: 'Double Bed Set ' },
-              { id: 'refrigerator', name: 'Smart Refrigerator ' },
-              { id: 'wardrobe', name: 'Modular Wardrobe ' },
-              { id: 'box', name: 'Heavy Carton Box ' }
+              { id: 'sofa', name: t('relocation.itemSofa'), weight: '80kg' },
+              { id: 'doubleBed', name: t('relocation.itemBed'), weight: '120kg' },
+              { id: 'refrigerator', name: t('relocation.itemFridge'), weight: '90kg' },
+              { id: 'wardrobe', name: t('relocation.itemWardrobe'), weight: '100kg' },
+              { id: 'box', name: t('relocation.itemBox'), weight: '15kg' },
             ].map((item) => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--navy-700)', fontWeight: 650 }}>{t('relocation.' + item.id)}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'var(--gray-50)', borderRadius: '8px' }}>
+                <div>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--navy-800)' }}>{item.name}</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--gray-400)', display: 'block' }}>~{item.weight}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <button
+                    type="button"
                     onClick={() => handleInventoryChange(item.id, -1)}
-                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer' }}
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', cursor: 'pointer', fontWeight: 800 }}
                   >
                     -
                   </button>
-                  <span style={{ minWidth: '24px', textAlign: 'center', fontWeight: 900 }}>{inventory[item.id]}</span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 800, minWidth: '20px', textAlign: 'center' }}>{inventory[item.id]}</span>
                   <button
+                    type="button"
                     onClick={() => handleInventoryChange(item.id, 1)}
-                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer' }}
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', cursor: 'pointer', fontWeight: 800 }}
                   >
                     +
                   </button>
@@ -207,26 +263,23 @@ const RelocationHub = () => {
             ))}
           </div>
 
-          {/* Add-ons and Adjustments */}
-          <div style={{ background: 'var(--gray-5)', padding: '16px', borderRadius: '12px', marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '14px', border: '1px solid var(--gray-200)' }}>
+          {/* Addons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-               <span style={{ fontSize: '0.85rem', fontWeight: 750, color: 'var(--navy-800)' }}>Elevator / Lift available? 🏢</span>
-               <select value={hasLift ? 'yes' : 'no'} onChange={(e) => setHasLift(e.target.value === 'yes')} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', outline: 'none' }}>
-                 <option value="yes">{t('relocationExt.yesLift')}</option>
-                 <option value="no">No, Stairs Only (+₹800)</option>
-               </select>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--navy-800)' }}>Building Has Elevator / Lift:</span>
+              <input type="checkbox" checked={hasLift} onChange={(e) => setHasLift(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#8b5cf6' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-               <span style={{ fontSize: '0.85rem', fontWeight: 750, color: 'var(--navy-800)' }}>{t('relocationExt.packingService')}</span>
-               <select value={packingType} onChange={(e) => setPackingType(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', outline: 'none' }}>
-                 <option value="basic">{t('relocationExt.basicLoading')}</option>
-                 <option value="premium">{t('relocationExt.premiumBubble')}</option>
-               </select>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--navy-800)' }}>Packaging Material:</span>
+              <select value={packingType} onChange={(e) => setPackingType(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem' }}>
+                <option value="basic">{t('relocationExt.basicLoading')}</option>
+                <option value="premium">{t('relocationExt.premiumBubble')}</option>
+              </select>
             </div>
             <div style={{ borderTop: '1px dashed var(--gray-200)', paddingTop: '10px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 750, color: 'var(--navy-800)', cursor: 'pointer' }}>
-                 <input type="checkbox" checked={addInsurance} onChange={(e) => setAddInsurance(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#8b5cf6' }} />
-                 Add Transit Insurance (Secure Goods) (+₹499)
+                <input type="checkbox" checked={addInsurance} onChange={(e) => setAddInsurance(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#8b5cf6' }} />
+                Add Transit Insurance (Secure Goods) (+₹499)
               </label>
             </div>
           </div>
@@ -245,6 +298,10 @@ const RelocationHub = () => {
               <span style={{ fontWeight: 800, color: 'var(--navy-800)' }}>{totalWeight} kg</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ color: 'var(--gray-500)' }}>Transit Distance ({distanceKm} km @ ₹{perKmRate}/km):</span>
+              <span style={{ fontWeight: 800, color: '#8b5cf6' }}>₹{distanceCharge.toLocaleString()}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ color: 'var(--gray-500)' }}>{t('relocation.recFleet')}:</span>
               <span style={{ fontWeight: 800, color: '#8b5cf6' }}>{estimatedTrucks}</span>
             </div>
@@ -256,7 +313,7 @@ const RelocationHub = () => {
                 </span>
               </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&serviceId=${transitType === 'full' ? 'full-home-shifting' : 'single-item-transport'}&category=relocation&price=${dynamicPrice}`}
+                to={`/customer/book?service=${encodeURIComponent(transitType === 'full' ? 'Full Home Shifting service' : 'Single Heavy Item Transport')}&serviceId=${transitType === 'full' ? 'full-home-shifting' : 'single-item-transport'}&category=relocation&price=${dynamicPrice}&distance=${distanceKm}`}
                 className="btn btn-primary btn-sm"
                 style={{ padding: '8px 16px', background: '#8b5cf6', borderColor: '#8b5cf6' }}
               >
@@ -353,7 +410,6 @@ const RelocationHub = () => {
       }}>
         {/* Vehicle Relocation */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.vehicleRelocation')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.vehicleRelocationDesc')}</p>
           <Link to="/customer/vehicle-demo" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: '#1d4ed8', borderColor: '#1d4ed8', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', background: '#dbeafe' }}>
@@ -363,7 +419,6 @@ const RelocationHub = () => {
 
         {/* Pet Relocation */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.petRelocation')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.petRelocationDesc')}</p>
           <Link to="/customer/pet-demo" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: '#c026d3', borderColor: '#c026d3', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', background: '#fae8ff' }}>
@@ -373,7 +428,9 @@ const RelocationHub = () => {
 
         {/* Junk Removal */}
         <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>♻️</div>
+          <div style={{ fontSize: '2.2rem', marginBottom: '12px', color: '#16a34a' }}>
+            <HiOutlineArrowPath />
+          </div>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('relocationExt.scrapRemoval')}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('relocationExt.scrapRemovalDesc')}</p>
           <Link to={`/customer/book?service=${encodeURIComponent('Junk Removal Evaluation')}&category=relocation&price=0`} className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'var(--navy-700)', borderColor: 'var(--gray-300)', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>

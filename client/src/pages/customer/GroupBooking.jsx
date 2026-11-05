@@ -61,7 +61,7 @@ const GroupBooking = () => {
           <div className="success-icon-wrap">
             <HiOutlineCheckCircle className="success-icon" style={{ fontSize: '4.5rem' }} />
           </div>
-          <h2>Society Group Booking Requested! 🎉</h2>
+          <h2>Society Group Booking Requested!</h2>
           <p>We have received your coordinated request for <strong>{societyName}</strong>.</p>
           
           <div className="success-details" style={{ width: '100%' }}>
@@ -90,7 +90,10 @@ const GroupBooking = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.groupBooking')} 🏢</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <HiOutlineBuildingOffice style={{ color: 'var(--primary-600)' }} />
+            {t('customer.groupBooking')}
+          </h1>
           <p className="page-subtitle">Coordinate bookings with neighbors in your housing society or apartment block for massive B2B discounts.</p>
         </div>
       </div>

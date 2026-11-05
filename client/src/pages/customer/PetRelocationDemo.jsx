@@ -6,7 +6,11 @@ import {
   HiOutlineCamera, 
   HiOutlineCheckCircle, 
   HiOutlineArrowRight,
-  HiOutlineInformationCircle
+  HiOutlineInformationCircle,
+  HiOutlineTruck,
+  HiOutlinePaperAirplane,
+  HiOutlineSparkles,
+  HiOutlineBolt
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -95,7 +99,7 @@ const PetRelocationDemo = () => {
           <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <div style={{ width: '48px', height: '48px', background: '#fae8ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#c026d3' }}>
-                🐾
+                <HiOutlineHeart />
               </div>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Pet Details & Health</h2>
@@ -111,10 +115,11 @@ const PetRelocationDemo = () => {
                   background: petData.type === 'Dog' ? '#fae8ff' : 'white',
                   border: `2px solid ${petData.type === 'Dog' ? '#d946ef' : 'var(--gray-200)'}`,
                   color: petData.type === 'Dog' ? '#a21caf' : 'var(--gray-600)',
-                  padding: '16px', fontSize: '1.2rem', fontWeight: 800
+                  padding: '16px', fontSize: '1.1rem', fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
-                🐶 Dog
+                <HiOutlineHeart /> Dog
               </button>
               <button 
                 className="btn"
@@ -123,10 +128,11 @@ const PetRelocationDemo = () => {
                   background: petData.type === 'Cat' ? '#fae8ff' : 'white',
                   border: `2px solid ${petData.type === 'Cat' ? '#d946ef' : 'var(--gray-200)'}`,
                   color: petData.type === 'Cat' ? '#a21caf' : 'var(--gray-600)',
-                  padding: '16px', fontSize: '1.2rem', fontWeight: 800
+                  padding: '16px', fontSize: '1.1rem', fontWeight: 800,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
-                🐱 Cat
+                <HiOutlineSparkles /> Cat
               </button>
             </div>
 
@@ -173,7 +179,7 @@ const PetRelocationDemo = () => {
           <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
               <div style={{ width: '48px', height: '48px', background: '#fae8ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#c026d3' }}>
-                🚐
+                <HiOutlineTruck />
               </div>
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 4px 0' }}>Choose Transport Mode</h2>
@@ -183,9 +189,9 @@ const PetRelocationDemo = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
-                { id: 'shared', title: 'Shared Pet AC Carrier', desc: 'Travels with up to 3 other pets. Economical.', price: 1499, icon: '🚌' },
-                { id: 'private', title: 'Private VIP AC Cab', desc: 'Dedicated car only for your pet. Premium care.', price: 4999, icon: '🚕' },
-                { id: 'air', title: 'Domestic Air Cargo', desc: 'Fastest transit. Requires standard IATA crate.', price: 8999, icon: '✈️' }
+                { id: 'shared', title: 'Shared Pet AC Carrier', desc: 'Travels with up to 3 other pets. Economical.', price: 1499, icon: <HiOutlineTruck /> },
+                { id: 'private', title: 'Private VIP AC Cab', desc: 'Dedicated car only for your pet. Premium care.', price: 4999, icon: <HiOutlineTruck /> },
+                { id: 'air', title: 'Domestic Air Cargo', desc: 'Fastest transit. Requires standard IATA crate.', price: 8999, icon: <HiOutlinePaperAirplane /> }
               ].map(mode => (
                 <div 
                   key={mode.id}
@@ -197,7 +203,7 @@ const PetRelocationDemo = () => {
                     display: 'flex', alignItems: 'center', gap: '16px'
                   }}
                 >
-                  <div style={{ fontSize: '2rem' }}>{mode.icon}</div>
+                  <div style={{ fontSize: '1.8rem', color: '#c026d3', display: 'flex', alignItems: 'center' }}>{mode.icon}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                       <h4 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: 0 }}>{mode.title}</h4>
@@ -236,7 +242,7 @@ const PetRelocationDemo = () => {
                  <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.4) 100%)' }}></div>
                  
                  <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                   <div style={{ fontSize: '3rem', filter: 'brightness(0.8) sepia(0.2)' }}>{petData.type === 'Cat' ? '🐱' : '🐶'}</div>
+                   <div style={{ fontSize: '3rem', color: '#e879f9', display: 'flex', justifyContent: 'center' }}><HiOutlineHeart /></div>
                    <div style={{ color: '#cbd5e1', fontSize: '0.8rem', marginTop: '8px', letterSpacing: '2px' }}>{petData.name.toUpperCase()} IS SLEEPING...</div>
                  </div>
               </div>
@@ -247,7 +253,7 @@ const PetRelocationDemo = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
                 <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                   <div style={{ fontSize: '0.75rem', color: '#166534', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>Cab Temp</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#15803d' }}>22°C <span style={{ fontSize: '0.8rem', color: '#22c55e' }}>❄️ AC ON</span></div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#15803d' }}>22°C <span style={{ fontSize: '0.8rem', color: '#22c55e', display: 'inline-flex', alignItems: 'center', gap: '2px' }}><HiOutlineBolt /> AC ON</span></div>
                 </div>
                 <div style={{ background: '#fffbeb', padding: '16px', borderRadius: '12px', border: '1px solid #fde68a' }}>
                   <div style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>Last Fed/Walked</div>

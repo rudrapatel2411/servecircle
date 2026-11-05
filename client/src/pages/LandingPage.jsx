@@ -61,7 +61,7 @@ const LandingPage = () => {
       <section className="hero">
         <div className="hero-content container">
           <div className="hero-text">
-            <span className="hero-badge">{t('hero.badge')}</span>
+            <span className="hero-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><HiOutlineGlobeAlt /> {t('hero.badge')}</span>
             <h1 className="hero-title">
               {t('hero.title')} <br />
               <span className="hero-highlight">{t('hero.titleHighlight')}</span>

@@ -45,14 +45,20 @@ const SocietyManagementHub = () => {
                 <strong style={{ fontSize: '0.9rem', color: '#166534', display: 'block' }}>{t('societyManagement.sunita', 'Sunita (Housemaid)')}</strong>
                 <span style={{ fontSize: '0.75rem', color: '#15803d' }}>{t('societyManagement.enteredAt', 'Entered at 8:15 AM')}</span>
               </div>
-              <span style={{ background: '#16a34a', color: 'white', padding: '6px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 800 }}>🟢 {t('societyManagement.inside', 'Inside')}</span>
+              <span style={{ background: '#16a34a', color: 'white', padding: '6px 12px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'white' }} />
+                {t('societyManagement.inside', 'Inside')}
+              </span>
             </div>
             <div style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--gray-200)', background: '#f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong style={{ fontSize: '0.9rem', color: 'var(--navy-700)', display: 'block' }}>{t('societyManagement.rajesh', 'Rajesh (Car Cleaner)')}</strong>
                 <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>{t('societyManagement.lastSeen', 'Last seen yesterday 9:30 AM')}</span>
               </div>
-              <span style={{ background: 'var(--gray-300)', color: 'var(--gray-700)', padding: '6px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 800 }}>⚪ {t('societyManagement.outside', 'Outside')}</span>
+              <span style={{ background: 'var(--gray-300)', color: 'var(--gray-700)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--gray-500)' }} />
+                {t('societyManagement.outside', 'Outside')}
+              </span>
             </div>
           </div>
         </div>

@@ -4,7 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineHeart, HiOutlineShieldCheck, HiOutlineSparkles,
   HiOutlinePlusCircle, HiOutlineClock, HiOutlineChevronRight,
-  HiOutlineInbox, HiOutlineTrash, HiOutlineCheckCircle
+  HiOutlineInbox, HiOutlineTrash, HiOutlineCheckCircle,
+  HiOutlineExclamationTriangle, HiOutlineWrench, HiOutlineTv,
+  HiOutlineCube, HiOutlineBolt
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -103,7 +105,7 @@ const HomeFixrWarranty = () => {
     setAlertMsg('');
 
     // Trigger toast or message
-    alert('🎉 Appliance registered successfully! Your HomeFixr score has increased.');
+    alert('Appliance registered successfully! Your HomeFixr score has increased.');
   };
 
   const handleDelete = (id) => {
@@ -130,7 +132,9 @@ const HomeFixrWarranty = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">{t('customer.homefixr')} ❤️</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {t('customer.homefixr')} <HiOutlineHeart style={{ color: '#ef4444' }} />
+          </h1>
           <p className="page-subtitle">AI-powered home health intelligence and proactive warranty monitoring.</p>
         </div>
       </div>
@@ -161,8 +165,8 @@ const HomeFixrWarranty = () => {
               Your home electrical, plumbing, and HVAC systems are in <strong>{currentScore >= 85 ? 'Excellent' : 'Good'}</strong> standing.
             </p>
 
-            <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: 'var(--radius-md)', fontSize: '0.8rem' }}>
-              ✨ Registering appliances and completing routine checks boosts your score.
+            <div style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <HiOutlineSparkles style={{ color: '#f59e0b' }} /> Registering appliances and completing routine checks boosts your score.
             </div>
           </div>
 
@@ -173,7 +177,7 @@ const HomeFixrWarranty = () => {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <span style={{ padding: '6px', background: '#fee2e2', color: 'var(--danger)', borderRadius: '50%', display: 'inline-flex', fontSize: '0.9rem' }}>⚠️</span>
+                <span style={{ padding: '6px', background: '#fee2e2', color: 'var(--danger)', borderRadius: '50%', display: 'inline-flex', fontSize: '1rem' }}><HiOutlineExclamationTriangle /></span>
                 <div>
                   <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--navy-800)' }}>Clean Master Bedroom AC Filter</h4>
                   <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>Clogged filters reduce efficiency by 15% and lower air quality.</p>
@@ -181,7 +185,7 @@ const HomeFixrWarranty = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <span style={{ padding: '6px', background: '#dbeafe', color: 'var(--primary-700)', borderRadius: '50%', display: 'inline-flex', fontSize: '0.9rem' }}>🔧</span>
+                <span style={{ padding: '6px', background: '#dbeafe', color: 'var(--primary-700)', borderRadius: '50%', display: 'inline-flex', fontSize: '1rem' }}><HiOutlineWrench /></span>
                 <div>
                   <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--navy-800)' }}>Compressor Tune-up</h4>
                   <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '2px' }}>Annual inspection recommended for Refrigerator.</p>
@@ -294,8 +298,8 @@ const HomeFixrWarranty = () => {
                       }}
                     >
                       <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                        <div style={{ fontSize: '2rem', padding: '10px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)' }}>
-                          {app.type === 'AC' ? '💨' : app.type === 'TV' ? '📺' : app.type === 'Refrigerator' ? '❄️' : '🔌'}
+                        <div style={{ fontSize: '1.8rem', padding: '10px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center' }}>
+                          {app.type === 'AC' ? <HiOutlineBolt style={{ color: '#06b6d4' }} /> : app.type === 'TV' ? <HiOutlineTv style={{ color: '#8b5cf6' }} /> : app.type === 'Refrigerator' ? <HiOutlineCube style={{ color: '#3b82f6' }} /> : <HiOutlineBolt style={{ color: '#f59e0b' }} />}
                         </div>
                         <div>
                           <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--navy-800)' }}>{app.name}</h4>

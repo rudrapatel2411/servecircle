@@ -438,7 +438,9 @@ const AISmartDiagnosis = () => {
                     <div className="card" style={{ border: '1.5px solid var(--primary-200)', background: 'var(--primary-50)', padding: '20px', textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
                         <h4 style={{ fontSize: '0.8rem', color: 'var(--primary-800)', textTransform: 'uppercase', fontWeight: 700 }}>MATCHED SERVICE</h4>
-                        <div style={{ fontSize: '2.5rem', margin: '14px 0', color: 'var(--primary-600)' }}>✓</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', margin: '14px 0' }}>
+                          <HiOutlineCheckCircle style={{ fontSize: '3rem', color: 'var(--primary-600)' }} />
+                        </div>
                         <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800 }}>{result.service}</h3>
                         <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '6px' }}>Category: {result.category}</p>
                       </div>
@@ -464,7 +466,7 @@ const AISmartDiagnosis = () => {
                             onClick={() => navigate(result.targetHubRoute)}
                             title="View Category Hub"
                           >
-                            Hub ➔
+                            Hub <HiOutlineArrowRight style={{ verticalAlign: 'middle', marginLeft: '4px' }} />
                           </button>
                         )}
                       </div>

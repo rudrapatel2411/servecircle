@@ -93,7 +93,18 @@ router.post(
     }
 
     const user = await User.create(userData);
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        email: user.email,
+        name: user.name,
+        serviceCategory: user.serviceCategory || '',
+        workerStatus: user.workerStatus || 'approved_senior',
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     // Phase 2: log registration event
     try {
@@ -148,9 +159,17 @@ router.post(
         user = fallbackUser;
       }
     } else {
-      const isMatch = await user.comparePassword(password);
+      let isMatch = await user.comparePassword(password);
       if (!isMatch) {
-        throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+        // Fallback: Check if this matches our fixed demo accounts (auto-sync password in DB)
+        const fallbackUser = findFallbackUserByEmail(email);
+        if (fallbackUser && (await verifyPassword(fallbackUser, password))) {
+          user.password = password;
+          await user.save();
+          isMatch = true;
+        } else {
+          throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+        }
       }
     }
 
@@ -158,7 +177,18 @@ router.post(
       throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        email: user.email,
+        name: user.name,
+        serviceCategory: user.serviceCategory || '',
+        workerStatus: user.workerStatus || 'approved_senior',
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     // Phase 2: log login event
     try {

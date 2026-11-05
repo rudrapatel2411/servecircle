@@ -5,6 +5,7 @@ import {
   HiOutlineCalendarDays,
   HiOutlineXMark,
   HiOutlineBanknotes,
+  HiOutlineClock,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
@@ -129,7 +130,7 @@ const B2BClientContracts = () => {
               )}
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '8px' }}>
                 <span><HiOutlineCalendarDays style={{ verticalAlign: 'middle' }} /> {contract.startDate} - {contract.endDate}</span>
-                {contract.frequency && <span>⏱️ {contract.frequency}</span>}
+                {contract.frequency && <span><HiOutlineClock style={{ verticalAlign: 'middle' }} /> {contract.frequency}</span>}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
                 <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary-700)' }}>
@@ -208,7 +209,7 @@ const B2BClientContracts = () => {
                 setSelectedContract(null);
                 navigate('/b2b/invoices', { state: { contractId: selectedContract.id } });
               }}>
-                <HiOutlineBanknotes style={{ verticalAlign: 'middle', marginRight: '4px' }} /> {t('b2bClient.contracts.invoicesBtn').replace('💰 ', '')}
+                <HiOutlineBanknotes style={{ verticalAlign: 'middle', marginRight: '4px' }} /> {t('b2bClient.contracts.invoicesBtn')}
               </button>
               <button className="btn btn-outline" onClick={() => {
                 setSelectedContract(null);

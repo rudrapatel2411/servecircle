@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBolt, HiOutlineShieldCheck, HiOutlineExclamationTriangle, HiOutlineMapPin,
-  HiOutlineMagnifyingGlass, HiOutlineXMark
+  HiOutlineMagnifyingGlass, HiOutlineXMark, HiOutlineKey, HiOutlineFire,
+  HiOutlineHomeModern, HiOutlineTruck, HiOutlineWrench
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -13,7 +14,7 @@ const emergencyPresets = [
     id: 'leakage',
     name: 'Major Water Leakage / Flood',
     description: 'Burst pipelines, overflowing overhead tanks, or active bathroom floods.',
-    icon: '💧',
+    icon: <HiOutlineWrench style={{ color: '#0284c7' }} />,
     service: 'Water Leakage Plumber',
     price: 699,
     actionNeeded: 'Close the main washroom control valve immediately.'
@@ -22,7 +23,7 @@ const emergencyPresets = [
     id: 'short-circuit',
     name: 'Short Circuit / Sparking Wire',
     description: 'Electrical spark noises, burning plastic smell, or total room blackout.',
-    icon: '⚡',
+    icon: <HiOutlineBolt style={{ color: '#eab308' }} />,
     service: 'Electrical Emergency Specialist',
     price: 599,
     actionNeeded: 'Flip the main circuit breaker (MCB) switch to OFF immediately.'
@@ -31,7 +32,7 @@ const emergencyPresets = [
     id: 'locked-out',
     name: 'Home Locked Out / Key Stuck',
     description: 'Keys lost, lock barrel jammed, or children locked inside a room.',
-    icon: '🔑',
+    icon: <HiOutlineKey style={{ color: '#f97316' }} />,
     service: 'Emergency Locksmith',
     price: 499,
     actionNeeded: 'Do not attempt to force the handle. Wait for locksmith tools.'
@@ -40,7 +41,7 @@ const emergencyPresets = [
     id: 'gas-leak',
     name: 'LPG Gas Cylinder Seepage',
     description: 'Pungent sulfur gas odor detected near kitchen stove or cylinder.',
-    icon: '⛽',
+    icon: <HiOutlineFire style={{ color: '#ef4444' }} />,
     service: 'Gas Line Emergency Specialist',
     price: 799,
     actionNeeded: 'Open all windows immediately. Do NOT turn on any light switches.'
@@ -49,7 +50,7 @@ const emergencyPresets = [
     id: 'roof-collapse',
     name: 'Roof Collapse & Structural Risk',
     description: 'Severe ceiling plaster cracking, concrete crumbling, or structural sagging.',
-    icon: '🏚️',
+    icon: <HiOutlineHomeModern style={{ color: '#64748b' }} />,
     service: 'Civil Structure Expert',
     price: 999,
     actionNeeded: 'Evacuate the affected room/area immediately and stay away from load-bearing beams.'
@@ -58,7 +59,7 @@ const emergencyPresets = [
     id: 'vehicle-breakdown',
     name: 'Roadside Vehicle Breakdown',
     description: 'Car/bike engine failure, flat tyre puncture on highway, or battery dead mid-transit.',
-    icon: '🚗',
+    icon: <HiOutlineTruck style={{ color: '#2563eb' }} />,
     service: 'On-Demand Emergency Mechanic',
     price: 399,
     actionNeeded: 'Park the vehicle safely on the shoulder, turn on hazard lights, and wait in a safe area.'
@@ -67,7 +68,7 @@ const emergencyPresets = [
     id: 'medical-first-aid',
     name: 'Immediate Paramedic First Aid',
     description: 'Minor household burns, sprains, high fever spikes, or emergency dressing assistance.',
-    icon: '🚑',
+    icon: <HiOutlineShieldCheck style={{ color: '#10b981' }} />,
     service: 'Home Paramedic Attendant',
     price: 499,
     actionNeeded: 'Apply basic first aid if trained, keep the patient calm, and do not self-medicate.'
@@ -76,7 +77,7 @@ const emergencyPresets = [
     id: 'animal-removal',
     name: 'Emergency Animal/Stray Removal',
     description: 'Stray dogs, snakes, wild monkeys, or dangerous nests inside residential premises.',
-    icon: '🐍',
+    icon: <HiOutlineExclamationTriangle style={{ color: '#8b5cf6' }} />,
     service: 'Verified Wildlife/Stray Expert',
     price: 599,
     actionNeeded: 'Keep a safe distance, do not lock eyes, and monitor the animal from a secure room.'
@@ -166,7 +167,7 @@ const EmergencyHub = () => {
               }}
             >
               <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '2.2rem' }}>{preset.icon}</span>
+                <span style={{ fontSize: '2.2rem', display: 'flex', alignItems: 'center' }}>{preset.icon}</span>
                 <div>
                   <h4 style={{ fontSize: '1.05rem', fontWeight: 850, color: 'var(--navy-800)', margin: '0 0 4px 0' }}>{getPresetName(preset)}</h4>
                   <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: 0, lineHeight: 1.4 }}>{getPresetDesc(preset)}</p>
@@ -174,7 +175,9 @@ const EmergencyHub = () => {
               </div>
               
               <div style={{ background: '#fef2f2', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid #fee2e2', marginTop: 'auto' }}>
-                <h5 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#991b1b', margin: '0 0 4px 0' }}>⚠️ Immediate Action:</h5>
+                <h5 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#991b1b', margin: '0 0 4px 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <HiOutlineExclamationTriangle /> Immediate Action:
+                </h5>
                 <p style={{ fontSize: '0.8rem', color: '#b91c1c', margin: 0, fontWeight: 600 }}>{getPresetAction(preset)}</p>
               </div>
               

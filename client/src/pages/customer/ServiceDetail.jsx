@@ -259,7 +259,9 @@ const ServiceDetail = () => {
                 </div>
                 <div style={{ textAlign: 'right', fontSize: '0.75rem', color: 'var(--gray-500)' }}>
                   {activeTier === 'premium' ? (
-                    <span style={{ color: 'var(--primary-600)', fontWeight: 800, display: 'block' }}>★ {t('serviceDetail.includesWarranty90')}</span>
+                    <span style={{ color: 'var(--primary-600)', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <HiOutlineSparkles /> {t('serviceDetail.includesWarranty90')}
+                    </span>
                   ) : (
                     <span>{t('serviceDetail.includesWarranty30')}</span>
                   )}
@@ -335,8 +337,11 @@ const ServiceDetail = () => {
 
         {/* BOTTOM SECTION: Card 4 (Reviews) Full Width or just placed nicely */}
         <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)', background: 'white' }}>
-          <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '18px' }}>
-            {t('serviceDetail.verifiedReviews')} (★ {service.rating})
+          <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>{t('serviceDetail.verifiedReviews')}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', color: '#f59e0b', fontSize: '0.95rem' }}>
+              (<HiOutlineStar /> {service.rating})
+            </span>
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {mockReviews.map((r, i) => (
@@ -345,8 +350,8 @@ const ServiceDetail = () => {
                   <h5 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{r.name}</h5>
                   <span style={{ fontSize: '0.7rem', color: 'var(--gray-400)' }}>{r.date}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '2px', color: '#f59e0b', fontSize: '0.75rem', marginTop: '3px' }}>
-                  {Array.from({ length: r.rating }).map((_, idx) => <span key={idx}>★</span>)}
+                <div style={{ display: 'flex', gap: '2px', color: '#f59e0b', fontSize: '0.85rem', marginTop: '3px' }}>
+                  {Array.from({ length: r.rating }).map((_, idx) => <HiOutlineStar key={idx} />)}
                 </div>
                 <p style={{ fontSize: '0.75rem', color: 'var(--gray-600)', marginTop: '8px', lineHeight: 1.5 }}>
                   {r.text}

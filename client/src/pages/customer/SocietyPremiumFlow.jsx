@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   HiOutlineArrowLeft, HiOutlineCheckCircle, HiOutlineBolt, 
   HiOutlineSparkles, HiOutlineUserGroup, HiOutlineShieldCheck,
-  HiOutlineDocumentText, HiOutlineGift
+  HiOutlineDocumentText, HiOutlineGift, HiOutlineExclamationTriangle
 } from 'react-icons/hi2';
 
 const SocietyPremiumFlow = () => {
@@ -523,7 +523,7 @@ return (
             
             {errorMsg && (
               <div className="animate-fade-in-up" style={{ color: '#ef4444', background: '#fef2f2', padding: '16px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 700, marginTop: '24px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #fecaca' }}>
-                <span>⚠️</span> {errorMsg}
+                <HiOutlineExclamationTriangle style={{ fontSize: '1.2rem', flexShrink: 0 }} /> {errorMsg}
               </div>
             )}
 

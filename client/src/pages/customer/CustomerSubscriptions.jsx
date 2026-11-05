@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineCheckCircle, HiOutlineStar, HiOutlineRocketLaunch,
-  HiOutlineShieldCheck, HiOutlineSparkles
+  HiOutlineShieldCheck, HiOutlineSparkles, HiOutlineXCircle
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -88,7 +88,7 @@ const CustomerSubscriptions = () => {
                 ))}
                 {plan.notIncluded.map((f, i) => (
                   <li key={`no-${i}`} className="feature-item not-included">
-                    <span className="feature-x">✕</span> {f}
+                    <HiOutlineXCircle className="feature-icon feature-x" /> {f}
                   </li>
                 ))}
               </ul>

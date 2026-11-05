@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next';
 import {
   HiOutlineSparkles, HiOutlineCalculator, HiOutlineCheckCircle, HiOutlineCurrencyRupee,
   HiOutlineEye, HiOutlineStar, HiOutlineUserGroup,
-  HiOutlineMagnifyingGlass, HiOutlineXMark
+  HiOutlineMagnifyingGlass, HiOutlineXMark,
+  HiOutlinePaintBrush, HiOutlineClipboardDocumentList, HiOutlineCalendarDays,
+  HiOutlineMapPin, HiOutlinePencilSquare, HiOutlineTrash, HiOutlinePlusCircle,
+  HiOutlineDocumentArrowDown, HiOutlineLockClosed, HiOutlineBolt,
+  HiOutlineCake, HiOutlineSun, HiOutlineBriefcase, HiOutlineHeart,
+  HiOutlineFaceSmile, HiOutlineCheck
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -18,139 +23,139 @@ const EventsHub = () => {
   const themesData = [
     {
       id: 'birthday',
-      name: t('eventsHub.themes.birthday.name', 'Theme Birthday Bash 🎉'),
+      name: t('eventsHub.themes.birthday.name', 'Theme Birthday Bash'),
       description: t('eventsHub.themes.birthday.desc', 'Balloons, cartoon backdrops, neon signboards, cake table layouts.'),
       baseDecorPrice: 2999,
-      icon: '🎈'
+      icon: <HiOutlineCake style={{ color: '#ec4899' }} />
     },
     {
       id: 'grihapravesh',
-      name: t('eventsHub.themes.grihapravesh.name', 'Traditional Griha Pravesh 🌸'),
+      name: t('eventsHub.themes.grihapravesh.name', 'Traditional Griha Pravesh'),
       description: t('eventsHub.themes.grihapravesh.desc', 'Traditional fresh marigold garlands, entrance rangoli, puja mandap decor.'),
       baseDecorPrice: 3999,
-      icon: '🌸'
+      icon: <HiOutlineSparkles style={{ color: '#f59e0b' }} />
     },
     {
       id: 'seasonal',
-      name: t('eventsHub.themes.seasonal.name', 'Festive Lights & Diwali 🪔'),
+      name: t('eventsHub.themes.seasonal.name', 'Festive Lights & Diwali'),
       description: t('eventsHub.themes.seasonal.desc', 'High-altitude fairy light cascading, door latkan hangings, and brass pots set.'),
       baseDecorPrice: 3000,
-      icon: '🪔'
+      icon: <HiOutlineSun style={{ color: '#f97316' }} />
     },
     {
       id: 'corporate',
-      name: t('eventsHub.themes.corporate.name', 'Corporate Farewell / Party 💼'),
+      name: t('eventsHub.themes.corporate.name', 'Corporate Farewell / Party'),
       description: t('eventsHub.themes.corporate.desc', 'Professional pull-up banners, balloon bouquets, awards podium setups.'),
       baseDecorPrice: 4999,
-      icon: '💼'
+      icon: <HiOutlineBriefcase style={{ color: '#3b82f6' }} />
     },
     {
       id: 'wedding',
-      name: t('eventsHub.themes.wedding.name', 'Wedding & Ring Ceremony 💍'),
+      name: t('eventsHub.themes.wedding.name', 'Wedding & Ring Ceremony'),
       description: t('eventsHub.themes.wedding.desc', 'Luxury floral arch backdrop, premium stage lighting, red carpet pathway.'),
       baseDecorPrice: 8999,
-      icon: '💍'
+      icon: <HiOutlineHeart style={{ color: '#ef4444' }} />
     },
     {
       id: 'babyshower',
-      name: t('eventsHub.themes.babyshower.name', 'Baby Shower / Godh Bharai 🍼'),
+      name: t('eventsHub.themes.babyshower.name', 'Baby Shower / Godh Bharai'),
       description: t('eventsHub.themes.babyshower.desc', 'Pastel blue & pink backdrops, baby blocks decor, customized photo booth.'),
       baseDecorPrice: 3499,
-      icon: '🍼'
+      icon: <HiOutlineFaceSmile style={{ color: '#8b5cf6' }} />
     },
     {
       id: 'kittyparty',
-      name: t('eventsHub.themes.kittyparty.name', 'Get-Together & Kitty Party 🍹'),
+      name: t('eventsHub.themes.kittyparty.name', 'Get-Together & Kitty Party'),
       description: t('eventsHub.themes.kittyparty.desc', 'Elegant table centerpieces, photo props, floral hangings, and ambient fairy lights.'),
       baseDecorPrice: 2499,
-      icon: '🍹'
+      icon: <HiOutlineUserGroup style={{ color: '#06b6d4' }} />
     },
     {
       id: 'anniversary',
-      name: t('eventsHub.themes.anniversary.name', 'Milestone Anniversary 💑'),
+      name: t('eventsHub.themes.anniversary.name', 'Milestone Anniversary'),
       description: t('eventsHub.themes.anniversary.desc', 'Romantic red rose arches, LED numbers backdrop, heart-shaped balloon accents.'),
       baseDecorPrice: 4500,
-      icon: '💑'
+      icon: <HiOutlineStar style={{ color: '#eab308' }} />
     }
   ];
 
   // Vendor profiles translated dynamically on render
   const vendorDetailsData = {
     catering: {
-      title: t('eventsHub.cateringTitle', 'Catering Food Services 🍽️'),
-      rating: '4.8 ★ (120+ Events)',
+      title: t('eventsHub.cateringTitle', 'Catering Food Services'),
+      rating: '4.8 (120+ Events)',
       expert: 'Chef Ramesh & Royal Caterers',
       experience: t('eventsHub.cateringProfileExp', '12+ years in large-scale wedding and party catering.'),
       portfolio: t('eventsHub.cateringPortfolioSpotlight', 'Delivered premium menus for corporate functions and high-end wedding receptions.'),
       included: [] 
     },
     dj: {
-      title: t('eventsHub.djTitle', 'Live Sound & Professional DJ Setup 🎧'),
-      rating: '4.9 ★ (95+ Events)',
+      title: t('eventsHub.djTitle', 'Live Sound & Professional DJ Setup'),
+      rating: '4.9 (95+ Events)',
       expert: 'DJ Nitish & SoundStorm Beats',
       experience: t('eventsHub.djProfileExp', '8+ years performing at major club parties, sangeet, and corporate galas.'),
       portfolio: t('eventsHub.djPortfolioSpotlight', 'Renowned for high-energy dance floors and flawless sound acoustics.'),
       included: []
     },
     livemusic: {
-      title: t('eventsHub.liveMusicTitle', 'Live Music & Acoustic Band Setup 🎸'),
-      rating: '4.8 ★ (40+ Events)',
+      title: t('eventsHub.liveMusicTitle', 'Live Music & Acoustic Band Setup'),
+      rating: '4.8 (40+ Events)',
       expert: 'The Harmony Trio Band',
       experience: t('eventsHub.liveMusicProfileExp', '5+ years performing in premium lounges, cafes, and intimate private parties.'),
       portfolio: t('eventsHub.liveMusicPortfolioSpotlight', 'Specializes in unplugged Bollywood melodies, Sufi, and classic soft rock.'),
       included: []
     },
     photography: {
-      title: t('eventsHub.photographyTitle', 'High-res Photographer & Videographer 📸'),
-      rating: '4.9 ★ (150+ Events)',
+      title: t('eventsHub.photographyTitle', 'High-res Photographer & Videographer'),
+      rating: '4.9 (150+ Events)',
       expert: 'LensCraft Studio (Lead: Amit & Team)',
       experience: t('eventsHub.photographyProfileExp', '10+ years covering weddings, birthdays, and national corporate events.'),
       portfolio: t('eventsHub.photographyPortfolioSpotlight', 'Stunning candid portfolio with beautiful color grading and framing.'),
       included: []
     },
     drone: {
-      title: t('eventsHub.droneTitle', 'Aerial Drone Videography Coverage 🛸'),
-      rating: '4.7 ★ (30+ Events)',
+      title: t('eventsHub.droneTitle', 'Aerial Drone Videography Coverage'),
+      rating: '4.7 (30+ Events)',
       expert: 'SkyEye Cinematic Pilots',
       experience: t('eventsHub.droneProfileExp', '4+ years in cinematic drone shoots for outdoor properties and festivals.'),
       portfolio: t('eventsHub.dronePortfolioSpotlight', 'Breathtaking 4K aerial reels of large outdoor venues and outdoor events.'),
       included: []
     },
     emcee: {
-      title: t('eventsHub.emceeTitle', 'Professional Anchor / Emcee Host 🎤'),
-      rating: '4.9 ★ (70+ Events)',
+      title: t('eventsHub.emceeTitle', 'Professional Anchor / Emcee Host'),
+      rating: '4.9 (70+ Events)',
       expert: 'Anchor Priya Sharma',
       experience: t('eventsHub.emceeProfileExp', '6+ years hosting corporate sangeets, baby showers, and grand wedding events.'),
       portfolio: t('eventsHub.emceePortfolioSpotlight', 'Extremely charismatic, funny, and skilled at keeping crowds engaged.'),
       included: []
     },
     magicshow: {
-      title: t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator 🪄'),
-      rating: '4.8 ★ (85+ Events)',
+      title: t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator'),
+      rating: '4.8 (85+ Events)',
       expert: 'Jadugar Samrat & PlayZone Team',
       experience: t('eventsHub.magicShowProfileExp', '7+ years conducting kids birthdays and carnival-themed society functions.'),
       portfolio: t('eventsHub.magicShowPortfolioSpotlight', 'A crowd favorite for kids with humorous, safe, and clean family entertainment.'),
       included: []
     },
     cleanup: {
-      title: t('eventsHub.cleanupTitle', 'Post-Event Site Clean-up Crew 🧹'),
-      rating: '4.9 ★ (300+ Cleanups)',
+      title: t('eventsHub.cleanupTitle', 'Post-Event Site Clean-up Crew'),
+      rating: '4.9 (300+ Cleanups)',
       expert: 'ServeCircle Clean-Force Premium',
       experience: t('eventsHub.cleanupProfileExp', 'Specialized corporate and private post-event cleaning crews.'),
       portfolio: t('eventsHub.cleanupPortfolioSpotlight', 'Trusted partner for restoring venues to pristine state overnight.'),
       included: []
     },
     photobooth: {
-      title: t('eventsHub.photoboothTitle', '360° Spin Video Photo Booth 🎥'),
-      rating: '4.9 ★ (200+ Events)',
+      title: t('eventsHub.photoboothTitle', '360° Spin Video Photo Booth'),
+      rating: '4.9 (200+ Events)',
       expert: 'SpinCam Pro Experiences',
       experience: t('eventsHub.photoboothProfileExp', 'Pioneers in 360-degree slow-motion cinematic video booths.'),
       portfolio: t('eventsHub.photoboothPortfolioSpotlight', 'Creates instant viral-worthy slow-motion reels for all guests.'),
       included: []
     },
     einvite: {
-      title: t('eventsHub.einviteTitle', 'Custom Digital E-Invite 💌'),
-      rating: '4.8 ★ (500+ Designs)',
+      title: t('eventsHub.einviteTitle', 'Custom Digital E-Invite'),
+      rating: '4.8 (500+ Designs)',
       expert: 'ServeCircle Studio Designers',
       experience: t('eventsHub.einviteProfileExp', 'Creative digital designers for premium WhatsApp video & image invites.'),
       portfolio: t('eventsHub.einvitePortfolioSpotlight', 'Beautiful, elegant templates crafted specifically for your theme.'),
@@ -475,7 +480,7 @@ const EventsHub = () => {
             gap: '6px'
           }}
         >
-          {t('eventsHub.tabTheme', '🎨 1. Theme & Decor')}
+          <HiOutlinePaintBrush style={{ fontSize: '1.1rem' }} /> {t('eventsHub.tabTheme', '1. Theme & Decor')}
         </button>
         <button
           type="button"
@@ -498,7 +503,7 @@ const EventsHub = () => {
             gap: '6px'
           }}
         >
-          {t('eventsHub.tabChecklist', '📋 2. Vendor Services')}
+          <HiOutlineClipboardDocumentList style={{ fontSize: '1.1rem' }} /> {t('eventsHub.tabChecklist', '2. Vendor Services')}
         </button>
       </div>
 
@@ -517,8 +522,8 @@ const EventsHub = () => {
                 {/* Event Date & Venue Selection */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px', background: 'var(--gray-50)', padding: '16px', borderRadius: 'var(--radius-md)' }}>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>
-                      Event Date 🗓️
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                      <HiOutlineCalendarDays style={{ color: 'var(--primary-600)' }} /> Event Date
                     </label>
                     <input 
                       type="text" 
@@ -530,8 +535,8 @@ const EventsHub = () => {
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>
-                      Venue Type 📍
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                      <HiOutlineMapPin style={{ color: 'var(--primary-600)' }} /> Venue Type
                     </label>
                     <select 
                       className="input-field" 
@@ -563,7 +568,7 @@ const EventsHub = () => {
                       }}
                     >
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '1.6rem' }}>{theme.icon}</span>
+                        <span style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center' }}>{theme.icon}</span>
                         <div>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{theme.name}</h4>
                           <p style={{ fontSize: '0.7rem', color: 'var(--gray-500)', marginTop: '2px', lineHeight: 1.3 }}>{theme.description}</p>
@@ -576,7 +581,7 @@ const EventsHub = () => {
                 {/* Permanent Theme Styling & Customization Form */}
                 <div className="card animate-fade-in-up" style={{ marginTop: '20px', padding: '20px', background: 'var(--gray-5)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)' }}>
                   <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {t('eventsHub.customizeThemeTitle', '✍️ Customize Selected Theme & Decor Styling')}
+                    <HiOutlinePencilSquare style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.customizeThemeTitle', 'Customize Selected Theme & Decor Styling')}
                   </h4>
                   <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginBottom: '14px', lineHeight: 1.4 }}>
                     {t('eventsHub.customizeThemeDesc', 'Want specific themes or extra decorations? Write your choice below (e.g. "Spider-Man theme for birthday", "Add blue & silver balloons").')}
@@ -619,7 +624,7 @@ const EventsHub = () => {
                 {/* Guests Count slider */}
                 <div className="input-group" style={{ marginBottom: '20px' }}>
                   <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>{t('eventsHub.guestsCount', '👥 Expected Guests Count')}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><HiOutlineUserGroup style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.guestsCount', 'Expected Guests Count')}</span>
                     <span style={{ color: 'var(--primary-600)', fontWeight: 800 }}>{guestsCount} {t('eventsHub.guestsCountSuffix', 'Guests')}</span>
                   </label>
                   <input
@@ -641,7 +646,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeCatering} onChange={(e) => setIncludeCatering(e.target.checked)} />
-                        {t('eventsHub.cateringTitle', 'Catering Food Services 🍽️')}
+                        {t('eventsHub.cateringTitle', 'Catering Food Services')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('catering')}
@@ -686,7 +691,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeDJ} onChange={(e) => setIncludeDJ(e.target.checked)} />
-                        {t('eventsHub.djTitle', 'Live Sound & Professional DJ Setup 🎧')}
+                        {t('eventsHub.djTitle', 'Live Sound & Professional DJ Setup')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('dj')}
@@ -710,7 +715,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeLiveMusic} onChange={(e) => setIncludeLiveMusic(e.target.checked)} />
-                        {t('eventsHub.liveMusicTitle', 'Live Music & Acoustic Band Setup 🎸')}
+                        {t('eventsHub.liveMusicTitle', 'Live Music & Acoustic Band Setup')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('livemusic')}
@@ -734,7 +739,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includePhotography} onChange={(e) => setIncludePhotography(e.target.checked)} />
-                        {t('eventsHub.photographyTitle', 'High-res Photographer & Videographer 📸')}
+                        {t('eventsHub.photographyTitle', 'High-res Photographer & Videographer')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('photography')}
@@ -758,7 +763,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeDrone} onChange={(e) => setIncludeDrone(e.target.checked)} />
-                        {t('eventsHub.droneTitle', 'Aerial Drone Videography Coverage 🛸')}
+                        {t('eventsHub.droneTitle', 'Aerial Drone Videography Coverage')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('drone')}
@@ -782,7 +787,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeEmcee} onChange={(e) => setIncludeEmcee(e.target.checked)} />
-                        {t('eventsHub.emceeTitle', 'Professional Anchor / Emcee Host 🎤')}
+                        {t('eventsHub.emceeTitle', 'Professional Anchor / Emcee Host')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('emcee')}
@@ -806,7 +811,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeMagicShow} onChange={(e) => setIncludeMagicShow(e.target.checked)} />
-                        {t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator 🪄')}
+                        {t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('magicshow')}
@@ -830,7 +835,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includePhotoBooth} onChange={(e) => setIncludePhotoBooth(e.target.checked)} />
-                        {t('eventsHub.photoboothTitle', '360° Spin Video Photo Booth 🎥')}
+                        {t('eventsHub.photoboothTitle', '360° Spin Video Photo Booth')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('photobooth')}
@@ -854,7 +859,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeEInvite} onChange={(e) => setIncludeEInvite(e.target.checked)} />
-                        {t('eventsHub.einviteTitle', 'Custom Digital E-Invite 💌')}
+                        {t('eventsHub.einviteTitle', 'Custom Digital E-Invite')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('einvite')}
@@ -878,7 +883,7 @@ const EventsHub = () => {
                     <div>
                       <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <input type="checkbox" checked={includeCleanup} onChange={(e) => setIncludeCleanup(e.target.checked)} />
-                        {t('eventsHub.cleanupTitle', 'Post-Event Site Clean-up Crew 🧹')}
+                        {t('eventsHub.cleanupTitle', 'Post-Event Site Clean-up Crew')}
                         <button 
                           type="button" 
                           onClick={() => setActiveVendorKey('cleanup')}
@@ -924,10 +929,10 @@ const EventsHub = () => {
                         <button 
                           type="button" 
                           onClick={() => setCustomNeeds(prev => prev.filter(item => item.id !== need.id))}
-                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.95rem', padding: '4px' }}
+                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.95rem', padding: '4px', display: 'flex', alignItems: 'center' }}
                           title={t('eventsHub.removeCustomRequirement', 'Remove custom requirement')}
                         >
-                          🗑️
+                          <HiOutlineTrash style={{ fontSize: '1.1rem' }} />
                         </button>
                       </div>
                     </div>
@@ -938,7 +943,7 @@ const EventsHub = () => {
                 {/* Add Custom Need Panel */}
                 <div style={{ marginTop: '20px', padding: '16px', background: 'var(--gray-55)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--gray-300)' }}>
                   <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {t('eventsHub.customRequirementTitle', '➕ Add Your Custom Requirement / Vendor Need')}
+                    <HiOutlinePlusCircle style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.customRequirementTitle', 'Add Your Custom Requirement / Vendor Need')}
                   </h4>
                   <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                     <input 
@@ -985,7 +990,7 @@ const EventsHub = () => {
             {/* Breakdowns */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.75rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '16px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--gray-500)' }}>{t('eventsHub.occasionThemeDecor', 'Occasion Theme Decor')} ({selectedTheme.icon})</span>
+                <span style={{ color: 'var(--gray-500)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>{t('eventsHub.occasionThemeDecor', 'Occasion Theme Decor')}</span>
                 <span style={{ fontWeight: 700, color: 'var(--navy-800)' }}>
                   {selectedTheme.name} (₹{decorPrice})
                 </span>
@@ -1105,9 +1110,9 @@ const EventsHub = () => {
                 type="button"
                 onClick={() => setPdfModalOpen(true)}
                 className="btn btn-outline"
-                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', gap: '6px' }}
+                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }}
               >
-                📥 PDF Quote
+                <HiOutlineDocumentArrowDown style={{ fontSize: '1rem' }} /> PDF Quote
               </button>
               <button
                 type="button"
@@ -1119,9 +1124,9 @@ const EventsHub = () => {
             </div>
 
             <div style={{ marginTop: '16px', fontSize: '0.7rem', color: 'var(--gray-400)', display: 'flex', gap: '6px', alignItems: 'center', justifyContent: 'center' }}>
-              <span>{t('eventsHub.secureTransaction', '🔒 100% Secure Transaction')}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineLockClosed style={{ color: 'var(--success)' }} /> {t('eventsHub.secureTransaction', '100% Secure Transaction')}</span>
               <span>•</span>
-              <span>{t('eventsHub.freeRevisions', '💰 Free post-event revisions')}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineCurrencyRupee style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.freeRevisions', 'Free post-event revisions')}</span>
             </div>
           </div>
         </div>
@@ -1170,7 +1175,7 @@ const EventsHub = () => {
             className="btn btn-primary"
             style={{ padding: '10px 22px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--gradient-primary, linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%))' }}
           >
-            {t('eventsHub.reviewAndBook', 'Review & Book ⚡')}
+            {t('eventsHub.reviewAndBook', 'Review & Book')} <HiOutlineBolt />
           </button>
         )}
       </div>
@@ -1215,16 +1220,16 @@ const EventsHub = () => {
               <button 
                 type="button" 
                 onClick={() => setShowMobileSummary(false)}
-                style={{ background: 'none', border: 'none', fontSize: '1.2rem', color: 'var(--gray-400)', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', fontSize: '1.2rem', color: 'var(--gray-400)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
               >
-                ✕
+                <HiOutlineXMark />
               </button>
             </div>
 
             {/* Breakdowns */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.8rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '16px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--gray-500)' }}>{t('eventsHub.occasionThemeDecor', 'Theme Decor')} ({selectedTheme.icon})</span>
+                <span style={{ color: 'var(--gray-500)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>{t('eventsHub.occasionThemeDecor', 'Theme Decor')}</span>
                 <span style={{ fontWeight: 700, color: 'var(--navy-800)' }}>{selectedTheme.name} (₹{decorPrice})</span>
               </div>
 
@@ -1373,7 +1378,7 @@ const EventsHub = () => {
                 transition: 'all 0.15s'
               }}
             >
-              ✕
+              <HiOutlineXMark />
             </button>
 
             {/* Header */}
@@ -1394,7 +1399,7 @@ const EventsHub = () => {
                 {activeVendorDetail.title}
               </h3>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--gray-500)', flexWrap: 'wrap' }}>
-                <span style={{ color: '#eab308', fontWeight: 800 }}>{activeVendorDetail.rating}</span>
+                <span style={{ color: '#eab308', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}><HiOutlineStar /> {activeVendorDetail.rating}</span>
                 <span>•</span>
                 <span>Partner: <strong>{activeVendorDetail.expert}</strong></span>
               </div>
@@ -1403,8 +1408,9 @@ const EventsHub = () => {
             {/* Content */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Dynamic Action / Scale Indicator */}
-              <div style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-200)', fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 700 }}>
-                {t('eventsHub.autoScaledConfig', '⚡ Auto-Scaled to your Configuration')}: <strong>{guestsCount} {t('eventsHub.expectedGuests', 'Expected Guests')}</strong>
+              <div style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-200)', fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <HiOutlineBolt style={{ color: 'var(--primary-600)' }} />
+                <span>{t('eventsHub.autoScaledConfig', 'Auto-Scaled to your Configuration')}: <strong>{guestsCount} {t('eventsHub.expectedGuests', 'Expected Guests')}</strong></span>
               </div>
 
               {/* Experience description */}
@@ -1419,13 +1425,13 @@ const EventsHub = () => {
 
               {/* What the vendor is bringing (Dynamic Equipment & Crew Checklist) */}
               <div>
-                <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
-                  {t('eventsHub.equipmentVendorBringing', '📋 Equipment & Services Vendor is Bringing:')}
+                <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <HiOutlineClipboardDocumentList style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.equipmentVendorBringing', 'Equipment & Services Vendor is Bringing:')}
                 </h4>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {activeVendorDetail.included.map((item, idx) => (
-                    <li key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', fontSize: '0.8rem', color: 'var(--gray-650)', lineHeight: 1.35 }}>
-                      <span style={{ color: 'var(--primary-600)', fontWeight: 900, marginTop: '1px' }}>✦</span>
+                    <li key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--gray-650)', lineHeight: 1.35 }}>
+                      <HiOutlineCheck style={{ color: 'var(--primary-600)', fontSize: '0.9rem', flexShrink: 0 }} />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -1434,8 +1440,8 @@ const EventsHub = () => {
 
               {/* Portfolio Showcase */}
               <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: '14px' }}>
-                <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px' }}>
-                  {t('eventsHub.portfolioSpotlight', '🌟 Portfolio Spotlight:')}
+                <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <HiOutlineStar style={{ color: '#eab308' }} /> {t('eventsHub.portfolioSpotlight', 'Portfolio Spotlight:')}
                 </h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', lineHeight: 1.4 }}>
                   {activeVendorDetail.portfolio}

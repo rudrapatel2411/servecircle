@@ -76,11 +76,11 @@ const B2BDashboard = () => {
         <button className="btn btn-primary" onClick={() => navigate('/b2b/booking')}>{t('b2b.bulkBooking', 'Bulk Booking')}</button>
       </div>
 
-      <div className="dashboard-grid">
+      <div className="stats-container">
         {stats.map((stat, i) => (
           <div key={i} className="stat-card animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s`, cursor: 'pointer' }} onClick={() => navigate(i === 3 ? '/b2b/invoices' : (i === 2 ? '/b2b/team' : (i === 1 ? '/b2b/locations' : '/b2b/contracts')))}>
             <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
-            <div>
+            <div className="stat-details">
               <div className="stat-value">{stat.value}</div>
               <div className="stat-label">{stat.label}</div>
             </div>

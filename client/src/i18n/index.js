@@ -17,7 +17,7 @@ i18nInstance.use({
   name: 'localizeNumbers',
   process: function(value, key, options, translator) {
     if (typeof value !== 'string') return value;
-    const lang = translator.language;
+    const lang = translator?.language || i18nInstance.language || "en";
     if (lang === 'hi') {
       return value.replace(/\d/g, d => '०१२३४५६७८९'[d]);
     } else if (lang === 'gu') {

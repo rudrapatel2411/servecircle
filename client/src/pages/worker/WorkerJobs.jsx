@@ -28,6 +28,8 @@ import {
   formatInr,
   getStatusBadgeClass,
 } from './workerHelpers';
+import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
+import { socket } from '../../socket';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -111,13 +113,38 @@ const WorkerJobs = () => {
   const [otpError, setOtpError] = useState({}); // { [jobId]: 'Wrong OTP' }
   const [cantResolveModal, setCantResolveModal] = useState(null); // jobId or null
   const [cantResolveReason, setCantResolveReason] = useState('');
+  const workerCategory = getWorkerCategory(user);
 
   const loadJobs = async (status = activeTab) => {
+    let matchingLocal = [];
+    try {
+      const stored = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
+      matchingLocal = stored
+        .filter((b) => doesServiceMatchWorker(workerCategory, b.category, b.service))
+        .map((b) => ({
+          _id: b.id || b.bookingId,
+          service: b.service,
+          category: b.category || workerCategory,
+          scheduledDate: b.date || new Date().toISOString(),
+          scheduledTime: b.time || '10:00 AM',
+          address: `${b.address || 'Civil Lines'}, ${b.city || 'Ahmedabad'}`,
+          amount: b.amount || 799,
+          status: b.status || 'pending',
+          isEmergency: b.isEmergency || false,
+          customer: { name: b.customerName || 'Rahul Shah', phone: '9876543210' },
+          startOtp: b.startOtp || '4821',
+        }));
+    } catch {}
+
     if (isDemoMode) {
       // Demo mode: filter mock jobs
+      const catJobs = DEMO_JOBS.filter((j) => doesServiceMatchWorker(workerCategory, j.category, j.service));
+      const pool = catJobs.length > 0 ? catJobs : DEMO_JOBS;
+      const combined = [...matchingLocal, ...pool];
+      const unique = combined.filter((v, i, a) => a.findIndex(t => t._id === v._id) === i);
       const filtered = status === 'all'
-        ? DEMO_JOBS
-        : DEMO_JOBS.filter((j) => j.status === status);
+        ? unique
+        : unique.filter((j) => j.status === status);
       setJobs(filtered);
       return;
     }
@@ -126,7 +153,9 @@ const WorkerJobs = () => {
     setError('');
     try {
       const data = await fetchWorkerJobs(token, status);
-      setJobs(data);
+      const combined = [...matchingLocal, ...(Array.isArray(data) ? data : [])];
+      const unique = combined.filter((v, i, a) => a.findIndex(t => t._id === v._id) === i);
+      setJobs(unique);
     } catch (err) {
       setError(err.message || 'Failed to load jobs');
     } finally {

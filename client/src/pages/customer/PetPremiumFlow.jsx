@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { HiOutlineArrowLeft, HiOutlineCheckCircle, HiOutlineCamera, HiOutlineHomeModern, HiOutlineAcademicCap, HiOutlineShoppingBag } from 'react-icons/hi2';
+import { HiOutlineArrowLeft, HiOutlineCheckCircle, HiOutlineCamera, HiOutlineHomeModern, HiOutlineAcademicCap, HiOutlineShoppingBag, HiOutlineExclamationTriangle } from 'react-icons/hi2';
 import { useTranslation, Trans } from 'react-i18next';
 
 const PetPremiumFlow = () => {
@@ -238,7 +238,7 @@ const PetPremiumFlow = () => {
     if (step === 2) {
       return (
         <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '20px' }}>📸</div>
+          <div style={{ fontSize: '4.5rem', marginBottom: '20px', color: '#be185d' }}><HiOutlineCamera /></div>
           <h3 style={{ fontSize: '1.6rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '12px' }}>{t('petFlow.perfectChoice', 'Perfect Choice!')}</h3>
           <p style={{ color: 'var(--gray-500)', fontSize: '1rem', lineHeight: 1.5 }}>
             <Trans i18nKey="petFlow.photoDesc" values={{ location: photoLocation }}>
@@ -349,7 +349,7 @@ const PetPremiumFlow = () => {
             
             {errorMsg && (
               <div className="animate-fade-in-up" style={{ color: '#ef4444', background: '#fef2f2', padding: '16px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 700, marginTop: '24px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #fecaca' }}>
-                <span>⚠️</span> {errorMsg}
+                <HiOutlineExclamationTriangle style={{ fontSize: '1.2rem', flexShrink: 0 }} /> {errorMsg}
               </div>
             )}
 

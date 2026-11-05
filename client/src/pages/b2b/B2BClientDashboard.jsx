@@ -141,12 +141,12 @@ const B2BClientDashboard = () => {
                   <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--navy-700)' }}>{svc.date}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>{svc.time}</div>
                   <span style={{
-                    display: 'inline-block', marginTop: '4px',
+                    display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px',
                     padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600,
                     background: svc.status === 'confirmed' ? '#dcfce7' : '#fef9c3',
                     color: svc.status === 'confirmed' ? '#166534' : '#854d0e',
                   }}>
-                    {svc.status === 'confirmed' ? `✓ ${t('b2bClient.common.confirmed')}` : `${t('b2bClient.common.pending')}`}
+                    {svc.status === 'confirmed' ? <><HiOutlineCheckCircle /> {t('b2bClient.common.confirmed')}</> : <><HiOutlineClock /> {t('b2bClient.common.pending')}</>}
                   </span>
                 </div>
               </div>

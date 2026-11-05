@@ -1,13 +1,24 @@
 import { Link } from 'react-router-dom';
-import { HiOutlineWrench, HiOutlineArrowLeft, HiOutlineBell, HiOutlineEnvelope } from 'react-icons/hi2';
+import {
+  HiOutlineWrench,
+  HiOutlineArrowLeft,
+  HiOutlineBell,
+  HiOutlineEnvelope,
+  HiOutlineBolt,
+  HiOutlineTruck,
+  HiOutlineHome,
+  HiOutlineFire,
+  HiOutlineHeart,
+  HiOutlineShieldCheck
+} from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
 const repairTimeline = [
-  { phase: 'Q1 2027', milestone: 'Electrician & Plumber Services', icon: '⚡', status: 'planned' },
-  { phase: 'Q2 2027', milestone: 'Carpenter & Furniture Repair', icon: '🪚', status: 'planned' },
-  { phase: 'Q3 2027', milestone: 'AC / Appliance Repair', icon: '❄️', status: 'planned' },
-  { phase: 'Q4 2027', milestone: 'Full Home Repair Suite', icon: '🏠', status: 'planned' },
+  { phase: 'Q1 2027', milestone: 'Electrician & Plumber Services', icon: <HiOutlineBolt />, status: 'planned' },
+  { phase: 'Q2 2027', milestone: 'Carpenter & Furniture Repair', icon: <HiOutlineWrench />, status: 'planned' },
+  { phase: 'Q3 2027', milestone: 'AC / Appliance Repair', icon: <HiOutlineBolt />, status: 'planned' },
+  { phase: 'Q4 2027', milestone: 'Full Home Repair Suite', icon: <HiOutlineHome />, status: 'planned' },
 ];
 
 const RepairServicesComingSoon = () => {
@@ -32,8 +43,8 @@ const RepairServicesComingSoon = () => {
           <div className="cs-hero-pulse" style={{ background: 'rgba(59, 130, 246, 0.15)' }} />
         </div>
 
-        <div className="cs-badge" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb' }}>
-          🔧 Repair Services
+        <div className="cs-badge" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#2563eb', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <HiOutlineWrench /> Repair Services
         </div>
 
         <h1 className="cs-title">
@@ -66,7 +77,7 @@ const RepairServicesComingSoon = () => {
         <div className="cs-timeline">
           {repairTimeline.map((item, i) => (
             <div key={i} className="cs-timeline-item">
-              <div className="cs-timeline-dot" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}>
+              <div className="cs-timeline-dot" style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {item.icon}
               </div>
               {i < repairTimeline.length - 1 && <div className="cs-timeline-line" />}
@@ -107,13 +118,13 @@ const RepairServicesComingSoon = () => {
         <p className="cs-alt-subtitle">While Repair Services gets ready, explore these live categories:</p>
         <div className="cs-alt-grid">
           {[
-            { path: '/customer/travel-commute', emoji: '🚗', label: 'Travel & Commute', color: '#06b6d4' },
-            { path: '/customer/food-kitchen', emoji: '🍽️', label: 'Food & Kitchen', color: '#3b7dc1' },
-            { path: '/customer/pet-services', emoji: '🐾', label: 'Pet Services', color: '#ec4899' },
-            { path: '/customer/health-wellness', emoji: '💊', label: 'Health & Wellness', color: '#f43f5e' },
+            { path: '/customer/travel-commute', icon: <HiOutlineTruck />, label: 'Travel & Commute', color: '#06b6d4' },
+            { path: '/customer/food-kitchen', icon: <HiOutlineFire />, label: 'Food & Kitchen', color: '#3b7dc1' },
+            { path: '/customer/pet-services', icon: <HiOutlineHeart />, label: 'Pet Services', color: '#ec4899' },
+            { path: '/customer/health-wellness', icon: <HiOutlineShieldCheck />, label: 'Health & Wellness', color: '#f43f5e' },
           ].map((alt) => (
             <Link key={alt.path} to={alt.path} className="cs-alt-card">
-              <span className="cs-alt-emoji">{alt.emoji}</span>
+              <span className="cs-alt-emoji" style={{ fontSize: '1.25rem', color: alt.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{alt.icon}</span>
               <span className="cs-alt-label" style={{ color: alt.color }}>{alt.label}</span>
             </Link>
           ))}

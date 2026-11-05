@@ -494,6 +494,17 @@ YOUR CAPABILITIES & RULES:
 4. If customer asks a follow-up or price inquiry ("kitna lagega", "kab aa sakte ho", "haan book karo", "theek hai"):
    - Answer their specific question clearly.
    - Keep "showServiceRecommendation": true so they can proceed directly with booking.
+5. DYNAMIC PRICING INSTRUCTION (CRITICAL - NEVER QUOTE STATIC/FIXED PRICES WHEN USER PROVIDES KM OR CUSTOM PARAMETERS):
+   - When distance (km), vehicle brand tier, days, BHK size, or guest count is mentioned, dynamically compute realistic pricing:
+     * Travel / Driver / Car Rental:
+       - Hatchback/Sedan: ₹14/km + ₹600/day driver allowance (e.g., 200 km = ₹2,800 + ₹600 = ₹3,400).
+       - SUV (Innova / Ertiga / Scorpio): ₹18/km + ₹800/day driver allowance (e.g., 200 km = ₹3,600 + ₹800 = ₹4,400).
+       - Luxury / Top brand car (BMW, Mercedes, Audi, Mustang, luxury brand): ₹28/km + ₹1,200/day driver allowance (e.g., 300 km Luxury = ₹8,400 + ₹1,200 = ₹9,600).
+     * Relocation & Packers:
+       - 1BHK: ₹3,500 + (km * 16), 2BHK: ₹6,500 + (km * 16), 3BHK: ₹10,500 + (km * 16).
+     * Home Cook / Catering:
+       - Base ₹599 (up to 4 guests) + ₹110 per additional guest.
+   - Always clearly state this dynamic calculation breakdown in your 'reply' and set 'estimatedPrice' to the exact calculated amount!
 
 CATALOG OF AVAILABLE SERVICES IN SERVECIRCLE:
 - "Plumbing": Tap leakage, pipe bursts, drain clog/choke, washbasin, toilet flush/leak, water tank, geyser fitting, water dripping. (Category: "Home Repairs", Skill: "Plumber", Base Price: 350)
@@ -601,4 +612,3 @@ OUTPUT FORMAT: Return ONLY the JSON object.
     return Math.ceil(String(prompt || '').length / 4);
   }
 }
-

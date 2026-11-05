@@ -20,6 +20,7 @@ import complaintRoutes from './routes/complaints.js';
 import contractRoutes from './routes/contracts.js';
 import invoiceRoutes from './routes/invoices.js';
 import notificationRoutes from './routes/notifications.js';
+import callRequestRoutes from './routes/callRequests.js';
 import partnerRoutes from './routes/partners.js';
 import analyticsRoutes from './routes/analytics.js';
 import exportRoutes from './routes/export.js';
@@ -31,6 +32,9 @@ import verificationRoutes from './routes/verification.js';
 import aiProviderRoutes from './routes/aiProvider.js';
 import customerAiRoutes from './routes/customerAi.js';
 import { AIProviderManager } from './ai/providers/AIProviderManager.js';
+import User from './models/User.js';
+import { ensureDemoUsersInDB } from './utils/demoAuthStore.js';
+import { notifyAdmin } from './services/notificationService.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -43,19 +47,177 @@ const io = new Server(httpServer, {
 
 const PORT = process.env.PORT || 5000;
 
-// Socket.io connection handling
+// ─── Socket.io connection handling ───────────────────────────────────────────
 io.on('connection', (socket) => {
+
+  // ── Room joins ──
   socket.on('join_admin', () => {
     socket.join('admin_room');
   });
+
   socket.on('join_worker', (workerId) => {
-    if (workerId) socket.join(`worker_${workerId}`);
+    if (workerId) {
+      socket.join(`worker_${workerId}`);
+      socket.join('workers_broadcast'); // receive call requests + new job alerts
+    }
   });
+
+  socket.on('join_worker_category', (category) => {
+    if (category) socket.join(`workers_category_${category}`);
+  });
+
   socket.on('join_customer', (customerId) => {
     if (customerId) socket.join(`customer_${customerId}`);
   });
+
+  socket.on('join_b2b', (userId) => {
+    if (userId) socket.join(`b2b_${userId}`);
+  });
+
+  // ── Client-side booking created event ────────────────────────────────────
+  // Fired from BookingFlow.jsx when a booking is confirmed (even in demo/offline mode).
+  // Server re-broadcasts to admin_room and targeted category workers so ALL panels see it live.
+  socket.on('new_booking_created', (payload) => {
+    const now = new Date();
+    const dateStr = now.toLocaleString('en-IN');
+    const bookingId = payload.bookingId || payload.id || `SC-${Date.now()}`;
+    const category = payload.category || 'General';
+
+    // 1. Notify admin panel (Live Socket + Persistent Notification in DB/Demo Store)
+    notifyAdmin(
+      io,
+      '📋 New Booking Received',
+      `Booking ${bookingId} | "${payload.service}" | Category: ${category} | ₹${payload.amount} | Worker: ${payload.workerName || 'Unassigned'}`,
+      'alert',
+      {
+        bookingId,
+        category,
+        service: payload.service,
+        amount: payload.amount,
+        city: payload.city,
+      }
+    );
+
+    // 2. Notify workers targeted by Category & Broadcast fallback
+    const workerJobPayload = {
+      id: `notif_worker_${Date.now()}`,
+      title: `🆕 New Job: ${payload.service}`,
+      message: `New booking ${bookingId} in "${category}" — ₹${payload.amount}. Review & accept job in your panel.`,
+      type: 'broadcast',
+      date: dateStr,
+      timestamp: now.toISOString(),
+      bookingId,
+      category,
+      service: payload.service,
+      amount: payload.amount,
+      city: payload.city,
+    };
+
+    if (payload.category) {
+      io.to(`workers_category_${payload.category}`).emit('worker_notification', workerJobPayload);
+      io.to(`workers_category_${payload.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerJobPayload);
+    }
+    io.to('workers_broadcast').emit('worker_notification', workerJobPayload);
+
+    // 3. Booking confirmation back to the customer who just booked
+    if (payload.customerId) {
+      io.to(`customer_${payload.customerId}`).emit('customer_notification', {
+        id: `notif_cust_${Date.now()}`,
+        title: '✅ Booking Confirmed',
+        message: `Your booking ${bookingId} for "${payload.service}" is confirmed! A worker will be assigned shortly.`,
+        type: 'system',
+        date: dateStr,
+        timestamp: now.toISOString(),
+        bookingId,
+      });
+    }
+  });
+
+  // ── Direct call request via socket (offline/demo fallback from CallMeBackWidget) ──
+  socket.on('call_request_direct', (payload) => {
+    const now = new Date();
+    const dateStr = now.toLocaleString('en-IN');
+    const category = payload.category || payload.serviceType || 'General Help';
+
+    const notifPayload = {
+      id: `notif_cr_${Date.now()}`,
+      title: `📞 New Call Request: ${payload.serviceType || category}`,
+      message: `${payload.customerName || 'A customer'} requested callback for ${payload.serviceType || category}. Mobile: +91 ${payload.phone}.`,
+      type: 'call_request',
+      date: dateStr,
+      timestamp: now.toISOString(),
+      requestId: payload.requestId,
+      phone: payload.phone,
+      customerName: payload.customerName,
+      serviceType: payload.serviceType,
+      category: category,
+      customerId: payload.customerId,
+      canAccept: true,
+    };
+
+    // 1. Target Workers in this exact service category
+    if (category) {
+      io.to(`workers_category_${category}`).emit('call_request', notifPayload);
+      io.to(`workers_category_${category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('call_request', notifPayload);
+    }
+    io.to('workers_broadcast').emit('call_request', notifPayload);
+
+    // 2. Persistent notification for Admin Panel
+    notifyAdmin(
+      io,
+      `📞 Call Request: ${payload.serviceType || category}`,
+      `${payload.customerName || 'Customer'} (+91 ${payload.phone}) requested immediate callback for "${payload.serviceType || category}".`,
+      'call_request',
+      {
+        requestId: payload.requestId,
+        phone: payload.phone,
+        serviceType: payload.serviceType,
+        category: category,
+        customerName: payload.customerName,
+      }
+    );
+  });
+
+  // ── Worker accepts job or call request ────────────────────────────────────
+  socket.on('worker_accepted_job', (payload) => {
+    const now = new Date();
+    const dateStr = now.toLocaleString('en-IN');
+    const workerName = payload.workerName || 'Worker';
+    const workerEmail = payload.workerEmail || '';
+    const service = payload.service || 'Service';
+    const phone = payload.phone || '';
+
+    // 1. Notify Admin with full details
+    notifyAdmin(
+      io,
+      '✅ Job Accepted by Worker',
+      `Worker "${workerName}" (${workerEmail}) has accepted request for ${service}. Customer Phone: +91 ${phone}`,
+      'system',
+      {
+        requestId: payload.requestId,
+        bookingId: payload.bookingId,
+        workerName,
+        workerEmail,
+        workerPhone: payload.workerPhone,
+        customerPhone: phone,
+        service,
+        date: dateStr,
+      }
+    );
+
+    // 2. Broadcast to dismiss from other workers
+    if (payload.requestId) {
+      io.emit('call_request_taken', {
+        requestId: payload.requestId,
+        acceptedByWorkerId: payload.workerId,
+        acceptedByWorkerName: workerName,
+      });
+    }
+  });
+
   socket.on('disconnect', () => {});
 });
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Middleware
 app.use(cors());
@@ -80,9 +242,24 @@ const connectDB = async () => {
         } catch (dnsErr) {
           console.warn('DNS server configuration warning:', dnsErr.message);
         }
+        // Pre-check: try to resolve the SRV record before connecting
+        const srvHost = atlasURI.split('@')[1]?.split('/')[0];
+        if (srvHost) {
+          await new Promise((resolve) => {
+            dns.resolveSrv(`_mongodb._tcp.${srvHost}`, (err) => {
+              if (err) console.warn(`⚠️ DNS SRV pre-check failed for ${srvHost}: ${err.message}`);
+              resolve();
+            });
+          });
+        }
       }
-      await mongoose.connect(atlasURI, { serverSelectionTimeoutMS: 5000 });
+      await mongoose.connect(atlasURI, {
+        serverSelectionTimeoutMS: 8000,
+        connectTimeoutMS: 10000,
+        family: 4, // Force IPv4 — avoids IPv6 SRV resolution issues
+      });
       console.log(`✅ MongoDB Atlas Connected Successfully (Database: ${mongoose.connection.name})`);
+      await ensureDemoUsersInDB(User);
       return;
     } catch (atlasErr) {
       console.warn(`⚠️ Atlas connection failed (${atlasErr.message}). Falling back to local MongoDB...`);
@@ -92,6 +269,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(localURI);
     console.log(`✅ Local MongoDB Connected Successfully (Database: ${mongoose.connection.name})`);
+    await ensureDemoUsersInDB(User);
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
     mongoose.set('bufferCommands', false);
@@ -100,6 +278,23 @@ const connectDB = async () => {
 };
 
 connectDB();
+
+// ─── Atlas Keep-Alive Ping ───────────────────────────────────────────────────
+// Free M0 clusters auto-pause after 60 days of no connections.
+// This pings the DB every 24 hours so it never goes idle.
+const KEEP_ALIVE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+setInterval(async () => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.db.admin().ping();
+      console.log('🏓 Atlas keep-alive ping sent successfully');
+    }
+  } catch (err) {
+    console.warn('⚠️ Atlas keep-alive ping failed:', err.message);
+  }
+}, KEEP_ALIVE_INTERVAL);
+// ─────────────────────────────────────────────────────────────────────────────
+
 
 // AI Provider Layer
 (async () => {
@@ -128,6 +323,7 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/call-requests', callRequestRoutes);
 app.use('/api/partners', partnerRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin/export', exportRoutes);

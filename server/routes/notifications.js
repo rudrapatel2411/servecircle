@@ -13,38 +13,43 @@ router.get(
   '/',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const audience =
-        req.user.role === 'customer'
-          ? 'customers'
-          : req.user.role === 'worker'
-          ? 'workers'
-          : 'b2b';
+    const role = req.user.role;
 
-      const userNotifs = DEMO_NOTIFICATIONS.filter(
-        (n) => n.isActive && (n.targetAudience === 'all' || n.targetAudience === audience)
-      );
+    if (mongoose.connection.readyState !== 1) {
+      let userNotifs = [];
+      if (role === 'admin') {
+        userNotifs = DEMO_NOTIFICATIONS.filter(
+          (n) => n.isActive && (n.targetAudience === 'admin' || n.targetAudience === 'all' || !n.targetAudience)
+        );
+      } else {
+        const audience = role === 'customer' ? 'customers' : role === 'worker' ? 'workers' : 'b2b';
+        userNotifs = DEMO_NOTIFICATIONS.filter(
+          (n) => n.isActive && (n.targetAudience === 'all' || n.targetAudience === audience)
+        );
+      }
+
       const unreadCount = userNotifs.filter(
         (n) => !n.readBy.some((id) => String(id) === String(req.user._id))
       ).length;
       return res.json({ notifications: userNotifs, unreadCount });
     }
 
-    const query = {
-      isActive: true,
-      $or: [
+    let query = { isActive: true };
+    if (role === 'admin') {
+      query.$or = [
         { targetAudience: 'all' },
-        {
-          targetAudience:
-            req.user.role === 'customer'
-              ? 'customers'
-              : req.user.role === 'worker'
-              ? 'workers'
-              : 'b2b',
-        },
+        { targetAudience: 'admin' },
         { targetUsers: req.user._id },
-      ],
-    };
+      ];
+    } else {
+      const audience = role === 'customer' ? 'customers' : role === 'worker' ? 'workers' : 'b2b';
+      query.$or = [
+        { targetAudience: 'all' },
+        { targetAudience: audience },
+        { targetUsers: req.user._id },
+      ];
+    }
+
     const notifications = await Notification.find(query).sort('-createdAt').limit(50);
     const unreadCount = notifications.filter((n) => !n.readBy.includes(req.user._id)).length;
     res.json({ notifications, unreadCount });
@@ -68,11 +73,32 @@ router.put(
   })
 );
 
+// PUT /notifications/read-all
+router.put(
+  '/read-all',
+  protect,
+  asyncHandler(async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+      DEMO_NOTIFICATIONS.forEach((n) => {
+        if (!n.readBy.includes(req.user._id)) {
+          n.readBy.push(req.user._id);
+        }
+      });
+      return res.json({ message: 'All marked as read' });
+    }
+
+    await Notification.updateMany({}, { $addToSet: { readBy: req.user._id } });
+    res.json({ message: 'All marked as read' });
+  })
+);
+
 router.post(
   '/',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
+    const { title, message, type, targetAudience } = req.body;
+
     if (mongoose.connection.readyState !== 1) {
       const newNotif = {
         _id: `notif_${Date.now()}`,
@@ -83,10 +109,66 @@ router.post(
         createdAt: new Date(),
       };
       DEMO_NOTIFICATIONS.unshift(newNotif);
+
+      // Emit via socket to all relevant rooms
+      if (req.io) {
+        const payload = {
+          id: newNotif._id,
+          title,
+          message,
+          type: type || 'broadcast',
+          date: new Date().toLocaleString('en-IN'),
+          timestamp: new Date().toISOString(),
+          reads: 0,
+        };
+        // Always notify admin room & broadcast
+        req.io.to('admin_room').emit('admin_notification', payload);
+        req.io.emit('admin_notification', payload);
+
+        // Notify audience
+        const audience = targetAudience || 'all';
+        if (audience === 'all' || audience === 'customers') {
+          req.io.emit('customer_notification', { ...payload, targetAudience: audience });
+        }
+        if (audience === 'all' || audience === 'workers') {
+          req.io.to('workers_broadcast').emit('worker_notification', { ...payload, targetAudience: audience });
+        }
+        if (audience === 'all' || audience === 'b2b') {
+          req.io.emit('b2b_notification', { ...payload, targetAudience: audience });
+        }
+      }
+
       return res.status(StatusCodes.CREATED).json(newNotif);
     }
 
     const notification = await Notification.create({ ...req.body, sentBy: req.user._id });
+
+    // Emit via socket to all relevant rooms (live delivery)
+    if (req.io) {
+      const payload = {
+        id: notification._id,
+        title,
+        message,
+        type: type || 'broadcast',
+        date: new Date().toLocaleString('en-IN'),
+        timestamp: new Date().toISOString(),
+        reads: 0,
+      };
+      req.io.to('admin_room').emit('admin_notification', payload);
+      req.io.emit('admin_notification', payload);
+
+      const audience = targetAudience || 'all';
+      if (audience === 'all' || audience === 'customers') {
+        req.io.emit('customer_notification', { ...payload, targetAudience: audience });
+      }
+      if (audience === 'all' || audience === 'workers') {
+        req.io.to('workers_broadcast').emit('worker_notification', { ...payload, targetAudience: audience });
+      }
+      if (audience === 'all' || audience === 'b2b') {
+        req.io.emit('b2b_notification', { ...payload, targetAudience: audience });
+      }
+    }
+
     res.status(StatusCodes.CREATED).json(notification);
   })
 );

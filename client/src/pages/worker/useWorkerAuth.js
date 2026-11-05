@@ -77,9 +77,8 @@ export const useWorkerAuth = () => {
       setWorkerSession(nextSession);
       return profile;
     } catch (err) {
-      clearWorkerSession();
-      setSession(null);
-      throw err;
+      console.warn('Worker profile refresh failed, retaining cached session:', err.message);
+      return session?.user;
     }
   };
 

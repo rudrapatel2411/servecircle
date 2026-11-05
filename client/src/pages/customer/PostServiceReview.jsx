@@ -93,7 +93,9 @@ const PostServiceReview = () => {
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed var(--navy-200)', fontSize: '1rem' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 800 }}>✓ Transferred to your UPI</span>
+                  <span style={{ color: 'var(--success)', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <HiOutlineCheckCircle /> Transferred to your UPI
+                  </span>
                   <span style={{ fontWeight: 900, color: 'var(--success)', fontSize: '1.2rem' }}>₹{scrapValue - 49}</span>
                 </div>
               </>
@@ -113,7 +115,9 @@ const PostServiceReview = () => {
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed var(--navy-200)', fontSize: '1rem' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 800 }}>✓ Already Paid</span>
+                  <span style={{ color: 'var(--success)', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <HiOutlineCheckCircle /> Already Paid
+                  </span>
                   <span style={{ fontWeight: 800, color: 'var(--success)' }}>₹{price + 49}</span>
                 </div>
 

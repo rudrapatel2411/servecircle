@@ -5,7 +5,13 @@ import {
   HiOutlineHome, HiOutlineShieldCheck, HiOutlineSparkles,
   HiOutlinePlusCircle, HiOutlineClock, HiOutlineTrash,
   HiOutlineCheckCircle, HiOutlineWrench, HiOutlineCalendarDays,
-  HiOutlineArrowRight, HiOutlineArrowUpOnSquare, HiOutlineArrowPath
+  HiOutlineArrowRight, HiOutlineArrowUpOnSquare, HiOutlineArrowPath,
+  HiOutlineTruck, HiOutlineMapPin, HiOutlineBolt, HiOutlineChartBar,
+  HiOutlineCloud, HiOutlineDocumentText, HiOutlineCamera,
+  HiOutlineMagnifyingGlass, HiOutlineXMark, HiOutlineTv,
+  HiOutlineCube, HiOutlineExclamationTriangle, HiOutlineStar,
+  HiOutlinePhone, HiOutlineCheck, HiOutlineLightBulb,
+  HiOutlineHeart, HiOutlineTrophy
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -182,7 +188,7 @@ const MyHomeDashboard = () => {
           : item
       )
     );
-    alert('🎉 Maintenance item marked complete! Your HomeFixr Health Score has increased.');
+    alert('Maintenance item marked complete! Your HomeFixr Health Score has increased.');
   };
 
   // Reset Maintenance Timeline
@@ -296,7 +302,7 @@ const MyHomeDashboard = () => {
             }
 
             setFormData(matchedData);
-            alert(`🤖 ServeCircle AI Scan Complete!\nSuccessfully extracted invoice details: ${matchedData.name} (${matchedData.brand}) from ${fileName}. The form has been autofilled.`);
+            alert(`ServeCircle AI Scan Complete!\nSuccessfully extracted invoice details: ${matchedData.name} (${matchedData.brand}) from ${fileName}. The form has been autofilled.`);
           }, 800);
         }, 800);
       }, 800);
@@ -358,7 +364,7 @@ const MyHomeDashboard = () => {
     setShowAddForm(false);
     setAlertMsg('');
 
-    alert('🎉 Appliance registered successfully in the digital Warranty Register!');
+    alert('Appliance registered successfully in the digital Warranty Register!');
   };
 
   // Delete Appliance
@@ -407,7 +413,9 @@ const MyHomeDashboard = () => {
       {/* Title Header */}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 className="page-title">{t('customer.myHome')} 🏡</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {t('customer.myHome')} <HiOutlineHome style={{ color: 'var(--primary-600)' }} />
+          </h1>
           <p className="page-subtitle">Your interactive home maintenance cockpit, appliance warranty vault, and HomeFixr health indicator.</p>
         </div>
         <button 
@@ -434,7 +442,7 @@ const MyHomeDashboard = () => {
       }}>
         <div style={{ flex: 1, minWidth: '280px' }}>
           <h4 style={{ fontSize: '1rem', color: 'var(--primary-700)', fontWeight: 800, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🏡</span> How to use your Home Dashboard
+            <HiOutlineHome /> How to use your Home Dashboard
           </h4>
           <p style={{ fontSize: '0.8rem', color: 'var(--navy-600)', lineHeight: 1.4 }}>
             Maintain your home, safeguard warranties, and boost your Home Health index in 3 simple steps:
@@ -470,8 +478,8 @@ const MyHomeDashboard = () => {
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #3b82f6' }}>
-            <span style={{ fontSize: '1.5rem' }}>🚚</span>
+          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #3b82f6', color: '#3b82f6', fontSize: '1.5rem' }}>
+            <HiOutlineTruck />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -484,7 +492,9 @@ const MyHomeDashboard = () => {
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>View Details</button>
-          <button className="btn btn-primary" style={{ background: '#3b7dc1', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(59, 125, 193, 0.3)', cursor: 'pointer' }} onClick={openTrackingMap}>Track Partner 📍</button>
+          <button className="btn btn-primary" style={{ background: '#3b7dc1', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(59, 125, 193, 0.3)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={openTrackingMap}>
+            Track Partner <HiOutlineMapPin />
+          </button>
         </div>
       </div>
 
@@ -502,7 +512,9 @@ const MyHomeDashboard = () => {
         gap: '16px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ fontSize: '2rem' }}>👑</div>
+          <div style={{ fontSize: '2rem', color: '#eab308', display: 'flex', alignItems: 'center' }}>
+            <HiOutlineTrophy />
+          </div>
           <div>
             <h4 style={{ color: '#b45309', margin: 0, fontSize: '1rem', fontWeight: 900 }}>ServeCircle Prime (AMC)</h4>
             <p style={{ color: '#92400e', margin: '4px 0 0 0', fontSize: '0.85rem', fontWeight: 600 }}>Get Free Visits, 0% Platform Fees & Priority Support for 1 Year.</p>
@@ -547,15 +559,17 @@ const MyHomeDashboard = () => {
             </p>
 
             <div style={{ padding: '10px 14px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', textAlign: 'left', border: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '12px' }}>
-              💡 <strong>Instant Boosts:</strong> Complete AC Servicing (+8 pts) or register new appliances in the warranty registry (+5 pts each).
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <HiOutlineLightBulb style={{ color: '#fbbf24' }} /> <strong>Instant Boosts:</strong>
+              </span> Complete AC Servicing (+8 pts) or register new appliances in the warranty registry (+5 pts each).
             </div>
             
             <button 
               className="btn btn-outline btn-sm" 
               onClick={(e) => { e.stopPropagation(); setShowHealthModal(true); }}
-              style={{ width: '100%', padding: '8px', fontSize: '0.8rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'white' }}
+              style={{ width: '100%', padding: '8px', fontSize: '0.8rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
             >
-              📊 View Detailed Health Audit
+              <HiOutlineChartBar /> View Detailed Health Audit
             </button>
           </div>
 
@@ -579,7 +593,7 @@ const MyHomeDashboard = () => {
                     <span style={{ fontSize: '0.7rem', background: '#609cd2', color: 'white', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700, textTransform: 'uppercase' }}>Recommended</span>
                     <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#065f46', marginTop: '4px' }}>Monsoon AC & Leak Proofing</h4>
                   </div>
-                  <span style={{ fontSize: '1.3rem' }}>⛈️</span>
+                  <span style={{ fontSize: '1.3rem', color: '#64748b', display: 'flex' }}><HiOutlineCloud /></span>
                 </div>
                 <p style={{ fontSize: '0.75rem', color: '#224c82' }}>
                   Prevent AC water dripping and wall dampness. Includes structural check of external compressor bracket.
@@ -596,7 +610,7 @@ const MyHomeDashboard = () => {
                     <span style={{ fontSize: '0.7rem', background: '#fbbf24', color: '#78350f', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700, textTransform: 'uppercase' }}>Autumn Check</span>
                     <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#92400e', marginTop: '4px' }}>Water Tank Sanitization</h4>
                   </div>
-                  <span style={{ fontSize: '1.3rem' }}>💧</span>
+                  <span style={{ fontSize: '1.3rem', color: '#0ea5e9', display: 'flex' }}><HiOutlineSparkles /></span>
                 </div>
                 <p style={{ fontSize: '0.75rem', color: '#b45309' }}>
                   Regular tank cleaning every 6 months prevents algae build-up. Recommended timing: pre-winter transition.
@@ -696,7 +710,7 @@ const MyHomeDashboard = () => {
                         }}
                       >
                         {item.completed && (
-                          <span style={{ fontSize: '0.62rem', color: 'white', fontWeight: 'bold' }}>✓</span>
+                          <HiOutlineCheck style={{ fontSize: '0.7rem', color: 'white', strokeWidth: 3 }} />
                         )}
                       </div>
 
@@ -766,8 +780,8 @@ const MyHomeDashboard = () => {
                           boxShadow: 'var(--shadow-sm)',
                           animation: 'fadeInUp 0.3s ease'
                         }}>
-                          <h5 style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--navy-800)', marginBottom: '8px' }}>
-                            📅 Quick Schedule: {item.title}
+                          <h5 style={{ fontWeight: 800, fontSize: '0.8rem', color: 'var(--navy-800)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <HiOutlineCalendarDays style={{ color: 'var(--primary-600)' }} /> Quick Schedule: {item.title}
                           </h5>
                           <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
                             <div style={{ flex: 1 }}>
@@ -803,7 +817,7 @@ const MyHomeDashboard = () => {
                               onClick={() => {
                                 markComplete(item.id);
                                 setBookingItem(null);
-                                alert(`📅 Slot Booked Successfully!\nScheduled your ${item.title} for ${bookingDate} during ${bookingTime}. Professional has been dispatched.`);
+                                alert(`Slot Booked Successfully!\nScheduled your ${item.title} for ${bookingDate} during ${bookingTime}. Professional has been dispatched.`);
                               }}
                             >
                               Confirm Booking
@@ -881,7 +895,7 @@ const MyHomeDashboard = () => {
                         100% { top: 0%; }
                       }
                     `}</style>
-                    <span style={{ fontSize: '2.5rem', display: 'block', animation: 'pulse 1.5s infinite' }}>🤖</span>
+                    <HiOutlineSparkles style={{ fontSize: '2.5rem', color: 'var(--primary-600)', margin: '0 auto', display: 'block', animation: 'pulse 1.5s infinite' }} />
                     <h5 style={{ fontWeight: 800, color: 'var(--primary-700)', fontSize: '0.95rem', marginTop: '10px' }}>AI Smart Receipt Scan Active</h5>
                     <p style={{ fontSize: '0.75rem', color: 'var(--navy-600)', marginTop: '6px', fontWeight: 600 }}>{scanStage}</p>
                     <span style={{ fontSize: '0.65rem', color: 'var(--gray-400)', display: 'block', marginTop: '12px' }}>Autofilling invoice metadata...</span>
@@ -893,8 +907,8 @@ const MyHomeDashboard = () => {
                       <input type="file" id="invoice-upload" style={{ display: 'none' }} accept=".pdf,.png,.jpg,.jpeg" onChange={handleFileUpload} />
                       <label htmlFor="invoice-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                         <HiOutlineArrowUpOnSquare style={{ fontSize: '2rem', color: 'var(--primary-600)' }} />
-                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)' }}>
-                          {uploadedFile ? `Attached: ${uploadedFile}` : '📸 Scan Invoice Bill / Guarantee Card'}
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          {uploadedFile ? `Attached: ${uploadedFile}` : <><HiOutlineCamera style={{ color: 'var(--primary-600)' }} /> Scan Invoice Bill / Guarantee Card</>}
                         </span>
                         <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)', maxWidth: '280px', lineHeight: 1.4 }}>
                           Upload your bill. Our AI will automatically scan and fill all warranty details instantly!
@@ -979,7 +993,7 @@ const MyHomeDashboard = () => {
             <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {/* Search Bar */}
               <div style={{ display: 'flex', background: 'var(--gray-50)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)', gap: '8px', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--gray-400)' }}>🔍</span>
+                <HiOutlineMagnifyingGlass style={{ fontSize: '1rem', color: 'var(--gray-400)' }} />
                 <input 
                   type="text" 
                   placeholder="Search registered appliances..." 
@@ -988,7 +1002,7 @@ const MyHomeDashboard = () => {
                   style={{ border: 'none', background: 'none', outline: 'none', fontSize: '0.85rem', flex: 1, color: 'var(--navy-800)' }}
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--gray-400)' }}>✕</button>
+                  <button onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.9rem', color: 'var(--gray-400)', display: 'flex', alignItems: 'center' }}><HiOutlineXMark /></button>
                 )}
               </div>
 
@@ -1049,21 +1063,21 @@ const MyHomeDashboard = () => {
                       }}
                     >
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <div style={{ fontSize: '1.8rem', padding: '8px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)' }}>
-                          {app.type === 'AC' ? '💨' : app.type === 'TV' ? '📺' : app.type === 'Refrigerator' ? '❄️' : '🔌'}
+                        <div style={{ fontSize: '1.5rem', padding: '8px', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-600)' }}>
+                          {app.type === 'AC' ? <HiOutlineBolt /> : app.type === 'TV' ? <HiOutlineTv /> : app.type === 'Refrigerator' ? <HiOutlineCube /> : <HiOutlineBolt />}
                         </div>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)' }}>{app.name}</h4>
                             {isExpiring && (
-                              <span style={{ fontSize: '0.65rem', background: '#fbbf24', color: '#78350f', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>⚠️ Expiring Soon</span>
+                              <span style={{ fontSize: '0.65rem', background: '#fbbf24', color: '#78350f', padding: '1px 6px', borderRadius: '4px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '3px' }}><HiOutlineExclamationTriangle /> Expiring Soon</span>
                             )}
                           </div>
                           <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
                             {app.brand} • Purchased: {app.purchaseDate}
                           </p>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--primary-600)', background: '#e6f4ea', padding: '2px 6px', borderRadius: '4px', display: 'inline-block', marginTop: '4px', fontWeight: 600 }}>
-                            📄 {app.fileName}
+                          <span style={{ fontSize: '0.7rem', color: 'var(--primary-600)', background: '#e6f4ea', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px', fontWeight: 600 }}>
+                            <HiOutlineDocumentText /> {app.fileName}
                           </span>
                         </div>
                       </div>
@@ -1155,16 +1169,18 @@ const MyHomeDashboard = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'var(--gray-600)',
-                fontSize: '0.9rem',
+                fontSize: '1rem',
                 transition: 'all 0.2s ease'
               }}
             >
-              ✕
+              <HiOutlineXMark />
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <span style={{ fontSize: '3rem' }}>🩺</span>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: 'var(--navy-900)', marginTop: '12px' }}>HomeFixr™ Safety & Health Audit</h2>
+              <div style={{ display: 'flex', justifyContent: 'center', color: 'var(--primary-600)', marginBottom: '8px' }}>
+                <HiOutlineHeart style={{ fontSize: '2.8rem' }} />
+              </div>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: 'var(--navy-900)', marginTop: '4px' }}>HomeFixr™ Safety & Health Audit</h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: '4px' }}>Real-time breakdown of structural, appliance, and preventive standards.</p>
             </div>
 
@@ -1185,35 +1201,35 @@ const MyHomeDashboard = () => {
               
               {/* timelines item list summary */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '10px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>💨 HVAC & Air Quality</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineBolt style={{ color: 'var(--primary-600)' }} /> HVAC & Air Quality</span>
                 <strong style={{ color: timelineItems.find(item => item.id === 1)?.completed ? 'var(--success)' : 'var(--warning)' }}>
                   {timelineItems.find(item => item.id === 1)?.completed ? 'Safe & Verified' : 'Deep Clean Required'}
                 </strong>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '10px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>💧 Hydraulic & Tanks</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineSparkles style={{ color: 'var(--primary-600)' }} /> Hydraulic & Tanks</span>
                 <strong style={{ color: timelineItems.find(item => item.id === 2)?.completed ? 'var(--success)' : 'var(--warning)' }}>
                   {timelineItems.find(item => item.id === 2)?.completed ? 'Sanitary' : 'Sanitization Overdue'}
                 </strong>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '10px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>⚡ Electrical Grid</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineBolt style={{ color: 'var(--warning)' }} /> Electrical Grid</span>
                 <strong style={{ color: timelineItems.find(item => item.id === 3)?.completed ? 'var(--success)' : 'var(--warning)' }}>
                   {timelineItems.find(item => item.id === 3)?.completed ? 'Standard Checked' : 'Inspection Pending'}
                 </strong>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--gray-100)', paddingBottom: '10px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>🕷️ Pest Prevention</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineShieldCheck style={{ color: 'var(--primary-600)' }} /> Pest Prevention</span>
                 <strong style={{ color: timelineItems.find(item => item.id === 4)?.completed ? 'var(--success)' : 'var(--warning)' }}>
                   {timelineItems.find(item => item.id === 4)?.completed ? 'Safe Barrier' : 'Treatment Overdue'}
                 </strong>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>🛡️ Digital Appliance Registry</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineCube style={{ color: 'var(--primary-600)' }} /> Digital Appliance Registry</span>
                 <strong>{appliances.length} Registered ({Math.min(15, appliances.length * 5)}/15 pts)</strong>
               </div>
             </div>
@@ -1268,7 +1284,7 @@ const MyHomeDashboard = () => {
             <div style={{ background: 'var(--navy-900)', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ color: 'white', margin: 0, fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>📍</span> Live Partner Tracking
+                  <HiOutlineMapPin style={{ color: 'var(--primary-400)' }} /> Live Partner Tracking
                 </h3>
                 <p style={{ color: 'var(--gray-400)', margin: '4px 0 0 0', fontSize: '0.85rem' }}>Order #SC-89241 • Reaching in 5 mins</p>
               </div>
@@ -1276,7 +1292,7 @@ const MyHomeDashboard = () => {
                 onClick={() => setShowTrackingMap(false)}
                 style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                ✕
+                <HiOutlineXMark />
               </button>
             </div>
 
@@ -1311,11 +1327,11 @@ const MyHomeDashboard = () => {
                 <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&auto=format&fit=crop&q=80" alt="Partner" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--gray-200)' }} />
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>Rajesh Kumar <HiOutlineCheckCircle style={{ color: '#3b7dc1' }} /></h4>
-                  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--gray-500)' }}>Relocation Expert • 4.9 ★ (120+ Jobs)</p>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--gray-500)', display: 'flex', alignItems: 'center', gap: '4px' }}>Relocation Expert • 4.9 <HiOutlineStar style={{ color: '#eab308' }} /> (120+ Jobs)</p>
                   <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: 'var(--navy-600)', fontWeight: 700 }}>Current Location: Koramangala 4th Block</p>
                 </div>
-                <button className="btn btn-primary" style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '10px 20px', fontSize: '0.85rem' }} onClick={() => alert('Calling Partner...')}>
-                  📞 Call Partner
+                <button className="btn btn-primary" style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '10px 20px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => alert('Calling Partner...')}>
+                  <HiOutlinePhone /> Call Partner
                 </button>
               </div>
             </div>

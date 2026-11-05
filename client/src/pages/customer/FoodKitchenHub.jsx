@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineArrowLeft, HiOutlineCalendarDays, HiOutlineCheckCircle, HiOutlineClock, HiOutlineChevronRight, HiOutlineShieldCheck, HiOutlineFire } from 'react-icons/hi2';
+import {
+  HiOutlineArrowLeft, HiOutlineCalendarDays, HiOutlineCheckCircle,
+  HiOutlineClock, HiOutlineChevronRight, HiOutlineShieldCheck,
+  HiOutlineFire, HiOutlineStar, HiOutlineCamera, HiOutlineCake,
+  HiOutlineSparkles, HiOutlineUserGroup
+} from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -20,11 +25,13 @@ const FoodKitchenHub = () => {
     setActiveDays(prev => ({ ...prev, [day]: !prev[day] }));
   };
 
-  // Home Chef state
+  // Home Chef state with dynamic guest scaling
   const [cuisine, setCuisine] = useState('indian'); // 'indian', 'mughlai', 'continental'
+  const [chefGuests, setChefGuests] = useState(4);
   
-  // Custom Cake state
+  // Custom Cake state with dynamic weight scaling
   const [cakeStyle, setCakeStyle] = useState('minimalist'); // 'minimalist', 'fruit', 'fondant'
+  const [cakeWeightKg, setCakeWeightKg] = useState(1);
   const [cakeImage, setCakeImage] = useState(null);
 
   const calculateTiffinPrice = () => {
@@ -36,7 +43,15 @@ const FoodKitchenHub = () => {
 
   const calculateChefPrice = () => {
     const cuisinePrices = { indian: 599, mughlai: 899, continental: 1299 };
-    return cuisinePrices[cuisine];
+    const base = cuisinePrices[cuisine] || 599;
+    const extraGuests = Math.max(0, chefGuests - 4);
+    return Math.round(base + extraGuests * 110);
+  };
+
+  const calculateCakePrice = () => {
+    const styleBases = { minimalist: 999, fruit: 1299, fondant: 1899 };
+    const basePerKg = styleBases[cakeStyle] || 999;
+    return Math.round(basePerKg * cakeWeightKg);
   };
 
   const handleImageUploadSim = (e) => {
@@ -56,8 +71,6 @@ const FoodKitchenHub = () => {
       }}>
         <HiOutlineArrowLeft /> Back to General Services
       </Link>
-
-
 
       <div style={{
         display: 'grid',
@@ -219,7 +232,7 @@ const FoodKitchenHub = () => {
           </div>
         </div>
 
-        {/* Gourmet Home Chef Booking */}
+        {/* Gourmet Home Chef Booking with Dynamic Guests */}
         <div style={{
           background: 'white',
           border: '1px solid var(--gray-200)',
@@ -239,27 +252,27 @@ const FoodKitchenHub = () => {
             </p>
 
             {/* FSSAI & Hygiene Badge */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.65rem', background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <HiOutlineShieldCheck size={14}/> 100% FSSAI Certified
               </span>
-              <span style={{ fontSize: '0.65rem', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 8px', borderRadius: '4px', fontWeight: 800 }}>
-                ⭐ 4.9 Hygiene Rating
+              <span style={{ fontSize: '0.65rem', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 8px', borderRadius: '4px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <HiOutlineStar /> 4.9 Hygiene Rating
               </span>
             </div>
 
             {/* Cuisine choice */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               {[
-                { id: 'indian', name: t('foodKitchen.indianName', 'Traditional Indian Feast 🥘'), desc: t('foodKitchen.indianDesc', 'Home-style authentic regional cuisines') },
-                { id: 'mughlai', name: t('foodKitchen.mughlaiName', 'Royal Mughlai Banquet 🍲'), desc: t('foodKitchen.mughlaiDesc', 'Aromatic gravies, rich biryanis, and kebabs') },
-                { id: 'continental', name: t('foodKitchen.continentalName', 'Premium European Course 🥩'), desc: t('foodKitchen.continentalDesc', 'Fine dining steaks, baked bakes, and rich pastas') }
+                { id: 'indian', name: t('foodKitchen.indianName', 'Traditional Indian Feast'), desc: t('foodKitchen.indianDesc', 'Home-style authentic regional cuisines') },
+                { id: 'mughlai', name: t('foodKitchen.mughlaiName', 'Royal Mughlai Banquet'), desc: t('foodKitchen.mughlaiDesc', 'Aromatic gravies, rich biryanis, and kebabs') },
+                { id: 'continental', name: t('foodKitchen.continentalName', 'Premium European Course'), desc: t('foodKitchen.continentalDesc', 'Fine dining steaks, baked bakes, and rich pastas') }
               ].map((c) => (
                 <div
                   key={c.id}
                   onClick={() => setCuisine(c.id)}
                   style={{
-                    padding: '12px 16px',
+                    padding: '10px 14px',
                     borderRadius: '10px',
                     border: '1.5px solid',
                     borderColor: cuisine === c.id ? '#ea580c' : 'var(--gray-200)',
@@ -271,12 +284,59 @@ const FoodKitchenHub = () => {
                   }}
                 >
                   <div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>{c.name}</span>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--navy-800)' }}>{c.name}</span>
                     <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--gray-500)', marginTop: '2px' }}>{c.desc}</span>
                   </div>
                   <HiOutlineChevronRight style={{ color: cuisine === c.id ? '#ea580c' : 'var(--gray-400)' }} />
                 </div>
               ))}
+            </div>
+
+            {/* Dynamic Guest Count Controller */}
+            <div style={{ marginBottom: '20px', background: 'var(--gray-50)', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--gray-200)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-800)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <HiOutlineUserGroup style={{ color: '#ea580c' }} /> Guest Count: <span style={{ color: '#ea580c' }}>{chefGuests} Guests</span>
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setChefGuests(prev => Math.max(2, prev - 1))}
+                    style={{ width: '26px', height: '26px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer', lineHeight: '1' }}
+                  >-</button>
+                  <span style={{ fontWeight: 800, minWidth: '22px', textAlign: 'center', color: 'var(--navy-900)', fontSize: '0.85rem' }}>{chefGuests}</span>
+                  <button
+                    type="button"
+                    onClick={() => setChefGuests(prev => Math.min(50, prev + 1))}
+                    style={{ width: '26px', height: '26px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer', lineHeight: '1' }}
+                  >+</button>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {[2, 4, 8, 15, 25, 40].map(cnt => (
+                  <button
+                    key={cnt}
+                    type="button"
+                    onClick={() => setChefGuests(cnt)}
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      border: '1px solid',
+                      borderColor: chefGuests === cnt ? '#ea580c' : 'var(--gray-300)',
+                      background: chefGuests === cnt ? '#ea580c' : 'white',
+                      color: chefGuests === cnt ? 'white' : 'var(--gray-700)',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {cnt}
+                  </button>
+                ))}
+              </div>
+              <span style={{ display: 'block', fontSize: '0.68rem', color: 'var(--gray-500)', marginTop: '6px' }}>
+                Covers base preparation up to 4 guests; +₹110 per additional guest.
+              </span>
             </div>
           </div>
 
@@ -290,13 +350,13 @@ const FoodKitchenHub = () => {
             alignItems: 'center'
           }}>
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.chefFee')}</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.chefFee')} ({chefGuests} guests)</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>
                 ₹{calculateChefPrice().toLocaleString()}
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&serviceId=home-chef&category=food-kitchen&price=${calculateChefPrice()}`}
+              to={`/customer/book?service=${encodeURIComponent(`Gourmet Home Chef (${cuisine.toUpperCase()} • ${chefGuests} Guests)`)}&serviceId=home-chef&category=food-kitchen&price=${calculateChefPrice()}&guests=${chefGuests}&cuisine=${cuisine}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -305,7 +365,7 @@ const FoodKitchenHub = () => {
           </div>
         </div>
 
-        {/* Custom Cake Designer Scheduler */}
+        {/* Custom Cake Designer with Dynamic Weight */}
         <div style={{
           background: 'white',
           border: '1px solid var(--gray-200)',
@@ -320,22 +380,53 @@ const FoodKitchenHub = () => {
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               {t('foodKitchen.cakeTitle')}
             </h3>
-            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
+            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
               {t('foodKitchen.cakeDesc')}
             </p>
 
             {/* Cake Style Selection */}
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '14px' }}>
               <label style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>{t('foodKitchen.decoratorStyle')}</label>
               <select
                 value={cakeStyle}
                 onChange={(e) => setCakeStyle(e.target.value)}
                 style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.82rem' }}
               >
-                <option value="minimalist">{t('foodKitchen.minimalistCake')}</option>
-                <option value="fruit">{t('foodKitchen.fruitCake')}</option>
-                <option value="fondant">{t('foodKitchen.fondantCake')}</option>
+                <option value="minimalist">{t('foodKitchen.minimalistCake')} (Base ₹999/kg)</option>
+                <option value="fruit">{t('foodKitchen.fruitCake')} (Base ₹1,299/kg)</option>
+                <option value="fondant">{t('foodKitchen.fondantCake')} (Base ₹1,899/kg)</option>
               </select>
+            </div>
+
+            {/* Dynamic Cake Weight Selector */}
+            <div style={{ marginBottom: '16px', background: 'var(--gray-50)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--gray-200)' }}>
+              <label style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>
+                Select Cake Weight: <strong style={{ color: '#ea580c' }}>{cakeWeightKg} Kg</strong>
+              </label>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {[0.5, 1, 1.5, 2, 3, 5].map(w => (
+                  <button
+                    key={w}
+                    type="button"
+                    onClick={() => setCakeWeightKg(w)}
+                    style={{
+                      flex: 1,
+                      minWidth: '42px',
+                      padding: '5px 6px',
+                      borderRadius: '6px',
+                      border: '1px solid',
+                      borderColor: cakeWeightKg === w ? '#ea580c' : 'var(--gray-300)',
+                      background: cakeWeightKg === w ? '#ea580c' : 'white',
+                      color: cakeWeightKg === w ? 'white' : 'var(--gray-700)',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {w} kg
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Photo Reference Upload simulator */}
@@ -344,18 +435,20 @@ const FoodKitchenHub = () => {
               <div style={{
                 border: '1.5px dashed var(--gray-300)',
                 borderRadius: '8px',
-                padding: '16px',
+                padding: '12px',
                 textAlign: 'center',
                 background: 'var(--gray-50)',
                 position: 'relative',
                 cursor: 'pointer'
               }}>
                 {cakeImage ? (
-                  <img src={cakeImage} alt="Uploaded Cake reference" style={{ maxHeight: '80px', margin: '0 auto', borderRadius: '6px' }} />
+                  <img src={cakeImage} alt="Uploaded Cake reference" style={{ maxHeight: '70px', margin: '0 auto', borderRadius: '6px' }} />
                 ) : (
                   <div>
-                    <span style={{ fontSize: '1.5rem', display: 'block' }}>📸</span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>{t('foodKitchen.tapToUpload')}</span>
+                    <span style={{ fontSize: '1.4rem', display: 'flex', justifyContent: 'center', marginBottom: '2px', color: '#ea580c' }}>
+                      <HiOutlineCamera />
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--gray-400)' }}>{t('foodKitchen.tapToUpload')}</span>
                   </div>
                 )}
                 <input
@@ -378,13 +471,13 @@ const FoodKitchenHub = () => {
             alignItems: 'center'
           }}>
             <div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{t('foodKitchen.consultationBooking')}</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>{cakeWeightKg} Kg {cakeStyle.toUpperCase()} Cake</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-800)' }}>
-                ₹{cakeStyle === 'minimalist' ? '1,499' : cakeStyle === 'fruit' ? '1,799' : '2,999'}
+                ₹{calculateCakePrice().toLocaleString()}
               </span>
             </div>
             <Link
-              to={`/customer/book?service=${encodeURIComponent('Celebration Custom Cake Designer')}&serviceId=custom-cake&category=food-kitchen&price=${cakeStyle === 'minimalist' ? 1499 : cakeStyle === 'fruit' ? 1799 : 2999}`}
+              to={`/customer/book?service=${encodeURIComponent(`Celebration Custom Cake (${cakeStyle.toUpperCase()} • ${cakeWeightKg} Kg)`)}&serviceId=custom-cake&category=food-kitchen&price=${calculateCakePrice()}&weight=${cakeWeightKg}&cakeStyle=${cakeStyle}`}
               className="btn btn-primary btn-sm"
               style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
             >
@@ -416,7 +509,7 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              Backyard BBQ Setup 🍖
+              Backyard BBQ Setup <HiOutlineFire style={{ color: '#ea580c' }} />
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
               We bring the grill, coal, and marinated meats. Enjoy a live BBQ experience in your backyard.
@@ -444,7 +537,7 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              In-Home Baking Class 🧁
+              In-Home Baking Class <HiOutlineCake style={{ color: '#ec4899' }} />
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
               Book a pastry chef for a 2-hour hands-on baking masterclass in your kitchen.
@@ -472,7 +565,7 @@ const FoodKitchenHub = () => {
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              Kitchen & Pantry Clean 🧼
+              Kitchen & Pantry Clean <HiOutlineSparkles style={{ color: '#06b6d4' }} />
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
               Deep cleaning of appliances and aesthetic organization of your pantry shelves.

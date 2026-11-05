@@ -4,7 +4,8 @@ import {
   HiOutlineCamera, HiOutlineArchiveBox, HiOutlineUserGroup, 
   HiOutlineShieldCheck, HiOutlineSparkles, HiOutlineCheckCircle,
   HiOutlineChevronRight, HiOutlineQrCode, HiOutlineWrenchScrewdriver,
-  HiOutlineHomeModern, HiOutlineMapPin, HiOutlineTruck, HiOutlineExclamationCircle
+  HiOutlineHomeModern, HiOutlineMapPin, HiOutlineTruck, HiOutlineExclamationCircle,
+  HiOutlineTv, HiOutlineCube, HiOutlineCheck
 } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
 
@@ -16,10 +17,10 @@ const SmartInventoryScanner = ({ onNext }) => {
 
   const startScan = () => {
     setScanning(true);
-    setTimeout(() => setItems(prev => [...prev, { name: '3-Seater Sofa', cft: 40, icon: '🛋️' }]), 1500);
-    setTimeout(() => setItems(prev => [...prev, { name: 'Smart TV 55"', cft: 15, icon: '📺' }]), 3000);
-    setTimeout(() => setItems(prev => [...prev, { name: 'Double Bed', cft: 65, icon: '🛏️' }]), 4500);
-    setTimeout(() => setItems(prev => [...prev, { name: 'Fragile Cartons', cft: 10, icon: '📦' }]), 5500);
+    setTimeout(() => setItems(prev => [...prev, { name: '3-Seater Sofa', cft: 40, icon: <HiOutlineHomeModern /> }]), 1500);
+    setTimeout(() => setItems(prev => [...prev, { name: 'Smart TV 55"', cft: 15, icon: <HiOutlineTv /> }]), 3000);
+    setTimeout(() => setItems(prev => [...prev, { name: 'Double Bed', cft: 65, icon: <HiOutlineCube /> }]), 4500);
+    setTimeout(() => setItems(prev => [...prev, { name: 'Fragile Cartons', cft: 10, icon: <HiOutlineArchiveBox /> }]), 5500);
     setTimeout(() => {
       setScanning(false);
       setDone(true);
@@ -48,7 +49,7 @@ const SmartInventoryScanner = ({ onNext }) => {
             <AnimatePresence>
               {items.map((item, idx) => (
                 <motion.div key={idx} initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ background: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(56, 189, 248, 0.4)', backdropFilter: 'blur(4px)' }}>
-                  <div style={{ fontSize: '2rem', textAlign: 'center' }}>{item.icon}</div>
+                  <div style={{ fontSize: '2rem', textAlign: 'center', display: 'flex', justifyContent: 'center' }}>{item.icon}</div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 700, marginTop: '8px' }}>{item.name}</div>
                   <div style={{ fontSize: '0.65rem', color: '#38bdf8' }}>{item.cft} {t('packersFlow.itemsDetected', 'CFT detected')}</div>
                 </motion.div>
@@ -113,7 +114,9 @@ const SharedLoadMatcher = ({ onNext }) => {
               <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--primary-600)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.2rem' }}>RK</div>
               <div>
                 <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-900)' }}>{t('packersFlow.userMoving', 'Rahul K. is moving to Pune!')}</h4>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--primary-700)' }}>{t('packersFlow.userVerified', 'Verified Corporate User ✓')}</p>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--primary-700)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  {t('packersFlow.userVerified', 'Verified Corporate User')} <HiOutlineCheck style={{ strokeWidth: 3 }} />
+                </p>
               </div>
             </div>
             <div style={{ background: 'white', padding: '8px 12px', borderRadius: '20px', fontWeight: 800, color: 'var(--success)', border: '1px solid var(--gray-200)', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
@@ -160,7 +163,9 @@ const DigitalInventoryQR = ({ onNext }) => {
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)' }}>
           <div style={{ background: 'var(--navy-900)', color: 'white', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>{t('packersFlow.boxHeader', '📦 Box #104')}</h3>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <HiOutlineArchiveBox /> {t('packersFlow.boxHeader', 'Box #104')}
+              </h3>
               <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{t('packersFlow.boxSub', 'Fragile • Kitchen Room')}</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>
@@ -171,15 +176,15 @@ const DigitalInventoryQR = ({ onNext }) => {
             <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>{t('packersFlow.contents', 'Contents Inside')}</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               <li style={{ padding: '12px 0', borderBottom: '1px solid var(--gray-100)', display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: 'var(--navy-800)' }}>
-                <span>{t('packersFlow.item1', '🍽️ Bone China Plates (Set of 12)')}</span>
+                <span>{t('packersFlow.item1', 'Bone China Plates (Set of 12)')}</span>
                 <span style={{ color: 'var(--success)' }}><HiOutlineCheckCircle /> {t('packersFlow.packed', 'Packed')}</span>
               </li>
               <li style={{ padding: '12px 0', borderBottom: '1px solid var(--gray-100)', display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: 'var(--navy-800)' }}>
-                <span>{t('packersFlow.item2', '🍷 Wine Glasses (Set of 4)')}</span>
+                <span>{t('packersFlow.item2', 'Wine Glasses (Set of 4)')}</span>
                 <span style={{ color: 'var(--success)' }}><HiOutlineCheckCircle /> {t('packersFlow.packed', 'Packed')}</span>
               </li>
               <li style={{ padding: '12px 0', display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: 'var(--navy-800)' }}>
-                <span>{t('packersFlow.item3', '🥣 Ceramic Bowls (Set of 6)')}</span>
+                <span>{t('packersFlow.item3', 'Ceramic Bowls (Set of 6)')}</span>
                 <span style={{ color: 'var(--success)' }}><HiOutlineCheckCircle /> {t('packersFlow.packed', 'Packed')}</span>
               </li>
             </ul>
@@ -269,7 +274,7 @@ const PostMoveConcierge = ({ onNext }) => {
   return (
     <div className="card" style={{ padding: '32px', maxWidth: '600px', margin: '0 auto', borderRadius: '24px', background: 'var(--navy-900)', color: 'white' }}>
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '8px', color: 'white' }}>{t('packersFlow.welcomeMsg', 'Welcome to your new home! 🎉')}</h2>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '8px', color: 'white' }}>{t('packersFlow.welcomeMsg', 'Welcome to your new home!')}</h2>
         <p style={{ color: 'var(--navy-300)', fontSize: '0.9rem' }}>{t('packersFlow.needHelpMsg', 'Need help settling in? Book verified experts instantly.')}</p>
       </div>
 
@@ -293,7 +298,7 @@ const PostMoveConcierge = ({ onNext }) => {
                   border: '1px solid #38bdf8', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s' 
                 }}
               >
-                {added[s.id] ? t('packersFlow.addedText', '✓ Added') : t('packersFlow.addText', '+ Add')}
+                {added[s.id] ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}><HiOutlineCheck /> {t('packersFlow.addedText', 'Added')}</span> : t('packersFlow.addText', '+ Add')}
               </button>
             </div>
           </div>
@@ -325,8 +330,8 @@ const PackersDemo = () => {
   return (
     <div className="page-content" style={{ minHeight: '92vh', background: 'var(--gray-50)', padding: '40px 20px' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <div style={{ display: 'inline-flex', background: 'white', padding: '8px 16px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: '16px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary-600)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-          {t('packersFlow.badgeMsg', '✨ Premium Feature Showcase')}
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'white', padding: '8px 16px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: '16px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary-600)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          <HiOutlineSparkles /> {t('packersFlow.badgeMsg', 'Premium Feature Showcase')}
         </div>
         <h1 className="page-title" style={{ fontSize: '2rem', marginBottom: '8px' }}>{t('packersFlow.pageTitle', 'Packers & Movers 2.0')}</h1>
         <p className="page-subtitle" style={{ maxWidth: '600px', margin: '0 auto' }}>{t('packersFlow.pageSubtitle', 'Experience the ultimate logistics flow designed for maximum conversion, transparency, and trust.')}</p>

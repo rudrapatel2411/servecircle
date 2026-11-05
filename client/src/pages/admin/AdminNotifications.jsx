@@ -1,18 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBell, HiOutlinePaperAirplane, HiOutlineTrash,
-  HiOutlineUsers, HiOutlineMegaphone
+  HiOutlineUsers, HiOutlineMegaphone, HiOutlineSparkles,
+  HiOutlineCog6Tooth, HiOutlinePhone, HiOutlineArrowPath,
 } from 'react-icons/hi2';
+import { socket } from '../../socket';
+import { getSession, API_BASE } from '../../utils/authSession';
+import { subscribeToCrossTabNotifications } from '../../utils/notificationSync';
 import '../Dashboard.css';
 import './AdminPages.css';
-
-const mockNotifications = [
-  { id: 1, title: 'Welcome to ServeCircle!', message: 'Thank you for joining ServeCircle. Book your first service and get 50% off!', type: 'broadcast', audience: 'all', date: '14 May 2026, 10:00 AM', reads: 8420 },
-  { id: 2, title: 'Summer Cleaning Offer', message: 'Get 20% off on all cleaning services this month. Use code CLEAN20.', type: 'promotion', audience: 'customers', date: '12 May 2026, 3:00 PM', reads: 5230 },
-  { id: 3, title: 'New Jobs Available', message: 'There are 5 new job requests in your area. Check them out!', type: 'alert', audience: 'workers', date: '13 May 2026, 9:00 AM', reads: 1890 },
-  { id: 4, title: 'System Maintenance', message: 'Platform will be under maintenance on 18 May from 2-4 AM IST.', type: 'system', audience: 'all', date: '10 May 2026, 11:00 AM', reads: 12400 },
-];
 
 const renderTypeIcon = (type) => {
   switch (type) {
@@ -20,78 +17,382 @@ const renderTypeIcon = (type) => {
     case 'promotion': return <HiOutlineSparkles size={18} />;
     case 'alert': return <HiOutlineBell size={18} />;
     case 'system': return <HiOutlineCog6Tooth size={18} />;
+    case 'call_request': return <HiOutlinePhone size={18} />;
     default: return <HiOutlineBell size={18} />;
   }
 };
-const audienceLabels = { all: 'All Users', customers: 'Customers', workers: 'Workers', b2b: 'B2B Partners' };
+
+const audienceLabels = {
+  all: 'All Users',
+  customers: 'Customers',
+  workers: 'Workers',
+  b2b: 'B2B Partners',
+};
+
+const typeColors = {
+  broadcast: '#3b82f6',
+  promotion: '#ec4899',
+  alert: '#ef4444',
+  system: '#8b5cf6',
+  call_request: '#10b981',
+  personal: '#f59e0b',
+};
 
 const AdminNotifications = () => {
   const { t } = useTranslation();
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications, setNotifications] = useState([]);
+  const [liveNotifs, setLiveNotifs] = useState([]); // Real-time from socket
+  const [callRequests, setCallRequests] = useState([]); // Active call requests
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ title: '', message: '', type: 'broadcast', audience: 'all' });
+
+  const session = getSession();
 
   const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
-  const handleSend = () => {
-    const newNotif = { ...form, id: Date.now(), date: new Date().toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }), reads: 0 };
-    setNotifications((p) => [newNotif, ...p]);
-    setShowForm(false);
-    setForm({ title: '', message: '', type: 'broadcast', audience: 'all' });
+  // Fetch notifications from API
+  const fetchNotifications = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/notifications/all`, {
+        headers: { Authorization: `Bearer ${session?.token}` },
+      });
+      const data = await res.json();
+      if (res.ok) setNotifications(data);
+    } catch {
+      // Use live notifications if API fails
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const deleteNotif = (id) => setNotifications((p) => p.filter((n) => n.id !== id));
+  // Fetch active call requests
+  const fetchCallRequests = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/call-requests`, {
+        headers: { Authorization: `Bearer ${session?.token}` },
+      });
+      const data = await res.json();
+      if (res.ok) setCallRequests(data.requests || []);
+    } catch {
+      // Ignore
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    fetchCallRequests();
+
+    // Listen to admin_notification events for real-time updates
+    const handleLiveNotif = (data) => {
+      setLiveNotifs((prev) => [
+        {
+          ...data,
+          _isLive: true,
+          audience: data.targetAudience || 'all',
+          reads: data.reads || 0,
+        },
+        ...prev,
+      ].slice(0, 20));
+    };
+
+    const handleCallRequest = (data) => {
+      setCallRequests((prev) => {
+        if (prev.find((r) => r.requestId === data.requestId)) return prev;
+        return [{ ...data, status: 'pending' }, ...prev];
+      });
+    };
+
+    const handleCallTaken = (data) => {
+      setCallRequests((prev) =>
+        prev.map((r) =>
+          r.requestId === data.requestId
+            ? { ...r, status: data.cancelled ? 'cancelled' : 'accepted', acceptedByWorkerName: data.acceptedByWorkerName }
+            : r
+        )
+      );
+    };
+
+    socket.on('admin_notification', handleLiveNotif);
+    socket.on('call_request', handleCallRequest);
+    socket.on('call_request_taken', handleCallTaken);
+
+    // Cross-tab broadcast listener for immediate synchronization
+    const unsubscribeCrossTab = subscribeToCrossTabNotifications((crossData) => {
+      handleLiveNotif(crossData);
+      if (crossData.type === 'call_request') {
+        handleCallRequest(crossData);
+      }
+    });
+
+    return () => {
+      socket.off('admin_notification', handleLiveNotif);
+      socket.off('call_request', handleCallRequest);
+      socket.off('call_request_taken', handleCallTaken);
+      unsubscribeCrossTab();
+    };
+  }, []);
+
+  const handleSend = async () => {
+    if (!form.title || !form.message) return;
+    setSending(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/notifications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.token}`,
+        },
+        body: JSON.stringify({
+          title: form.title,
+          message: form.message,
+          type: form.type,
+          targetAudience: form.audience,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        // Also emit via socket for real-time delivery
+        // (The route handler should do this, but we update local state too)
+        const newNotif = {
+          ...data,
+          _id: data._id || `notif_${Date.now()}`,
+          reads: 0,
+          audience: form.audience,
+          date: new Date().toLocaleString('en-IN'),
+        };
+        setNotifications((p) => [newNotif, ...p]);
+        setShowForm(false);
+        setForm({ title: '', message: '', type: 'broadcast', audience: 'all' });
+      }
+    } catch {
+      // Fallback: add locally
+      const newNotif = {
+        _id: `notif_${Date.now()}`,
+        ...form,
+        audience: form.audience,
+        date: new Date().toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        reads: 0,
+      };
+      setNotifications((p) => [newNotif, ...p]);
+      setShowForm(false);
+      setForm({ title: '', message: '', type: 'broadcast', audience: 'all' });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const deleteNotif = async (id) => {
+    try {
+      await fetch(`${API_BASE}/notifications/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session?.token}` },
+      });
+    } catch { /* ignore */ }
+    setNotifications((p) => p.filter((n) => (n._id || n.id) !== id));
+    setLiveNotifs((p) => p.filter((n) => (n._id || n.id) !== id));
+  };
+
+  const allNotifs = [...liveNotifs, ...notifications];
+  const pendingCallRequests = callRequests.filter((r) => r.status === 'pending');
 
   return (
     <div className="page-content">
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('admin.notifications')}</h1>
-          <p className="page-subtitle">Manage broadcast notifications</p>
+          <p className="page-subtitle">
+            Manage broadcast notifications &amp; monitor call requests
+            {liveNotifs.length > 0 && (
+              <span
+                style={{
+                  marginLeft: '10px',
+                  background: '#ef4444',
+                  color: 'white',
+                  borderRadius: '12px',
+                  padding: '2px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                }}
+              >
+                {liveNotifs.length} new live
+              </span>
+            )}
+          </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}><HiOutlineMegaphone /> New Broadcast</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            className="btn btn-outline"
+            onClick={() => { fetchNotifications(); fetchCallRequests(); }}
+            title="Refresh"
+          >
+            <HiOutlineArrowPath />
+          </button>
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+            <HiOutlineMegaphone /> New Broadcast
+          </button>
+        </div>
       </div>
 
+      {/* Active Call Requests Panel */}
+      {pendingCallRequests.length > 0 && (
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
+            border: '1.5px solid #bbf7d0',
+            borderRadius: '16px',
+            padding: '16px 20px',
+            marginBottom: '24px',
+          }}
+        >
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#065f46', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <HiOutlinePhone style={{ color: '#10b981' }} />
+            Live Call Requests ({pendingCallRequests.length} pending)
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {pendingCallRequests.map((req) => (
+              <div
+                key={req.requestId}
+                style={{
+                  background: 'white',
+                  borderRadius: '12px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                }}
+              >
+                <div>
+                  <p style={{ fontWeight: 700, color: '#111827', margin: '0 0 2px', fontSize: '0.88rem' }}>
+                    {req.customerName} — {req.serviceType}
+                  </p>
+                  <p style={{ color: '#6b7280', margin: 0, fontSize: '0.8rem' }}>
+                    📞 {req.phone} · {new Date(req.createdAt).toLocaleTimeString('en-IN')}
+                  </p>
+                </div>
+                <span
+                  style={{
+                    background: '#fef3c7',
+                    color: '#92400e',
+                    borderRadius: '8px',
+                    padding: '4px 10px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  Waiting for worker...
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Broadcast Form */}
       {showForm && (
         <div className="admin-form-card animate-fade-in-up">
           <h3>Send Broadcast Notification</h3>
-          <div className="input-group"><label>Title</label><input className="input-field" placeholder="Notification title..." value={form.title} onChange={(e) => update('title', e.target.value)} /></div>
-          <div className="input-group"><label>Message</label><textarea className="input-field" rows={3} placeholder="Write your message here..." value={form.message} onChange={(e) => update('message', e.target.value)} /></div>
+          <div className="input-group">
+            <label>Title</label>
+            <input className="input-field" placeholder="Notification title..." value={form.title} onChange={(e) => update('title', e.target.value)} />
+          </div>
+          <div className="input-group">
+            <label>Message</label>
+            <textarea className="input-field" rows={3} placeholder="Write your message here..." value={form.message} onChange={(e) => update('message', e.target.value)} />
+          </div>
           <div className="form-grid" style={{ marginBottom: 0 }}>
-            <div className="input-group"><label>Type</label>
+            <div className="input-group">
+              <label>Type</label>
               <select className="input-field" value={form.type} onChange={(e) => update('type', e.target.value)}>
-                <option value="broadcast">Broadcast</option><option value="promotion">Promotion</option><option value="alert">Alert</option><option value="system">System</option>
+                <option value="broadcast">Broadcast</option>
+                <option value="promotion">Promotion</option>
+                <option value="alert">Alert</option>
+                <option value="system">System</option>
               </select>
             </div>
-            <div className="input-group"><label>Target Audience</label>
+            <div className="input-group">
+              <label>Target Audience</label>
               <select className="input-field" value={form.audience} onChange={(e) => update('audience', e.target.value)}>
-                <option value="all">All Users</option><option value="customers">Customers Only</option><option value="workers">Workers Only</option><option value="b2b">B2B Partners</option>
+                <option value="all">All Users</option>
+                <option value="customers">Customers Only</option>
+                <option value="workers">Workers Only</option>
+                <option value="b2b">B2B Partners</option>
               </select>
             </div>
           </div>
           <div className="form-actions">
-            <button className="btn btn-primary" onClick={handleSend} disabled={!form.title || !form.message}><HiOutlinePaperAirplane /> Send Now</button>
+            <button
+              className="btn btn-primary"
+              onClick={handleSend}
+              disabled={!form.title || !form.message || sending}
+            >
+              <HiOutlinePaperAirplane /> {sending ? 'Sending...' : 'Send Now'}
+            </button>
             <button className="btn btn-outline" onClick={() => setShowForm(false)}>Cancel</button>
           </div>
         </div>
       )}
 
+      {/* Notifications List */}
       <div className="notifications-list">
-        {notifications.map((n) => (
-          <div key={n.id} className="notif-card">
-            <div className="notif-icon">{renderTypeIcon(n.type)}</div>
-            <div className="notif-content">
-              <h4 className="notif-title">{n.title}</h4>
-              <p className="notif-message">{n.message}</p>
-              <div className="notif-meta">
-                <span className="notif-audience"><HiOutlineUsers /> {audienceLabels[n.audience]}</span>
-                <span className="notif-date">{n.date}</span>
-                <span className="notif-reads">{n.reads.toLocaleString()} reads</span>
-              </div>
-            </div>
-            <button className="btn-icon-sm danger" onClick={() => deleteNotif(n.id)}><HiOutlineTrash /></button>
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--gray-500)' }}>
+            Loading notifications...
           </div>
-        ))}
+        )}
+        {allNotifs.map((n) => {
+          const id = n._id || n.id;
+          const color = typeColors[n.type] || '#6b7280';
+          return (
+            <div key={id} className="notif-card" style={{ borderLeft: `3px solid ${color}` }}>
+              <div className="notif-icon" style={{ color }}>{renderTypeIcon(n.type)}</div>
+              <div className="notif-content">
+                <h4 className="notif-title">
+                  {n.title}
+                  {n._isLive && (
+                    <span
+                      style={{
+                        marginLeft: '8px',
+                        background: '#ef4444',
+                        color: 'white',
+                        borderRadius: '6px',
+                        padding: '1px 6px',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      LIVE
+                    </span>
+                  )}
+                </h4>
+                <p className="notif-message">{n.message}</p>
+                <div className="notif-meta">
+                  <span className="notif-audience">
+                    <HiOutlineUsers /> {audienceLabels[n.audience || n.targetAudience] || 'All'}
+                  </span>
+                  <span className="notif-date">{n.date || (n.createdAt ? new Date(n.createdAt).toLocaleString('en-IN') : '')}</span>
+                  <span className="notif-reads">{(n.reads || 0).toLocaleString()} reads</span>
+                </div>
+              </div>
+              <button className="btn-icon-sm danger" onClick={() => deleteNotif(id)}>
+                <HiOutlineTrash />
+              </button>
+            </div>
+          );
+        })}
+        {!loading && allNotifs.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--gray-400)' }}>
+            <HiOutlineBell style={{ fontSize: '3rem', marginBottom: '12px', display: 'block', margin: '0 auto 12px' }} />
+            <p style={{ fontWeight: 600 }}>No notifications yet</p>
+            <p style={{ fontSize: '0.85rem' }}>Send a broadcast to notify users</p>
+          </div>
+        )}
       </div>
     </div>
   );

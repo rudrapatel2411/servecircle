@@ -6,7 +6,7 @@ import {
   HiOutlineUserGroup, HiOutlineArrowRight, HiOutlineSparkles,
   HiOutlineWrench, HiOutlineTruck, HiOutlineAcademicCap,
   HiOutlineBuildingOffice, HiOutlineHeart, HiOutlineClock,
-  HiOutlineMicrophone
+  HiOutlineMicrophone, HiOutlineCheck
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
@@ -437,7 +437,7 @@ const BrowseServices = () => {
                   <ul style={{ listStyle: 'none', margin: '4px 0 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {b.servicesList.map((s, i) => (
                       <li key={i} style={{ fontSize: '0.75rem', color: 'var(--navy-700)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ color: 'var(--primary-500)' }}>✓</span> {s}
+                        <HiOutlineCheck style={{ color: 'var(--primary-500)', flexShrink: 0 }} /> {s}
                       </li>
                     ))}
                   </ul>
