@@ -68,7 +68,9 @@ router.put(
       return res.json({ message: 'Marked as read' });
     }
 
-    await Notification.findByIdAndUpdate(req.params.id, { $addToSet: { readBy: req.user._id } });
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      await Notification.findByIdAndUpdate(req.params.id, { $addToSet: { readBy: req.user._id } });
+    }
     res.json({ message: 'Marked as read' });
   })
 );
@@ -189,16 +191,30 @@ router.get(
 router.delete(
   '/:id',
   protect,
-  authorize('admin'),
   asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const isAdmin = req.user.role === 'admin';
+
     if (mongoose.connection.readyState !== 1) {
-      const idx = DEMO_NOTIFICATIONS.findIndex((n) => n._id === req.params.id);
-      if (idx !== -1) DEMO_NOTIFICATIONS.splice(idx, 1);
-      return res.json({ message: 'Notification deleted' });
+      const idx = DEMO_NOTIFICATIONS.findIndex((n) => n._id === id || n.id === id);
+      if (idx !== -1) {
+        if (isAdmin) {
+          DEMO_NOTIFICATIONS.splice(idx, 1);
+        } else if (!DEMO_NOTIFICATIONS[idx].readBy.includes(req.user._id)) {
+          DEMO_NOTIFICATIONS[idx].readBy.push(req.user._id);
+        }
+      }
+      return res.json({ message: 'Notification dismissed' });
     }
 
-    await Notification.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Notification deleted' });
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      if (isAdmin) {
+        await Notification.findByIdAndDelete(id);
+      } else {
+        await Notification.findByIdAndUpdate(id, { $addToSet: { readBy: req.user._id } });
+      }
+    }
+    res.json({ message: 'Notification dismissed' });
   })
 );
 

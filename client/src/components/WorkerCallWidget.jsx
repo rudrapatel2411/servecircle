@@ -21,6 +21,12 @@ const IncomingCallModal = ({ request, onAccept, onDismiss }) => {
     await onAccept(request.requestId, request.phone, request);
     setAccepted(true);
     setLoading(false);
+    // Open live in-app consultation console directly (avoids OS tel:/WhatsApp popup on desktop)
+    window.dispatchEvent(
+      new CustomEvent('servecircle:open-worker-call', {
+        detail: { phone: request.phone, customerName: request.customerName || 'Customer', autoStart: true },
+      })
+    );
   };
 
   return (
@@ -191,10 +197,10 @@ const IncomingCallModal = ({ request, onAccept, onDismiss }) => {
 };
 
 // ── 2. Fully Functional Partner Communication & Support Modal ───────────────
-const CallModal = ({ onClose, defaultPhone, defaultCustomerName }) => {
+const CallModal = ({ onClose, defaultPhone, defaultCustomerName, autoStart = false }) => {
   const [activeTab, setActiveTab] = useState('customer'); // 'customer' | 'support'
   const [targetPhone, setTargetPhone] = useState(defaultPhone || '9876543210');
-  const [callActive, setCallActive] = useState(false);
+  const [callActive, setCallActive] = useState(Boolean(autoStart));
   const [callSeconds, setCallSeconds] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaker, setIsSpeaker] = useState(true);
@@ -222,10 +228,6 @@ const CallModal = ({ onClose, defaultPhone, defaultCustomerName }) => {
   const startCall = () => {
     setCallActive(true);
     setNotesSaved(false);
-    // Also trigger mobile device dialer
-    if (typeof window !== 'undefined') {
-      window.open(`tel:${targetPhone}`, '_self');
-    }
   };
 
   const endCall = () => {
@@ -553,9 +555,18 @@ const CallModal = ({ onClose, defaultPhone, defaultCustomerName }) => {
               </a>
 
               <a
-                href="https://wa.me/919876543210?text=Hello%20ServeCircle%20Support%2C%20I%20am%20a%20partner%20and%20need%20assistance"
+                href="https://web.whatsapp.com/send?phone=919876543210&text=Hello%20ServeCircle%20Support%2C%20I%20am%20a%20partner%20and%20need%20assistance"
                 target="_blank"
                 rel="noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  const msg = encodeURIComponent('Hello ServeCircle Support, I am a partner and need assistance');
+                  const url = isMobile
+                    ? `https://api.whatsapp.com/send?phone=919876543210&text=${msg}`
+                    : `https://web.whatsapp.com/send?phone=919876543210&text=${msg}`;
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -584,6 +595,7 @@ const CallModal = ({ onClose, defaultPhone, defaultCustomerName }) => {
 // ── 3. Main WorkerCallWidget Component ───────────────────────────────────────
 const WorkerCallWidget = () => {
   const [showCall, setShowCall] = useState(false);
+  const [callOverride, setCallOverride] = useState(null);
   const [activeRequests, setActiveRequests] = useState([]);
   const session = getSession();
   const workerCategory = getWorkerCategory(session?.user);
@@ -680,10 +692,20 @@ const WorkerCallWidget = () => {
       }
     });
 
+    // Direct call trigger from notifications / toasts / job cards
+    const handleDirectCallEvent = (e) => {
+      if (e.detail?.phone) {
+        setCallOverride(e.detail);
+        setShowCall(true);
+      }
+    };
+    window.addEventListener('servecircle:open-worker-call', handleDirectCallEvent);
+
     return () => {
       socket.off('call_request', handleIncoming);
       socket.off('call_request_taken', handleCallTaken);
       unsubCrossTab();
+      window.removeEventListener('servecircle:open-worker-call', handleDirectCallEvent);
     };
   }, [workerCategory]);
 
@@ -692,7 +714,10 @@ const WorkerCallWidget = () => {
       {/* Sleek Floating Hotline Button in Bottom-Right */}
       <button
         className="call-floating-btn"
-        onClick={() => setShowCall(true)}
+        onClick={() => {
+          setCallOverride(null);
+          setShowCall(true);
+        }}
         title={`Worker Hotline & Consultation Console (${workerCategory})`}
         style={{
           display: 'inline-flex',
@@ -734,9 +759,14 @@ const WorkerCallWidget = () => {
       {/* Active Call / Support Modal */}
       {showCall && (
         <CallModal
-          onClose={() => setShowCall(false)}
-          defaultPhone={activeRequests[0]?.phone}
-          defaultCustomerName={activeRequests[0]?.customerName}
+          key={`${callOverride?.phone || activeRequests[0]?.phone || 'default'}_${callOverride?.autoStart ? 'auto' : 'manual'}`}
+          onClose={() => {
+            setShowCall(false);
+            setCallOverride(null);
+          }}
+          defaultPhone={callOverride?.phone || activeRequests[0]?.phone}
+          defaultCustomerName={callOverride?.customerName || activeRequests[0]?.customerName}
+          autoStart={Boolean(callOverride?.autoStart)}
         />
       )}
 

@@ -41,7 +41,7 @@ const mockOrders = [
     address: 'Satellite, Ahmedabad',
     amount: 799,
     status: 'en-route', // pending | confirmed | en-route | active | completed | cant-resolve
-    startOtp: '8492',
+    startOtp: '4821',
     endOtp: '3751',
     worker: {
       name: 'Ramesh Kumar',
@@ -135,27 +135,33 @@ const OrderedServices = () => {
     let localBookings = [];
     try {
       const raw = localStorage.getItem('servecircle_customer_bookings');
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
       if (raw) {
-        localBookings = JSON.parse(raw).map((b) => ({
-          id: b.id?.startsWith('#') ? b.id : `#${b.id || 'SC-2845'}`,
-          service: b.service,
-          category: b.category,
-          date: b.date || 'Today',
-          time: b.time || '11:30 AM',
-          address: `${b.address || ''}, ${b.city || ''}`,
-          amount: b.amount,
-          status: 'confirmed',
-          startOtp: b.startOtp || '8492',
-          endOtp: '3751',
-          worker: {
-            name: b.workerName || b.worker?.name || 'Ramesh Kumar',
-            tier: b.tier || 'Senior Pro',
-            rating: b.worker?.rating || 4.9,
-            jobsSolved: 1240,
-            initials: (b.workerName || 'RK').split(' ').map(n=>n[0]).join('').slice(0,2),
-          },
-          trainee: null,
-        }));
+        localBookings = JSON.parse(raw).map((b) => {
+          const rawId = b.id || b.bookingId || 'SC-2845';
+          const cleanId = rawId.startsWith('#') ? rawId : `#${rawId}`;
+          const otp = b.startOtp || otpMap[rawId] || otpMap[cleanId] || '4821';
+          return {
+            id: cleanId,
+            service: b.service,
+            category: b.category,
+            date: b.date || 'Today',
+            time: b.time || '11:30 AM',
+            address: `${b.address || ''}, ${b.city || ''}`,
+            amount: b.amount,
+            status: b.status || 'confirmed',
+            startOtp: otp,
+            endOtp: b.endOtp || '3751',
+            worker: {
+              name: b.workerName || b.worker?.name || 'Rajesh Kumar',
+              tier: b.tier || 'Senior Pro',
+              rating: b.worker?.rating || 4.9,
+              jobsSolved: 1240,
+              initials: (b.workerName || 'RK').split(' ').map((n) => n[0]).join('').slice(0, 2),
+            },
+            trainee: null,
+          };
+        });
       }
     } catch {}
     return [...localBookings, ...mockOrders];
@@ -527,7 +533,7 @@ const OrderedServices = () => {
                         </span>
                         {order.status === 'en-route' && (
                           <Link
-                            to={`/customer/live-tracking?bookingId=${order.id}&service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker.name)}&price=${order.amount}`}
+                            to={`/customer/live-tracking?bookingId=${encodeURIComponent(order.id.replace('#', ''))}&service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker.name)}&price=${order.amount}&startOtp=${encodeURIComponent(order.startOtp || '')}`}
                             className="btn btn-primary"
                             style={{ marginLeft: 'auto', fontSize: '0.8rem', padding: '8px 16px' }}
                           >

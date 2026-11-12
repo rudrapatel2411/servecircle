@@ -123,6 +123,70 @@ export class GroqProvider extends BaseAIProvider {
           }
         }
 
+        const inferFallbackByContext = (sampleText = '') => {
+          const t = sampleText.toLowerCase();
+          const isTravel = /\b(driver|chauffeur|cab|car|ride|suv|innova|crysta|ertiga|creta|hatchback|sedan|swift|dzire|bmw|tempo|traveller|outstation|travel|travelling|traveling|commute|airport|railway|station|bhavnagar|udaipur|ahmedabad|mumbai|surat|self\s*drive|self-drive|batta|rental)\b/i.test(t);
+          if (isTravel) {
+            return {
+              intent: 'SERVICE_PROBLEM',
+              showServiceRecommendation: true,
+              serviceName: 'City, Station, Airport & Outstation Rides',
+              category: 'Travel & Commute',
+              problemType: 'Outstation / Commute Ride',
+              urgency: 'Scheduled',
+              requiredWorkerSkill: 'Driver',
+              estimatedPrice: 599,
+              safetyPrecautions: ['Verified commercial license driver', 'GPS tracked vehicle', 'Zero hidden charges'],
+              followUpQuestions: ['With Driver vs Self Drive rates', 'Multi-day Outstation Tour', 'Railway Station / Bus Stand Pick & Drop'],
+            };
+          }
+
+          const isPlumbing = /\b(plumb|leak|pipe|tap|drain|toilet|water|sink|flush|geyser)\b/i.test(t);
+          if (isPlumbing) {
+            return {
+              intent: 'SERVICE_PROBLEM',
+              showServiceRecommendation: true,
+              serviceName: 'Plumbing',
+              category: 'Home Repairs',
+              problemType: 'Plumbing Leakage / Repair',
+              urgency: 'Standard',
+              requiredWorkerSkill: 'Plumber',
+              estimatedPrice: 350,
+              safetyPrecautions: ['Turn off main valve if heavy leakage exists'],
+              followUpQuestions: ['Pipe / Tap leak repair', 'Bathroom drain blockage', 'Water motor / tank issue'],
+            };
+          }
+
+          const isElectrical = /\b(electric|wire|switch|power|fan|short\s*circuit|mcb|spark|light)\b/i.test(t);
+          if (isElectrical) {
+            return {
+              intent: 'SERVICE_PROBLEM',
+              showServiceRecommendation: true,
+              serviceName: 'Electrical Work',
+              category: 'Home Repairs',
+              problemType: 'Electrical Repair',
+              urgency: 'Standard',
+              requiredWorkerSkill: 'Electrician',
+              estimatedPrice: 300,
+              safetyPrecautions: ['Switch off main MCB before touching exposed wires'],
+              followUpQuestions: ['Short circuit or tripping MCB', 'Switchboard & wiring check', 'Ceiling fan / light installation'],
+            };
+          }
+
+          return {
+            intent: 'GENERAL_CONVERSATION',
+            showServiceRecommendation: false,
+            serviceName: '',
+            category: '',
+            problemType: '',
+            urgency: 'Scheduled',
+            requiredWorkerSkill: 'Technician',
+            estimatedPrice: 350,
+            safetyPrecautions: [],
+            followUpQuestions: ['How else can I assist you?', 'Browse popular services', 'Book a verified technician'],
+          };
+        };
+
         if (failedGen && typeof failedGen === 'string' && failedGen.trim()) {
           console.log('[GroqProvider] Successfully recovered message from failed_generation');
           const jsonMatch = failedGen.match(/\{[\s\S]*\}/);
@@ -132,18 +196,19 @@ export class GroqProvider extends BaseAIProvider {
               return jsonMatch[0];
             } catch {}
           }
+          const inferred = inferFallbackByContext(`${text} ${failedGen}`);
           return JSON.stringify({
-            intent: 'GENERAL_CONVERSATION',
+            intent: inferred.intent,
             reply: failedGen.trim(),
-            showServiceRecommendation: false,
-            serviceName: '',
-            category: '',
-            problemType: '',
-            urgency: 'Scheduled',
-            requiredWorkerSkill: 'Technician',
-            estimatedPrice: 350,
-            safetyPrecautions: [],
-            followUpQuestions: ['Party & Event Decoration', 'Home Catering & Chef', 'Home Deep Cleaning'],
+            showServiceRecommendation: inferred.showServiceRecommendation,
+            serviceName: inferred.serviceName,
+            category: inferred.category,
+            problemType: inferred.problemType,
+            urgency: inferred.urgency,
+            requiredWorkerSkill: inferred.requiredWorkerSkill,
+            estimatedPrice: inferred.estimatedPrice,
+            safetyPrecautions: inferred.safetyPrecautions,
+            followUpQuestions: inferred.followUpQuestions,
           });
         }
 
@@ -161,18 +226,19 @@ export class GroqProvider extends BaseAIProvider {
                 return jsonMatch[0];
               } catch {}
             }
+            const inferred = inferFallbackByContext(`${text} ${rawText}`);
             return JSON.stringify({
-              intent: 'GENERAL_CONVERSATION',
+              intent: inferred.intent,
               reply: rawText.trim(),
-              showServiceRecommendation: false,
-              serviceName: '',
-              category: '',
-              problemType: '',
-              urgency: 'Scheduled',
-              requiredWorkerSkill: 'Technician',
-              estimatedPrice: 350,
-              safetyPrecautions: [],
-              followUpQuestions: ['How else can I assist you?', 'Browse popular services'],
+              showServiceRecommendation: inferred.showServiceRecommendation,
+              serviceName: inferred.serviceName,
+              category: inferred.category,
+              problemType: inferred.problemType,
+              urgency: inferred.urgency,
+              requiredWorkerSkill: inferred.requiredWorkerSkill,
+              estimatedPrice: inferred.estimatedPrice,
+              safetyPrecautions: inferred.safetyPrecautions,
+              followUpQuestions: inferred.followUpQuestions,
             });
           }
         } catch (retryErr) {
@@ -495,11 +561,20 @@ YOUR CAPABILITIES & RULES:
    - Answer their specific question clearly.
    - Keep "showServiceRecommendation": true so they can proceed directly with booking.
 5. DYNAMIC PRICING INSTRUCTION (CRITICAL - NEVER QUOTE STATIC/FIXED PRICES WHEN USER PROVIDES KM OR CUSTOM PARAMETERS):
-   - When distance (km), vehicle brand tier, days, BHK size, or guest count is mentioned, dynamically compute realistic pricing:
-     * Travel / Driver / Car Rental:
-       - Hatchback/Sedan: ₹14/km + ₹600/day driver allowance (e.g., 200 km = ₹2,800 + ₹600 = ₹3,400).
-       - SUV (Innova / Ertiga / Scorpio): ₹18/km + ₹800/day driver allowance (e.g., 200 km = ₹3,600 + ₹800 = ₹4,400).
-       - Luxury / Top brand car (BMW, Mercedes, Audi, Mustang, luxury brand): ₹28/km + ₹1,200/day driver allowance (e.g., 300 km Luxury = ₹8,400 + ₹1,200 = ₹9,600).
+   - When distance (km), airport transfer route, drive mode (with driver vs self drive), vehicle class/brand, days, BHK size, or guest count is mentioned, dynamically compute realistic pricing:
+     * City, Station & Airport Pick & Drop (Standard AC Cab, single unified category — NO luxury/SUV upsell):
+       - Airport Terminal pickup/drop: ₹199 base pickup (includes parking) + ₹18/km.
+       - Railway Station or Bus Terminal (ISBT/GSRTC) pickup/drop: ₹129 base pickup + ₹18/km.
+       - Any City Address / Doorstep pickup & drop: ₹99 base pickup + ₹18/km.
+       - Optional: +25% Night Pickup surcharge, +₹200 Extra Luggage. Always price strictly by distance (km) from pickup to drop!
+     * Multi-Day Outstation & Rentals (Supports BOTH With Driver & Self Drive across all car types):
+       - Hatchback (Swift / i20): With Driver ₹11/km + ₹400/day batta | Self Drive ₹10/km + ₹900/day vehicle rental.
+       - Sedan (Dzire / City): With Driver ₹14/km + ₹500/day batta | Self Drive ₹12/km + ₹1,200/day vehicle rental.
+       - Compact SUV (Ertiga / Creta): With Driver ₹17/km + ₹600/day batta | Self Drive ₹15/km + ₹1,600/day vehicle rental.
+       - Premium SUV (Innova Crysta): With Driver ₹22/km + ₹700/day batta | Self Drive ₹19/km + ₹2,100/day vehicle rental.
+       - Luxury Fleet (Mercedes / BMW / Audi): With Driver ₹38/km + ₹1,200/day batta | Self Drive ₹34/km + ₹3,500/day vehicle rental.
+       - Tempo Traveller (12-Seater, With Driver only): ₹28/km + ₹900/day batta.
+       - Formula: Total = (billedKm * perKmRate) + (days * dailyFee). If user specifies Pickup & Drop cities without km (e.g. Bhavnagar to Udaipur ≈ 350 km, Ahmedabad to Udaipur ≈ 260 km), automatically estimate road km and state it clearly. Always use one-way distance unless user specifically asks for round-trip (×2). Do NOT add extra night/toll charges on outstation estimates so rates match the Travel & Commute Hub 100%!
      * Relocation & Packers:
        - 1BHK: ₹3,500 + (km * 16), 2BHK: ₹6,500 + (km * 16), 3BHK: ₹10,500 + (km * 16).
      * Home Cook / Catering:
@@ -517,7 +592,7 @@ CATALOG OF AVAILABLE SERVICES IN SERVECIRCLE:
 - "Bathroom & Kitchen Deep Clean": Bathroom tile descaling, toilet bowl deep clean, kitchen chimney & counter degreasing. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 499)
 - "Pest Control": Cockroach, termite (deemak), bed bugs (khatmal), mosquitoes, rodent/rat control spray. (Category: "Cleaning & Hygiene", Skill: "Pest Controller", Base Price: 899)
 - "Relocation & Packers": Local house shifting, room shifting, flat shifting, packing & moving, furniture transport, luggage relocation. (Category: "Relocation & Packers", Skill: "Movers & Packers", Base Price: 2500)
-- "Driver & Chauffeur Service": Outstation driver, daily city driver, airport commute cab/driver, night driver, personal chauffeur. (Category: "Travel & Commute", Skill: "Driver", Base Price: 599)
+- "City, Station, Airport & Outstation Rides": Outstation travel, airport/railway station/bus stand pick & drop, car rental (Hatchback/Swift, Sedan/Dzire, Compact SUV/Ertiga/Creta, Premium SUV/Innova Crysta, Luxury/BMW/Mercedes, Tempo Traveller), with driver & self-drive, daily city driver. (Category: "Travel & Commute", Skill: "Driver", Base Price: 599)
 - "Home Cook & Catering": Daily home chef, morning/evening family cook, party food catering, tiffin service. (Category: "Food & Kitchen", Skill: "Cook", Base Price: 499)
 - "Pet Grooming & Care": Dog/cat bath & styling at home, nail clipping, vet home visit, dog walking. (Category: "Pet Services", Skill: "Pet Care Specialist", Base Price: 450)
 - "Doctor & Healthcare at Home": Doctor consultation at home, physiotherapy (back/knee pain), home nursing, elderly caretaker. (Category: "Health & Wellness", Skill: "Healthcare Professional", Base Price: 699)
@@ -542,8 +617,9 @@ OUTPUT FORMAT: Return ONLY the JSON object.
   "requiredWorkerSkill": "Technician",
   "estimatedPrice": 350,
   "safetyPrecautions": [],
-  "followUpQuestions": ["Option 1", "Option 2"]
-}`;
+  "followUpQuestions": ["Relevant follow-up 1", "Relevant follow-up 2"]
+}
+Note: Always keep 'serviceName', 'category', and 'followUpQuestions' strictly relevant to the active conversation topic (e.g., for Travel queries ONLY suggest Travel/Car/Driver follow-ups, NEVER suggest Pest Control, Cleaning, or Parties).`;
 
     // Build chat history
     const messages = [{ role: 'system', content: systemPrompt }];

@@ -133,6 +133,62 @@ io.on('connection', (socket) => {
     }
   });
 
+  // ── Society Group Booking Created Event ────────────────────────────────────
+  socket.on('group_booking_created', (payload) => {
+    const now = new Date();
+    const dateStr = now.toLocaleString('en-IN');
+    const groupId = payload.groupId || `SC-GRP-${Date.now().toString().slice(-4)}`;
+    const category = payload.category || 'Society Management';
+
+    // 1. Notify Admin Panel
+    notifyAdmin(
+      io,
+      `🏢 Society Group Booking: ${payload.societyName || 'New Society'}`,
+      `Group Booking #${groupId} | Society: "${payload.societyName}" (${payload.flatCount} flats) | Service: "${payload.service}" | Contact: ${payload.contactName} (+91 ${payload.phone || 'N/A'}) | Total: ₹${payload.amount}`,
+      'alert',
+      {
+        groupId,
+        societyName: payload.societyName,
+        contactName: payload.contactName,
+        phone: payload.phone,
+        flatCount: payload.flatCount,
+        category,
+        service: payload.service,
+        amount: payload.amount,
+        preferredDate: payload.preferredDate,
+      }
+    );
+
+    // 2. Notify Target Workers in this exact service category
+    const workerGroupPayload = {
+      id: `notif_grp_${Date.now()}`,
+      title: `🏢 Group Job Alert: ${payload.service}`,
+      message: `Bulk booking for ${payload.societyName} (${payload.flatCount} flats) — "${payload.service}". Total value: ₹${payload.amount}. Date: ${payload.preferredDate}.`,
+      type: 'broadcast',
+      date: dateStr,
+      timestamp: now.toISOString(),
+      groupId,
+      societyName: payload.societyName,
+      contactName: payload.contactName,
+      category,
+      service: payload.service,
+      flatCount: payload.flatCount,
+      amount: payload.amount,
+    };
+
+    if (category) {
+      io.to(`workers_category_${category}`).emit('worker_notification', workerGroupPayload);
+      io.to(`workers_category_${category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerGroupPayload);
+    }
+    io.to('workers_broadcast').emit('worker_notification', workerGroupPayload);
+  });
+
+  // ── Real-Time Booking Status Changed (Worker arriving / OTP verified) ─────
+  socket.on('booking_status_changed', (payload) => {
+    io.to('admin_room').emit('booking_status_changed', payload);
+    io.emit('booking_status_changed', payload); // Broadcast to customer and worker
+  });
+
   // ── Direct call request via socket (offline/demo fallback from CallMeBackWidget) ──
   socket.on('call_request_direct', (payload) => {
     const now = new Date();

@@ -398,9 +398,53 @@ function sanitizeError(err) {
   return 'AI assistant is temporarily unable to process this request. Please try again.';
 }
 
+const AI_CITY_COORDS = {
+  ahmedabad: [23.0225, 72.5714], bhavnagar: [21.7645, 72.1519], surat: [21.1702, 72.8311],
+  vadodara: [22.3072, 73.1812], rajkot: [22.3039, 70.8022], jamnagar: [22.4707, 70.0577],
+  dwarka: [22.2442, 68.9685], somnath: [20.8880, 70.4012], junagadh: [21.5222, 70.4579],
+  bhuj: [23.2420, 69.6669], udaipur: [24.5854, 73.7125], 'mount abu': [24.5926, 72.7156],
+  jaipur: [26.9124, 75.7873], jodhpur: [26.2389, 73.0243], mumbai: [19.0760, 72.8777],
+  pune: [18.5204, 73.8567], goa: [15.2993, 74.1240], delhi: [28.6139, 77.2090],
+  agra: [27.1767, 78.0081], bengaluru: [12.9716, 77.5946], bangalore: [12.9716, 77.5946],
+  mysore: [12.2958, 76.6394], coorg: [12.3375, 75.8069], hyderabad: [17.3850, 78.4867],
+  indore: [22.7196, 75.8577],
+};
+
+const AI_EXACT_ROUTE_KM = {
+  'ahmedabad|udaipur': 260, 'bhavnagar|udaipur': 350, 'ahmedabad|mount abu': 225,
+  'ahmedabad|jaipur': 660, 'ahmedabad|dwarka': 440, 'ahmedabad|somnath': 410,
+  'ahmedabad|surat': 265, 'ahmedabad|vadodara': 112, 'ahmedabad|rajkot': 215,
+  'ahmedabad|mumbai': 525, 'bhavnagar|ahmedabad': 175, 'bhavnagar|somnath': 260,
+  'bhavnagar|dwarka': 410, 'surat|mumbai': 280, 'surat|udaipur': 485,
+  'mumbai|pune': 150, 'mumbai|goa': 590, 'delhi|jaipur': 280,
+  'delhi|agra': 230, 'bengaluru|mysore': 145, 'bengaluru|coorg': 265,
+};
+
+function estimateCityPairKmFromText(cleanText = '') {
+  const matchedCities = [];
+  for (const key of Object.keys(AI_CITY_COORDS)) {
+    const regex = new RegExp(`\\b${key}\\b`, 'i');
+    if (regex.test(cleanText)) {
+      matchedCities.push(key);
+    }
+  }
+  if (matchedCities.length < 2) return null;
+  const [c1, c2] = matchedCities;
+  if (AI_EXACT_ROUTE_KM[`${c1}|${c2}`]) return AI_EXACT_ROUTE_KM[`${c1}|${c2}`];
+  if (AI_EXACT_ROUTE_KM[`${c2}|${c1}`]) return AI_EXACT_ROUTE_KM[`${c2}|${c1}`];
+  const [lat1, lon1] = AI_CITY_COORDS[c1];
+  const [lat2, lon2] = AI_CITY_COORDS[c2];
+  const toRad = (v) => (v * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  const straight = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.max(40, Math.round((straight * 1.28) / 5) * 5);
+}
+
 /**
  * Dynamic Fare & Pricing Calculator for ServeCircle AI Chatbot
- * Guarantees that prices dynamically scale based on user inputs (km, brand/vehicle tier, days, BHK, guests).
+ * Identical formulas to client/src/utils/pricingEngine.js so UI & AI always match.
  */
 function computeDynamicChatPrice({ text = '', serviceName = '', category = '', basePrice = 350, aiEstimatedPrice = null }) {
   const clean = (text || '').toLowerCase();
@@ -408,7 +452,7 @@ function computeDynamicChatPrice({ text = '', serviceName = '', category = '', b
   let breakdown = '';
   let isDynamic = false;
 
-  // 1. Distance extraction:
+  // 1. Distance extraction (or auto-estimate from Pickup & Drop city names):
   let km = null;
   const kmRegex = /(?:(\d+(?:\.\d+)?)\s*(?:km|kms|kilometer|kilometres|kilo|k\.m\.)|(?:distance|door|safar|drive|travel|gaye|jana|chala|kitna).{0,15}?(\d+(?:\.\d+)?)\s*(?:km|kms)?)/i;
   const kmMatch = clean.match(kmRegex);
@@ -422,11 +466,24 @@ function computeDynamicChatPrice({ text = '', serviceName = '', category = '', b
     const directKm = clean.match(/(\d{2,4})\s*(?:km|kms)\b/i);
     if (directKm) km = parseFloat(directKm[1]);
   }
+  if (!km) {
+    km = estimateCityPairKmFromText(clean);
+  }
+  const isRoundTrip = /round.?trip|return|wapas|both side|up\s*and\s*down|up\s*down/i.test(clean);
 
-  // 2. Vehicle brand / tier classification
-  const isLuxury = /luxury|premium|mercedes|bmw|audi|jaguar|mustang|lexus|porsche|roll|royce|range rover|fortuner|thar|achhi brand|acche brand|top brand|top model|vip/i.test(clean);
-  const isSuv = /suv|innova|ertiga|creta|harrier|scorpio|xuv|safari|7 seater|seven seater|badi gadi/i.test(clean);
-  const isSedan = /sedan|hatchback|dzire|city|verna|swift|i20|wagonr|baleno|alto|car|gadi|gaadi/i.test(clean);
+  // 2. Point-to-Point Pick & Drop (Airport / Railway / Bus / Any Place) vs Outstation Drive Mode & Vehicle classification
+  const isAirport = /airport|flight|terminal|hawai adda|airport pickup|airport drop/i.test(clean) || /airport/i.test(serviceName);
+  const isRailway = /railway|train|station|junction|kalupur|sabarmati|ndls|pnr/i.test(clean);
+  const isBus = /bus|bus stand|bus terminal|isbt|gsrtc|brts/i.test(clean);
+  const isPickDrop = isAirport || isRailway || isBus || (/pick\s*(?:&|and|up)?\s*drop|pickup.*drop|drop.*pickup/i.test(clean) && !/outstation|multi.?day/i.test(clean));
+  const isSelfDrive = /self.?drive|without driver|no driver|bina driver|khud chalani|khud drive/i.test(clean);
+
+  const isTempo = /tempo|traveller|12 seater|minibus/i.test(clean);
+  const isLuxury = /luxury|mercedes|bmw|audi|jaguar|mustang|lexus|porsche|roll|royce|range rover|achhi brand|acche brand|top brand|top model|vip/i.test(clean);
+  const isPremiumSuv = /innova|crysta|hycross|fortuner|safari|xuv700|7 seater|seven seater/i.test(clean);
+  const isCompactSuv = /suv|ertiga|creta|harrier|scorpio|seltos|brezza|badi gadi/i.test(clean);
+  const isHatchback = /hatchback|swift|i20|wagonr|baleno|alto|tiago|chhoti gadi/i.test(clean);
+  const isSedan = /sedan|dzire|city|verna|etios|amaze|car|gadi|gaadi/i.test(clean);
 
   // 3. Days extraction
   let days = 1;
@@ -451,10 +508,11 @@ function computeDynamicChatPrice({ text = '', serviceName = '', category = '', b
 
   const isNight = /night|raat|late night|overnight|der raat/i.test(clean);
 
-  const isTravel = /travel|driver|commute|chauffeur|cab|taxi|rental|outstation/i.test(category) || 
+  const isTravel = isPickDrop ||
+                   /travel|driver|commute|chauffeur|cab|taxi|rental|outstation|self.?drive/i.test(category) ||
                    /driver|chauffeur|travel|outstation|car rental/i.test(serviceName) ||
-                   /driver|gadi chalane|gaadi driver|outstation|travel/i.test(clean) ||
-                   (km && (isLuxury || isSuv || isSedan || /gadi|gaadi|car|drive/i.test(clean)));
+                   /driver|gadi chalane|gaadi driver|outstation|travel|self.?drive/i.test(clean) ||
+                   (km && (isLuxury || isTempo || isPremiumSuv || isCompactSuv || isHatchback || isSedan || /gadi|gaadi|car|drive/i.test(clean)));
 
   const isRelocation = /relocat|packer|mover|shifting/i.test(category) ||
                        /relocat|packer|mover|shifting/i.test(serviceName) ||
@@ -466,39 +524,57 @@ function computeDynamicChatPrice({ text = '', serviceName = '', category = '', b
 
   const isCleaning = /clean|hygiene/i.test(category) || /cleaning/i.test(serviceName);
 
-  if (isTravel) {
-    let perKm = 14;
-    let driverPerDay = 600;
-    let tierTitle = 'Standard Sedan (Dzire / Etios)';
+  if (isPickDrop) {
+    const dist = km || 18;
+    const basePickup = isAirport ? 199 : (isRailway || isBus) ? 129 : 99;
+    const hubLabel = isAirport ? 'Airport Transfer' : isRailway ? 'Railway Station Pick & Drop' : isBus ? 'Bus Terminal Pick & Drop' : 'Point-to-Point Pick & Drop';
+    const distCharge = Math.round(dist * 18);
+    const subtotal = basePickup + distCharge;
+    const nightFee = isNight ? Math.round(subtotal * 0.25) : 0;
+    price = subtotal + nightFee;
+    breakdown = `${hubLabel} (Standard AC Cab • ${dist} km @ ₹18/km = ₹${distCharge.toLocaleString('en-IN')} + ₹${basePickup} pickup base${nightFee ? ` + ₹${nightFee} night surcharge` : ''})`;
+    isDynamic = true;
+  } else if (isTravel) {
+    let perKm = isSelfDrive ? 12 : 14;
+    let dailyFee = isSelfDrive ? 1200 : 500;
+    let tierTitle = 'Sedan (Dzire / Honda City)';
+    let effectiveSelfDrive = isSelfDrive;
 
-    if (isLuxury) {
+    if (isTempo) {
       perKm = 28;
-      driverPerDay = 1200;
-      tierTitle = 'Luxury Brand Fleet (Mercedes / BMW / Audi / Mustang)';
-    } else if (isSuv) {
-      perKm = 18;
-      driverPerDay = 800;
-      tierTitle = 'SUV (Innova / Ertiga / Scorpio)';
+      dailyFee = 900;
+      tierTitle = 'Tempo Traveller (12-Seater, With Driver)';
+      effectiveSelfDrive = false;
+    } else if (isLuxury) {
+      perKm = isSelfDrive ? 34 : 38;
+      dailyFee = isSelfDrive ? 3500 : 1200;
+      tierTitle = 'Luxury Fleet (Mercedes / BMW / Audi)';
+    } else if (isPremiumSuv) {
+      perKm = isSelfDrive ? 19 : 22;
+      dailyFee = isSelfDrive ? 2100 : 700;
+      tierTitle = 'Premium SUV (Innova Crysta / Hycross)';
+    } else if (isCompactSuv) {
+      perKm = isSelfDrive ? 15 : 17;
+      dailyFee = isSelfDrive ? 1600 : 600;
+      tierTitle = 'Compact SUV (Ertiga / Creta)';
+    } else if (isHatchback) {
+      perKm = isSelfDrive ? 10 : 11;
+      dailyFee = isSelfDrive ? 900 : 400;
+      tierTitle = 'Hatchback (Swift / i20)';
     }
 
+    const modeLabel = effectiveSelfDrive ? 'Self Drive (No Driver)' : 'With Driver';
+
     if (km) {
-      const transitFare = Math.round(km * perKm);
-      const driverFare = driverPerDay * days;
-      const nightFee = isNight ? 400 : 0;
-      price = transitFare + driverFare + nightFee;
-      breakdown = `${km} km travel @ ₹${perKm}/km (₹${transitFare.toLocaleString('en-IN')}) + ${days} day driver allowance (₹${driverFare.toLocaleString('en-IN')})${nightFee ? ' + Night surcharge (₹400)' : ''} [${tierTitle}]`;
+      const billedKm = isRoundTrip ? km * 2 : km;
+      const transitFare = Math.round(billedKm * perKm);
+      const durationFare = dailyFee * days;
+      price = transitFare + durationFare;
+      breakdown = `${tierTitle} [${modeLabel}] • ${billedKm} km${isRoundTrip ? ' (Round Trip)' : ''} @ ₹${perKm}/km (₹${transitFare.toLocaleString('en-IN')}) + ${days}d ${effectiveSelfDrive ? 'self-drive rental' : 'driver allowance'} (₹${durationFare.toLocaleString('en-IN')})`;
       isDynamic = true;
-    } else if (isLuxury) {
-      price = 2999 * days;
-      breakdown = `Luxury Brand Fleet (${days} day @ ₹2,999/day)`;
-      isDynamic = true;
-    } else if (isSuv) {
-      price = 1599 * days;
-      breakdown = `SUV Rental (${days} day @ ₹1,599/day)`;
-      isDynamic = true;
-    } else if (isSedan) {
-      price = 899 * days;
-      breakdown = `Sedan Rental (${days} day @ ₹899/day)`;
+    } else {
+      price = dailyFee * days;
+      breakdown = `${tierTitle} [${modeLabel}] (${days} day @ ₹${dailyFee.toLocaleString('en-IN')}/day + ₹${perKm}/km by distance)`;
       isDynamic = true;
     }
   } else if (isRelocation) {
@@ -669,7 +745,7 @@ router.post(
           targetHubRoute: '/customer/general-services/cleaning-services',
         },
         {
-          keywords: ['pest', 'termite', 'cockroach', 'khatmal', 'bed bug', 'deemak', 'mosquito', 'insect', 'chuha', 'rat', 'rodent', 'kida'],
+          keywords: ['pest', 'termite', 'cockroach', 'khatmal', 'bed bug', 'deemak', 'mosquito', 'insect', 'chuha', 'chuhe', 'rodent', 'kida'],
           name: 'Pest Control',
           category: 'Cleaning & Hygiene',
           skill: 'Pest Controller',
@@ -685,8 +761,16 @@ router.post(
           targetHubRoute: '/customer/relocation',
         },
         {
-          keywords: ['driver', 'chauffeur', 'cab', 'airport', 'outstation', 'gadi chalane', 'gaadi driver'],
-          name: 'Driver & Chauffeur Service',
+          keywords: [
+            'driver', 'chauffeur', 'cab', 'taxi', 'airport', 'flight', 'hawai adda', 'railway', 'train', 'station',
+            'bus stand', 'bus terminal', 'pickup', 'pick & drop', 'drop', 'dropoff', 'outstation', 'self drive', 'self-drive',
+            'car rental', 'car', 'gadi', 'gaadi', 'gadi chalane', 'gaadi driver', 'hatchback', 'sedan', 'suv', 'innova', 'crysta',
+            'hycross', 'ertiga', 'creta', 'fortuner', 'swift', 'dzire', 'bmw', 'mercedes', 'audi', 'mustang', 'tempo', 'traveller',
+            'travel', 'travelling', 'traveling', 'commute', 'km', 'kilometer', 'kilometre', 'journey', 'trip', 'tour', 'ride', 'rides',
+            'bhavnagar', 'udaipur', 'ahmedabad', 'mumbai', 'surat', 'pune', 'delhi', 'vadodara', 'rajkot', 'jaipur', 'mount abu', 'dwarka', 'somnath',
+            'kiraya', 'bhaada', 'bhada', 'fare', 'trip cost', 'travelling cost', 'travel cost'
+          ],
+          name: 'City, Station, Airport & Outstation Rides',
           category: 'Travel & Commute',
           skill: 'Driver',
           price: 599,
@@ -782,15 +866,64 @@ router.post(
         },
       ];
 
-      const searchSignals = `${text || ''} ${aiResponse?.serviceName || ''} ${aiResponse?.category || ''}`.toLowerCase();
-      let matchedCanonical = CANONICAL_SERVICES.find((s) =>
-        s.keywords.some((kw) => searchSignals.includes(kw))
-      );
+      // Word-boundary safe keyword matcher (prevents 'rat' matching 'rates', 'ac' matching 'pack', 'cat' matching 'location', etc.)
+      const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const hasWordMatch = (haystack, kw) => {
+        const escaped = escapeRegex(kw.toLowerCase());
+        return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:$|[^\\p{L}\\p{N}])`, 'iu').test(haystack);
+      };
+
+      const userHistoryText = Array.isArray(conversation)
+        ? conversation.filter((c) => c?.role === 'user').slice(-3).map((c) => c.content || '').join(' ')
+        : '';
+      const primarySignals = `${text || ''} ${aiResponse?.serviceName || ''} ${aiResponse?.category || ''}`.toLowerCase();
+      const contextSignals = `${primarySignals} ${userHistoryText}`.toLowerCase();
+      const hasTravelIntent = /\b(travel|travelling|traveling|trip|tour|ride|rides|driver|chauffeur|cab|taxi|outstation|suv|innova|crysta|ertiga|creta|swift|dzire|sedan|hatchback|tempo|traveller|self\s*drive|self-drive|bhavnagar|udaipur|ahmedabad|mumbai|surat|pune|delhi|vadodara|rajkot|jaipur|mount abu|dwarka|somnath|pickup|drop|commute|airport|railway|bus\s*stand|bhaada|kiraya|fare|trip cost|travelling cost)\b/i.test(contextSignals);
+
+      const scoreService = (svc, signalText) => {
+        // If customer intent is clearly travel/rides, suppress cleaning, pest control, events, etc.
+        if (hasTravelIntent && svc.category !== 'Travel & Commute') {
+          return 0;
+        }
+
+        let score = 0;
+        for (const kw of svc.keywords) {
+          if (hasWordMatch(signalText, kw)) {
+            score += kw.includes(' ') ? 3 : 2;
+          }
+        }
+        if (aiResponse?.category && svc.category.toLowerCase() === aiResponse.category.toLowerCase()) {
+          score += 3;
+        }
+        if (hasTravelIntent && svc.category === 'Travel & Commute') {
+          score += 15;
+        }
+        return score;
+      };
+
+      let matchedCanonical = null;
+      let bestScore = 0;
+      for (const svc of CANONICAL_SERVICES) {
+        const s = scoreService(svc, primarySignals);
+        if (s > bestScore) {
+          bestScore = s;
+          matchedCanonical = svc;
+        }
+      }
+      if (!matchedCanonical && userHistoryText) {
+        for (const svc of CANONICAL_SERVICES) {
+          const s = scoreService(svc, contextSignals);
+          if (s > bestScore) {
+            bestScore = s;
+            matchedCanonical = svc;
+          }
+        }
+      }
 
       const classified = classifyIntent({ text, hasImage: Boolean(image), conversation });
       let showRecommendation = Boolean(
-        (aiResponse && aiResponse.showServiceRecommendation && aiResponse.serviceName) ||
-        (matchedCanonical && (classified === 'SERVICE_PROBLEM' || image || hasLeakageSignal(text)))
+        (aiResponse && aiResponse.showServiceRecommendation && aiResponse.serviceName && (!hasTravelIntent || aiResponse.category === 'Travel & Commute')) ||
+        (matchedCanonical && (classified === 'SERVICE_PROBLEM' || image || hasLeakageSignal(text) || hasTravelIntent))
       );
 
       if (!showRecommendation && matchedCanonical && (text.length > 3 || image)) {
@@ -802,9 +935,12 @@ router.post(
         try {
           const lookupName = matchedCanonical?.name || aiResponse?.serviceName || '';
           if (lookupName) {
-            dbService = await Service.findOne({
+            const foundDb = await Service.findOne({
               name: { $regex: new RegExp(lookupName.trim(), 'i') },
             }).lean().catch(() => null);
+            if (foundDb && (!matchedCanonical || foundDb.category === matchedCanonical.category)) {
+              dbService = foundDb;
+            }
           }
         } catch {
           dbService = null;
@@ -815,9 +951,11 @@ router.post(
       const serviceCategory = dbService ? dbService.category : (matchedCanonical?.category || aiResponse?.category || 'Home Repairs');
       const baseCandidatePrice = dbService ? (dbService.basePrice || dbService.price || 350) : (matchedCanonical?.price || aiResponse?.estimatedPrice || 350);
 
-      // Deterministic dynamic pricing calculation based on distance, vehicle tier, days, BHK, guests
+      // Deterministic dynamic pricing calculation (include recent km/params if current turn omits km)
+      const hasKmInCurrent = /\d+\s*(?:km|kms|kilometer|kilometres)\b/i.test(text || '');
+      const pricingText = hasKmInCurrent ? text : `${text || ''} ${userHistoryText} ${aiResponse?.reply || ''}`;
       const dynamicPricing = computeDynamicChatPrice({
-        text,
+        text: pricingText,
         serviceName,
         category: serviceCategory,
         basePrice: baseCandidatePrice,
@@ -828,6 +966,13 @@ router.post(
       const serviceSkill = matchedCanonical?.skill || aiResponse?.requiredWorkerSkill || 'Technician';
       const targetHubRoute = matchedCanonical?.targetHubRoute || null;
       const serviceId = dbService ? dbService._id.toString() : '';
+
+      const rawFollowUps = Array.isArray(aiResponse?.followUpQuestions) ? aiResponse.followUpQuestions : [];
+      const sanitizedFollowUps = (serviceCategory === 'Travel & Commute' || hasTravelIntent)
+        ? (rawFollowUps.some((q) => /pest|party|decoration|cleaning|chef|catering|leakage|plumb/i.test(q)) || rawFollowUps.length === 0
+            ? ['With Driver vs Self Drive rate', 'Railway Station / Bus Stand Pick & Drop', 'Sedan / Luxury / Tempo rates']
+            : rawFollowUps)
+        : rawFollowUps;
 
       const language = detectLanguage(text);
       let replyMessage = aiResponse?.reply;
@@ -855,8 +1000,8 @@ router.post(
         intent: showRecommendation ? 'SERVICE_PROBLEM' : (aiResponse?.intent || 'GENERAL_CONVERSATION'),
         message: replyMessage,
         showServiceRecommendation: showRecommendation,
-        followUpQuestions: Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
-          ? aiResponse.followUpQuestions
+        followUpQuestions: sanitizedFollowUps.length > 0
+          ? sanitizedFollowUps
           : ['Plumbing & Water Leakage', 'Electrical & Wiring Fault', 'AC Repair & Servicing', 'Local House Shifting'],
         analysis: showRecommendation ? {
           multimodal: {
@@ -867,7 +1012,7 @@ router.post(
                 problemType: aiResponse?.problemType || serviceName,
                 urgency: aiResponse?.urgency || 'Standard',
                 recommendedActions: aiResponse?.safetyPrecautions || [],
-                followUpQuestions: aiResponse?.followUpQuestions || [],
+                followUpQuestions: sanitizedFollowUps,
               },
             },
             serviceResolution: {

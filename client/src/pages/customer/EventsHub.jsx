@@ -1116,7 +1116,14 @@ const EventsHub = () => {
               </button>
               <button
                 type="button"
-                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Hey, check out my event quote from ServeCircle!\n\nTheme: ${selectedTheme.name}\nTotal Estimate: ₹${totalEstimate}`)}`, '_blank')}
+                onClick={() => {
+                  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  const msg = encodeURIComponent(`Hey, check out my event quote from ServeCircle!\n\nTheme: ${selectedTheme.name}\nTotal Estimate: ₹${totalEstimate}`);
+                  const url = isMobile
+                    ? `https://api.whatsapp.com/send?text=${msg}`
+                    : `https://web.whatsapp.com/send?text=${msg}`;
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
                 style={{ flex: 1, padding: '10px', fontSize: '0.8rem', background: '#25D366', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
               >
                 Share on WhatsApp

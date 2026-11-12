@@ -7,8 +7,10 @@ const URL = API_URL.replace(/\/api\/?$/, '');
 export const socket = io(URL, {
   autoConnect: true,
   reconnection: true,
-  reconnectionAttempts: 20,
-  reconnectionDelay: 1000,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500,
+  reconnectionDelayMax: 3000,
+  timeout: 20000,
   transports: ['websocket', 'polling'], // Fallback to polling if ws blocked
 });
 

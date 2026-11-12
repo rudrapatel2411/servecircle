@@ -7,7 +7,11 @@ import {
 } from 'react-icons/hi2';
 import { socket } from '../../socket';
 import { getSession, API_BASE } from '../../utils/authSession';
-import { subscribeToCrossTabNotifications } from '../../utils/notificationSync';
+import {
+  subscribeToCrossTabNotifications,
+  getCachedNotifications,
+  dismissCachedNotification,
+} from '../../utils/notificationSync';
 import '../Dashboard.css';
 import './AdminPages.css';
 
@@ -85,6 +89,33 @@ const AdminNotifications = () => {
     fetchNotifications();
     fetchCallRequests();
 
+    // Pre-seed live notifications and call requests from cross-tab cache
+    try {
+      const cached = getCachedNotifications();
+      if (cached.length > 0) {
+        setLiveNotifs(cached.map((c) => ({ ...c, _isLive: true, audience: c.targetAudience || 'all' })).slice(0, 25));
+        const cachedCalls = cached
+          .filter((c) => c.type === 'call_request' && c.requestId)
+          .map((c) => ({
+            requestId: c.requestId,
+            customerName: c.customerName || 'Customer',
+            serviceType: c.serviceType || 'Service',
+            phone: c.phone,
+            status: 'pending',
+            createdAt: c.timestamp || new Date().toISOString(),
+          }));
+        if (cachedCalls.length > 0) {
+          setCallRequests((prev) => {
+            const merged = [...prev];
+            for (const cc of cachedCalls) {
+              if (!merged.find((r) => r.requestId === cc.requestId)) merged.push(cc);
+            }
+            return merged;
+          });
+        }
+      }
+    } catch {}
+
     // Listen to admin_notification events for real-time updates
     const handleLiveNotif = (data) => {
       setLiveNotifs((prev) => [
@@ -94,8 +125,8 @@ const AdminNotifications = () => {
           audience: data.targetAudience || 'all',
           reads: data.reads || 0,
         },
-        ...prev,
-      ].slice(0, 20));
+        ...prev.filter((item) => (item._id || item.id) !== (data._id || data.id)),
+      ].slice(0, 25));
     };
 
     const handleCallRequest = (data) => {
@@ -109,7 +140,12 @@ const AdminNotifications = () => {
       setCallRequests((prev) =>
         prev.map((r) =>
           r.requestId === data.requestId
-            ? { ...r, status: data.cancelled ? 'cancelled' : 'accepted', acceptedByWorkerName: data.acceptedByWorkerName }
+            ? {
+                ...r,
+                status: data.cancelled ? 'cancelled' : 'accepted',
+                acceptedByWorkerName: data.acceptedByWorkerName || data.workerName,
+                acceptedByWorkerEmail: data.workerEmail || '',
+              }
             : r
         )
       );
@@ -124,6 +160,12 @@ const AdminNotifications = () => {
       handleLiveNotif(crossData);
       if (crossData.type === 'call_request') {
         handleCallRequest(crossData);
+      } else if (crossData.requestId && crossData.workerName) {
+        handleCallTaken({
+          requestId: crossData.requestId,
+          acceptedByWorkerName: crossData.workerName,
+          workerEmail: crossData.workerEmail,
+        });
       }
     });
 
@@ -187,6 +229,7 @@ const AdminNotifications = () => {
   };
 
   const deleteNotif = async (id) => {
+    dismissCachedNotification(id);
     try {
       await fetch(`${API_BASE}/notifications/${id}`, {
         method: 'DELETE',
@@ -197,8 +240,10 @@ const AdminNotifications = () => {
     setLiveNotifs((p) => p.filter((n) => (n._id || n.id) !== id));
   };
 
-  const allNotifs = [...liveNotifs, ...notifications];
-  const pendingCallRequests = callRequests.filter((r) => r.status === 'pending');
+  const allNotifs = [...liveNotifs, ...notifications].filter(
+    (v, i, a) => a.findIndex((tItem) => (tItem._id || tItem.id) === (v._id || v.id)) === i
+  );
+  const activeOrAcceptedCalls = callRequests.filter((r) => r.status === 'pending' || r.status === 'accepted');
 
   return (
     <div className="page-content">
@@ -238,8 +283,8 @@ const AdminNotifications = () => {
         </div>
       </div>
 
-      {/* Active Call Requests Panel */}
-      {pendingCallRequests.length > 0 && (
+      {/* Active & Accepted Call Requests Panel */}
+      {activeOrAcceptedCalls.length > 0 && (
         <div
           style={{
             background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
@@ -251,10 +296,10 @@ const AdminNotifications = () => {
         >
           <h3 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#065f46', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <HiOutlinePhone style={{ color: '#10b981' }} />
-            Live Call Requests ({pendingCallRequests.length} pending)
+            Live Call Requests ({activeOrAcceptedCalls.filter((r) => r.status === 'pending').length} pending · {activeOrAcceptedCalls.filter((r) => r.status === 'accepted').length} accepted)
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {pendingCallRequests.map((req) => (
+            {activeOrAcceptedCalls.map((req) => (
               <div
                 key={req.requestId}
                 style={{
@@ -264,6 +309,8 @@ const AdminNotifications = () => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 }}
               >
@@ -272,21 +319,37 @@ const AdminNotifications = () => {
                     {req.customerName} — {req.serviceType}
                   </p>
                   <p style={{ color: '#6b7280', margin: 0, fontSize: '0.8rem' }}>
-                    📞 {req.phone} · {new Date(req.createdAt).toLocaleTimeString('en-IN')}
+                    📞 +91 {req.phone} · {new Date(req.createdAt).toLocaleTimeString('en-IN')}
                   </p>
                 </div>
-                <span
-                  style={{
-                    background: '#fef3c7',
-                    color: '#92400e',
-                    borderRadius: '8px',
-                    padding: '4px 10px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                  }}
-                >
-                  Waiting for worker...
-                </span>
+                {req.status === 'accepted' ? (
+                  <span
+                    style={{
+                      background: '#dcfce7',
+                      color: '#166534',
+                      border: '1px solid #86efac',
+                      borderRadius: '8px',
+                      padding: '4px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                    }}
+                  >
+                    ✅ Accepted by {req.acceptedByWorkerName || 'Worker'}{req.acceptedByWorkerEmail ? ` (${req.acceptedByWorkerEmail})` : ''}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      background: '#fef3c7',
+                      color: '#92400e',
+                      borderRadius: '8px',
+                      padding: '4px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    Waiting for worker...
+                  </span>
+                )}
               </div>
             ))}
           </div>

@@ -32,7 +32,11 @@ import {
   subscribeToCrossTabNotifications,
   getCachedNotifications,
   markAllCachedNotificationsRead,
+  markCachedNotificationRead,
   dismissCachedNotification,
+  getDismissedNotificationIds,
+  getReadNotificationIds,
+  broadcastNotificationToTabs,
 } from '../utils/notificationSync';
 import { getWorkerCategory, doesServiceMatchWorker } from '../utils/workerCategoryHelper';
 import './DashboardNavbar.css';
@@ -56,9 +60,11 @@ const DashboardNavbar = ({ panel }) => {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const markAllRead = () => {
+  const markAllRead = (e) => {
+    if (e) e.stopPropagation();
+    const ids = notifications.map((n) => n.id || n._id).filter(Boolean);
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    markAllCachedNotificationsRead();
+    markAllCachedNotificationsRead(ids);
     if (session?.token) {
       fetch(`${API_BASE}/notifications/read-all`, {
         method: 'PUT',
@@ -67,9 +73,29 @@ const DashboardNavbar = ({ panel }) => {
     }
   };
 
-  const dismissNotif = (id) => {
+  const markOneRead = (id, e) => {
+    if (e) e.stopPropagation();
+    if (!id) return;
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id || n._id === id ? { ...n, read: true } : n))
+    );
+    markCachedNotificationRead(id);
+    if (session?.token) {
+      fetch(`${API_BASE}/notifications/${id}/read`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${session.token}` },
+      }).catch(() => {});
+    }
+  };
+
+  const dismissNotif = (id, e) => {
+    if (e) e.stopPropagation();
+    if (!id) return;
     setNotifications((prev) => prev.filter((n) => n.id !== id && n._id !== id));
     dismissCachedNotification(id);
+    if (latestToast && (latestToast.id === id || latestToast._id === id)) {
+      setShowToast(false);
+    }
     if (session?.token) {
       fetch(`${API_BASE}/notifications/${id}`, {
         method: 'DELETE',
@@ -78,48 +104,114 @@ const DashboardNavbar = ({ panel }) => {
     }
   };
 
+  const directCallCustomer = (phone, customerName, notifObj) => {
+    if (!phone) return;
+    // Also mark accepted & notify admin if not already accepted
+    if (notifObj && notifObj.requestId && !notifObj.accepted) {
+      acceptCallRequest(notifObj.requestId, phone, notifObj);
+    }
+    // Open live in-app Worker Voice Console (avoids OS tel:/WhatsApp popup)
+    window.dispatchEvent(
+      new CustomEvent('servecircle:open-worker-call', {
+        detail: { phone, customerName: customerName || 'Customer', autoStart: true },
+      })
+    );
+  };
+
   const addNotification = (data, extra = {}) => {
-    const notif = { ...data, read: false, ...extra };
-    setNotifications((prev) => [notif, ...prev].slice(0, 50)); // Keep max 50
+    const id = data.id || data._id || `notif_${Date.now()}`;
+    const dismissed = getDismissedNotificationIds();
+    if (dismissed.includes(id)) return;
+    const readIds = getReadNotificationIds();
+    const notif = { ...data, id, read: data.read || readIds.includes(id), ...extra };
+    setNotifications((prev) => {
+      if (
+        prev.some(
+          (n) =>
+            (n.id && n.id === notif.id) ||
+            (notif.requestId && notif.type === 'call_request' && n.requestId === notif.requestId && n.type === 'call_request')
+        )
+      ) {
+        return prev;
+      }
+      return [notif, ...prev].slice(0, 50);
+    });
     setLatestToast(notif);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 6000);
   };
 
   // Accept a call request (for worker panel)
-  const acceptCallRequest = async (requestId, phone) => {
+  const acceptCallRequest = async (requestId, phone, extraNotif = {}) => {
+    const workerName = sessionUser?.name || 'Assigned Worker';
+    const workerEmail = sessionUser?.email || '';
+    const workerPhone = sessionUser?.phone || '9876543210';
+    const workerId = sessionUser?._id || sessionUser?.id || 'worker_id';
+    const service = extraNotif.serviceType || extraNotif.category || workerCategory || 'Service';
+
+    // Always update UI immediately & broadcast to Admin (works even offline/cross-tab)
+    setActiveCallRequests((prev) => prev.filter((r) => r.requestId !== requestId));
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.requestId === requestId
+          ? { ...n, accepted: true, title: '✅ Call Request Accepted', canAccept: false }
+          : n
+      )
+    );
+
+    const acceptPayload = {
+      requestId,
+      phone,
+      workerId,
+      workerName,
+      workerEmail,
+      workerPhone,
+      workerCategory,
+      service,
+      customerName: extraNotif.customerName || 'Customer',
+      timestamp: new Date().toISOString(),
+      date: new Date().toLocaleString('en-IN'),
+    };
+
+    try {
+      socket.emit('worker_accepted_job', acceptPayload);
+      socket.emit('call_request_taken', {
+        requestId,
+        acceptedByWorkerId: workerId,
+        acceptedByWorkerName: workerName,
+      });
+    } catch {}
+
+    broadcastNotificationToTabs({
+      id: `accepted_${requestId}_${Date.now()}`,
+      title: '✅ Call Request Accepted by Worker',
+      message: `Worker "${workerName}" (${workerEmail}) accepted call request for ${service}. Customer phone: +91 ${phone}`,
+      type: 'alert',
+      targetAudience: 'admin',
+      ...acceptPayload,
+    });
+
+    addNotification({
+      id: `accepted_${requestId}`,
+      title: '📞 Please Call the Customer',
+      message: `Call: +91 ${phone} — ${acceptPayload.customerName} (${service})`,
+      type: 'call_accepted',
+      date: new Date().toLocaleString('en-IN'),
+    });
+
     try {
       const token = session?.token;
-      const res = await fetch(`${API_BASE}/call-requests/${requestId}/accept`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        // Remove from active call requests
-        setActiveCallRequests((prev) => prev.filter((r) => r.requestId !== requestId));
-        // Update notification to show it was accepted
-        setNotifications((prev) =>
-          prev.map((n) =>
-            n.requestId === requestId
-              ? { ...n, accepted: true, title: '✅ Call Request Accepted', canAccept: false }
-              : n
-          )
-        );
-        // Show a toast with phone number
-        addNotification({
-          id: `accepted_${requestId}`,
-          title: '📞 Please Call the Customer',
-          message: `Call: ${data.phone} — ${data.customerName || ''} (${data.serviceType || ''})`,
-          type: 'call_accepted',
-          date: new Date().toLocaleString('en-IN'),
+      if (token) {
+        await fetch(`${API_BASE}/call-requests/${requestId}/accept`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
       }
     } catch (err) {
-      console.error('Failed to accept call request:', err);
+      console.warn('Call accept API fallback notice:', err.message);
     }
   };
 
@@ -151,14 +243,23 @@ const DashboardNavbar = ({ panel }) => {
         });
         if (res.ok) {
           const data = await res.json();
-          const mapped = (data.notifications || []).map((n) => ({
-            id: n._id || n.id,
-            title: n.title,
-            message: n.message,
-            type: n.type || 'broadcast',
-            date: n.date || new Date(n.createdAt || Date.now()).toLocaleString('en-IN'),
-            read: n.readBy?.includes?.(sessionUser?._id) || n.readBy?.includes?.(sessionUser?.id) || false,
-          }));
+          const dismissed = new Set(getDismissedNotificationIds());
+          const readIds = new Set(getReadNotificationIds());
+          const mapped = (data.notifications || [])
+            .filter((n) => !dismissed.has(n._id || n.id))
+            .filter((n) => panel !== 'worker' || !n.category || doesServiceMatchWorker(workerCategory, n.category, n.service || n.serviceType))
+            .map((n) => {
+              const nid = n._id || n.id;
+              return {
+                ...n,
+                id: nid,
+                title: n.title,
+                message: n.message,
+                type: n.type || 'broadcast',
+                date: n.date || new Date(n.createdAt || Date.now()).toLocaleString('en-IN'),
+                read: readIds.has(nid) || n.readBy?.includes?.(sessionUser?._id) || n.readBy?.includes?.(sessionUser?.id) || false,
+              };
+            });
 
           setNotifications((prev) => {
             const combined = [...mapped];
@@ -616,48 +717,109 @@ const DashboardNavbar = ({ panel }) => {
                             {notif.message}
                           </p>
 
-                          {/* Accept button for call_request type (worker panel) */}
-                          {notif.canAccept && notif.type === 'call_request' && panel === 'worker' && !notif.accepted && (
-                            <button
-                              onClick={() => acceptCallRequest(notif.requestId, notif.phone)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                background: 'linear-gradient(135deg, #10b981, #059669)',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '6px 12px',
-                                fontSize: '0.78rem',
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                                marginTop: '4px',
-                              }}
-                            >
-                              <HiOutlinePhone style={{ fontSize: '0.9rem' }} />
-                              Accept & Call Back
-                            </button>
+                          {/* Direct Call & Accept buttons for call notifications (worker panel) */}
+                          {panel === 'worker' && (notif.type === 'call_request' || notif.type === 'call_accepted' || notif.phone) && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px', marginBottom: '6px' }}>
+                              {notif.phone && (
+                                <a
+                                  href={`tel:${notif.phone}`}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    directCallCustomer(notif.phone, notif.customerName, notif);
+                                  }}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    background: '#2563eb',
+                                    color: 'white',
+                                    borderRadius: '8px',
+                                    padding: '5px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 800,
+                                    textDecoration: 'none',
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <HiOutlinePhone style={{ fontSize: '0.85rem' }} />
+                                  Call +91 {notif.phone}
+                                </a>
+                              )}
+                              {notif.canAccept && notif.type === 'call_request' && !notif.accepted && (
+                                <button
+                                  type="button"
+                                  onClick={() => acceptCallRequest(notif.requestId, notif.phone, notif)}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    padding: '5px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                  }}
+                                >
+                                  <HiCheckCircle style={{ fontSize: '0.9rem' }} />
+                                  Accept
+                                </button>
+                              )}
+                            </div>
                           )}
 
-                          <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
+                          <span style={{ fontSize: '0.72rem', color: '#9ca3af', display: 'block' }}>
                             {notif.date || notif.timestamp || ''}
                           </span>
                         </div>
-                        <button
-                          onClick={() => dismissNotif(notif.id)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: '#d1d5db',
-                            fontSize: '1rem',
-                            padding: '2px',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <HiXMark />
-                        </button>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
+                          <button
+                            type="button"
+                            onClick={(e) => dismissNotif(notif.id || notif._id, e)}
+                            title="Dismiss notification"
+                            aria-label="Dismiss notification"
+                            style={{
+                              background: '#f1f5f9',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              color: '#475569',
+                              fontSize: '0.95rem',
+                              width: '24px',
+                              height: '24px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <HiXMark />
+                          </button>
+                          {!notif.read && (
+                            <button
+                              type="button"
+                              onClick={(e) => markOneRead(notif.id || notif._id, e)}
+                              title="Mark as read"
+                              aria-label="Mark as read"
+                              style={{
+                                background: '#eff6ff',
+                                border: '1px solid #bfdbfe',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                color: '#2563eb',
+                                fontSize: '0.85rem',
+                                width: '24px',
+                                height: '24px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <HiCheckCircle />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -809,8 +971,9 @@ const DashboardNavbar = ({ panel }) => {
           className="toast-notification animate-slide-in-left"
           style={{
             position: 'fixed',
-            bottom: '24px',
-            right: '24px',
+            bottom: panel === 'worker' ? '96px' : '24px',
+            right: panel === 'worker' ? '24px' : '24px',
+            left: 'auto',
             background: 'white',
             borderLeft: `4px solid ${notifTypeColor[latestToast.type] || 'var(--primary-500)'}`,
             boxShadow: 'var(--shadow-lg)',
@@ -834,39 +997,89 @@ const DashboardNavbar = ({ panel }) => {
               {latestToast.message}
             </p>
 
-            {/* Accept button inside toast for call_request (worker panel) */}
-            {latestToast.canAccept && latestToast.type === 'call_request' && panel === 'worker' && (
+            {/* Direct Call & Accept buttons inside toast for worker panel */}
+            {panel === 'worker' && (latestToast.type === 'call_request' || latestToast.phone) && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+                {latestToast.phone && (
+                  <a
+                    href={`tel:${latestToast.phone}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      directCallCustomer(latestToast.phone, latestToast.customerName, latestToast);
+                      setShowToast(false);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      background: '#2563eb',
+                      color: 'white',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 800,
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <HiOutlinePhone />
+                    Call +91 {latestToast.phone}
+                  </a>
+                )}
+                {latestToast.canAccept && latestToast.type === 'call_request' && !latestToast.accepted && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      acceptCallRequest(latestToast.requestId, latestToast.phone, latestToast);
+                      setShowToast(false);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <HiCheckCircle />
+                    Accept Call
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <button
+              type="button"
+              onClick={(e) => {
+                dismissNotif(latestToast.id || latestToast._id, e);
+                setShowToast(false);
+              }}
+              title="Dismiss notification"
+              style={{ background: '#f1f5f9', border: 'none', borderRadius: '6px', color: '#475569', cursor: 'pointer', fontSize: '1.1rem', width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <HiXMark />
+            </button>
+            {!latestToast.read && (
               <button
-                onClick={() => {
-                  acceptCallRequest(latestToast.requestId, latestToast.phone);
+                type="button"
+                onClick={(e) => {
+                  markOneRead(latestToast.id || latestToast._id, e);
                   setShowToast(false);
                 }}
-                style={{
-                  marginTop: '8px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '6px 14px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
+                title="Mark as read"
+                style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px', color: '#2563eb', cursor: 'pointer', fontSize: '1rem', width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <HiOutlinePhone />
-                Accept Call Request
+                <HiCheckCircle />
               </button>
             )}
           </div>
-          <button
-            onClick={() => setShowToast(false)}
-            style={{ background: 'none', border: 'none', color: 'var(--gray-400)', cursor: 'pointer', fontSize: '1.2rem' }}
-          >
-            <HiXMark />
-          </button>
         </div>
       )}
     </header>

@@ -117,6 +117,7 @@ function App() {
         <Route path="/login" element={<><Navbar /><LoginPage /></>} />
         <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
         <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
+        <Route path="/project-summary" element={<><Navbar /><ProjectSummary /></>} />
         <Route path="/ai-chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/ai-diagnosis" element={<Navigate to="/customer/ai-diagnosis" replace />} />

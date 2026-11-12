@@ -29,6 +29,7 @@ import {
   getStatusBadgeClass,
 } from './workerHelpers';
 import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
+import { broadcastNotificationToTabs, subscribeToCrossTabNotifications } from '../../utils/notificationSync';
 import { socket } from '../../socket';
 import '../Dashboard.css';
 import './WorkerPages.css';
@@ -44,9 +45,6 @@ const tabs = [
   { key: 'cancelled', label: 'Cancelled' },
 ];
 
-// Generate a random 4-digit OTP
-const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
-
 const DEMO_JOBS = [
   {
     _id: 'demo-job-001',
@@ -58,7 +56,8 @@ const DEMO_JOBS = [
     amount: 799,
     status: 'pending',
     isEmergency: false,
-    customer: { name: 'Rudra Shah' },
+    customer: { name: 'Rudra Shah', phone: '9876543210' },
+    startOtp: '4821',
   },
   {
     _id: 'demo-job-002',
@@ -70,19 +69,21 @@ const DEMO_JOBS = [
     amount: 1200,
     status: 'accepted',
     isEmergency: true,
-    customer: { name: 'Priya Desai' },
+    customer: { name: 'Priya Desai', phone: '9876543211' },
+    startOtp: '4821',
   },
   {
     _id: 'demo-job-003',
-    service: 'Electrical Fan Installation',
-    category: 'Home Repairs',
+    service: 'Full Car Detailing & Oil Check',
+    category: 'Vehicle Services',
     scheduledDate: new Date().toISOString(),
     scheduledTime: '11:00 AM',
     address: 'SG Highway, Ahmedabad',
-    amount: 450,
-    status: 'arrived',
+    amount: 899,
+    status: 'pending',
     isEmergency: false,
-    customer: { name: 'Amit Patel' },
+    customer: { name: 'Amit Mehta', phone: '9876543212' },
+    startOtp: '4821',
   },
   {
     _id: 'demo-job-004',
@@ -94,7 +95,8 @@ const DEMO_JOBS = [
     amount: 1500,
     status: 'completed',
     isEmergency: false,
-    customer: { name: 'Rudra Shah' },
+    customer: { name: 'Rudra Shah', phone: '9876543210' },
+    startOtp: '4821',
   },
 ];
 
@@ -109,55 +111,125 @@ const WorkerJobs = () => {
   const [actionLoading, setActionLoading] = useState('');
 
   // OTP verification UI state
-  const [otpInput, setOtpInput] = useState({}); // { [jobId]: '1234' }
-  const [otpError, setOtpError] = useState({}); // { [jobId]: 'Wrong OTP' }
-  const [cantResolveModal, setCantResolveModal] = useState(null); // jobId or null
+  const [otpInput, setOtpInput] = useState({});
+  const [otpError, setOtpError] = useState({});
+  const [cantResolveModal, setCantResolveModal] = useState(null);
   const [cantResolveReason, setCantResolveReason] = useState('');
   const workerCategory = getWorkerCategory(user);
 
+  const notifyAdminOfWorkerAction = (job, actionLabel) => {
+    const workerName = user?.name || 'Verified Worker';
+    const workerEmail = user?.email || '';
+    const workerPhone = user?.phone || '9876543210';
+    const service = job?.service || workerCategory;
+    const customerName = job?.customer?.name || 'Customer';
+    const customerPhone = job?.customer?.phone || '9876543210';
+
+    try {
+      socket.emit('worker_accepted_job', {
+        bookingId: job?._id,
+        workerId: user?._id || user?.id,
+        workerName,
+        workerEmail,
+        workerPhone,
+        workerCategory,
+        service,
+        phone: customerPhone,
+        action: actionLabel,
+      });
+    } catch {}
+
+    broadcastNotificationToTabs({
+      id: `worker_job_${job?._id}_${Date.now()}`,
+      title: `✅ Worker ${actionLabel}: ${service}`,
+      message: `Worker "${workerName}" (${workerEmail}) ${actionLabel.toLowerCase()} booking ${job?._id} for ${customerName} (${job?.address || ''}) — ₹${job?.amount || 0}.`,
+      type: 'alert',
+      targetAudience: 'admin',
+      bookingId: job?._id,
+      workerName,
+      workerEmail,
+      workerPhone,
+      service,
+      customerName,
+    });
+  };
+
+  const saveLocalJobState = (jobId, nextStatus) => {
+    try {
+      const states = JSON.parse(localStorage.getItem('servecircle_worker_job_states') || '{}');
+      states[jobId] = nextStatus;
+      localStorage.setItem('servecircle_worker_job_states', JSON.stringify(states));
+
+      const bookings = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
+      const updated = bookings.map((b) =>
+        b.id === jobId || b.bookingId === jobId ? { ...b, workerJobStatus: nextStatus, status: nextStatus } : b
+      );
+      localStorage.setItem('servecircle_customer_bookings', JSON.stringify(updated));
+    } catch {}
+  };
+
   const loadJobs = async (status = activeTab) => {
+    let savedStates = {};
+    try {
+      savedStates = JSON.parse(localStorage.getItem('servecircle_worker_job_states') || '{}');
+    } catch {}
+
     let matchingLocal = [];
     try {
       const stored = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
       matchingLocal = stored
         .filter((b) => doesServiceMatchWorker(workerCategory, b.category, b.service))
-        .map((b) => ({
-          _id: b.id || b.bookingId,
-          service: b.service,
-          category: b.category || workerCategory,
-          scheduledDate: b.date || new Date().toISOString(),
-          scheduledTime: b.time || '10:00 AM',
-          address: `${b.address || 'Civil Lines'}, ${b.city || 'Ahmedabad'}`,
-          amount: b.amount || 799,
-          status: b.status || 'pending',
-          isEmergency: b.isEmergency || false,
-          customer: { name: b.customerName || 'Rahul Shah', phone: '9876543210' },
-          startOtp: b.startOtp || '4821',
-        }));
+        .map((b) => {
+          const id = b.id || b.bookingId;
+          const rawStatus = savedStates[id] || b.workerJobStatus || b.status || 'pending';
+          const normalizedStatus = rawStatus === 'confirmed' ? 'pending' : rawStatus;
+          return {
+            _id: id,
+            service: b.service,
+            category: b.category || workerCategory,
+            scheduledDate: b.date || new Date().toISOString(),
+            scheduledTime: b.time || '10:00 AM',
+            address: `${b.address || 'Civil Lines'}, ${b.city || 'Ahmedabad'}`,
+            amount: b.amount || 799,
+            status: normalizedStatus,
+            isEmergency: b.isEmergency || false,
+            customer: { name: b.customerName || 'Rahul Shah', phone: b.customerPhone || '9876543210' },
+            startOtp: b.startOtp || otpMap[id] || '4821',
+          };
+        });
     } catch {}
 
-    if (isDemoMode) {
-      // Demo mode: filter mock jobs
-      const catJobs = DEMO_JOBS.filter((j) => doesServiceMatchWorker(workerCategory, j.category, j.service));
-      const pool = catJobs.length > 0 ? catJobs : DEMO_JOBS;
-      const combined = [...matchingLocal, ...pool];
-      const unique = combined.filter((v, i, a) => a.findIndex(t => t._id === v._id) === i);
-      const filtered = status === 'all'
-        ? unique
-        : unique.filter((j) => j.status === status);
+    const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
+    const catDemo = DEMO_JOBS
+      .filter((j) => doesServiceMatchWorker(workerCategory, j.category, j.service))
+      .map((j) => ({ ...j, status: savedStates[j._id] || j.status, startOtp: otpMap[j._id] || j.startOtp || '4821' }));
+    const demoPool = (catDemo.length > 0 ? catDemo : DEMO_JOBS).map((j) => ({ ...j, status: savedStates[j._id] || j.status, startOtp: otpMap[j._id] || j.startOtp || '4821' }));
+
+    if (isDemoMode || !token) {
+      const combined = [...matchingLocal, ...demoPool];
+      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
+      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
       setJobs(filtered);
       return;
     }
-    if (!token) return;
+
     setLoading(true);
     setError('');
     try {
       const data = await fetchWorkerJobs(token, status);
-      const combined = [...matchingLocal, ...(Array.isArray(data) ? data : [])];
-      const unique = combined.filter((v, i, a) => a.findIndex(t => t._id === v._id) === i);
-      setJobs(unique);
+      const serverJobs = (Array.isArray(data) ? data : []).filter((j) =>
+        doesServiceMatchWorker(workerCategory, j.category, j.service)
+      );
+      const combined = [...matchingLocal, ...serverJobs, ...demoPool];
+      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
+      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
+      setJobs(filtered);
     } catch (err) {
-      setError(err.message || 'Failed to load jobs');
+      const combined = [...matchingLocal, ...demoPool];
+      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
+      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
+      setJobs(filtered);
     } finally {
       setLoading(false);
     }
@@ -165,45 +237,152 @@ const WorkerJobs = () => {
 
   useEffect(() => {
     loadJobs(activeTab);
+
+    const handleLiveBooking = (data) => {
+      if (doesServiceMatchWorker(workerCategory, data?.category, data?.service)) {
+        loadJobs(activeTab);
+      }
+    };
+
+    socket.on('worker_notification', handleLiveBooking);
+    const unsubCrossTab = subscribeToCrossTabNotifications(handleLiveBooking);
+
+    return () => {
+      socket.off('worker_notification', handleLiveBooking);
+      unsubCrossTab();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, activeTab]);
+  }, [token, activeTab, workerCategory]);
 
   const handleRespond = async (bookingId, action) => {
-    if (!token) return;
     setActionLoading(`${bookingId}-${action}`);
     setError('');
-    try {
-      await respondToJobRequest(token, bookingId, action);
-      await loadJobs(activeTab);
-    } catch (err) {
-      setError(err.message || 'Could not update request');
-    } finally {
-      setActionLoading('');
+    const nextStatus = action === 'accept' ? 'accepted' : 'cancelled';
+    const targetJob = jobs.find((j) => j._id === bookingId);
+
+    // 1. Update local state & localStorage immediately
+    saveLocalJobState(bookingId, nextStatus);
+    setJobs((prev) =>
+      prev
+        .map((j) => (j._id === bookingId ? { ...j, status: nextStatus } : j))
+        .filter((j) => activeTab === 'all' || j.status === activeTab)
+    );
+
+    // 2. Notify Admin with full worker & job details
+    notifyAdminOfWorkerAction(targetJob, action === 'accept' ? 'Accepted Job' : 'Declined Job');
+
+    // 3. Call backend API for MongoDB jobs
+    const isLocalOrDemo = String(bookingId).startsWith('SC-') || String(bookingId).startsWith('demo-');
+    if (token && !isLocalOrDemo) {
+      try {
+        await respondToJobRequest(token, bookingId, action);
+      } catch (err) {
+        console.warn('Respond API fallback notice:', err.message);
+      }
     }
+    setActionLoading('');
   };
 
   const handleStatus = async (bookingId, nextStatus) => {
-    if (!token) return;
     setActionLoading(`${bookingId}-${nextStatus}`);
     setError('');
+    const targetJob = jobs.find((j) => j._id === bookingId);
+
+    saveLocalJobState(bookingId, nextStatus);
+    setJobs((prev) =>
+      prev
+        .map((j) => (j._id === bookingId ? { ...j, status: nextStatus } : j))
+        .filter((j) => activeTab === 'all' || j.status === activeTab)
+    );
+
+    // 1. Real-time socket status change to customer tracking
     try {
-      await updateWorkerJobStatus(token, bookingId, nextStatus);
-      await loadJobs(activeTab);
-    } catch (err) {
-      setError(err.message || 'Could not update job status');
-    } finally {
-      setActionLoading('');
+      socket.emit('booking_status_changed', {
+        bookingId,
+        currentStatus: nextStatus,
+        status: nextStatus,
+        workerName: user?.name || 'Assigned Worker',
+        workerId: user?._id || user?.id,
+      });
+    } catch {}
+
+    // 2. Cross-tab notification broadcast so customer tab immediately reflects arrived/en-route
+    broadcastNotificationToTabs({
+      id: `status_change_${bookingId}_${Date.now()}`,
+      title: nextStatus === 'arrived' ? '🔔 Worker Arrived at Doorstep!' : `Job ${nextStatus}`,
+      message: nextStatus === 'arrived'
+        ? `Worker "${user?.name || 'Assigned Worker'}" has arrived at your doorstep. Please share your 4-digit Start OTP to begin.`
+        : `Booking #${bookingId} is now ${nextStatus}.`,
+      type: 'booking_status',
+      bookingId,
+      currentStatus: nextStatus,
+      status: nextStatus,
+      targetAudience: 'all',
+    });
+
+    const labelMap = { 'en-route': 'Started Journey (En-Route)', arrived: 'Arrived at Location', completed: 'Completed Job' };
+    notifyAdminOfWorkerAction(targetJob, labelMap[nextStatus] || `Updated to ${nextStatus}`);
+
+    const isLocalOrDemo = String(bookingId).startsWith('SC-') || String(bookingId).startsWith('demo-');
+    if (token && !isLocalOrDemo) {
+      try {
+        await updateWorkerJobStatus(token, bookingId, nextStatus);
+      } catch (err) {
+        console.warn('Status API fallback notice:', err.message);
+      }
     }
+    setActionLoading('');
   };
 
   const handleVerifyStartOtp = async (jobId) => {
-    const entered = otpInput[jobId] || '';
-    if (!entered) return;
+    const entered = (otpInput[jobId] || '').trim();
+    if (!entered) {
+      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit Start OTP.' }));
+      return;
+    }
     setActionLoading(`${jobId}-start`);
+    const targetJob = jobs.find((j) => j._id === jobId);
+    const expectedOtp = String(targetJob?.startOtp || '4821');
+
+    if (entered !== expectedOtp) {
+      setOtpError((prev) => ({ ...prev, [jobId]: `❌ Incorrect OTP! Customer screen par jo 4-digit Start OTP dikh raha hai wahi enter karein.` }));
+      setActionLoading('');
+      return;
+    }
+
+    const isLocalOrDemo = String(jobId).startsWith('SC-') || String(jobId).startsWith('demo-');
+
     try {
-      await verifyWorkerOtp(token, jobId, 'start', entered);
+      if (token && !isLocalOrDemo) {
+        await verifyWorkerOtp(token, jobId, 'start', entered);
+      }
+      saveLocalJobState(jobId, 'started');
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      await loadJobs(activeTab);
+      setJobs((prev) => prev.map((j) => (j._id === jobId ? { ...j, status: 'started' } : j)));
+
+      // Real-time broadcast to Customer Live Tracking
+      try {
+        socket.emit('booking_status_changed', {
+          bookingId: jobId,
+          currentStatus: 'started',
+          status: 'started',
+          workerName: user?.name || 'Assigned Worker',
+          workerId: user?._id || user?.id,
+        });
+      } catch {}
+
+      broadcastNotificationToTabs({
+        id: `status_started_${jobId}_${Date.now()}`,
+        title: '✅ Start OTP Verified — Work Begun!',
+        message: `Worker "${user?.name || 'Worker'}" verified the Start OTP. Work is now in progress!`,
+        type: 'booking_status',
+        bookingId: jobId,
+        currentStatus: 'started',
+        status: 'started',
+        targetAudience: 'all',
+      });
+
+      notifyAdminOfWorkerAction(targetJob, 'Verified Start OTP & Started Work');
     } catch (err) {
       setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify Start OTP.' }));
     } finally {
@@ -212,13 +391,46 @@ const WorkerJobs = () => {
   };
 
   const handleVerifyEndOtp = async (jobId) => {
-    const entered = otpInput[jobId] || '';
-    if (!entered) return;
+    const entered = (otpInput[jobId] || '').trim();
+    if (!entered) {
+      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit End OTP.' }));
+      return;
+    }
     setActionLoading(`${jobId}-end`);
+    const targetJob = jobs.find((j) => j._id === jobId);
+    const isLocalOrDemo = String(jobId).startsWith('SC-') || String(jobId).startsWith('demo-');
+
     try {
-      await verifyWorkerOtp(token, jobId, 'end', entered);
+      if (token && !isLocalOrDemo) {
+        await verifyWorkerOtp(token, jobId, 'end', entered);
+      }
+      saveLocalJobState(jobId, 'completed');
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      await loadJobs(activeTab);
+      setJobs((prev) => prev.map((j) => (j._id === jobId ? { ...j, status: 'completed' } : j)));
+
+      // Real-time broadcast to Customer Live Tracking
+      try {
+        socket.emit('booking_status_changed', {
+          bookingId: jobId,
+          currentStatus: 'completed',
+          status: 'completed',
+          workerName: user?.name || 'Assigned Worker',
+          workerId: user?._id || user?.id,
+        });
+      } catch {}
+
+      broadcastNotificationToTabs({
+        id: `status_completed_${jobId}_${Date.now()}`,
+        title: '🎉 Job Completed Successfully!',
+        message: `Worker "${user?.name || 'Worker'}" completed the service. Review is now active!`,
+        type: 'booking_status',
+        bookingId: jobId,
+        currentStatus: 'completed',
+        status: 'completed',
+        targetAudience: 'all',
+      });
+
+      notifyAdminOfWorkerAction(targetJob, 'Completed Job & Verified End OTP');
     } catch (err) {
       setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify End OTP.' }));
     } finally {
@@ -233,8 +445,9 @@ const WorkerJobs = () => {
 
   const submitCantResolve = () => {
     if (!cantResolveReason.trim()) return;
-    // In production: send to backend with reason
-    alert(`Support team notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
+    const targetJob = jobs.find((j) => j._id === cantResolveModal);
+    notifyAdminOfWorkerAction(targetJob, `Reported Issue: "${cantResolveReason}"`);
+    alert(`Support team & Admin notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
     setCantResolveModal(null);
     loadJobs(activeTab);
   };
@@ -244,18 +457,20 @@ const WorkerJobs = () => {
   }
 
   return (
-    <div className="page-content worker-page-content">
+    <div className="page-content worker-page-content" style={{ paddingBottom: '100px' }}>
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('worker.jobRequests', 'Job Requests')}</h1>
-          <p className="page-subtitle">Accept, track, and complete jobs with OTP verification.</p>
+          <p className="page-subtitle">
+            Category: <strong>{workerCategory}</strong> — Accept, track, and complete jobs with OTP verification.
+          </p>
         </div>
         <button className="btn btn-outline" onClick={() => loadJobs(activeTab)}>
           <HiOutlineArrowPath /> Refresh
         </button>
       </div>
 
-      {/* Rapido-style broadcast notice */}
+      {/* Live Broadcast Banner */}
       <div style={{
         background: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
         borderRadius: 'var(--radius-lg)',
@@ -266,10 +481,9 @@ const WorkerJobs = () => {
         gap: '12px',
         color: 'white',
       }}>
-        
         <div>
-          <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Live Job Broadcast Active</div>
-          <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>New jobs within 15 km radius will appear here. Accept fast — first come, first served!</div>
+          <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Live {workerCategory} Dispatch Active</div>
+          <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>New {workerCategory} bookings appear here automatically. Admin sees every action you take.</div>
         </div>
         <div style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.15)', borderRadius: '100px', padding: '4px 14px', fontSize: '0.8rem', fontWeight: 800 }}>
           Online
@@ -299,7 +513,7 @@ const WorkerJobs = () => {
       {!loading && jobs.length === 0 && <div className="card">No jobs found for this filter.</div>}
 
       {!loading && jobs.map((job) => {
-        const isEmergency = job.service?.toLowerCase().includes('emergency') || job.service?.toLowerCase().includes('leak');
+        const isEmergency = job.isEmergency || job.service?.toLowerCase().includes('emergency') || job.service?.toLowerCase().includes('leak');
 
         return (
           <AnimatePresence key={job._id}>
@@ -321,11 +535,6 @@ const WorkerJobs = () => {
                   <span style={{ color: '#3b7dc1', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
                   <span><HiOutlineUser /> {job.customer?.name || 'Customer'}</span>
                   <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
-                  {job.trainee && (
-                    <span style={{ background: '#f0fdf4', color: '#166534', padding: '2px 10px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700 }}>
-                      Training: {job.trainee?.name || 'Trainee'}
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -336,11 +545,11 @@ const WorkerJobs = () => {
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                       className="btn btn-primary"
-                      style={{ flex: 1 }}
+                      style={{ flex: 1, background: '#16a34a', borderColor: '#16a34a' }}
                       onClick={() => handleRespond(job._id, 'accept')}
                       disabled={actionLoading === `${job._id}-accept`}
                     >
-                      {actionLoading === `${job._id}-accept` ? '...' : 'Accept Job'}
+                      {actionLoading === `${job._id}-accept` ? 'Accepting...' : 'Accept Job'}
                     </button>
                     <button
                       className="btn btn-outline"
@@ -358,7 +567,7 @@ const WorkerJobs = () => {
                   <div>
                     <div style={{ background: '#eff6ff', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#1e40af', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlinePhone style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>Once you click <strong>"Ready to Go"</strong>, your phone number will be shared with the customer so they can guide you.</span>
+                      <span>Accepted! Admin has been notified. Click <strong>"Ready to Go"</strong> to begin your journey.</span>
                     </div>
                     <button
                       className="btn btn-primary"
@@ -392,13 +601,13 @@ const WorkerJobs = () => {
                       <input
                         type="number"
                         maxLength={4}
-                        placeholder="Enter Start OTP"
+                        placeholder="Start OTP"
                         value={otpInput[job._id] || ''}
                         onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
                         style={{
                           flex: 1, padding: '10px 14px', borderRadius: '8px',
                           border: '2px solid #e2e8f0', fontSize: '1.2rem',
-                          fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
+                          fontWeight: 800, letterSpacing: '6px', textAlign: 'center',
                           outline: 'none',
                         }}
                       />
@@ -417,24 +626,24 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP ===== */}
+                {/* ===== STEP 5: STARTED — Enter End OTP ===== */}
                 {job.status === 'started' && (
                   <div>
                     <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>Job is in progress. When work is done, get the <strong>End OTP</strong> from the customer to close this job.</span>
+                      <span>Job is in progress. When work is done, enter the <strong>End OTP</strong> from the customer to complete.</span>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
                       <input
                         type="number"
                         maxLength={4}
-                        placeholder="Enter End OTP"
+                        placeholder="End OTP"
                         value={otpInput[job._id] || ''}
                         onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
                         style={{
                           flex: 1, padding: '10px 14px', borderRadius: '8px',
                           border: '2px solid #e2e8f0', fontSize: '1.2rem',
-                          fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
+                          fontWeight: 800, letterSpacing: '6px', textAlign: 'center',
                           outline: 'none',
                         }}
                       />
@@ -450,32 +659,31 @@ const WorkerJobs = () => {
                     {otpError[job._id] && (
                       <p style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px', fontWeight: 600 }}>{otpError[job._id]}</p>
                     )}
-                    {/* Can't Resolve option */}
                     <button
                       className="btn btn-outline"
                       style={{ width: '100%', color: '#b45309', borderColor: '#fde68a', background: '#fffbeb', fontSize: '0.8rem' }}
                       onClick={() => handleCantResolve(job._id)}
                     >
                       <HiOutlineExclamationTriangle style={{ marginRight: '6px' }} />
-                      Can't Resolve — Contact Support
+                      Can&apos;t Resolve — Contact Support
                     </button>
                   </div>
                 )}
 
-                {/* Quick contact buttons for en-route and active */}
-                {(job.status === 'en-route' || job.status === 'started') && (
+                {/* Quick contact buttons for accepted, en-route, started */}
+                {(job.status === 'accepted' || job.status === 'en-route' || job.status === 'started') && (
                   <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                    <button
+                    <a
+                      href={`tel:${job.customer?.phone || '9876543210'}`}
                       className="btn btn-outline"
-                      style={{ flex: 1, fontSize: '0.8rem', padding: '8px' }}
-                      onClick={() => alert(`Calling ${job.customer?.name || 'Customer'}...`)}
+                      style={{ flex: 1, fontSize: '0.8rem', padding: '8px', textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                     >
-                      <HiOutlinePhone /> Call
-                    </button>
+                      <HiOutlinePhone /> Call Customer
+                    </a>
                     <button
                       className="btn btn-outline"
                       style={{ flex: 1, fontSize: '0.8rem', padding: '8px' }}
-                      onClick={() => alert(`Opening chat with ${job.customer?.name || 'Customer'}...`)}
+                      onClick={() => alert(`Chat connected with ${job.customer?.name || 'Customer'} (+91 ${job.customer?.phone || '9876543210'})`)}
                     >
                       <HiOutlineChatBubbleLeftRight /> Chat
                     </button>
@@ -514,7 +722,7 @@ const WorkerJobs = () => {
                 <HiOutlineExclamationTriangle style={{ color: '#f59e0b' }} /> Report Issue
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '16px' }}>
-                Please describe the issue. ServeCircle support will be notified immediately. Once submitted, you are authorized to leave.
+                Please describe the issue. ServeCircle support &amp; Admin will be notified immediately.
               </p>
               <textarea
                 placeholder="Describe the problem (e.g. part unavailable, customer unresponsive, safety concern...)"
@@ -541,7 +749,7 @@ const WorkerJobs = () => {
                   onClick={submitCantResolve}
                   disabled={!cantResolveReason.trim()}
                 >
-                  Notify Support & Exit
+                  Notify Support &amp; Exit
                 </button>
               </div>
             </motion.div>

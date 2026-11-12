@@ -25,50 +25,253 @@ const lerp = (a, b, t) => a + (b - a) * t;
 // TRAVEL & COMMUTE
 // ─────────────────────────────────────────────────────────────────────
 
+export const PICKUP_HUBS = {
+  airport: [
+    { code: 'AMD', name: 'Sardar Vallabhbhai Patel Intl Airport (Ahmedabad)', city: 'Ahmedabad' },
+    { code: 'BOM', name: 'Chhatrapati Shivaji Maharaj Intl Airport (Mumbai)', city: 'Mumbai' },
+    { code: 'DEL', name: 'Indira Gandhi Intl Airport (Delhi)', city: 'Delhi' },
+    { code: 'BLR', name: 'Kempegowda Intl Airport (Bengaluru)', city: 'Bengaluru' },
+    { code: 'PNQ', name: 'Pune International Airport (Pune)', city: 'Pune' },
+    { code: 'STV', name: 'Surat International Airport (Surat)', city: 'Surat' },
+    { code: 'BDQ', name: 'Vadodara Airport (Vadodara)', city: 'Vadodara' },
+  ],
+  railway: [
+    { code: 'ADI', name: 'Ahmedabad Junction (Kalupur Railway Station)', city: 'Ahmedabad' },
+    { code: 'SBI', name: 'Sabarmati Junction Railway Station', city: 'Ahmedabad' },
+    { code: 'BRC', name: 'Vadodara Junction Railway Station', city: 'Vadodara' },
+    { code: 'ST',  name: 'Surat Railway Station', city: 'Surat' },
+    { code: 'MMCT', name: 'Mumbai Central Railway Station', city: 'Mumbai' },
+    { code: 'NDLS', name: 'New Delhi Railway Station (NDLS)', city: 'Delhi' },
+    { code: 'SBC', name: 'KSR Bengaluru City Railway Station', city: 'Bengaluru' },
+  ],
+  bus: [
+    { code: 'GEETA', name: 'Geeta Mandir GSRTC Central Bus Terminal', city: 'Ahmedabad' },
+    { code: 'RANIP', name: 'Ranip GSRTC Bus Port', city: 'Ahmedabad' },
+    { code: 'NEHRU', name: 'Nehru Nagar Central BRTS / Bus Hub', city: 'Ahmedabad' },
+    { code: 'CTM',   name: 'CTM Express Highway Bus Stand', city: 'Ahmedabad' },
+    { code: 'ISBT',  name: 'Kashmere Gate ISBT Terminal', city: 'Delhi' },
+    { code: 'MBS',   name: 'Majestic Kempegowda Bus Station', city: 'Bengaluru' },
+    { code: 'BORI',  name: 'Borivali / Dadar Bus Terminal', city: 'Mumbai' },
+  ],
+};
+
+export const AIRPORT_OPTIONS = PICKUP_HUBS.airport;
+
+export const OUTSTATION_CARS = [
+  { id: 'hatchback',   name: 'Hatchback (Swift / i20)',        seats: '4 Seats', withDriverRate: 11, selfDriveRate: 10, driverDaily: 400,  selfDailyFee: 900,  icon: '🚗' },
+  { id: 'sedan',       name: 'Sedan (Dzire / Honda City)',     seats: '4 Seats', withDriverRate: 14, selfDriveRate: 12, driverDaily: 500,  selfDailyFee: 1200, icon: '🚘' },
+  { id: 'compact-suv', name: 'Compact SUV (Ertiga / Creta)',   seats: '6 Seats', withDriverRate: 17, selfDriveRate: 15, driverDaily: 600,  selfDailyFee: 1600, icon: '🚙' },
+  { id: 'suv',         name: 'Premium SUV (Innova Crysta)',    seats: '7 Seats', withDriverRate: 22, selfDriveRate: 19, driverDaily: 700,  selfDailyFee: 2100, icon: '🚐' },
+  { id: 'luxury',      name: 'Luxury Fleet (BMW / Mercedes)',  seats: '4 Seats', withDriverRate: 38, selfDriveRate: 34, driverDaily: 1200, selfDailyFee: 3500, icon: '🏎️' },
+  { id: 'tempo',       name: 'Tempo Traveller (12-Seater)',    seats: '12 Seats', withDriverRate: 28, selfDriveRate: 28, driverDaily: 900, selfDailyFee: 900,  icon: '🚌', driverOnly: true },
+];
+
 /**
- * Airport Transfer Price
- * Factors: car type, time of day (night surcharge)
+ * Flexible Point-to-Point Pick & Drop Price (Airport / Railway Station / Bus Stand / Any Custom Location)
+ * Priced transparently by pickup type base + exact km rate (₹18/km) + night/luggage options.
  */
-export function calcAirportTransfer({ carType = 'sedan', isNight = false, extraLuggage = false }) {
-  const BASE = { sedan: 799, suv: 1499, luxury: 2499 };
-  let price = BASE[carType] || BASE.sedan;
-  if (isNight) price = Math.round(price * 1.25);           // +25% night surcharge
-  if (extraLuggage) price += 200;                          // Extra luggage fee
+export function calcPointToPointTransfer({
+  distanceKm = 20,
+  pickupType = 'airport', // 'airport' | 'railway' | 'bus' | 'custom'
+  pickupPoint = '',
+  destination = '',
+  isNight = false,
+  extraLuggage = false,
+}) {
+  const safeKm = Math.max(1, Number(distanceKm) || 20);
+  const baseByType = {
+    airport: 199,  // includes terminal parking & gate access
+    railway: 129,  // station pickup gate
+    bus: 129,      // bus terminal pickup
+    custom: 99,    // home / hotel / office pickup
+  };
+  const labelByType = {
+    airport: 'Airport Terminal Pickup (Incl. Parking)',
+    railway: 'Railway Station Pickup Fee',
+    bus: 'Bus Terminal Pickup Fee',
+    custom: 'Doorstep Pickup Base Charge',
+  };
+
+  const basePickup = baseByType[pickupType] ?? 129;
+  const perKmRate = 18;
+  const distanceCharge = Math.round(safeKm * perKmRate);
+  const subtotal = basePickup + distanceCharge;
+  const nightSurcharge = isNight ? Math.round(subtotal * 0.25) : 0;
+  const luggageFee = extraLuggage ? 200 : 0;
+  const total = subtotal + nightSurcharge + luggageFee;
+
   return {
-    base: BASE[carType] || BASE.sedan,
-    nightSurcharge: isNight ? Math.round((BASE[carType] || BASE.sedan) * 0.25) : 0,
-    luggageFee: extraLuggage ? 200 : 0,
-    total: price,
+    base: basePickup,
+    distanceCharge,
+    nightSurcharge,
+    luggageFee,
+    total,
     breakdown: [
-      { label: `${carType === 'sedan' ? 'Sedan' : carType === 'suv' ? 'SUV' : 'Luxury'} Transfer`, amount: BASE[carType] || BASE.sedan },
-      ...(isNight ? [{ label: 'Night Surcharge (25%)', amount: Math.round((BASE[carType] || BASE.sedan) * 0.25) }] : []),
-      ...(extraLuggage ? [{ label: 'Extra Luggage', amount: 200 }] : []),
+      { label: `${labelByType[pickupType] || 'Pickup Base'}${pickupPoint ? ` (${pickupPoint})` : ''}`, amount: basePickup },
+      { label: `Distance Fare (${safeKm} km @ ₹${perKmRate}/km${destination ? ` → ${destination}` : ''})`, amount: distanceCharge },
+      ...(isNight ? [{ label: 'Night Pickup Surcharge (25%)', amount: nightSurcharge }] : []),
+      ...(extraLuggage ? [{ label: 'Extra Luggage Handling', amount: 200 }] : []),
     ],
   };
 }
 
+// Backwards-compatible alias
+export function calcAirportTransfer(params = {}) {
+  return calcPointToPointTransfer({
+    ...params,
+    pickupType: params.pickupType || 'airport',
+    pickupPoint: params.pickupPoint || params.airport || 'AMD',
+  });
+}
+
+export const CITY_COORDS = {
+  ahmedabad:  [23.0225, 72.5714],
+  bhavnagar:  [21.7645, 72.1519],
+  surat:      [21.1702, 72.8311],
+  vadodara:   [22.3072, 73.1812],
+  rajkot:     [22.3039, 70.8022],
+  jamnagar:   [22.4707, 70.0577],
+  gandhinagar:[23.2156, 72.6369],
+  dwarka:     [22.2442, 68.9685],
+  somnath:    [20.8880, 70.4012],
+  junagadh:   [21.5222, 70.4579],
+  bhuj:       [23.2420, 69.6669],
+  udaipur:    [24.5854, 73.7125],
+  'mount abu':[24.5926, 72.7156],
+  jaipur:     [26.9124, 75.7873],
+  jodhpur:    [26.2389, 73.0243],
+  mumbai:     [19.0760, 72.8777],
+  pune:       [18.5204, 73.8567],
+  nashik:     [19.9975, 73.7898],
+  goa:        [15.2993, 74.1240],
+  delhi:      [28.6139, 77.2090],
+  agra:       [27.1767, 78.0081],
+  bengaluru:  [12.9716, 77.5946],
+  bangalore:  [12.9716, 77.5946],
+  mysore:     [12.2958, 76.6394],
+  coorg:      [12.3375, 75.8069],
+  hyderabad:  [17.3850, 78.4867],
+  indore:     [22.7196, 75.8577],
+};
+
+const EXACT_ROUTE_KM = {
+  'ahmedabad|udaipur': 260,
+  'bhavnagar|udaipur': 350,
+  'ahmedabad|mount abu': 225,
+  'ahmedabad|jaipur': 660,
+  'ahmedabad|dwarka': 440,
+  'ahmedabad|somnath': 410,
+  'ahmedabad|surat': 265,
+  'ahmedabad|vadodara': 112,
+  'ahmedabad|rajkot': 215,
+  'ahmedabad|mumbai': 525,
+  'bhavnagar|ahmedabad': 175,
+  'bhavnagar|somnath': 260,
+  'bhavnagar|dwarka': 410,
+  'surat|mumbai': 280,
+  'surat|udaipur': 485,
+  'mumbai|pune': 150,
+  'mumbai|goa': 590,
+  'delhi|jaipur': 280,
+  'delhi|agra': 230,
+  'bengaluru|mysore': 145,
+  'bengaluru|coorg': 265,
+};
+
 /**
- * Outstation Chauffeur Price
- * Factors: distance (km), number of days, car type
+ * Estimates road distance (km) and recommended trip days from any Pickup City & Drop City
  */
-export function calcOutstationChauffeur({ distanceKm = 100, days = 1, carType = 'sedan' }) {
-  const RATE_PER_KM = { sedan: 12, suv: 18, luxury: 28 };       // ₹ per km
-  const DRIVER_DAILY = { sedan: 600, suv: 800, luxury: 1200 };   // Driver allowance per day
-  const rate = RATE_PER_KM[carType] || RATE_PER_KM.sedan;
-  const driverDaily = DRIVER_DAILY[carType] || DRIVER_DAILY.sedan;
-  const kmCharge = Math.round(distanceKm * 2 * rate);             // round trip
-  const driverCharge = driverDaily * days;
-  const tollPark = Math.round(distanceKm * 1.5);                  // estimated tolls/parking
-  const total = kmCharge + driverCharge + tollPark;
+export function estimateOutstationRoute(pickupCity = '', dropCity = '') {
+  const clean = (s) => String(s || '').toLowerCase().trim();
+  const findCityKey = (raw) => {
+    const c = clean(raw);
+    if (!c) return null;
+    if (CITY_COORDS[c]) return c;
+    return Object.keys(CITY_COORDS).find((k) => c.includes(k)) || null;
+  };
+
+  const k1 = findCityKey(pickupCity);
+  const k2 = findCityKey(dropCity);
+
+  let km = 200;
+  let matched = false;
+
+  if (k1 && k2) {
+    if (k1 === k2) {
+      km = 60;
+      matched = true;
+    } else {
+      const pair1 = `${k1}|${k2}`;
+      const pair2 = `${k2}|${k1}`;
+      if (EXACT_ROUTE_KM[pair1]) {
+        km = EXACT_ROUTE_KM[pair1];
+        matched = true;
+      } else if (EXACT_ROUTE_KM[pair2]) {
+        km = EXACT_ROUTE_KM[pair2];
+        matched = true;
+      } else {
+        const [lat1, lon1] = CITY_COORDS[k1];
+        const [lat2, lon2] = CITY_COORDS[k2];
+        const toRad = (v) => (v * Math.PI) / 180;
+        const R = 6371;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+        const straight = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        km = Math.max(40, Math.round((straight * 1.28) / 5) * 5); // ~1.28 Indian highway road factor
+        matched = true;
+      }
+    }
+  }
+
+  const recommendedDays = km >= 550 ? 3 : km >= 260 ? 2 : 1;
+  return { distanceKm: km, recommendedDays, matched };
+}
+
+/**
+ * Multi-Day Outstation Price (Unified formula matching AI Assistant 100%)
+ * Total = (billedKm * perKmRate) + (days * dailyFee)
+ * Factors: driveMode ('with-driver' | 'self-drive'), carType, distance (km), number of days, isRoundTrip
+ */
+export function calcOutstationChauffeur({
+  distanceKm = 200,
+  days = 1,
+  carType = 'sedan',
+  driveMode = 'with-driver',
+  isRoundTrip = false,
+}) {
+  const car = OUTSTATION_CARS.find((c) => c.id === carType) || OUTSTATION_CARS[1];
+  const effectiveMode = car.driverOnly ? 'with-driver' : (driveMode === 'self-drive' ? 'self-drive' : 'with-driver');
+  const rate = effectiveMode === 'self-drive' ? car.selfDriveRate : car.withDriverRate;
+
+  const oneWayKm = Math.max(20, Number(distanceKm) || 100);
+  const billedKm = isRoundTrip ? oneWayKm * 2 : oneWayKm;
+  const kmCharge = Math.round(billedKm * rate);
+  const dailyFee = effectiveMode === 'self-drive' ? car.selfDailyFee : car.driverDaily;
+  const safeDays = Math.max(1, Number(days) || 1);
+  const durationCharge = dailyFee * safeDays;
+  const total = kmCharge + durationCharge;
+
   return {
+    car,
+    effectiveMode,
+    rate,
+    billedKm,
     kmCharge,
-    driverCharge,
-    tollPark,
+    durationCharge,
     total,
     breakdown: [
-      { label: `${carType.toUpperCase()} • ${distanceKm * 2} km (round trip @₹${rate}/km)`, amount: kmCharge },
-      { label: `Driver Allowance × ${days} day${days > 1 ? 's' : ''}`, amount: driverCharge },
-      { label: 'Estimated Tolls & Parking', amount: tollPark },
+      {
+        label: `${car.name} (${effectiveMode === 'self-drive' ? 'Self Drive' : 'With Driver'}) • ${billedKm} km ${isRoundTrip ? '(Round Trip)' : ''} @ ₹${rate}/km`,
+        amount: kmCharge,
+      },
+      {
+        label:
+          effectiveMode === 'self-drive'
+            ? `Self-Drive Vehicle Rental × ${safeDays} day${safeDays > 1 ? 's' : ''} (₹${dailyFee}/day)`
+            : `Driver Batta / Allowance × ${safeDays} day${safeDays > 1 ? 's' : ''} (₹${dailyFee}/day)`,
+        amount: durationCharge,
+      },
     ],
   };
 }

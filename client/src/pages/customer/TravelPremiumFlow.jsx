@@ -16,6 +16,8 @@ const TravelPremiumFlow = () => {
   // Luxury Rental State
   const [carClass, setCarClass] = useState('');
   const [driveType, setDriveType] = useState('');
+  const [rentalKm, setRentalKm] = useState(120);
+  const [rentalDays, setRentalDays] = useState(1);
   
   // School Commute State
   const [childAge, setChildAge] = useState('');
@@ -63,8 +65,12 @@ const TravelPremiumFlow = () => {
       let price = 0;
       
       if (flowType === 'luxury-rental') {
-        serviceName = `Luxury Car Rental (${carClass} - ${driveType})`;
-        price = carClass === 'Ford Mustang GT' ? 14999 : carClass === 'Mercedes G-Wagon' ? 24999 : 49999;
+        const isChauffeur = driveType === 'Chauffeur';
+        const kmRate = carClass === 'Ford Mustang GT' ? 35 : carClass === 'Mercedes G-Wagon' ? 55 : 75;
+        const baseDayRate = carClass === 'Ford Mustang GT' ? 7999 : carClass === 'Mercedes G-Wagon' ? 14999 : 24999;
+        const driverFee = isChauffeur ? 1200 * rentalDays : 0;
+        price = Math.round((baseDayRate * rentalDays) + (rentalKm * kmRate) + driverFee);
+        serviceName = `Luxury Rental: ${carClass} (${isChauffeur ? 'With Driver' : 'Self-Drive'} • ${rentalKm} km / ${rentalDays}d)`;
       } else if (flowType === 'school-commute') {
         serviceName = 'Monthly School Commute Sub (With Dashcam)';
         price = 4500;
@@ -162,9 +168,25 @@ const TravelPremiumFlow = () => {
       return (
         <div className="animate-fade-in-up">
           <h3 style={{ fontSize: '1.3rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '20px' }}>{t('travelFlow.luxuryQ2', 'Drive Preference')}</h3>
-          <div style={{ display: 'grid', gap: '16px' }}>
-            <OptionCard label={t('travelFlow.selfDrive', 'Self-Drive')} subtext={t('travelFlow.selfDriveDesc', 'Insurance included, unlimited km')} isSelected={driveType === 'Self-Drive'} onClick={() => setDriveType('Self-Drive')} />
-            <OptionCard label={t('travelFlow.chauffeur', 'Chauffeur Driven')} subtext={t('travelFlow.chauffeurDesc', 'White glove service, uniformed driver')} isSelected={driveType === 'Chauffeur'} onClick={() => setDriveType('Chauffeur')} />
+          <div style={{ display: 'grid', gap: '16px', marginBottom: '20px' }}>
+            <OptionCard label={t('travelFlow.selfDrive', 'Self-Drive')} subtext="Drive yourself (zero driver allowance fee)" isSelected={driveType === 'Self-Drive'} onClick={() => setDriveType('Self-Drive')} />
+            <OptionCard label={t('travelFlow.chauffeur', 'Chauffeur Driven (With Driver)')} subtext="White glove service with uniformed driver (+₹1,200/day)" isSelected={driveType === 'Chauffeur'} onClick={() => setDriveType('Chauffeur')} />
+          </div>
+          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0', display: 'grid', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span>Trip Distance</span>
+                <strong style={{ color: '#ef4444' }}>{rentalKm} km</strong>
+              </label>
+              <input type="range" min="40" max="800" step="20" value={rentalKm} onChange={(e) => setRentalKm(parseInt(e.target.value, 10))} style={{ width: '100%', accentColor: '#ef4444' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span>Rental Duration</span>
+                <strong style={{ color: '#ef4444' }}>{rentalDays} day{rentalDays > 1 ? 's' : ''}</strong>
+              </label>
+              <input type="range" min="1" max="10" value={rentalDays} onChange={(e) => setRentalDays(parseInt(e.target.value, 10))} style={{ width: '100%', accentColor: '#ef4444' }} />
+            </div>
           </div>
         </div>
       );

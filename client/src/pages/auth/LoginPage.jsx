@@ -127,7 +127,12 @@ const LoginPage = () => {
       const data = await requestAuth('/auth/login', { email, password });
       const userRole = data?.user?.role || role;
       saveSession({ token: data.token, user: data.user });
-      navigate(roleHome[userRole] || `/${userRole}`, { replace: true });
+      const redirectTo = searchParams.get('redirect');
+      if (redirectTo && redirectTo.startsWith('/')) {
+        navigate(redirectTo, { replace: true });
+      } else {
+        navigate(roleHome[userRole] || `/${userRole}`, { replace: true });
+      }
     } catch (submitError) {
       setError(submitError.message || t('login.error', 'Unable to sign in'));
     } finally {

@@ -23,6 +23,9 @@ import WorkerIDCardModal from '../../components/WorkerIDCardModal';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
+import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
+import { broadcastNotificationToTabs, subscribeToCrossTabNotifications } from '../../utils/notificationSync';
+import { socket } from '../../socket';
 import '../Dashboard.css';
 import './WorkerPages.css';
 

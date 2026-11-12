@@ -245,18 +245,24 @@ const BookingFlow = () => {
   const subtotal = price;
   const gst = Math.round(subtotal * 0.18);
   const trustSafetyFee = price > 0 ? 49 : 0;
+
+  // Automatic Subscription Tier Discount (Silver 10%, Gold 20%, Platinum 30%)
+  const activeSub = (getSession()?.user?.subscription || localStorage.getItem('servecircle_active_subscription') || 'basic').toLowerCase();
+  const subDiscountPct = activeSub === 'platinum' ? 30 : activeSub === 'gold' ? 20 : activeSub === 'silver' ? 10 : 0;
+  const subDiscountAmount = price > 0 && subDiscountPct > 0 ? Math.round((subtotal * subDiscountPct) / 100) : 0;
   
-  let discountAmount = 0;
+  let couponDiscountAmount = 0;
   if (appliedCoupon && subtotal >= appliedCoupon.minAmount) {
     if (appliedCoupon.type === 'FLAT') {
-      discountAmount = appliedCoupon.discount;
+      couponDiscountAmount = appliedCoupon.discount;
     } else if (appliedCoupon.type === 'PERCENT') {
-      discountAmount = Math.round((subtotal * appliedCoupon.discount) / 100);
-      if (appliedCoupon.maxDiscount && discountAmount > appliedCoupon.maxDiscount) {
-        discountAmount = appliedCoupon.maxDiscount;
+      couponDiscountAmount = Math.round((subtotal * appliedCoupon.discount) / 100);
+      if (appliedCoupon.maxDiscount && couponDiscountAmount > appliedCoupon.maxDiscount) {
+        couponDiscountAmount = appliedCoupon.maxDiscount;
       }
     }
   }
+  const discountAmount = subDiscountAmount + couponDiscountAmount;
   
   const amountBeforeWallet = Math.max(0, subtotal + gst + trustSafetyFee - discountAmount);
   const walletDiscount = useWallet ? Math.min(walletBalance, amountBeforeWallet) : 0;
@@ -494,6 +500,11 @@ const BookingFlow = () => {
       const existing = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
       const updated = [confirmedPayload, ...existing.filter(b => b.id !== confirmedPayload.id)];
       localStorage.setItem('servecircle_customer_bookings', JSON.stringify(updated));
+
+      // Global single source of truth for Booking OTPs
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
+      otpMap[confirmedId] = finalStartOtp;
+      localStorage.setItem('servecircle_booking_otps', JSON.stringify(otpMap));
     } catch (e) {
       console.warn('Failed to save booking to localStorage:', e);
     }
@@ -777,7 +788,7 @@ const BookingFlow = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
             {/* Primary CTA: Track Live */}
             <Link
-              to={`/customer/live-tracking?bookingId=${encodeURIComponent(bookingConfirmedData.id)}&service=${encodeURIComponent(bookingConfirmedData.service)}&worker=${encodeURIComponent(bookingConfirmedData.workerName)}&price=${bookingConfirmedData.amount}`}
+              to={`/customer/live-tracking?bookingId=${encodeURIComponent(bookingConfirmedData.id)}&service=${encodeURIComponent(bookingConfirmedData.service)}&worker=${encodeURIComponent(bookingConfirmedData.workerName)}&price=${bookingConfirmedData.amount}&startOtp=${encodeURIComponent(bookingConfirmedData.startOtp || '')}`}
               className="btn btn-primary btn-lg"
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',

@@ -7,7 +7,7 @@ import {
   HiOutlineArrowLeft, HiOutlineBuildingOffice2, HiOutlineWrenchScrewdriver,
   HiOutlineTruck, HiOutlineClipboardDocumentCheck, HiOutlineArrowPath,
 } from 'react-icons/hi2';
-import '../Dashboard.css';
+import './Dashboard.css';
 
 const ProjectSummary = () => {
   const [activeTab, setActiveTab] = useState('all');

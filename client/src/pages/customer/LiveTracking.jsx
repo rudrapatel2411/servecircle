@@ -7,12 +7,15 @@ import {
   HiOutlineClock, HiOutlineShieldCheck, HiOutlineMapPin,
   HiOutlineClipboardDocumentList, HiOutlineMegaphone,
   HiOutlineLockClosed, HiOutlineCheckCircle, HiOutlineCheck,
-  HiOutlineBriefcase, HiOutlineAcademicCap
+  HiOutlineBriefcase, HiOutlineAcademicCap,
+  HiOutlineMicrophone, HiOutlineSpeakerWave, HiOutlinePaperAirplane,
+  HiOutlineXMark, HiOutlinePhoneXMark
 } from 'react-icons/hi2';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { socket } from '../../socket';
 import { getSession, requestApi } from '../../utils/authSession';
+import { subscribeToCrossTabNotifications, broadcastNotificationToTabs } from '../../utils/notificationSync';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -23,12 +26,13 @@ const statusToStep = (status) => {
     case 'assigned':
       return { step: 0, text: 'Professional is dispatched and preparing tools.', eta: 15, otp: false };
     case 'on_the_way':
+    case 'en-route':
       return { step: 1, text: 'Worker is en route to your location.', eta: 8, otp: false };
     case 'arrived':
-      return { step: 2, text: 'Arrived at your doorstep!', eta: 0, otp: true };
+      return { step: 2, text: 'Arrived at your doorstep! Please share Start OTP.', eta: 0, otp: true };
     case 'in_progress':
     case 'started':
-      return { step: 3, text: 'Job in progress...', eta: 0, otp: false };
+      return { step: 3, text: 'Job in progress (OTP Verified by Worker) 🛠️', eta: 0, otp: false };
     case 'completed':
       return { step: 4, text: 'Job completed successfully!', eta: 0, otp: false };
     default:
@@ -46,26 +50,38 @@ const LiveTracking = () => {
   // Dynamic parameters from checkout / bookings
   const bookingId = searchParams.get('bookingId') || 'SC-2839';
   const serviceName = searchParams.get('service') || 'AC Servicing';
-  const workerName = searchParams.get('worker') || 'Ramesh Kumar';
+  const workerName = searchParams.get('worker') || 'Rajesh Kumar';
   const price = searchParams.get('price') || '499';
 
   const [bookingData, setBookingData] = useState(null);
   const [isRealTracking, setIsRealTracking] = useState(false);
   const [hasRealGps, setHasRealGps] = useState(false);
 
-  // Deterministic demo OTP fallback
-  const deterministicOtp = useMemo(() => {
-    if (!bookingId) return '8492';
-    if (bookingId === 'SC-2839') return '8492';
-    let hash = 0;
-    for (let i = 0; i < bookingId.length; i++) {
-      hash = (hash << 5) - hash + bookingId.charCodeAt(i);
-      hash |= 0;
-    }
-    return String(Math.abs(hash % 9000) + 1000);
+  // Unified Single Source of Truth for OTP across all screens
+  const urlOtp = searchParams.get('startOtp');
+  const storedOtp = useMemo(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
+      const b = stored.find((item) => item.id === bookingId || item.bookingId === bookingId);
+      if (b?.startOtp) return b.startOtp;
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
+      if (otpMap[bookingId]) return otpMap[bookingId];
+    } catch {}
+    return null;
   }, [bookingId]);
 
-  const currentOtp = bookingData?.startOtp || deterministicOtp;
+  const currentOtp = urlOtp || bookingData?.startOtp || storedOtp || '4821';
+
+  // Persist this exact OTP to servecircle_booking_otps so worker panel reads identical OTP
+  useEffect(() => {
+    try {
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
+      if (!otpMap[bookingId] || otpMap[bookingId] !== currentOtp) {
+        otpMap[bookingId] = currentOtp;
+        localStorage.setItem('servecircle_booking_otps', JSON.stringify(otpMap));
+      }
+    } catch {}
+  }, [bookingId, currentOtp]);
 
   const getInitials = (name) => {
     return name
@@ -80,6 +96,101 @@ const LiveTracking = () => {
   const [activeStep, setActiveStep] = useState(0); // 0: Dispatched, 1: Arriving, 2: Arrived, 3: Job Started, 4: Finished
   const [currentStatusText, setCurrentStatusText] = useState('Professional is dispatched and preparing tools.');
   const [otpVisible, setOtpVisible] = useState(false);
+
+  // Call Modal State
+  const [isCallOpen, setIsCallOpen] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isSpeaker, setIsSpeaker] = useState(true);
+  const [callStatus, setCallStatus] = useState('Connecting...');
+
+  // Chat Modal State
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    {
+      sender: 'worker',
+      text: `Namaste! Main ServeCircle verified expert ${workerName} hoon. Main aapki location ki taraf aa raha hoon. Koi specific landmark ya gate instruction ho toh batayein.`,
+      time: 'Just now',
+    },
+  ]);
+  const [inputChat, setInputChat] = useState('');
+  const [isWorkerTyping, setIsWorkerTyping] = useState(false);
+  const chatBottomRef = useRef(null);
+
+  // Call timer effect
+  useEffect(() => {
+    let timer = null;
+    let connectTimeout = null;
+    if (isCallOpen) {
+      setCallStatus('Connecting via ServeCircle Private Relay...');
+      connectTimeout = setTimeout(() => {
+        setCallStatus('Connected (Secure Masked Line)');
+      }, 1200);
+
+      timer = setInterval(() => {
+        setCallDuration((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setCallDuration(0);
+      setCallStatus('Connecting...');
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+      if (connectTimeout) clearTimeout(connectTimeout);
+    };
+  }, [isCallOpen]);
+
+  const formatTimer = (sec) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  // Chat send handler
+  const sendChatMessage = (textToSend) => {
+    const text = (textToSend || inputChat).trim();
+    if (!text) return;
+
+    const newMsg = {
+      sender: 'customer',
+      text,
+      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatMessages((prev) => [...prev, newMsg]);
+    setInputChat('');
+    setIsWorkerTyping(true);
+
+    setTimeout(() => {
+      setIsWorkerTyping(false);
+      let reply = `Ji bilkul sir! Main raste me hoon, bas 5-7 minute me aapke ghar pahunch raha hoon.`;
+      const lower = text.toLowerCase();
+      if (lower.includes('gate') || lower.includes('security') || lower.includes('guard')) {
+        reply = `Theek hai sir, main entry gate par security guard ko booking ID dikha kar andar aata hoon.`;
+      } else if (lower.includes('otp')) {
+        reply = `Haanji sir, main doorstep par aakar aapse 4-digit Start OTP (${currentOtp}) poochhunga, phir service shuru karenge!`;
+      } else if (lower.includes('der') || lower.includes('time') || lower.includes('kab')) {
+        reply = `Sir GPS route ke hisab se bas 5 se 8 minute lagenge, main almost society ke pass hoon.`;
+      } else if (lower.includes('phone') || lower.includes('call')) {
+        reply = `Ji sir, main abhi location par pahunchte hi aapko isi masked line se call karta hoon.`;
+      }
+
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'worker',
+          text: reply,
+          time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    }, 1300);
+  };
+
+  useEffect(() => {
+    if (isChatOpen) {
+      chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, isWorkerTyping, isChatOpen]);
 
   useEffect(() => {
     let isMounted = true;
@@ -119,7 +230,7 @@ const LiveTracking = () => {
       if (!data) return;
       if (data.bookingId === bookingId || (bookingData && data.bookingId === bookingData.bookingId)) {
         setIsRealTracking(true);
-        const mapping = statusToStep(data.currentStatus);
+        const mapping = statusToStep(data.currentStatus || data.status);
         setActiveStep(mapping.step);
         setCurrentStatusText(mapping.text);
         setEta(mapping.eta);
@@ -128,8 +239,17 @@ const LiveTracking = () => {
     };
 
     socket.on('booking_status_changed', handleStatusUpdate);
+
+    // Cross-tab broadcast listener (ensures live sync across browser tabs)
+    const unsubscribe = subscribeToCrossTabNotifications((notif) => {
+      if (notif?.type === 'booking_status' && notif.bookingId === bookingId) {
+        handleStatusUpdate(notif);
+      }
+    });
+
     return () => {
       socket.off('booking_status_changed', handleStatusUpdate);
+      unsubscribe();
     };
   }, [bookingId, bookingData]);
 
@@ -435,23 +555,96 @@ const LiveTracking = () => {
                 );
               })}
             </div>
-            
+
+            {/* STEP 2: ARRIVED — Amazon-Style Delivery Verification OTP Box */}
             <AnimatePresence>
-              {activeStep >= 2 && activeStep < 4 && otpVisible && (
+              {activeStep === 2 && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '16px', padding: '12px', background: '#fef2f2', border: '1px dashed #ef4444', borderRadius: '8px', textAlign: 'center' }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    marginTop: '16px',
+                    padding: '18px 16px',
+                    background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+                    border: '2px solid #f59e0b',
+                    borderRadius: '14px',
+                    textAlign: 'center',
+                    boxShadow: '0 8px 24px rgba(245, 158, 11, 0.25)'
+                  }}
                 >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                    <HiOutlineLockClosed /> {bookingData?.startOtp ? 'VERIFIED BOOKING START OTP' : 'DEMO EXHIBITION START OTP'}
-                  </span>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>{currentOtp}</div>
-                  <p style={{ fontSize: '0.7rem', color: '#7f1d1d', margin: 0 }}>Do not share this OTP until the professional has arrived and you are ready to begin.</p>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#d97706', color: 'white', padding: '4px 14px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
+                    <HiOutlineLockClosed /> Amazon-Style Delivery Verification
+                  </div>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#92400e', margin: '4px 0' }}>
+                    🔔 {workerName} has arrived at your doorstep!
+                  </h4>
+                  <p style={{ fontSize: '0.78rem', color: '#78350f', margin: '2px 0 10px' }}>
+                    Jaise delivery boy parcel dene se pehle OTP maangte hain, waise hi kaam shuru karne ke liye apna <strong>Start OTP</strong> share karein:
+                  </p>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 900,
+                    color: '#b45309',
+                    letterSpacing: '12px',
+                    margin: '6px 0',
+                    fontFamily: 'monospace',
+                    background: 'white',
+                    padding: '10px 24px',
+                    borderRadius: '10px',
+                    border: '2px solid #fde68a',
+                    display: 'inline-block',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
+                  }}>
+                    {currentOtp}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#b45309', marginTop: '8px', fontWeight: 700 }}>
+                    ⏳ Worker Panel me yeh OTP enter karne ke baad hi kaam officially shuru hoga.
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
+            {/* STEP 3: STARTED — Verification Success & In Progress */}
+            <AnimatePresence>
+              {activeStep === 3 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    marginTop: '16px',
+                    padding: '14px',
+                    background: '#f0fdf4',
+                    border: '1px solid #22c55e',
+                    borderRadius: '10px',
+                    textAlign: 'center',
+                    color: '#15803d'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 800, fontSize: '0.95rem' }}>
+                    <HiOutlineCheckCircle style={{ fontSize: '1.4rem' }} /> Start OTP Verified! Work in Progress 🛠️
+                  </div>
+                  <p style={{ fontSize: '0.75rem', margin: '4px 0 0', color: '#166534' }}>
+                    {workerName} ne Start OTP verify kar liya hai. Service safely shuru ho chuki hai.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* STEP 0 OR 1: DISPATCHED / EN-ROUTE OTP PREVIEW */}
+            {activeStep < 2 && (
+              <div style={{ marginTop: '14px', padding: '10px 14px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '0.75rem', color: '#475569' }}>
+                  <span style={{ fontWeight: 700, color: '#0f172a' }}>🔒 Service Start OTP:</span> (Worker ke aane par share karein)
+                </div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#2563eb', letterSpacing: '3px', background: '#eff6ff', padding: '3px 10px', borderRadius: '6px', border: '1px solid #bfdbfe' }}>
+                  {currentOtp}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: COMPLETED CTA */}
             <AnimatePresence>
               {activeStep === 4 && (
                 <motion.div
@@ -469,11 +662,64 @@ const LiveTracking = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Live Testing Simulation Controls */}
+            <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed #e2e8f0', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700 }}>Quick Test Simulation:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveStep(1);
+                  setCurrentStatusText('Worker is en route to your location.');
+                  setEta(8);
+                  setOtpVisible(false);
+                }}
+                style={{ fontSize: '0.68rem', padding: '3px 8px', background: activeStep === 1 ? '#dbeafe' : '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                1. En Route
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveStep(2);
+                  setCurrentStatusText('Arrived at your doorstep! Please share Start OTP.');
+                  setEta(0);
+                  setOtpVisible(true);
+                }}
+                style={{ fontSize: '0.68rem', padding: '3px 8px', background: activeStep === 2 ? '#fef3c7' : '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, color: '#b45309' }}
+              >
+                2. Arrived (Ask OTP)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveStep(3);
+                  setCurrentStatusText('Job in progress (OTP Verified by Worker) 🛠️');
+                  setEta(0);
+                  setOtpVisible(false);
+                }}
+                style={{ fontSize: '0.68rem', padding: '3px 8px', background: activeStep === 3 ? '#dcfce7' : '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer', fontWeight: 700, color: '#15803d' }}
+              >
+                3. OTP Verified (Work Starts)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveStep(4);
+                  setCurrentStatusText('Job completed successfully!');
+                  setEta(0);
+                  setOtpVisible(false);
+                }}
+                style={{ fontSize: '0.68rem', padding: '3px 8px', background: activeStep === 4 ? '#e0e7ff' : '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                4. Completed
+              </button>
+            </div>
           </div>
 
         </div>
 
-        {/* Right Side: Professional Details (Tightly scaled, flexbox layout to prevent overflow) */}
+        {/* Right Side: Professional Details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minHeight: 0, height: '100%' }}>
           
           <div className="card" style={{ padding: '24px 20px', textAlign: 'center', background: 'white', flex: 1.2, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 0, border: '1px solid var(--gray-200)' }}>
@@ -501,7 +747,7 @@ const LiveTracking = () => {
                 </div>
               </div>
 
-              {/* Trainee (Mock Data) */}
+              {/* Trainee */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{
                   width: '60px', height: '60px', borderRadius: '50%',
@@ -521,20 +767,21 @@ const LiveTracking = () => {
               </div>
             </div>
 
+            {/* Working Call & Chat Buttons */}
             <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
               <button
+                type="button"
                 className="btn btn-outline"
-                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
-                onClick={() => {
-                  alert(`Masked calling initiated with ${workerName}. Your phone number remains private.`);
-                }}
+                style={{ flex: 1, padding: '10px', fontSize: '0.82rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                onClick={() => setIsCallOpen(true)}
               >
                 <HiOutlinePhone /> Call
               </button>
               <button
+                type="button"
                 className="btn btn-primary"
-                style={{ flex: 1, padding: '10px', fontSize: '0.8rem', fontWeight: 800 }}
-                onClick={() => alert(`Secure chat session started with ${workerName}.`)}
+                style={{ flex: 1, padding: '10px', fontSize: '0.82rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                onClick={() => setIsChatOpen(true)}
               >
                 <HiOutlineChatBubbleLeftRight /> Chat
               </button>
@@ -555,6 +802,247 @@ const LiveTracking = () => {
         </div>
 
       </div>
+
+      {/* ===== INTERACTIVE CALL MODAL ===== */}
+      <AnimatePresence>
+        {isCallOpen && (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(8px)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px'
+          }}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              style={{
+                width: '100%', maxWidth: '380px',
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                color: 'white', borderRadius: '24px', padding: '28px 24px', textAlign: 'center',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)',
+                position: 'relative'
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setIsCallOpen(false)}
+                style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: '#94a3b8', fontSize: '1.4rem', cursor: 'pointer' }}
+              >
+                <HiOutlineXMark />
+              </button>
+
+              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#38bdf8', fontWeight: 800, marginBottom: '16px' }}>
+                ServeCircle Masked Private Relay
+              </div>
+
+              {/* Avatar with pulse ring */}
+              <div style={{ position: 'relative', width: '84px', height: '84px', margin: '0 auto 16px' }}>
+                <div style={{
+                  width: '100%', height: '100%', borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '2rem', fontWeight: 900, color: 'white',
+                  border: '3px solid #38bdf8', boxShadow: '0 0 24px rgba(56, 189, 248, 0.4)'
+                }}>
+                  {getInitials(workerName)}
+                </div>
+              </div>
+
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 4px', color: 'white' }}>{workerName}</h3>
+              <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0 0 12px' }}>Senior Service Pro · Assigned Expert</p>
+
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.08)', padding: '4px 14px', borderRadius: '20px', fontSize: '0.75rem', color: '#a7f3d0', marginBottom: '16px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                {callStatus}
+              </div>
+
+              <div style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'monospace', letterSpacing: '2px', color: '#f8fafc', marginBottom: '24px' }}>
+                {formatTimer(callDuration)}
+              </div>
+
+              {/* Controls: Mute, Speaker, End */}
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsMuted((p) => !p)}
+                  style={{
+                    width: '50px', height: '50px', borderRadius: '50%',
+                    background: isMuted ? '#ef4444' : 'rgba(255,255,255,0.12)',
+                    border: 'none', color: 'white', fontSize: '1.3rem', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                  title={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  <HiOutlineMicrophone />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsCallOpen(false)}
+                  style={{
+                    width: '64px', height: '64px', borderRadius: '50%',
+                    background: '#ef4444', border: 'none', color: 'white', fontSize: '1.8rem',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 8px 20px rgba(239, 68, 68, 0.4)'
+                  }}
+                  title="End Call"
+                >
+                  <HiOutlinePhoneXMark />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSpeaker((p) => !p)}
+                  style={{
+                    width: '50px', height: '50px', borderRadius: '50%',
+                    background: isSpeaker ? '#2563eb' : 'rgba(255,255,255,0.12)',
+                    border: 'none', color: 'white', fontSize: '1.3rem', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                  title={isSpeaker ? 'Speaker On' : 'Speaker Off'}
+                >
+                  <HiOutlineSpeakerWave />
+                </button>
+              </div>
+
+              <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                🔒 100% Privacy Protected. Your real phone number is not revealed.
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ===== INTERACTIVE CHAT MODAL ===== */}
+      <AnimatePresence>
+        {isChatOpen && (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(8px)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px'
+          }}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              style={{
+                width: '100%', maxWidth: '440px', height: '560px',
+                background: 'white', borderRadius: '24px', display: 'flex', flexDirection: 'column',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', overflow: 'hidden'
+              }}
+            >
+              {/* Chat Header */}
+              <div style={{
+                padding: '16px 20px', background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)',
+                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '42px', height: '42px', borderRadius: '50%',
+                    background: 'white', color: '#1e3a8a', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', fontWeight: 800, fontSize: '1rem'
+                  }}>
+                    {getInitials(workerName)}
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>{workerName}</h4>
+                    <span style={{ fontSize: '0.72rem', color: '#bfdbfe', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} /> Online · Senior Pro
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsChatOpen(false)}
+                  style={{ background: 'none', border: 'none', color: 'white', fontSize: '1.4rem', cursor: 'pointer' }}
+                >
+                  <HiOutlineXMark />
+                </button>
+              </div>
+
+              {/* Message List */}
+              <div style={{ flex: 1, padding: '16px', overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ textAlign: 'center', margin: '4px 0' }}>
+                  <span style={{ fontSize: '0.65rem', background: '#e2e8f0', color: '#64748b', padding: '2px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                    End-to-End Encrypted Service Chat
+                  </span>
+                </div>
+
+                {chatMessages.map((msg, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      alignSelf: msg.sender === 'customer' ? 'flex-end' : 'flex-start',
+                      maxWidth: '82%',
+                      padding: '10px 14px',
+                      borderRadius: msg.sender === 'customer' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
+                      background: msg.sender === 'customer' ? '#2563eb' : 'white',
+                      color: msg.sender === 'customer' ? 'white' : '#0f172a',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      fontSize: '0.82rem',
+                      lineHeight: 1.4
+                    }}
+                  >
+                    <div>{msg.text}</div>
+                    <div style={{ fontSize: '0.62rem', opacity: 0.75, textAlign: 'right', marginTop: '4px' }}>{msg.time}</div>
+                  </div>
+                ))}
+
+                {isWorkerTyping && (
+                  <div style={{ alignSelf: 'flex-start', padding: '8px 12px', background: 'white', borderRadius: '14px 14px 14px 2px', fontSize: '0.75rem', color: '#64748b', fontStyle: 'italic', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                    {workerName} is typing...
+                  </div>
+                )}
+                <div ref={chatBottomRef} />
+              </div>
+
+              {/* Quick Preset Chips */}
+              <div style={{ padding: '8px 12px', background: '#f1f5f9', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '6px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                {['Aap kitni der me aa rahe ho?', 'Main ghar par ready hoon.', 'Gate par security guard ko bol diya hai.', 'Start OTP screen par ready hai.'].map((chip, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => sendChatMessage(chip)}
+                    style={{
+                      background: 'white', border: '1px solid #cbd5e1', borderRadius: '16px',
+                      padding: '4px 10px', fontSize: '0.7rem', color: '#334155', cursor: 'pointer',
+                      flexShrink: 0, fontWeight: 600
+                    }}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendChatMessage();
+                }}
+                style={{ padding: '12px', background: 'white', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '8px' }}
+              >
+                <input
+                  type="text"
+                  placeholder="Type a message to Rajesh Kumar..."
+                  value={inputChat}
+                  onChange={(e) => setInputChat(e.target.value)}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '20px', border: '1px solid #cbd5e1', fontSize: '0.85rem', outline: 'none' }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    width: '42px', height: '42px', borderRadius: '50%',
+                    background: '#2563eb', color: 'white', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem'
+                  }}
+                >
+                  <HiOutlinePaperAirplane />
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

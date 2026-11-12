@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -119,6 +119,39 @@ const MyHomeDashboard = () => {
   const [showHealthModal, setShowHealthModal] = useState(false);
   const [showTrackingMap, setShowTrackingMap] = useState(false);
   const [mapUrl, setMapUrl] = useState("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15555.074090240974!2d77.62534571738283!3d12.9226343!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1466099187a5%3A0x67ba4f3fc58702cb!2sKoramangala%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin");
+  const [activeBooking, setActiveBooking] = useState(null);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
+      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
+      if (saved && saved.length > 0) {
+        const latest = saved[0];
+        const rawId = latest.id || 'SC-89241';
+        const cleanId = String(rawId).replace('#', '');
+        const canonicalOtp = latest.startOtp || otpMap[cleanId] || otpMap[rawId] || '4821';
+        setActiveBooking({
+          ...latest,
+          displayId: rawId.startsWith('#') ? rawId : `#${rawId}`,
+          id: cleanId,
+          startOtp: canonicalOtp,
+          serviceName: latest.service || latest.serviceName || 'Home Relocation Service',
+          workerName: latest.workerName || latest.worker?.name || 'Rajesh Kumar'
+        });
+      } else {
+        const fallbackOtp = otpMap['SC-89241'] || otpMap['SC-2841'] || '4821';
+        setActiveBooking({
+          id: 'SC-89241',
+          displayId: '#SC-89241',
+          serviceName: 'Complete Home Relocation',
+          workerName: 'Rajesh Kumar',
+          startOtp: fallbackOtp
+        });
+      }
+    } catch (e) {
+      console.warn('Failed loading active booking for dashboard banner', e);
+    }
+  }, []);
 
   const openTrackingMap = () => {
     setShowTrackingMap(true);
@@ -484,17 +517,29 @@ const MyHomeDashboard = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span style={{ background: '#3b82f6', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Live Tracking</span>
-              <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>Order #SC-89241</span>
+              <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>Order {activeBooking?.displayId || '#SC-89241'}</span>
             </div>
-            <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Complete Home Relocation</h4>
-            <p style={{ color: '#cbd5e1', margin: '4px 0 0 0', fontSize: '0.85rem' }}>Expert assigned: Rajesh Kumar. OTP to start: <strong style={{ color: '#3b7dc1', letterSpacing: '1px' }}>4521</strong></p>
+            <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>{activeBooking?.serviceName || 'Complete Home Relocation'}</h4>
+            <p style={{ color: '#cbd5e1', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
+              Expert assigned: {activeBooking?.workerName || 'Rajesh Kumar'}. OTP to start: <strong style={{ color: '#60a5fa', letterSpacing: '2px', fontSize: '1.05rem', fontWeight: 900 }}>{activeBooking?.startOtp || '4821'}</strong>
+            </p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer' }}>View Details</button>
-          <button className="btn btn-primary" style={{ background: '#3b7dc1', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(59, 125, 193, 0.3)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={openTrackingMap}>
-            Track Partner <HiOutlineMapPin />
-          </button>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <Link 
+            to="/customer/orders" 
+            className="btn" 
+            style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 16px', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+          >
+            View Details
+          </Link>
+          <Link 
+            to={`/customer/live-tracking?bookingId=${encodeURIComponent(activeBooking?.id || 'SC-89241')}&startOtp=${encodeURIComponent(activeBooking?.startOtp || '4821')}`}
+            className="btn btn-primary" 
+            style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '8px 16px', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', textDecoration: 'none', fontWeight: 700 }}
+          >
+            Track Partner Live <HiOutlineMapPin />
+          </Link>
         </div>
       </div>
 

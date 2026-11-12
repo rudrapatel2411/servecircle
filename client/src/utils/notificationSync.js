@@ -10,6 +10,8 @@
 
 const CHANNEL_NAME = 'servecircle_cross_tab_notifications';
 const STORAGE_KEY = 'servecircle_recent_notifications';
+const DISMISSED_KEY = 'servecircle_dismissed_notif_ids';
+const READ_KEY = 'servecircle_read_notif_ids';
 
 let channel = null;
 if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
@@ -91,25 +93,75 @@ export function subscribeToCrossTabNotifications(onNotification) {
   };
 }
 
-/**
- * Get all cached recent notifications from localStorage
- */
-export function getCachedNotifications() {
+export function getDismissedNotificationIds() {
   if (typeof window === 'undefined') return [];
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+export function getReadNotificationIds() {
+  if (typeof window === 'undefined') return [];
+  try {
+    return JSON.parse(localStorage.getItem(READ_KEY) || '[]');
   } catch {
     return [];
   }
 }
 
 /**
+ * Get all cached recent notifications from localStorage (filtering out dismissed ones)
+ */
+export function getCachedNotifications() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const dismissed = new Set(getDismissedNotificationIds());
+    const readIds = new Set(getReadNotificationIds());
+    return list
+      .filter((item) => !dismissed.has(item.id) && !dismissed.has(item._id))
+      .map((item) => ({
+        ...item,
+        read: item.read || readIds.has(item.id) || readIds.has(item._id),
+      }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Mark a specific notification as read in localStorage
+ */
+export function markCachedNotificationRead(id) {
+  if (typeof window === 'undefined' || !id) return;
+  try {
+    const readIds = getReadNotificationIds();
+    if (!readIds.includes(id)) {
+      localStorage.setItem(READ_KEY, JSON.stringify([id, ...readIds].slice(0, 200)));
+    }
+    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const updated = list.map((item) =>
+      item.id === id || item._id === id ? { ...item, read: true } : item
+    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch {}
+}
+
+/**
  * Mark all cached notifications as read in localStorage
  */
-export function markAllCachedNotificationsRead() {
+export function markAllCachedNotificationsRead(extraIds = []) {
   if (typeof window === 'undefined') return;
   try {
     const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const readIds = new Set([...getReadNotificationIds(), ...extraIds]);
+    list.forEach((item) => {
+      if (item.id) readIds.add(item.id);
+      if (item._id) readIds.add(item._id);
+    });
+    localStorage.setItem(READ_KEY, JSON.stringify(Array.from(readIds).slice(0, 300)));
     const updated = list.map((item) => ({ ...item, read: true }));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   } catch {}
@@ -121,6 +173,10 @@ export function markAllCachedNotificationsRead() {
 export function dismissCachedNotification(id) {
   if (typeof window === 'undefined' || !id) return;
   try {
+    const dismissed = getDismissedNotificationIds();
+    if (!dismissed.includes(id)) {
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify([id, ...dismissed].slice(0, 300)));
+    }
     const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     const updated = list.filter((item) => item.id !== id && item._id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
