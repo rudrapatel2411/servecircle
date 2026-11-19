@@ -37,10 +37,19 @@ const DEFAULT_EMBEDDING_MODEL = 'text-embedding-004';
  */
 export const PROVIDER_CONFIGS = [
   {
-    name:           'groq',
+    name:           'ollama',
     enabled:        true,
     priority:       1,
-    description:    'Groq Cloud LPU via groq-sdk (Qwen 3.8 27B Multimodal & Vision)',
+    description:    'Local Ollama Multimodal Vision RAG (qwen3-vl:2b + nomic-embed-text)',
+    textModel:      process.env.OLLAMA_VISION_MODEL || 'qwen3-vl:2b',
+    visionModel:    process.env.OLLAMA_VISION_MODEL || 'qwen3-vl:2b',
+    embeddingModel: process.env.OLLAMA_EMBED_MODEL  || 'nomic-embed-text',
+  },
+  {
+    name:           'groq',
+    enabled:        true,
+    priority:       2,
+    description:    'Groq Cloud LPU via groq-sdk (Fallback)',
     textModel:      process.env.GROQ_TEXT_MODEL   || 'qwen/qwen3.8-27b',
     visionModel:    process.env.GROQ_VISION_MODEL || 'qwen/qwen3.8-27b',
     embeddingModel: '',
@@ -71,15 +80,6 @@ export const PROVIDER_CONFIGS = [
     textModel:      'claude-3-5-sonnet-20241022',
     visionModel:    'claude-3-5-sonnet-20241022',
     embeddingModel: '',
-  },
-  {
-    name:           'ollama',
-    enabled:        false,
-    priority:       4,
-    description:    'Local Ollama runtime (not yet implemented)',
-    textModel:      'llama3.2',
-    visionModel:    'llava',
-    embeddingModel: 'nomic-embed-text',
   },
 ];
 

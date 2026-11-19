@@ -31,6 +31,8 @@ import verificationRoutes from './routes/verification.js';
 import aiProviderRoutes from './routes/aiProvider.js';
 import customerAiRoutes from './routes/customerAi.js';
 import { AIProviderManager } from './ai/providers/AIProviderManager.js';
+import { prisma } from './config/prisma.js';
+import { syncAndLoadServiceVectors } from './ai/services/ragService.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -100,6 +102,18 @@ const connectDB = async () => {
 };
 
 connectDB();
+
+// PostgreSQL (Prisma ORM) & RAG Layer Initialization
+(async () => {
+  try {
+    await prisma.$connect();
+    console.log('✅ PostgreSQL (Prisma ORM) Connected Successfully');
+    // Pre-cache 110 catalog services into Vector RAG memory
+    await syncAndLoadServiceVectors(false);
+  } catch (err) {
+    console.error('❌ PostgreSQL / RAG Connection Error:', err.message);
+  }
+})();
 
 // AI Provider Layer
 (async () => {

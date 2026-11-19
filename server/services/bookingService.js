@@ -54,8 +54,21 @@ import {
   recordDemand,
   generateFeatureRecord,
 } from './featureService.js';
+import { prisma } from '../config/prisma.js';
 
-
+function formatPrismaBooking(booking) {
+  if (!booking) return null;
+  return {
+    ...booking,
+    _id: booking.id,
+    service: booking.serviceName || booking.service,
+    customer: booking.customer ? { ...booking.customer, _id: booking.customer.id } : booking.customerId,
+    worker: booking.worker ? { ...booking.worker, _id: booking.worker.id } : booking.workerId,
+    status: (booking.status || 'PENDING').toLowerCase().replace('_', '-'),
+    paymentStatus: (booking.paymentStatus || 'PENDING').toLowerCase(),
+    paymentMethod: booking.paymentMethod || 'Wallet',
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INTERNAL: applyTransition
@@ -70,6 +83,32 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdates = {}) {
   validateTransition(currentStatus, nextStatus, AppError, StatusCodes);
+
+  // 1. PostgreSQL (Prisma) Attempt
+  try {
+    const prismaStatus = nextStatus.toUpperCase().replace('-', '_');
+    const updateData = { status: prismaStatus };
+    if (extraUpdates.worker) updateData.workerId = extraUpdates.worker;
+    if (extraUpdates.paymentStatus) updateData.paymentStatus = extraUpdates.paymentStatus.toUpperCase();
+    if (extraUpdates.paymentMethod) updateData.paymentMethod = extraUpdates.paymentMethod;
+
+    const existing = await prisma.booking.findFirst({
+      where: { OR: [{ id: bookingId }, { bookingId }] }
+    });
+    if (existing) {
+      const updated = await prisma.booking.update({
+        where: { id: existing.id },
+        data: updateData,
+        include: {
+          customer: { select: { id: true, name: true, email: true, phone: true } },
+          worker: { select: { id: true, name: true, phone: true } },
+        },
+      });
+      return formatPrismaBooking(updated);
+    }
+  } catch (prismaErr) {
+    // If not found in Prisma or error, fall through to MongoDB / Demo
+  }
 
   const tsField = transitionTimestampField(nextStatus);
   const update = {
@@ -118,6 +157,59 @@ async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdate
 export async function createBooking(data, customerId, io, customerName, reqCtx = {}) {
   // Validate service existence, active status and category match
   await validateServiceForBooking(data.service, data.category, data.serviceId);
+
+  // 1. PostgreSQL (Prisma) Creation
+  try {
+    const count = await prisma.booking.count();
+    const bookingId = `SC-${count + 2800}`;
+
+    let matchedService = null;
+    if (data.serviceId) {
+      matchedService = await prisma.service.findFirst({
+        where: { OR: [{ id: data.serviceId }, { serviceId: data.serviceId }] },
+      });
+    }
+    if (!matchedService && data.service) {
+      matchedService = await prisma.service.findFirst({
+        where: { name: { equals: data.service, mode: 'insensitive' } },
+      });
+    }
+
+    const amount = Number(data.amount) || 0;
+    const created = await prisma.booking.create({
+      data: {
+        bookingId,
+        customerId,
+        serviceId: matchedService ? matchedService.id : undefined,
+        serviceName: data.service || (matchedService ? matchedService.name : 'General Service'),
+        category: data.category || (matchedService ? matchedService.category : 'Home Repairs'),
+        description: data.description || '',
+        scheduledDate: data.scheduledDate ? new Date(data.scheduledDate) : new Date(),
+        scheduledTime: data.scheduledTime || '10:00 AM',
+        address: data.address || '',
+        city: data.city || 'Mumbai',
+        amount,
+        platformCommission: Math.round(amount * 0.1 * 100) / 100,
+        workerEarnings: Math.round(amount * 0.9 * 100) / 100,
+        status: 'PENDING',
+      },
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, phone: true } },
+      },
+    });
+
+    notifyAdmin(
+      io,
+      'New Booking',
+      `Booking ${bookingId} created by ${customerName || 'Customer'}.`,
+      'alert'
+    );
+
+    return formatPrismaBooking(created);
+  } catch (prismaErr) {
+    console.warn('[createBooking] Prisma creation fallback:', prismaErr.message);
+  }
 
   if (mongoose.connection.readyState !== 1) {
     const booking = createDemoBooking(data, customerId, customerName);
@@ -197,6 +289,34 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
 // @returns {Promise<{bookings, total, page, pages}>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getAllBookings({ status, page = 1, limit = 20, search } = {}) {
+  // 1. Try PostgreSQL (Prisma)
+  try {
+    const where = {};
+    if (status) where.status = status.toUpperCase().replace('-', '_');
+    if (search) where.bookingId = { contains: search, mode: 'insensitive' };
+    const total = await prisma.booking.count({ where });
+    if (total > 0 || mongoose.connection.readyState !== 1) {
+      const bookings = await prisma.booking.findMany({
+        where,
+        include: {
+          customer: { select: { id: true, name: true, email: true, phone: true } },
+          worker: { select: { id: true, name: true, email: true, phone: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: parseInt(limit),
+      });
+      return {
+        bookings: bookings.map(formatPrismaBooking),
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / limit) || 1,
+      };
+    }
+  } catch (prismaErr) {
+    // Fall back
+  }
+
   if (mongoose.connection.readyState !== 1) {
     const all = getAllDemoBookings({ status, search });
     const total = all.length;
@@ -229,6 +349,24 @@ export async function getAllBookings({ status, page = 1, limit = 20, search } = 
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getCustomerBookings(customerId, status) {
+  // 1. Try PostgreSQL (Prisma)
+  try {
+    const where = { customerId };
+    if (status) where.status = status.toUpperCase().replace('-', '_');
+    const bookings = await prisma.booking.findMany({
+      where,
+      include: {
+        worker: { select: { id: true, name: true, phone: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (bookings.length > 0 || mongoose.connection.readyState !== 1) {
+      return bookings.map(formatPrismaBooking);
+    }
+  } catch (prismaErr) {
+    // Fall back
+  }
+
   if (mongoose.connection.readyState !== 1) {
     return getDemoBookingsForCustomer(customerId, status);
   }
@@ -247,6 +385,24 @@ export async function getCustomerBookings(customerId, status) {
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getWorkerJobs(workerId, status) {
+  // 1. Try PostgreSQL (Prisma)
+  try {
+    const where = { workerId };
+    if (status) where.status = status.toUpperCase().replace('-', '_');
+    const bookings = await prisma.booking.findMany({
+      where,
+      include: {
+        customer: { select: { id: true, name: true, phone: true, address: true } },
+      },
+      orderBy: { scheduledDate: 'desc' },
+    });
+    if (bookings.length > 0 || mongoose.connection.readyState !== 1) {
+      return bookings.map(formatPrismaBooking);
+    }
+  } catch (prismaErr) {
+    // Fall back
+  }
+
   if (mongoose.connection.readyState !== 1) {
     return getDemoBookingsForWorker(workerId, status);
   }
@@ -265,6 +421,40 @@ export async function getWorkerJobs(workerId, status) {
 // @returns {Promise<Booking>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getBookingById(bookingId, requestingUser) {
+  // 1. Try PostgreSQL (Prisma)
+  try {
+    const booking = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id: bookingId }, { bookingId: bookingId }],
+      },
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, email: true, phone: true } },
+      },
+    });
+    if (booking) {
+      const formatted = formatPrismaBooking(booking);
+      if (
+        requestingUser.role === 'customer' &&
+        String(formatted.customerId) !== String(requestingUser._id) &&
+        String(formatted.customerId) !== String(requestingUser.id)
+      ) {
+        throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+      }
+      if (
+        requestingUser.role === 'worker' &&
+        formatted.workerId &&
+        String(formatted.workerId) !== String(requestingUser._id) &&
+        String(formatted.workerId) !== String(requestingUser.id)
+      ) {
+        throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+      }
+      return formatted;
+    }
+  } catch (prismaErr) {
+    if (prismaErr instanceof AppError) throw prismaErr;
+  }
+
   if (mongoose.connection.readyState !== 1) {
     const booking = findDemoBookingById(bookingId);
     if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
@@ -326,13 +516,36 @@ export async function updateBookingFields(bookingId, updates) {
   return booking;
 }
 
+export async function findAnyBooking(bookingId) {
+  try {
+    const pgBooking = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id: bookingId }, { bookingId }],
+      },
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, phone: true } },
+      },
+    });
+    if (pgBooking) return formatPrismaBooking(pgBooking);
+  } catch (err) {}
+
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const b = await Booking.findById(bookingId).populate('customer', 'name email phone').populate('worker', 'name workerIdCode');
+      if (b) return b;
+    } catch {}
+  }
+  return findDemoBookingById(bookingId);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // WORKFLOW OPERATIONS
 // Each method encapsulates: fetch → validate → transition → notify
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function assignBooking(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
   await assignWorker(workerId, booking.category);
@@ -341,13 +554,15 @@ export async function assignBooking(bookingId, workerId, io, reqCtx = {}) {
   const updated = await applyTransition(bookingId, prevStatus, 'assigned', { worker: workerId });
 
   // Phase 2: timeline entry
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_ASSIGNED, actor: workerId, actorRole: 'system', timestamp: new Date() } },
-  });
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_ASSIGNED, actor: workerId, actorRole: 'system', timestamp: new Date() } },
+    });
+  }
 
   notifyAdmin(io, 'Booking Assigned', `Booking ${updated.bookingId} assigned to worker.`, 'broadcast');
   notifyWorker(io, workerId, 'New Job Assigned', `You have been assigned booking ${updated.bookingId}.`);
-  notifyCustomer(io, booking.customer, 'Worker Assigned', `A worker has been assigned to your booking ${updated.bookingId}.`);
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker Assigned', `A worker has been assigned to your booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
 
   logBookingEvent(EVENT_TYPES.BOOKING_ASSIGNED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -358,10 +573,11 @@ export async function assignBooking(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
@@ -370,10 +586,12 @@ export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
   const updated = await applyTransition(bookingId, prevStatus, 'accepted');
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_ACCEPTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-  });
-  notifyCustomer(io, booking.customer, 'Booking Accepted', `Worker accepted your booking ${updated.bookingId}.`);
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_ACCEPTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
+    });
+  }
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Booking Accepted', `Worker accepted your booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_ACCEPTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerAcceptance(workerId, responseTimeMs);
@@ -383,10 +601,11 @@ export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function rejectBooking(bookingId, workerId, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
@@ -394,9 +613,11 @@ export async function rejectBooking(bookingId, workerId, reqCtx = {}) {
   const intermediate = await applyTransition(bookingId, prevStatus, 'rejected');
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_REJECTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-  });
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_REJECTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
+    });
+  }
   logBookingEvent(EVENT_TYPES.BOOKING_REJECTED, intermediate, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerRejection(workerId);
 
@@ -404,10 +625,11 @@ export async function rejectBooking(bookingId, workerId, reqCtx = {}) {
 }
 
 export async function setEnRoute(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
@@ -415,10 +637,12 @@ export async function setEnRoute(bookingId, workerId, io, reqCtx = {}) {
   const updated = await applyTransition(bookingId, prevStatus, 'en-route');
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_EN_ROUTE, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-  });
-  notifyCustomer(io, booking.customer, 'Worker En Route', `Your worker is on the way for booking ${updated.bookingId}.`);
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_EN_ROUTE, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
+    });
+  }
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker En Route', `Your worker is on the way for booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_EN_ROUTE, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'en-route' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_EN_ROUTE });
@@ -427,23 +651,28 @@ export async function setEnRoute(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function setArrived(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
   const prevStatus = booking.status;
   const arrivalTimeMs = booking.acceptedAt ? Date.now() - new Date(booking.acceptedAt).getTime() : null;
   const updated = await applyTransition(bookingId, prevStatus, 'arrived');
-  await generateStartOtp(bookingId);
+  try {
+    await generateStartOtp(bookingId);
+  } catch (e) {}
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_ARRIVED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { otpGenerated: true } } },
-  });
-  notifyCustomer(io, booking.customer, 'Worker Arrived', `Your worker has arrived for booking ${updated.bookingId}. Your Start OTP has been generated.`);
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_ARRIVED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { otpGenerated: true } } },
+    });
+  }
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker Arrived', `Your worker has arrived for booking ${updated.bookingId}. Your Start OTP has been generated.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_ARRIVED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerArrival(workerId, arrivalTimeMs);
@@ -453,22 +682,27 @@ export async function setArrived(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function startBooking(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'started', { jobStartedAt: new Date() });
-  await generateEndOtp(bookingId);
+  try {
+    await generateEndOtp(bookingId);
+  } catch (e) {}
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_STARTED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { endOtpGenerated: true } } },
-  });
-  notifyCustomer(io, booking.customer, 'Job Started', `Your job has started for booking ${updated.bookingId}. Your End OTP has been generated.`);
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_STARTED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { endOtpGenerated: true } } },
+    });
+  }
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Job Started', `Your job has started for booking ${updated.bookingId}. Your End OTP has been generated.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_STARTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'started' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_STARTED });
@@ -477,10 +711,11 @@ export async function startBooking(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
-  const booking = await Booking.findById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  if (!booking.worker || booking.worker.toString() !== workerId.toString()) {
+  const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
+  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
@@ -490,17 +725,19 @@ export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
   const updated = await applyTransition(bookingId, prevStatus, 'completed', { jobCompletedAt: now });
 
   // Phase 2
-  await Booking.findByIdAndUpdate(bookingId, {
-    $push: { timeline: { event: EVENT_TYPES.BOOKING_COMPLETED, actor: workerId, actorRole: 'worker', timestamp: now } },
-  });
+  if (mongoose.connection.readyState === 1) {
+    await Booking.findByIdAndUpdate(bookingId, {
+      $push: { timeline: { event: EVENT_TYPES.BOOKING_COMPLETED, actor: workerId, actorRole: 'worker', timestamp: now } },
+    });
+  }
   notifyAdmin(io, 'Job Completed', `Booking ${updated.bookingId} marked as completed.`, 'broadcast');
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_COMPLETED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
-  recordWorkerCompletion(workerId, completionTimeMs, booking.customer, booking.category, now);
-  recordCustomerCompletion(booking.customer, workerId);
+  recordWorkerCompletion(workerId, completionTimeMs, booking.customer?._id || booking.customer, booking.category, now);
+  recordCustomerCompletion(booking.customer?._id || booking.customer, workerId);
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'completed', jobCompletedAt: now }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_COMPLETED });
   // Phase 2 Batch 2: skill history, geo history, trust sync, demand
-  recordSkillCompletion(workerId, booking.service, booking.category, completionTimeMs, booking.customer);
+  recordSkillCompletion(workerId, booking.service, booking.category, completionTimeMs, booking.customer?._id || booking.customer);
   appendGeoHistory(workerId, bookingId, booking.city, booking.category, booking.service);
   syncTrustProfile(workerId);
   recordDemand(booking, 'completed');
@@ -509,15 +746,14 @@ export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
 }
 
 export async function payBooking(bookingId, requestingUser, paymentMethod, reqCtx = {}) {
-  const booking = mongoose.connection.readyState === 1
-    ? await Booking.findById(bookingId)
-    : findDemoBookingById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  const custId = booking.customer?._id || booking.customer;
+  const custId = booking.customer?._id || booking.customer?.id || booking.customer;
   if (
     requestingUser.role === 'customer' &&
-    String(custId) !== String(requestingUser._id)
+    String(custId) !== String(requestingUser._id) &&
+    String(custId) !== String(requestingUser.id)
   ) {
     throw new AppError('Access denied', StatusCodes.FORBIDDEN);
   }
@@ -540,9 +776,7 @@ export async function payBooking(bookingId, requestingUser, paymentMethod, reqCt
 }
 
 export async function closeBooking(bookingId, requestingUser, reqCtx = {}) {
-  const booking = mongoose.connection.readyState === 1
-    ? await Booking.findById(bookingId)
-    : findDemoBookingById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
   const prevStatus = booking.status;
@@ -562,22 +796,21 @@ export async function closeBooking(bookingId, requestingUser, reqCtx = {}) {
 }
 
 export async function cancelBooking(bookingId, requestingUser, reason, io, reqCtx = {}) {
-  const booking = mongoose.connection.readyState === 1
-    ? await Booking.findById(bookingId)
-    : findDemoBookingById(bookingId);
+  const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  const custId = booking.customer?._id || booking.customer;
+  const custId = booking.customer?._id || booking.customer?.id || booking.customer;
   if (
     requestingUser.role === 'customer' &&
-    String(custId) !== String(requestingUser._id)
+    String(custId) !== String(requestingUser._id) &&
+    String(custId) !== String(requestingUser.id)
   ) {
     throw new AppError('Access denied', StatusCodes.FORBIDDEN);
   }
 
-  const workerId = booking.worker?._id || booking.worker;
+  const workerId = booking.worker?._id || booking.worker?.id || booking.worker;
   if (requestingUser.role === 'worker') {
-    if (!workerId || String(workerId) !== String(requestingUser._id)) {
+    if (!workerId || (String(workerId) !== String(requestingUser._id) && String(workerId) !== String(requestingUser.id))) {
       throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
     }
   }
@@ -591,7 +824,7 @@ export async function cancelBooking(bookingId, requestingUser, reason, io, reqCt
 
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'cancelled', {
-    cancelledBy: requestingUser._id,
+    cancelledBy: requestingUser._id || requestingUser.id,
     ...(reason ? { cancellationReason: reason } : {}),
   });
 

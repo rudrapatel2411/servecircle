@@ -1,0 +1,1764 @@
+[
+  {
+    "serviceId": "ac-repair",
+    "name": "AC Repair & Diagnostics",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 449,
+    "description": "Expert repair, cooling fix, filter clean, and gas refill for Split & Window ACs.",
+    "tags": [
+      "ac-repair",
+      "home-repairs",
+      "30-day warranty",
+      "Vetted & certified mechanics",
+      "No mess left behind",
+      "High-quality spare parts used"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "electrician-visit",
+    "name": "General Electrical Work",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 199,
+    "description": "Fixing short circuits, switches, wiring faults, socket replacements, and lighting issues.",
+    "tags": [
+      "electrician-visit",
+      "home-repairs",
+      "Licensed electricians",
+      "Immediate safety isolation check",
+      "All small repair parts covered"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "plumbing-fix",
+    "name": "Plumbing Repairs & Leakage",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 249,
+    "description": "Fixing dripping taps, blockages, pipe leaks, and major sanitary fittings.",
+    "tags": [
+      "plumbing-fix",
+      "home-repairs",
+      "High-durability sealing tapes",
+      "Pressure test check",
+      "Includes clean-up post repair"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "carpenter-visit",
+    "name": "Carpentry Repair & Assembly",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 299,
+    "description": "Door repairs, hinge replacements, minor drawer slide fix, and lock repair.",
+    "tags": [
+      "carpenter-visit",
+      "home-repairs",
+      "Stainless steel heavy-duty hinges",
+      "Smooth slide operations guaranteed",
+      "Noise reduction alignment"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "painter-pro",
+    "name": "Wall Touch-ups & Painting",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 899,
+    "description": "Precision damping patch fix, wall scraping, primer coat, and quality touch-up paint.",
+    "tags": [
+      "painter-pro",
+      "home-repairs",
+      "Premium low-odor paints used",
+      "Full wall masking for furniture protection",
+      "Zero stain guarantee"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "car-wash",
+    "name": "Eco-Friendly Premium Car Wash",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 399,
+    "description": "High-pressure foam spray, interior vacuuming, dashboard polish, and door jamb cleaning.",
+    "tags": [
+      "car-wash",
+      "vehicle-services",
+      "PH-neutral shampoo used",
+      "Deep carpet vacuuming",
+      "Streak-free window wipe",
+      "Tire shine finish"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "bike-repair",
+    "name": "Bike/Scooter Full Tune-up",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 299,
+    "description": "Engine oil change, carburetor cleanup, chain lubrication, brake adjustment, and wash.",
+    "tags": [
+      "bike-repair",
+      "vehicle-services",
+      "Authorized original parts only",
+      "Digital emissions checks",
+      "Free washing included"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "battery-jumpstart",
+    "name": "Battery Jumpstart & Health Test",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 199,
+    "description": "On-demand battery recovery jump, alternator health check, and battery terminal cleaning.",
+    "tags": [
+      "battery-jumpstart",
+      "vehicle-services",
+      "15-minute response in city",
+      "Advanced voltage load testing",
+      "Anti-corrosion terminal gel applied"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "dent-paint",
+    "name": "Denting & Painting Panel repair",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 1499,
+    "description": "Denting correction, original paint matching, scratch removal, and clear gloss top coat.",
+    "tags": [
+      "dent-paint",
+      "vehicle-services",
+      "Computerized paint matching",
+      "Rustproofing base primer",
+      "Full panel finish warranty"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "deep-clean",
+    "name": "Full Home Deep Cleaning",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 2499,
+    "description": "Intense sanitization, vacuuming, window scrubbing, kitchen grease removal, and toilet wash.",
+    "tags": [
+      "deep-clean",
+      "cleaning",
+      "Industrial grade single-disc scrubbers",
+      "Eco-friendly germicides",
+      "4-member professional crew"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "sofa-cleaning",
+    "name": "Sofa & Carpet Shampooing",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 799,
+    "description": "Deep vacuum suction, stain lifting enzyme wash, fabric shampooing, and wet vacuum drying.",
+    "tags": [
+      "sofa-cleaning",
+      "cleaning",
+      "Removes 99% dust mites and stains",
+      "High-pressure vacuum extraction",
+      "Safe on velvet and leather"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pest-control",
+    "name": "Advanced Pest & Bug Control",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 899,
+    "description": "Odourless gel treatment for cockroaches, anti-termite barrier injection, and bedbug spray.",
+    "tags": [
+      "pest-control",
+      "cleaning",
+      "WHO-approved non-toxic chemicals",
+      "Safe for children and pets",
+      "90-day pest recurrence warranty"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "birthday-decor",
+    "name": "Grand Birthday Theme Decor",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 2999,
+    "description": "Custom balloon arches, LED lighting setup, character backdrops, and theme set-up.",
+    "tags": [
+      "birthday-decor",
+      "events",
+      "Over 10 custom themes available",
+      "Setup completed in under 3 hours",
+      "Clean post-event teardown included"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "catering-service",
+    "name": "Premium Catering (Per Plate)",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 399,
+    "description": "Vast menu selections of starters, main course, and desserts cooked by top rating chefs.",
+    "tags": [
+      "catering-service",
+      "events",
+      "High-hygiene certified ingredients",
+      "Uniformed servers & live counters",
+      "FSSAI approved hygiene standards"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "wifi-setup",
+    "name": "Smart Wi-Fi & Mesh Setup",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 349,
+    "description": "High-speed router configuration, dead-zone inspection, SSID channel optimization, and Mesh networking setup.",
+    "tags": [
+      "wifi-setup",
+      "home-it",
+      "Maximum bandwidth speed testing",
+      "Parental control setups included",
+      "Sleek cabling setup"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "cctv-setup",
+    "name": "Smart CCTV Security Install",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 999,
+    "description": "Outdoor/indoor HD CCTV mounting, DVR sync, cloud account configuration, and mobile live-view setup.",
+    "tags": [
+      "cctv-setup",
+      "home-it",
+      "Masked secure passwords",
+      "Night vision focus tuning",
+      "Clean conduit casing wiring"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "smart-doorbell",
+    "name": "Video Doorbell Installation",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 499,
+    "description": "Smart doorbell mounting, chime sync, Wi-Fi pairing, and cloud setup.",
+    "tags": [
+      "smart-doorbell",
+      "home-it",
+      "Compatible with Alexa & Google Home",
+      "Two-way voice test verified",
+      "Tamper alarm activation"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "elder-care",
+    "name": "Senior Citizen Care Attendant",
+    "category": "Care & Family",
+    "subCategory": "care-family",
+    "basePrice": 999,
+    "description": "Compassionate assistance for seniors, including medicine logs, mobility support, and basic health metrics tracking.",
+    "tags": [
+      "elder-care",
+      "care-family",
+      "Verified background & medically trained attendants",
+      "Daily BP/Sugar log updates",
+      "Patience & empathy verified"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "beauty-home",
+    "name": "Salon & Beauty at Home",
+    "category": "Care & Family",
+    "subCategory": "care-family",
+    "basePrice": 499,
+    "description": "Facials, hair spa, premium waxing, threading, and pedicure/manicure done at the convenience of home.",
+    "tags": [
+      "beauty-home",
+      "care-family",
+      "100% disposable hygiene kits used",
+      "Premium organic brand products",
+      "Stress-relieving head massages"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "driver-demand",
+    "name": "On-Demand Professional Driver",
+    "category": "Utility & Daily Services",
+    "subCategory": "utility-daily",
+    "basePrice": 399,
+    "description": "Hire verified drivers for outstation trips, night drives, or daily city commutes in your own vehicle.",
+    "tags": [
+      "driver-demand",
+      "utility-daily",
+      "Clean license history & zero-accident records",
+      "Professional etiquette",
+      "Emergency GPS route tracking"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "packers-helper",
+    "name": "Packers & Movers Loading Helper",
+    "category": "Utility & Daily Services",
+    "subCategory": "utility-daily",
+    "basePrice": 499,
+    "description": "Strong helper labor to safely pack, load, and shift heavy furniture & cardboard boxes.",
+    "tags": [
+      "packers-helper",
+      "utility-daily",
+      "Equipped with heavy lifting belts",
+      "Bubble wrap packing assistance",
+      "Trained to stack items compactly"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "home-tuition",
+    "name": "1-on-1 Academic Home Tutor",
+    "category": "Learning & Support",
+    "subCategory": "learning-support",
+    "basePrice": 299,
+    "description": "Personalized tuition for primary to high school students in Mathematics, Science, and English.",
+    "tags": [
+      "home-tuition",
+      "learning-support",
+      "Highly qualified academic tutors",
+      "Weekly progression tests",
+      "Mock board papers check"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "seniors-computer",
+    "name": "Computer & Smartphone Help for Seniors",
+    "category": "Learning & Support",
+    "subCategory": "learning-support",
+    "basePrice": 199,
+    "description": "Patient 1-on-1 coaching for senior citizens to comfortably navigate smartphones, online banking, and video calls.",
+    "tags": [
+      "seniors-computer",
+      "learning-support",
+      "Very high patience curriculum",
+      "Simplified print-out guides",
+      "Cyber-security awareness modules"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "tenant-ready",
+    "name": "Tenant-Ready Premium Package",
+    "category": "Property Services",
+    "subCategory": "property-services",
+    "basePrice": 4999,
+    "description": "Complete package: Deep cleaning, basic electrical repair, plumbing check, door oiling, and paint touchups.",
+    "tags": [
+      "tenant-ready",
+      "property-services",
+      "Increases property rental value instantly",
+      "Detailed inspection certificate checklist",
+      "100% turnkey handover"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "rental-inspection",
+    "name": "Structural Rental Inspection",
+    "category": "Property Services",
+    "subCategory": "property-services",
+    "basePrice": 999,
+    "description": "Exhaustive check for seepage dampness, wall cracks, electrical load compliance, and plumbing wear.",
+    "tags": [
+      "rental-inspection",
+      "property-services",
+      "Thermal moisture scanner tech used",
+      "20-page digital PDF report",
+      "Detailed cost estimates for repairs"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "waterproofing",
+    "name": "Monsoon Roof Waterproofing Pack",
+    "category": "Festive & Seasonal",
+    "subCategory": "festive-seasonal",
+    "basePrice": 1999,
+    "description": "High-density elastomeric compound coat, surface crack filling, and drainage check to prevent monsoon leakage.",
+    "tags": [
+      "waterproofing",
+      "festive-seasonal",
+      "3-year no-leakage warranty",
+      "Heavy UV resistance",
+      "Fast 4-hour curing process"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "diwali-prep",
+    "name": "Diwali Festive Preparation Combo",
+    "category": "Festive & Seasonal",
+    "subCategory": "festive-seasonal",
+    "basePrice": 1299,
+    "description": "High pressure balcony cleaning, festive LED strings hanging, door brass polish, and deep window cleaning.",
+    "tags": [
+      "diwali-prep",
+      "festive-seasonal",
+      "Professional ladder climbers",
+      "LED test check verification",
+      "Vetted decoration styling"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "furniture-assembly",
+    "name": "IKEA-style Furniture Assembly",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 399,
+    "description": "Precision flat-pack assembly for beds, wardrobes, chairs, and custom modular desks.",
+    "tags": [
+      "furniture-assembly",
+      "furniture-decor",
+      "All magnetic tools provided",
+      "Leveling check verified",
+      "Sturdy joints guarantee"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "furniture-polish",
+    "name": "Wood Polishing & Restoration",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 799,
+    "description": "Lacquer coating, deep wood polishing, scratch removal, and vintage touch-ups.",
+    "tags": [
+      "furniture-polish",
+      "furniture-decor",
+      "Odorless premium lacquers",
+      "Deep scratch repair filler",
+      "Gloss or matte choices"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "interior-design",
+    "name": "Interior Design Consultation",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 1499,
+    "description": "Professional space planning, custom color schemes, HSL palettes, and 2D floor plans.",
+    "tags": [
+      "interior-design",
+      "furniture-decor",
+      "1-on-1 expert designer chat",
+      "High resolution CAD layouts",
+      "Full material estimation catalogs"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "wallpaper-install",
+    "name": "Premium Wallpaper Installation",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 499,
+    "description": "Precision measurement, alignment, bubble-free rolling, and high-durability paste application.",
+    "tags": [
+      "wallpaper-install",
+      "furniture-decor",
+      "Seamless pattern matching",
+      "Zero mold adhesive coating",
+      "Clean edge finishing"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "plant-care",
+    "name": "Plant Care & Garden Cleanup",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 299,
+    "description": "Pruning, weeding, organic manure mix, insect treatment, and seasonal soil optimization.",
+    "tags": [
+      "plant-care",
+      "garden-outdoor",
+      "Natural neem-oil pest sprays",
+      "Imported slow-release fertilizers",
+      "Trimming debris disposal"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "lawn-mowing",
+    "name": "Lawn Mowing & Edging",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 349,
+    "description": "Professional mechanical grass trimming, edging lines, and lawn aeration.",
+    "tags": [
+      "lawn-mowing",
+      "garden-outdoor",
+      "Sharp rotary power mowers",
+      "Precise geometric border lining",
+      "Dead grass collection"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "welding-gate-fix",
+    "name": "Welding & Iron Gate Repairs",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 499,
+    "description": "Door hinge welding, grill adjustments, rusted rail replacement, and lock plate reinforcement.",
+    "tags": [
+      "welding-gate-fix",
+      "garden-outdoor",
+      "High-volt welding safety kit",
+      "Rustproof primer coating",
+      "Includes structural hinge testing"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "full-home-shifting",
+    "name": "Full Home Shifting service",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 4999,
+    "description": "Heavy duty wrapping, carton packing, loading, logistics transit, and unloading support.",
+    "tags": [
+      "full-home-shifting",
+      "relocation",
+      "Bubble wrapping for all electronics",
+      "Closed container transit truck",
+      "Damage protection SLA up to 10k"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "single-item-transport",
+    "name": "Single Heavy Item Transport",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 799,
+    "description": "Safe transport for single heavy items like treadmills, refrigerators, double beds, or steel cupboards.",
+    "tags": [
+      "single-item-transport",
+      "relocation",
+      "Equipped with heavy piano straps",
+      "Mini-truck booking included",
+      "Scratchproof blanket wrapping"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "storage-vault",
+    "name": "Digital Secure Storage Vault",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 1999,
+    "description": "Rent monthly dry storage lockers, fully monitored with 24/7 CCTV and climate lock.",
+    "tags": [
+      "storage-vault",
+      "relocation",
+      "Climate controlled moisture sealing",
+      "Individual padlock keys",
+      "Insured against fire & damage"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "doctor-visit",
+    "name": "General Doctor Home Visit",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 799,
+    "description": "Certified general physician diagnostic checkup, prescription, and patient status log.",
+    "tags": [
+      "doctor-visit",
+      "health-wellness",
+      "Registered medical practitioners (MBBS/MD)",
+      "Full diagnostics vital gear",
+      "Free follow-up chat support"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "physiotherapy",
+    "name": "Orthopaedic Physiotherapy Session",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 499,
+    "description": "Therapeutic movements, ultrasound therapy, joint mobilization, and post-surgery care.",
+    "tags": [
+      "physiotherapy",
+      "health-wellness",
+      "Certified clinical therapists (BPT/MPT)",
+      "Portable heat/tens devices",
+      "Custom recovery timeline blueprint"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "lab-diagnostics",
+    "name": "Lab Sample Collection at Home",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 299,
+    "description": "Professional phlebotomist blood/urine sample extraction and digital report processing.",
+    "tags": [
+      "lab-diagnostics",
+      "health-wellness",
+      "100% disposable vacuum needles",
+      "Chilled sample transport box",
+      "Verified reports under 12 hours"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "babysitting",
+    "name": "Hourly Professional Babysitter",
+    "category": "Kids & Elderly Care",
+    "subCategory": "kids-elderly",
+    "basePrice": 249,
+    "description": "Background checked child caretaker for child feeding, basic study play, and companion supervision.",
+    "tags": [
+      "babysitting",
+      "kids-elderly",
+      "Infant safety first-aid trained",
+      "High patience verification trial",
+      "Constant activity reporting logs"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "special-needs-care",
+    "name": "Special Caregiver Attendant",
+    "category": "Kids & Elderly Care",
+    "subCategory": "kids-elderly",
+    "basePrice": 799,
+    "description": "Highly qualified nursing assistant for Alzheimer, dementia, or bedridden senior citizen support.",
+    "tags": [
+      "special-needs-care",
+      "kids-elderly",
+      "Registered clinical caretakers",
+      "Bedsore treatment specialized",
+      "Emergency CPR protocols certified"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pet-grooming",
+    "name": "Premium Pet Grooming & Spa",
+    "category": "Pet Services",
+    "subCategory": "pet-services",
+    "basePrice": 599,
+    "description": "PH-neutral organic bath shampoo, nail trimming, ear sanitizing, tick removal, and styling.",
+    "tags": [
+      "pet-grooming",
+      "pet-services",
+      "Calm-handling pet groomers",
+      "Odor-control conditioning coat",
+      "Flea & tick prevention spray"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "vet-visit",
+    "name": "Veterinary Doctor Home Checkup",
+    "category": "Pet Services",
+    "subCategory": "pet-services",
+    "basePrice": 799,
+    "description": "At-home pet immunization vaccines, general illness diagnostics, and diet plans.",
+    "tags": [
+      "vet-visit",
+      "pet-services",
+      "Licensed Veterinary Surgeons (BVSc)",
+      "At-home deworming included",
+      "Official vaccination booklet update"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "home-chef",
+    "name": "Gourmet Home Chef (Per Meal)",
+    "category": "Food & Kitchen",
+    "subCategory": "food-kitchen",
+    "basePrice": 599,
+    "description": "Hire culinary experts to cook premium traditional Indian, Mughlai, or Continental meals in your kitchen.",
+    "tags": [
+      "home-chef",
+      "food-kitchen",
+      "High-hygiene apron & gloves worn",
+      "Kitchen cleaning included post-cooking",
+      "Chef signature HSL spices used"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "tiffin-subscription",
+    "name": "Daily Tiffin Meal Plan Subscription",
+    "category": "Food & Kitchen",
+    "subCategory": "food-kitchen",
+    "basePrice": 2499,
+    "description": "Monthly delivery of healthy home-cooked lunch and dinner boxes in heat-retention packs.",
+    "tags": [
+      "tiffin-subscription",
+      "food-kitchen",
+      "Low oil and zero MSG used",
+      "Vegetarian and High-Protein choices",
+      "Cancel/pause subscription in one-tap"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "airport-transfer",
+    "name": "Guaranteed Airport Drop & Pick",
+    "category": "Travel & Commute",
+    "subCategory": "travel-commute",
+    "basePrice": 799,
+    "description": "Sanitized premium sedan, flight tracking, punctual dispatcher, and toll handling.",
+    "tags": [
+      "airport-transfer",
+      "travel-commute",
+      "100% no-cancellation warranty",
+      "Flight delay buffer monitoring",
+      "Polite, English-speaking driver"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "outstation-chauffeur",
+    "name": "Multi-Day Outstation Chauffeur",
+    "category": "Travel & Commute",
+    "subCategory": "travel-commute",
+    "basePrice": 999,
+    "description": "Vetted expert highway driver for long-distance family travel in your vehicle.",
+    "tags": [
+      "outstation-chauffeur",
+      "travel-commute",
+      "Night-driving experts",
+      "Basic mechanical emergency diagnostics",
+      "Clean traffic records only"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "rwa-bulk-clean",
+    "name": "RWA Lobby & Pathway Cleaning",
+    "category": "Society Management",
+    "subCategory": "society-management",
+    "basePrice": 3999,
+    "description": "High pressure washing of society corridors, staircase, elevator lobbies, and shared parks.",
+    "tags": [
+      "rwa-bulk-clean",
+      "society-management",
+      "Industrial jet washers used",
+      "Scented germicide sanitizers",
+      "6-member expert crew"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "society-security",
+    "name": "Vetted Security Guard Roster",
+    "category": "Society Management",
+    "subCategory": "society-management",
+    "basePrice": 899,
+    "description": "12-hour guard placements for apartments, main gates, and office campuses.",
+    "tags": [
+      "society-security",
+      "society-management",
+      "KYC verified & height audited guards",
+      "Biometric tracking system sync",
+      "Emergency fire isolation certified"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "geyser-repair",
+    "name": "Geyser Installation & Maintenance",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 349,
+    "description": "Thermostat replacement, water scale descaling, heating element testing, and new geyser mounting.",
+    "tags": [
+      "geyser-repair",
+      "home-repairs",
+      "High-resistance replacement coils",
+      "Auto shutoff thermal test",
+      "Includes pipe leak audit"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "locksmith-pro",
+    "name": "Emergency Locksmith & Key Making",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 449,
+    "description": "Non-destructive door opening, premium deadbolt installation, key duplication, and smart-lock sync.",
+    "tags": [
+      "locksmith-pro",
+      "home-repairs",
+      "20-minute emergency arrival",
+      "Advanced brass master lock cylinders",
+      "Scratchless unlock guarantees"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "appliance-install",
+    "name": "Washing Machine & Appliance Install",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 299,
+    "description": "Inlet/outlet hose alignment, level auditing, stabilizer wiring, and fully automatic drum calibration.",
+    "tags": [
+      "appliance-install",
+      "home-repairs",
+      "Anti-vibration rubber base pads",
+      "Water pressure balancing",
+      "Full operational guide demo"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "chimney-service",
+    "name": "Kitchen Chimney Deep Clean & Repair",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 599,
+    "description": "Baffle filter degreasing, motor carbon cleaning, exhaust duct inspection, and suction recovery.",
+    "tags": [
+      "chimney-service",
+      "home-repairs",
+      "Caustic-free eco degreasers used",
+      "Suction pressure gauge testing",
+      "Exhaust mesh cleaning"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "water-purifier",
+    "name": "Water Purifier (RO) Filter Change",
+    "category": "Home Repairs",
+    "subCategory": "home-repairs",
+    "basePrice": 499,
+    "description": "Sediment, carbon, and RO membrane replacements, TDS calibration, and leakage troubleshooting.",
+    "tags": [
+      "water-purifier",
+      "home-repairs",
+      "Certified food-grade membrane filters",
+      "Digital TDS level certification",
+      "Antibacterial post-carbon block"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "car-detailing",
+    "name": "Premium Car Ceramic Detailing & Waxing",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 2499,
+    "description": "Three-stage orbital paint correction, clay bar treatment, high-durability carnauba wax, and interior conditioning.",
+    "tags": [
+      "car-detailing",
+      "vehicle-services",
+      "9H ceramic shield liquid top coat",
+      "Swirl mark correction guarantee",
+      "UV protection shielding"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "bike-puncture",
+    "name": "On-Demand Bike Puncture & Air Fill",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 149,
+    "description": "Mobile tubeless tire repair, alloy rim verification, nitrogen air pressure top-up, and valve core change.",
+    "tags": [
+      "bike-puncture",
+      "vehicle-services",
+      "15-minute roadside assistance",
+      "Heavy duty cold vulcanizing plugs",
+      "Tire wear index diagnostics"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "windshield-repair",
+    "name": "Windshield Crack Repair & Treatment",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 799,
+    "description": "Precision vacuum resin injection to arrest bullseye/star cracks, scratch buffing, and hydrophobic rain coat.",
+    "tags": [
+      "windshield-repair",
+      "vehicle-services",
+      "High-refractive optical resin used",
+      "Arrests crack spreading completely",
+      "Clear wiper glide finish"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "engine-coolant",
+    "name": "Engine Fluid & Coolant Flush Service",
+    "category": "Vehicle Services",
+    "subCategory": "vehicle-services",
+    "basePrice": 399,
+    "description": "Radiator cleaning, high-performance synthetic engine oil check, brake fluid top-up, and coolant refill.",
+    "tags": [
+      "engine-coolant",
+      "vehicle-services",
+      "OEM grade glycol coolants only",
+      "Complete radiator scale descaling",
+      "Fluid level indicator calibration"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "water-tank-clean",
+    "name": "Overhead Water Tank Vacuum Clean",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 1299,
+    "description": "High-pressure jet wash, sediment vacuuming, sludge disposal, and food-grade antibacterial spray.",
+    "tags": [
+      "water-tank-clean",
+      "cleaning",
+      "Anti-algae disinfection treatments",
+      "TDS water sample audit",
+      "Submersible high-pressure mud pump"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "bathroom-deep-clean",
+    "name": "Intense Bathroom Stain & Descaling Clean",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 499,
+    "description": "Acid-free tile scrubbing, glass descaling, steel tap polishing, and intensive toilet disinfection.",
+    "tags": [
+      "bathroom-deep-clean",
+      "cleaning",
+      "Nano polishing wax on steel taps",
+      "Removes heavy hard-water scaling",
+      "Anti-odor active drainage treatment"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "kitchen-deep-clean",
+    "name": "Kitchen Chimney & Slab Oil Scrubbing",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 999,
+    "description": "Removal of oil stains from walls, deep degreasing of shelves, kitchen sink descaling, and grout whitening.",
+    "tags": [
+      "kitchen-deep-clean",
+      "cleaning",
+      "Hot steam extraction degreasing",
+      "FSSAI compliance clean standards",
+      "Pest barrier gel applications"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "fridge-cleaning",
+    "name": "Refrigerator Deep Sanitization",
+    "category": "Cleaning & Hygiene",
+    "subCategory": "cleaning",
+    "basePrice": 399,
+    "description": "Removal of food debris, cleaning of rubber gaskets to arrest mold, shelf washing, and odor neutralization.",
+    "tags": [
+      "fridge-cleaning",
+      "cleaning",
+      "Food-safe non-toxic disinfectants",
+      "Gasket restoration for airtight lock",
+      "Activated carbon odor absorber"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "dj-setup",
+    "name": "Professional DJ & Acoustic Audio Setup",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 4999,
+    "description": "1000W RMS high-bass speakers, cordless microphones, LED consoles, and custom song mixes.",
+    "tags": [
+      "dj-setup",
+      "events",
+      "Dual cordless vocal microphones",
+      "Pre-event genre alignment session",
+      "Bass-rich subwoofer setup included"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "photographer-pro",
+    "name": "Event & Portrait Photography Studio",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 3999,
+    "description": "High-res mirrorless cameras, prime lens configurations, studio strobe setups, and custom photo editing.",
+    "tags": [
+      "photographer-pro",
+      "events",
+      "Edited high-res cloud links in 48 hours",
+      "Includes studio strobe softboxes",
+      "Raw files copy handed instantly"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "stage-lighting",
+    "name": "Atmospheric Stage & Laser Light Install",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 2999,
+    "description": "RGB par cans, high-velocity smoke machines, programmable laser beams, and safety mounting.",
+    "tags": [
+      "stage-lighting",
+      "events",
+      "Heavy-duty tripods with safety clamps",
+      "Smoke machine fluid included",
+      "Sound-synchronized laser patterns"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "anchor-emcee",
+    "name": "Live Event Anchor & Host Performance",
+    "category": "Events & Celebrations",
+    "subCategory": "events",
+    "basePrice": 3499,
+    "description": "Energetic host for birthdays, corporate meets, and interactive family icebreaker games.",
+    "tags": [
+      "anchor-emcee",
+      "events",
+      "Bilingual fluent stage performance",
+      "Custom tailored engagement scripts",
+      "Includes props for kid games"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "smart-tv-setup",
+    "name": "Smart TV Wall Mounting & Setup",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 399,
+    "description": "Level-matched heavy duty mounting, concrete drilling, cable conduit hiding, and app synchronizations.",
+    "tags": [
+      "smart-tv-setup",
+      "home-it",
+      "Premium heavy gauge carbon brackets",
+      "Spirit level bubble balance check",
+      "HDMI arc receiver sync"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pc-tuneup",
+    "name": "Laptop OS Setup, Tune-up & Malware Repair",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 499,
+    "description": "Operating system installation, registry optimization, deep virus cleans, and hardware thermal paste change.",
+    "tags": [
+      "pc-tuneup",
+      "home-it",
+      "Includes licensed system tuner tools",
+      "Complete data backup guarantee",
+      "Fan dust extraction service"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "printer-install",
+    "name": "Wireless Printer Installation & Sync",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 249,
+    "description": "Setting up wireless print queues, mobile cloud printing configurations, and alignment tests.",
+    "tags": [
+      "printer-install",
+      "home-it",
+      "Multi-device smartphone print setup",
+      "Double-sided printing configurations",
+      "Printhead cleaning cycles run"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "home-theater-sync",
+    "name": "Surround Sound Home Theater Calibration",
+    "category": "Home IT & Tech Support",
+    "subCategory": "home-it",
+    "basePrice": 999,
+    "description": "Acoustic positioning check, cable splicing, equalizer level settings, and Bluetooth routing.",
+    "tags": [
+      "home-theater-sync",
+      "home-it",
+      "5.1/7.1 speaker spatial tests",
+      "Hidden under-carpet wire casings",
+      "Dolby Atmos output validation"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "makeup-artist",
+    "name": "Bridal & Party Makeup Home Styling",
+    "category": "Care & Family",
+    "subCategory": "care-family",
+    "basePrice": 1499,
+    "description": "Premium cosmetic brands applications, false lashes fitting, hairstyle setting, and drape adjustments.",
+    "tags": [
+      "makeup-artist",
+      "care-family",
+      "Premium international makeup kits only",
+      "Airbrush options available",
+      "Includes setting sprays for 12hr stay"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "yoga-instructor",
+    "name": "1-on-1 Personalized Home Yoga Coach",
+    "category": "Care & Family",
+    "subCategory": "care-family",
+    "basePrice": 399,
+    "description": "Custom therapeutic stretch programs, breathing exercises (Pranayama), and meditation guidance.",
+    "tags": [
+      "yoga-instructor",
+      "care-family",
+      "Certified Patanjali/Morarji yoga instructors",
+      "Body alignment correction focus",
+      "Stress levels track sheet"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "cook-for-day",
+    "name": "Daily Meals Home Cook Placement",
+    "category": "Care & Family",
+    "subCategory": "care-family",
+    "basePrice": 499,
+    "description": "Preparation of traditional everyday recipes (dal, sabzi, roti, rice) matching salt/spice limits.",
+    "tags": [
+      "cook-for-day",
+      "care-family",
+      "FSSAI approved cook hygiene training",
+      "Vegetable cleaning & sanitizing",
+      "Kitchen cleaning included"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "errand-boy",
+    "name": "Local Errand Runner & Document Delivery",
+    "category": "Utility & Daily Services",
+    "subCategory": "utility-daily",
+    "basePrice": 149,
+    "description": "Picking up medicines, government document deposits, grocery drops, and physical checks.",
+    "tags": [
+      "errand-boy",
+      "utility-daily",
+      "GPS tracking shared in real-time",
+      "ID-verified courier runner",
+      "Sealed tamper-proof envelope packaging"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "laundry-pickup",
+    "name": "Express Laundry & Premium Ironing Pickup",
+    "category": "Utility & Daily Services",
+    "subCategory": "utility-daily",
+    "basePrice": 299,
+    "description": "Weight-based premium laundry washing, tumble drying, lint removal, and steam ironing combo.",
+    "tags": [
+      "laundry-pickup",
+      "utility-daily",
+      "Antibacterial softeners used",
+      "Zero color running assurance",
+      "Crumple-free hanger packing"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "ironing-help",
+    "name": "At-home Garment Pressing & Ironing",
+    "category": "Utility & Daily Services",
+    "subCategory": "utility-daily",
+    "basePrice": 199,
+    "description": "Heavy steam iron specialist coming home to iron bulk cotton suits, shirts, and curtains.",
+    "tags": [
+      "ironing-help",
+      "utility-daily",
+      "Heavy Teflon non-stick steam irons",
+      "Aesthetic crease formations",
+      "Delicate silk care setting guarantees"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "spoken-english",
+    "name": "1-on-1 Spoken English & Accent Coach",
+    "category": "Learning & Support",
+    "subCategory": "learning-support",
+    "basePrice": 349,
+    "description": "Confidence-building vocabulary sessions, voice modulation, mock interview practice, and accent tuning.",
+    "tags": [
+      "spoken-english",
+      "learning-support",
+      "TEFL/CELTA certified language trainers",
+      "Pre-recorded feedback checks",
+      "Executive business lexicon guides"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "coding-tutor",
+    "name": "Python & Web Development Coding Tutor",
+    "category": "Learning & Support",
+    "subCategory": "learning-support",
+    "basePrice": 499,
+    "description": "Learn logical loops, React frameworks, database SQL triggers, and deploy live Git projects.",
+    "tags": [
+      "coding-tutor",
+      "learning-support",
+      "Ex-MNC tech leads as mentors",
+      "100% project-based building approach",
+      "Free resume push to startup partners"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "resume-writing",
+    "name": "Executive Resume & LinkedIn Makeover Coach",
+    "category": "Learning & Support",
+    "subCategory": "learning-support",
+    "basePrice": 899,
+    "description": "ATS optimization, action verb integrations, metric-based descriptions, and LinkedIn profile tuning.",
+    "tags": [
+      "resume-writing",
+      "learning-support",
+      "Trained by senior HR recruiters",
+      "98%+ ATS software score targets",
+      "Professional corporate headshot tips"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pest-pre-purchase",
+    "name": "Pre-Purchase Property Pest & Quality Check",
+    "category": "Property Services",
+    "subCategory": "property-services",
+    "basePrice": 1199,
+    "description": "Comprehensive dry-wood termite check, thermal scans for interior piping leaks, and slab inspection.",
+    "tags": [
+      "pest-pre-purchase",
+      "property-services",
+      "Moisture measurement scan probes",
+      "Digital quality clearance certificates",
+      "Structural crack integrity mapping"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "house-appraisal",
+    "name": "Official Property Valuation & Rental Guidance",
+    "category": "Property Services",
+    "subCategory": "property-services",
+    "basePrice": 1499,
+    "description": "Comparative market valuation models, carpet area check, local circle rate index matching, and rental estimates.",
+    "tags": [
+      "house-appraisal",
+      "property-services",
+      "Certified government valuer audits",
+      "Detailed neighborhood trend sheets",
+      "Legal compliance checklists"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "key-management",
+    "name": "Digital Key Holding & Periodic Inspections",
+    "category": "Property Services",
+    "subCategory": "property-services",
+    "basePrice": 1999,
+    "description": "Secure custody of apartment keys, fortnightly ventilation rounds, utility meter checks, and safety checks.",
+    "tags": [
+      "key-management",
+      "property-services",
+      "Biometric vault key tracking",
+      "High resolution video inspections",
+      "Instant structural leakage alerts"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "air-purifier-service",
+    "name": "Winter Air Purifier Filter Replacement",
+    "category": "Festive & Seasonal",
+    "subCategory": "festive-seasonal",
+    "basePrice": 449,
+    "description": "HEPA & active carbon filters descaling, ionization chamber cleaning, fan dust sweep, and AQI calibration.",
+    "tags": [
+      "air-purifier-service",
+      "festive-seasonal",
+      "True-HEPA Grade-13 replacements",
+      "AQI sensor cleaning with isopropyl alcohol",
+      "Includes PM2.5 baseline validation"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "christmas-tree-decor",
+    "name": "Premium Christmas Tree & Lawn Lighting",
+    "category": "Festive & Seasonal",
+    "subCategory": "festive-seasonal",
+    "basePrice": 1999,
+    "description": "Setting up giant pine trees, fairy wire string wrapping, mistletoe arrangements, and lawn LED deer models.",
+    "tags": [
+      "christmas-tree-decor",
+      "festive-seasonal",
+      "Flame-retardant electrical cabling",
+      "Over 50 premium ornaments included",
+      "Clean dismantling service post-NewYear"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "holi-color-clean",
+    "name": "Post-Holi Wall Stain Scrubbing & Wash",
+    "category": "Festive & Seasonal",
+    "subCategory": "festive-seasonal",
+    "basePrice": 1499,
+    "description": "Chemical-free stain scrubbing from tiles, wooden main gates, floor patios, and wall washing.",
+    "tags": [
+      "holi-color-clean",
+      "festive-seasonal",
+      "No-paint-peel scrub solvents used",
+      "High pressure floor water blasting",
+      "Neutralizer spray to arrest stains"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "sofa-upholstery",
+    "name": "Premium Sofa Fabric Upholstery Repair",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 1499,
+    "description": "Foam padding replacement, heavy weave fabric stitching, webbing belt tightening, and armrest restoration.",
+    "tags": [
+      "sofa-upholstery",
+      "furniture-decor",
+      "Over 200+ fabric premium textures",
+      "High-density memory foam padding",
+      "Anti-sag steel zig-zag springs"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "curtain-installation",
+    "name": "Curtain Rod Mounting & Drape Steaming",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 299,
+    "description": "Precise drilling, bracket installations, heavy rod alignment, curtain ring insertion, and wrinkle steam iron.",
+    "tags": [
+      "curtain-installation",
+      "furniture-decor",
+      "Heavy concrete anchor bolts used",
+      "Laser level alignment checks",
+      "Wrinkle extraction steam treatment"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "modular-kitchen-fix",
+    "name": "Modular Cabinet Soft-Close Tuning",
+    "category": "Furniture & Decor",
+    "subCategory": "furniture-decor",
+    "basePrice": 499,
+    "description": "Damper installations, hydraulic cabinet strut replacement, misaligned drawers adjustment, and corner carousel tuning.",
+    "tags": [
+      "modular-kitchen-fix",
+      "furniture-decor",
+      "Premium stainless steel hydraulic hinges",
+      "No-slam magnetic latches included",
+      "Height adjustment alignment check"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "drip-irrigation",
+    "name": "Automatic Drip Irrigation Installation",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 1299,
+    "description": "Setting up smart timers, pressure dialers, thin drip pipes routing, and micro nozzle fittings.",
+    "tags": [
+      "drip-irrigation",
+      "garden-outdoor",
+      "Rain-sensor automatic bypass timers",
+      "Zero leak compression couplings",
+      "Roots hydration mapping"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "garden-design",
+    "name": "Balcony Vertical Garden Design & Setup",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 2499,
+    "description": "Installing iron frameworks, dynamic plastic pot pockets, coco-peat organic soil fill, and creepers setup.",
+    "tags": [
+      "garden-design",
+      "garden-outdoor",
+      "Heavy rustproof powder-coated grid frames",
+      "Includes 12 choice indoor ferns/moneyplants",
+      "Anti-wall-dampness plastic shields"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "outdoor-lighting",
+    "name": "Weatherproof Garden & Fountain LED Sync",
+    "category": "Garden & Outdoor",
+    "subCategory": "garden-outdoor",
+    "basePrice": 999,
+    "description": "Warm LED spike lights grounding, waterproof wire joint casings, solar panel pairing, and tree spot lighting.",
+    "tags": [
+      "outdoor-lighting",
+      "garden-outdoor",
+      "IP68 certified waterproof LED housings",
+      "Automatic dusk-to-dawn sensor triggers",
+      "Low voltage shockproof transformers"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "office-shifting",
+    "name": "Corporate Office Equipment Relocation",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 8999,
+    "description": "Server rack wrapping, modular desk dismantling, rolling chair stacks, file filing crate packaging, and assembly.",
+    "tags": [
+      "office-shifting",
+      "relocation",
+      "Static-shield bubble wrapping for servers",
+      "Asset tagged color-coded packaging stickers",
+      "Overnight transitions to avoid downtime"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "packing-supplies",
+    "name": "Heavy-Duty Packing Supplies Bundle",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 499,
+    "description": "Direct delivery of 5-ply corrugated cardboard boxes, brown bubble rolls, tape dispensers, and marker pens.",
+    "tags": [
+      "packing-supplies",
+      "relocation",
+      "High load capacity corrugated boxes",
+      "Fragile item warning stickers bundle",
+      "Free delivery to room corner under 2 hours"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "vehicle-transit",
+    "name": "Inter-City Car & Bike Transit Carrier",
+    "category": "Relocation & Packers",
+    "subCategory": "relocation",
+    "basePrice": 3999,
+    "description": "Insured loading onto closed hydraulic double-deck car carriers, transit GPS updates, and home delivery.",
+    "tags": [
+      "vehicle-transit",
+      "relocation",
+      "Comprehensive transport insurance coverage",
+      "Detailed scratch inspection sheet audit",
+      "Closed trailer protection guarantees"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "nurse-home-care",
+    "name": "Registered Nurse Home Care",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 999,
+    "description": "Injection administering, complex wound dressing shifts, bedridden catheterization, and ICU monitor logs.",
+    "tags": [
+      "nurse-home-care",
+      "health-wellness",
+      "Registered clinical nurses (GNM/BSc Nursing)",
+      "Vitals tracker charts with doctor hotlines",
+      "Emergency resuscitation drills trained"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "mental-wellbeing",
+    "name": "Cognitive Behavior Counseling & Therapy",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 799,
+    "description": "Confidential 1-on-1 mental health therapy, stress mapping, anxiety tools, and depression coping logs.",
+    "tags": [
+      "mental-wellbeing",
+      "health-wellness",
+      "Licensed clinical psychologists (RCI registered)",
+      "100% HIPAA compliant private chats",
+      "Includes daily progress mood-logs"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "fitness-trainer",
+    "name": "Personalized Home Strength Coach",
+    "category": "Health & Wellness",
+    "subCategory": "health-wellness",
+    "basePrice": 499,
+    "description": "At-home calisthenics instruction, posture assessments, resistance bands routines, and weight-loss tracker.",
+    "tags": [
+      "fitness-trainer",
+      "health-wellness",
+      "ACE/Gold's Gym certified fitness trainers",
+      "Detailed body fat index analysis scans",
+      "Custom weekly nutrition meal tables"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "newborn-nanny",
+    "name": "Newborn Baby & Mother Specialist Nanny",
+    "category": "Kids & Elderly Care",
+    "subCategory": "kids-elderly",
+    "basePrice": 999,
+    "description": "Gentle baby bathing cycles, bottle sanitizations, sleep schedule induction, and maternal support.",
+    "tags": [
+      "newborn-nanny",
+      "kids-elderly",
+      "Infant safety & CPR certified nannies",
+      "Postpartum nutrition support guidelines",
+      "High-hygiene routine verification checks"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "seniors-activity-companion",
+    "name": "Interactive Mind-Games & Walking Companion",
+    "category": "Kids & Elderly Care",
+    "subCategory": "kids-elderly",
+    "basePrice": 399,
+    "description": "Daily garden walks support, chess/memory game interactions, audio-book reading, and warm tea chat.",
+    "tags": [
+      "seniors-activity-companion",
+      "kids-elderly",
+      "Highly polite bilingual companion staff",
+      "Emergency contact alert tracking",
+      "Active listening training certified"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pet-walking",
+    "name": "Daily Dog Walking & Obedience Training",
+    "category": "Pet Services",
+    "subCategory": "pet-services",
+    "basePrice": 199,
+    "description": "Paced leash walking, behavior correction (no-pull), socializing sessions, and paw cleaning post-walk.",
+    "tags": [
+      "pet-walking",
+      "pet-services",
+      "Professional leash control trainers",
+      "Real-time GPS walking routes shared",
+      "Treats reinforcement for good posture"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "pet-sitting",
+    "name": "At-Home Overnight Pet Sitting Care",
+    "category": "Pet Services",
+    "subCategory": "pet-services",
+    "basePrice": 799,
+    "description": "In-home overnight pet caretaker for feeding loops, litter cleanup, playtime, and separation anxiety support.",
+    "tags": [
+      "pet-sitting",
+      "pet-services",
+      "100% verified pet-loving attendants",
+      "Twice daily video status updates",
+      "Includes basic grooming brush sweep"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "aquarium-cleaning",
+    "name": "Professional Fish Tank Deep Cleaning",
+    "category": "Pet Services",
+    "subCategory": "pet-services",
+    "basePrice": 499,
+    "description": "Algae scrapings, water siphoning, pH audits, substrate vacuuming, filter media changes, and decorations.",
+    "tags": [
+      "aquarium-cleaning",
+      "pet-services",
+      "Chemical-free plant safe cleansers only",
+      "Water salinity & nitrates checks",
+      "Fish safe temporary transfer tanks"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "custom-cake",
+    "name": "Custom Decorated Birthday/Anniversary Cake",
+    "category": "Food & Kitchen",
+    "subCategory": "food-kitchen",
+    "basePrice": 799,
+    "description": "Customized fondant designs, multi-tier chocolate truffle cakes, custom name prints, and safe home delivery.",
+    "tags": [
+      "custom-cake",
+      "food-kitchen",
+      "Eggless options with zero extra costs",
+      "High-end Belgian chocolates used",
+      "Insured chilled transport container dispatches"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "banquet-catering",
+    "name": "Banquet Buffet Cook & Catering Services",
+    "category": "Food & Kitchen",
+    "subCategory": "food-kitchen",
+    "basePrice": 2999,
+    "description": "Cook-on-site service for parties, custom layout displays, salad bar arrangements, and cleanups.",
+    "tags": [
+      "banquet-catering",
+      "food-kitchen",
+      "FSSAI-certified live kitchen setup",
+      "Signature clay-oven tandoor counters",
+      "Eco-friendly biodegradable waste disposals"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "dietician-plan",
+    "name": "Dietician Meal Prep Consultation",
+    "category": "Food & Kitchen",
+    "subCategory": "food-kitchen",
+    "basePrice": 399,
+    "description": "Caloric density audits, micro-nutrient tables mapping, daily calorie limits, and healthy recipe logs.",
+    "tags": [
+      "dietician-plan",
+      "food-kitchen",
+      "Qualified clinical dieticians (MSc Nutrition)",
+      "Diabetes and hypertension targeted diet plans",
+      "Weekly WhatsApp adjustments included"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "luxury-cab",
+    "name": "Premium Luxury Chauffeur Cab Commute",
+    "category": "Travel & Commute",
+    "subCategory": "travel-commute",
+    "basePrice": 2499,
+    "description": "Book premium Mercedes/BMW cabs with suited chauffeurs, mineral water bottles, and newspapers.",
+    "tags": [
+      "luxury-cab",
+      "travel-commute",
+      "Vetted high-profile corporate drivers",
+      "Fragrant sanitized luxury car interiors",
+      "USB-C charging ports and in-car Wi-Fi"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "weekend-getaway-driver",
+    "name": "Weekend Outstation Round-Trip Driver Pack",
+    "category": "Travel & Commute",
+    "subCategory": "travel-commute",
+    "basePrice": 1999,
+    "description": "Book elite drivers for 48 hours to drive your SUV through hilly terrain roads safely.",
+    "tags": [
+      "weekend-getaway-driver",
+      "travel-commute",
+      "Hilly terrain & heavy rain expert drivers",
+      "Polite, non-smoking, drug-screened staff",
+      "GPS continuous driving logs shared"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "rwa-pest-spray",
+    "name": "Society Common Area Mosquito & Fogging Drive",
+    "category": "Society Management",
+    "subCategory": "society-management",
+    "basePrice": 1499,
+    "description": "Weekly fogging drives inside corridors, lifts, basements, and garden bushes to prevent Dengue.",
+    "tags": [
+      "rwa-pest-spray",
+      "society-management",
+      "WHO recommended Pyrethrum spray mix",
+      "Zero residue odourless chemical filters",
+      "Covers up to 3 residential society blocks"
+    ],
+    "isActive": true
+  },
+  {
+    "serviceId": "cctv-gate-sync",
+    "name": "Society Gates Smart RFID Sync & Install",
+    "category": "Society Management",
+    "subCategory": "society-management",
+    "basePrice": 3999,
+    "description": "Installing RFID scanners, syncing resident car windshield tags, and server registration.",
+    "tags": [
+      "cctv-gate-sync",
+      "society-management",
+      "Heavy waterproof weather-shields on scanners",
+      "Includes 50 resident RFID windshield tags",
+      "Automatic database cloud logging integration"
+    ],
+    "isActive": true
+  }
+]

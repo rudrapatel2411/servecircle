@@ -1,7 +1,8 @@
+// server/routes/auth.js
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
-import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import { prisma } from '../config/prisma.js';
 import { protect } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -19,6 +20,27 @@ if (!JWT_SECRET) {
 
 const PUBLIC_ROLES = ['customer', 'worker', 'b2b'];
 
+function formatAuthResponse(user) {
+  const roleLower = String(user.role || '').toLowerCase();
+  return {
+    id: user.id,
+    _id: user.id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '',
+    role: roleLower,
+    city: user.city || '',
+    walletBalance: user.walletBalance ?? 0,
+    avatar: user.avatar || '',
+    workerStatus: user.workerProfile?.workerStatus || null,
+    skills: user.workerProfile?.skills || [],
+    serviceCategory: user.workerProfile?.serviceCategory || '',
+    rating: user.workerProfile?.rating ?? 5.0,
+    isVerified: user.workerProfile?.isVerified ?? false,
+    workerIdCode: user.workerProfile?.workerIdCode || '',
+  };
+}
+
 // Register
 router.post(
   '/register',
@@ -29,13 +51,67 @@ router.post(
       skills, serviceCategory, city, experience, companyName,
     } = req.body;
 
-    const normalizedRole = role || 'customer';
+    const normalizedRole = role ? role.toLowerCase() : 'customer';
     if (!PUBLIC_ROLES.includes(normalizedRole)) {
       throw new AppError('This role cannot be self-registered', StatusCodes.FORBIDDEN);
     }
 
-    // Resilient offline fallback if MongoDB is not connected
-    if (mongoose.connection.readyState !== 1) {
+    try {
+      const existing = await prisma.user.findUnique({
+        where: { email },
+      });
+      if (existing) {
+        throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const prismaRole = normalizedRole.toUpperCase();
+
+      const user = await prisma.$transaction(async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            name,
+            email,
+            phone: phone || null,
+            password: hashedPassword,
+            role: prismaRole,
+            city: city || 'Mumbai',
+            walletBalance: 0.0,
+          },
+        });
+
+        if (prismaRole === 'WORKER') {
+          const profile = await tx.workerProfile.create({
+            data: {
+              userId: createdUser.id,
+              serviceCategory: serviceCategory || 'Home Repairs',
+              skills: Array.isArray(skills) ? skills : (skills ? [skills] : []),
+              experience: experience || 'Fresher',
+              workerStatus: 'PENDING_INTERVIEW',
+              workerIdCode: `WK-${Math.floor(1000 + Math.random() * 9000)}`,
+            },
+          });
+          createdUser.workerProfile = profile;
+        }
+
+        return createdUser;
+      });
+
+      const token = jwt.sign({ id: user.id, role: normalizedRole }, JWT_SECRET, { expiresIn: '7d' });
+
+      try {
+        logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user.id, actorId: user.id, actorRole: normalizedRole, metadata: { name: user.name, email: user.email, role: normalizedRole }, ...req.reqCtx });
+      } catch {}
+
+      return res.status(StatusCodes.CREATED).json({
+        token,
+        user: formatAuthResponse(user),
+      });
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      console.warn('[Register] PostgreSQL fallback to demo store:', err.message);
+
+      // Demo fallback
       const existing = findFallbackUserByEmail(email);
       if (existing) {
         throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
@@ -43,12 +119,12 @@ router.post(
       const demoId = `demo_${Date.now()}`;
       const newUser = {
         _id: demoId,
+        id: demoId,
         name: name || 'Demo User',
         email,
         password,
         phone: phone || '9876543210',
         role: normalizedRole,
-        subscription: 'basic',
         walletBalance: 0,
         skills: skills || [],
         serviceCategory: serviceCategory || '',
@@ -63,59 +139,9 @@ router.post(
       const token = jwt.sign({ id: demoId, role: normalizedRole }, JWT_SECRET, { expiresIn: '7d' });
       return res.status(StatusCodes.CREATED).json({
         token,
-        user: {
-          id: demoId,
-          name: newUser.name,
-          email: newUser.email,
-          phone: newUser.phone,
-          role: newUser.role,
-          subscription: newUser.subscription,
-          walletBalance: newUser.walletBalance,
-        },
+        user: newUser,
       });
     }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
-    }
-
-    const userData = { name, email, phone, password, role: normalizedRole };
-    if (normalizedRole === 'worker') {
-      userData.skills = skills || [];
-      userData.serviceCategory = serviceCategory || '';
-      userData.city = city || '';
-      userData.experience = experience || 'Fresher';
-      userData.workerStatus = 'pending_interview';
-    }
-    if (normalizedRole === 'b2b') {
-      userData.companyName = companyName;
-    }
-
-    const user = await User.create(userData);
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
-
-    // Phase 2: log registration event
-    try {
-      logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { name: user.name, email: user.email, role: user.role }, ...req.reqCtx });
-    } catch {
-      // ignore logging errors
-    }
-
-    res.status(StatusCodes.CREATED).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        workerStatus: user.workerStatus,
-        subscription: user.subscription,
-        walletBalance: user.walletBalance,
-        avatar: user.avatar,
-      },
-    });
   })
 );
 
@@ -127,30 +153,30 @@ router.post(
     const { email, password } = req.body;
     let user = null;
 
-    // 1. Try finding in MongoDB if connected
-    if (mongoose.connection.readyState === 1) {
-      try {
-        user = await User.findOne({ email });
-      } catch (dbErr) {
-        console.warn('DB lookup failed, checking fallback store:', dbErr.message);
-        user = null;
+    // 1. Look up user in PostgreSQL via Prisma
+    try {
+      const dbUser = await prisma.user.findUnique({
+        where: { email },
+        include: { workerProfile: true },
+      });
+      if (dbUser && !dbUser.isDeleted) {
+        const isMatch = await bcrypt.compare(password, dbUser.password);
+        if (isMatch) {
+          user = dbUser;
+        }
       }
+    } catch (dbErr) {
+      console.warn('[Login] PostgreSQL lookup fallback:', dbErr.message);
     }
 
-    // 2. If not found in DB or DB not connected, check demo / fallback store
+    // 2. Fallback store check if not in DB
     if (!user) {
       const fallbackUser = findFallbackUserByEmail(email);
       if (fallbackUser) {
         const isMatch = await verifyPassword(fallbackUser, password);
-        if (!isMatch) {
-          throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
+        if (isMatch) {
+          user = fallbackUser;
         }
-        user = fallbackUser;
-      }
-    } else {
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
       }
     }
 
@@ -158,57 +184,28 @@ router.post(
       throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const userId = user.id || user._id;
+    const userRole = String(user.role || '').toLowerCase();
+    const token = jwt.sign({ id: userId, role: userRole }, JWT_SECRET, { expiresIn: '7d' });
 
-    // Phase 2: log login event
     try {
-      logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { email: user.email }, ...req.reqCtx });
-      logActivity({ userId: user._id, role: user.role, action: 'LOGIN', module: 'auth', ...req.reqCtx });
-    } catch {
-      // ignore logging errors
-    }
+      logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: userId, actorId: userId, actorRole: userRole, metadata: { email: user.email }, ...req.reqCtx });
+      logActivity({ userId, role: userRole, action: 'LOGIN', module: 'auth', ...req.reqCtx });
+    } catch {}
 
     res.json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        workerStatus: user.workerStatus || null,
-        skills: user.skills || [],
-        serviceCategory: user.serviceCategory || null,
-        city: user.city || null,
-        experience: user.experience || null,
-        completedJobs: user.completedJobs || 0,
-        shadowJobsDone: user.shadowJobsDone || 0,
-        rating: user.rating || 0,
-        subscription: user.subscription || 'basic',
-        walletBalance: user.walletBalance || 0,
-        avatar: user.avatar || '',
-        isVerified: user.isVerified || false,
-        companyName: user.companyName || null,
-      },
+      user: formatAuthResponse(user),
     });
   })
 );
 
-// Verify token
+// Get current user profile
 router.get(
-  '/verify',
+  '/me',
   protect,
   asyncHandler(async (req, res) => {
-    res.json({
-      valid: true,
-      user: {
-        id: req.user._id,
-        name: req.user.name,
-        email: req.user.email,
-        role: req.user.role,
-        subscription: req.user.subscription,
-      },
-    });
+    res.json({ user: formatAuthResponse(req.user) });
   })
 );
 

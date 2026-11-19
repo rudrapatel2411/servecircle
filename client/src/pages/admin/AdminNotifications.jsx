@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBell, HiOutlinePaperAirplane, HiOutlineTrash,
-  HiOutlineUsers, HiOutlineMegaphone
+  HiOutlineUsers, HiOutlineMegaphone, HiOutlineSparkles, HiOutlineCog6Tooth
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';

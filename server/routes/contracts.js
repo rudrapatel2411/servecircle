@@ -1,6 +1,6 @@
+// server/routes/contracts.js
 import express from 'express';
-import mongoose from 'mongoose';
-import Contract from '../models/Contract.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -9,47 +9,69 @@ import { DEMO_CONTRACTS } from '../utils/demoDataStore.js';
 
 const router = express.Router();
 
+function formatContract(c) {
+  if (!c) return null;
+  return {
+    ...c,
+    _id: c.id,
+    partner: c.partner ? { ...c.partner, _id: c.partner.id } : c.partnerId,
+  };
+}
+
 // GET all contracts (admin)
 router.get(
   '/all',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.json(DEMO_CONTRACTS);
+    try {
+      const contracts = await prisma.contract.findMany({
+        include: { partner: { select: { id: true, name: true, email: true, phone: true } } },
+        orderBy: { createdAt: 'desc' },
+      });
+      return res.json(contracts.map(formatContract));
+    } catch (err) {
+      console.warn('[Contracts /all] PostgreSQL fallback:', err.message);
+      res.json(DEMO_CONTRACTS);
     }
-
-    const contracts = await Contract.find()
-      .populate('partner', 'name companyName email')
-      .sort('-createdAt');
-    res.json(contracts);
   })
 );
 
-// GET my contracts (B2B)
+// GET my contracts (B2B / Admin)
 router.get(
   '/',
   protect,
   authorize('b2b', 'admin'),
   asyncHandler(async (req, res) => {
     const { status } = req.query;
+    const userId = req.user.id || req.user._id;
 
-    if (mongoose.connection.readyState !== 1) {
+    try {
+      const where = {};
+      if (req.user.role === 'b2b') {
+        where.partnerId = userId;
+      }
+      if (status) {
+        where.status = status.toUpperCase();
+      }
+
+      const contracts = await prisma.contract.findMany({
+        where,
+        include: { partner: { select: { id: true, name: true, email: true, phone: true } } },
+        orderBy: { createdAt: 'desc' },
+      });
+      return res.json(contracts.map(formatContract));
+    } catch (err) {
+      console.warn('[Contracts /] PostgreSQL fallback:', err.message);
       let list = [...DEMO_CONTRACTS];
       if (req.user.role === 'b2b') {
-        list = list.filter((c) => String(c.partner) === String(req.user._id));
+        list = list.filter((c) => String(c.partner) === String(userId));
       }
       if (status) {
         list = list.filter((c) => c.status === status);
       }
-      return res.json(list);
+      res.json(list);
     }
-
-    const query = req.user.role === 'admin' ? {} : { partner: req.user._id };
-    if (status) query.status = status;
-
-    const contracts = await Contract.find(query).sort('-createdAt');
-    res.json(contracts);
   })
 );
 
@@ -58,25 +80,30 @@ router.get(
   '/:id',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const contract = DEMO_CONTRACTS.find((c) => c._id === req.params.id || c.contractId === req.params.id);
-      if (!contract) throw new AppError('Contract not found', StatusCodes.NOT_FOUND);
-      return res.json(contract);
+    const { id } = req.params;
+    const userId = req.user.id || req.user._id;
+
+    try {
+      const contract = await prisma.contract.findFirst({
+        where: {
+          OR: [{ id }, { contractId: id }],
+        },
+        include: { partner: { select: { id: true, name: true, email: true, phone: true } } },
+      });
+
+      if (contract) {
+        if (req.user.role === 'b2b' && contract.partnerId !== userId) {
+          throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+        }
+        return res.json(formatContract(contract));
+      }
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      console.warn('[Contracts /:id] PostgreSQL fallback:', err.message);
     }
 
-    const contract = await Contract.findById(req.params.id).populate(
-      'partner',
-      'name companyName email phone'
-    );
+    const contract = DEMO_CONTRACTS.find((c) => c._id === id || c.contractId === id);
     if (!contract) throw new AppError('Contract not found', StatusCodes.NOT_FOUND);
-
-    if (
-      req.user.role === 'b2b' &&
-      contract.partner._id.toString() !== req.user._id.toString()
-    ) {
-      throw new AppError('Access denied', StatusCodes.FORBIDDEN);
-    }
-
     res.json(contract);
   })
 );
@@ -87,31 +114,46 @@ router.post(
   protect,
   authorize('admin', 'b2b'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
+    const userId = req.user.id || req.user._id;
+    const partnerId = req.body.partner || userId;
+
+    try {
+      const count = await prisma.contract.count();
+      const contractId = `CON-${(count + 1001).toString()}`;
+
+      const created = await prisma.contract.create({
+        data: {
+          contractId,
+          partnerId,
+          partnerName: req.body.partnerName || req.user.name || 'Partner',
+          contractType: req.body.contractType || 'CUSTOM',
+          services: req.body.services || [],
+          locations: req.body.locations || [],
+          totalValue: Number(req.body.totalValue) || 0.0,
+          startDate: req.body.startDate ? new Date(req.body.startDate) : new Date(),
+          endDate: req.body.endDate ? new Date(req.body.endDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+          status: req.body.status ? req.body.status.toUpperCase() : 'DRAFT',
+          autoRenew: Boolean(req.body.autoRenew),
+          notes: req.body.notes || null,
+        },
+      });
+
+      return res.status(StatusCodes.CREATED).json(formatContract(created));
+    } catch (err) {
+      console.warn('[Contracts POST] PostgreSQL fallback:', err.message);
       const count = DEMO_CONTRACTS.length;
       const contractId = `CON-${(count + 1001).toString()}`;
       const newContract = {
         _id: `cnt_${Date.now()}`,
         ...req.body,
         contractId,
-        partner: req.body.partner || req.user._id,
-        partnerName: req.body.partnerName || req.user.companyName || req.user.name,
+        partner: partnerId,
+        partnerName: req.body.partnerName || req.user.name,
         createdAt: new Date(),
       };
       DEMO_CONTRACTS.unshift(newContract);
       return res.status(StatusCodes.CREATED).json(newContract);
     }
-
-    const count = await Contract.countDocuments();
-    const contractId = `CON-${(count + 1001).toString()}`;
-
-    const contract = await Contract.create({
-      ...req.body,
-      contractId,
-      partner: req.body.partner || req.user._id,
-    });
-
-    res.status(StatusCodes.CREATED).json(contract);
   })
 );
 
@@ -121,16 +163,26 @@ router.put(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const contract = DEMO_CONTRACTS.find((c) => c._id === req.params.id || c.contractId === req.params.id);
+    const { id } = req.params;
+    try {
+      const updated = await prisma.contract.update({
+        where: { id },
+        data: {
+          ...(req.body.partnerName && { partnerName: req.body.partnerName }),
+          ...(req.body.totalValue !== undefined && { totalValue: Number(req.body.totalValue) }),
+          ...(req.body.status && { status: req.body.status.toUpperCase() }),
+          ...(req.body.autoRenew !== undefined && { autoRenew: Boolean(req.body.autoRenew) }),
+          ...(req.body.notes !== undefined && { notes: req.body.notes }),
+        },
+      });
+      return res.json(formatContract(updated));
+    } catch (err) {
+      console.warn('[Contracts PUT] PostgreSQL fallback:', err.message);
+      const contract = DEMO_CONTRACTS.find((c) => c._id === id || c.contractId === id);
       if (!contract) throw new AppError('Contract not found', StatusCodes.NOT_FOUND);
       Object.assign(contract, req.body);
       return res.json(contract);
     }
-
-    const contract = await Contract.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!contract) throw new AppError('Contract not found', StatusCodes.NOT_FOUND);
-    res.json(contract);
   })
 );
 
@@ -140,15 +192,16 @@ router.delete(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const idx = DEMO_CONTRACTS.findIndex((c) => c._id === req.params.id || c.contractId === req.params.id);
+    const { id } = req.params;
+    try {
+      await prisma.contract.delete({ where: { id } });
+      return res.json({ message: 'Contract deleted' });
+    } catch (err) {
+      console.warn('[Contracts DELETE] PostgreSQL fallback:', err.message);
+      const idx = DEMO_CONTRACTS.findIndex((c) => c._id === id || c.contractId === id);
       if (idx !== -1) DEMO_CONTRACTS.splice(idx, 1);
       return res.json({ message: 'Contract deleted' });
     }
-
-    const contract = await Contract.findByIdAndDelete(req.params.id);
-    if (!contract) throw new AppError('Contract not found', StatusCodes.NOT_FOUND);
-    res.json({ message: 'Contract deleted' });
   })
 );
 

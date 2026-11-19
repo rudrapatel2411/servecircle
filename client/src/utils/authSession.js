@@ -3,13 +3,16 @@ const WORKER_SESSION_KEY = 'servecircle_worker_session';
 
 export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+export const isDemoToken = (token) =>
+  typeof token === 'string' && (token.startsWith('demo-') || token.startsWith('demo_'));
+
 /**
  * Checks if a JWT token has expired.
  * Demo tokens (e.g. 'demo-token-worker', 'demo_...') never expire.
  */
 export const isTokenExpired = (token) => {
   if (!token) return true;
-  if (token.startsWith('demo-') || token.startsWith('demo_')) return false;
+  if (isDemoToken(token)) return false;
 
   try {
     const parts = token.split('.');
@@ -103,7 +106,7 @@ export const requestApi = async (path, { method = 'GET', token, body } = {}) => 
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (response.status === 401) {
+  if (response.status === 401 && !isDemoToken(token)) {
     clearSession();
     if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
       window.dispatchEvent(new CustomEvent('servecircle:session-expired'));
@@ -130,4 +133,3 @@ export const roleHome = {
   admin: '/admin',
   b2b: '/b2b',
 };
-

@@ -12,7 +12,7 @@ import mongoose from 'mongoose';
 
 const activityLogSchema = new mongoose.Schema(
   {
-    userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId:    { type: mongoose.Schema.Types.Mixed, required: true },
     role:      { type: String, required: true }, // 'customer' | 'worker' | 'admin'
 
     // Human-readable action label
@@ -22,7 +22,7 @@ const activityLogSchema = new mongoose.Schema(
     module:    { type: String, trim: true }, // e.g. 'bookings', 'services', 'wallet'
 
     // Optional reference to the document being acted on
-    targetId:  { type: mongoose.Schema.Types.ObjectId },
+    targetId:  { type: mongoose.Schema.Types.Mixed },
     targetRef: { type: String }, // Collection name of targetId
 
     // When the action happened

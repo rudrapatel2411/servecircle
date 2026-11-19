@@ -11,6 +11,7 @@ import Groq from 'groq-sdk';
 import { BaseAIProvider } from './BaseAIProvider.js';
 import { AppError } from '../../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
+import { recoverFromGroqJsonError } from './GroqErrorRecovery.js';
 
 const PROVIDER_NAME = 'groq';
 const PROVIDER_VERSION = '1.0.0';
@@ -93,94 +94,32 @@ export class GroqProvider extends BaseAIProvider {
       temperature: options.temperature ?? 0.3,
       max_tokens: options.max_tokens || options.maxOutputTokens || 800,
     };
+    if (options.reasoning_effort) {
+      requestPayload.reasoning_effort = options.reasoning_effort;
+    }
 
     if (options.jsonMode || options.response_format?.type === 'json_object') {
       requestPayload.response_format = { type: 'json_object' };
     }
+    if (options.responseFormat) {
+      requestPayload.response_format = options.responseFormat;
+    }
 
     try {
-      const completion = await this._client.chat.completions.create(requestPayload);
+      const completion = await this._client.chat.completions.create(
+        requestPayload,
+        options.timeoutMs ? { timeout: options.timeoutMs } : undefined
+      );
       const text = completion.choices[0]?.message?.content || '';
       if (!text.trim()) {
         throw new AppError('Groq returned empty response', StatusCodes.INTERNAL_SERVER_ERROR);
       }
       return text;
     } catch (err) {
-      console.error('[GroqProvider] generateText error:', err.message);
-
-      // Robust recovery if Groq's json_object validator rejects natural conversational text:
-      const errMsg = String(err?.message || '');
-      if (err?.error?.code === 'json_validate_failed' || errMsg.includes('json_validate_failed')) {
-        let failedGen = err?.error?.failed_generation;
-        if (!failedGen) {
-          const match = errMsg.match(/"failed_generation"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          if (match) {
-            try {
-              failedGen = JSON.parse(`"${match[1]}"`);
-            } catch {
-              failedGen = match[1];
-            }
-          }
-        }
-
-        if (failedGen && typeof failedGen === 'string' && failedGen.trim()) {
-          console.log('[GroqProvider] Successfully recovered message from failed_generation');
-          const jsonMatch = failedGen.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            try {
-              JSON.parse(jsonMatch[0]);
-              return jsonMatch[0];
-            } catch {}
-          }
-          return JSON.stringify({
-            intent: 'GENERAL_CONVERSATION',
-            reply: failedGen.trim(),
-            showServiceRecommendation: false,
-            serviceName: '',
-            category: '',
-            problemType: '',
-            urgency: 'Scheduled',
-            requiredWorkerSkill: 'Technician',
-            estimatedPrice: 350,
-            safetyPrecautions: [],
-            followUpQuestions: ['Party & Event Decoration', 'Home Catering & Chef', 'Home Deep Cleaning'],
-          });
-        }
-
-        // Retry without response_format json_object enforcement
-        try {
-          console.log('[GroqProvider] Retrying completion without strict json_object enforcement...');
-          delete requestPayload.response_format;
-          const retryCompletion = await this._client.chat.completions.create(requestPayload);
-          const rawText = retryCompletion.choices[0]?.message?.content || '';
-          if (rawText.trim()) {
-            const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              try {
-                JSON.parse(jsonMatch[0]);
-                return jsonMatch[0];
-              } catch {}
-            }
-            return JSON.stringify({
-              intent: 'GENERAL_CONVERSATION',
-              reply: rawText.trim(),
-              showServiceRecommendation: false,
-              serviceName: '',
-              category: '',
-              problemType: '',
-              urgency: 'Scheduled',
-              requiredWorkerSkill: 'Technician',
-              estimatedPrice: 350,
-              safetyPrecautions: [],
-              followUpQuestions: ['How else can I assist you?', 'Browse popular services'],
-            });
-          }
-        } catch (retryErr) {
-          console.error('[GroqProvider] Retry also failed:', retryErr.message);
-        }
-      }
-
-      throw new AppError(`AI Generation Error: ${err.message}`, StatusCodes.INTERNAL_SERVER_ERROR);
+      return await recoverFromGroqJsonError(err, requestPayload,
+        (payload) => this._client.chat.completions.create(payload, options.timeoutMs ? { timeout: options.timeoutMs } : undefined),
+        'generateText'
+      );
     }
   }
 
@@ -221,70 +160,10 @@ export class GroqProvider extends BaseAIProvider {
       const completion = await this._client.chat.completions.create(requestPayload);
       return completion.choices[0]?.message?.content || '';
     } catch (err) {
-      console.error('[GroqProvider] analyzeImage error:', err.message);
-
-      const errMsg = String(err?.message || '');
-      if (err?.error?.code === 'json_validate_failed' || errMsg.includes('json_validate_failed')) {
-        let failedGen = err?.error?.failed_generation;
-        if (!failedGen) {
-          const match = errMsg.match(/"failed_generation"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          if (match) {
-            try {
-              failedGen = JSON.parse(`"${match[1]}"`);
-            } catch {
-              failedGen = match[1];
-            }
-          }
-        }
-
-        if (failedGen && typeof failedGen === 'string' && failedGen.trim()) {
-          console.log('[GroqProvider] analyzeImage recovered from failed_generation');
-          const jsonMatch = failedGen.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            try {
-              JSON.parse(jsonMatch[0]);
-              return jsonMatch[0];
-            } catch {}
-          }
-          return JSON.stringify({
-            problemCategory: 'Home Repairs',
-            detectedIssues: [failedGen.trim()],
-            severity: 'medium',
-            recommendedService: 'Technician Inspection',
-            requiredSkills: ['technician'],
-            estimatedUrgency: 'same_day',
-            safetyWarnings: [],
-            confidence: 0.9,
-            reasoning: failedGen.trim(),
-          });
-        }
-
-        // Retry without response_format
-        try {
-          delete requestPayload.response_format;
-          const retryCompletion = await this._client.chat.completions.create(requestPayload);
-          const rawText = retryCompletion.choices[0]?.message?.content || '';
-          if (rawText.trim()) {
-            const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-            if (jsonMatch) return jsonMatch[0];
-            return JSON.stringify({
-              problemCategory: 'Home Repairs',
-              detectedIssues: [rawText.trim()],
-              severity: 'medium',
-              recommendedService: 'Technician Inspection',
-              requiredSkills: ['technician'],
-              estimatedUrgency: 'same_day',
-              safetyWarnings: [],
-              confidence: 0.9,
-              reasoning: rawText.trim(),
-            });
-          }
-        } catch (retryErr) {
-          console.error('[GroqProvider] analyzeImage retry failed:', retryErr.message);
-        }
-      }
-
-      throw new AppError(`AI Vision Error: ${err.message}`, StatusCodes.INTERNAL_SERVER_ERROR);
+      return await recoverFromGroqJsonError(err, requestPayload,
+        (payload) => this._client.chat.completions.create(payload, options.timeoutMs ? { timeout: options.timeoutMs } : undefined),
+        'analyzeImage'
+      );
     }
   }
 
@@ -470,83 +349,63 @@ Customer Language: "${inputs.customerLanguage || 'English/Hinglish'}"`;
   }
 
   /**
-   * Master Customer Chat Engine — Handles Chit-Chat, Follow-ups, and Direct Problem Diagnosis
+   * Customer chat: preserve conversational context, clarify ambiguity, and only
+   * return a catalog service when the user actually wants help with that task.
    */
-  async chatWithCustomer({ text = '', image = null, conversation = [], customerContext = {} }) {
+  async chatWithCustomer({ text = '', image = null, conversation = [], customerContext = {}, services = [] }) {
     if (!this.isReady) await this.initialize();
 
-    const systemPrompt = `You are ServeCircle AI — the intelligent customer assistant for the ServeCircle home and lifestyle services platform in India.
+    let catalogServices = Array.isArray(services) && services.length > 0 ? services : [];
+    if (catalogServices.length === 0 && text) {
+      try {
+        const { getRelevantServices } = await import('../services/ragService.js');
+        catalogServices = await getRelevantServices(text, 8, 0.45);
+      } catch {}
+    }
+    const descriptionLimit = image ? 45 : 90;
+    const activeCatalogPrompt = catalogServices.map((service) => {
+      const description = String(service.description || '').replace(/\s+/g, ' ').trim().slice(0, descriptionLimit);
+      return `${service.serviceId}|${service.name}|${service.category}|${service.basePrice}${description ? `|${description}` : ''}`;
+    }).join('\n');
 
-CRITICAL INSTRUCTION: You MUST ALWAYS reply with a valid JSON object matching the schema below. NEVER output plain text outside the JSON object.
+    // Keep enough recent context to understand follow-ups while reserving a
+    // predictable token budget for the complete platform catalog.
+    const recentConversation = [];
+    let historyCharsRemaining = image ? 1200 : 2600;
+    for (const msg of (Array.isArray(conversation) ? conversation.slice(-10) : []).reverse()) {
+      if (!['user', 'assistant'].includes(msg?.role) || typeof msg.content !== 'string') continue;
+      const maxMessageChars = msg.role === 'user' ? 600 : 450;
+      const content = msg.content.trim().slice(-Math.min(maxMessageChars, historyCharsRemaining));
+      if (!content) continue;
+      recentConversation.push({ role: msg.role, content });
+      historyCharsRemaining -= content.length;
+      if (historyCharsRemaining <= 0) break;
+    }
+    recentConversation.reverse();
 
-YOUR CAPABILITIES & RULES:
-1. Fluently understand English, Hindi, Hinglish (mixed Hindi-English), and Gujarati. Always reply in the SAME language and tone the customer used.
-2. If customer is doing PURE GREETING with NO service need (e.g., "hi", "hello", "kaise ho", "kya kar sakte ho", "shukriya"):
-   - Be warm, welcoming, and mention 3-4 key services they can ask for (Plumbing, AC/Appliance, Cleaning, Shifting/Packers, Driver, etc.).
-   - Set "intent": "GENERAL_CONVERSATION".
-   - Set "showServiceRecommendation": false.
-   - Set "followUpQuestions": ["AC Repair & Cooling", "Plumbing & Tap Leakage", "Local House Shifting", "Deep Cleaning"].
-3. If customer mentions or describes ANY service need, problem, repair, maintenance, task, shifting, driver, maid/cook, security, grooming, doctor, or asks "chahiye / need / book / kharab / repair":
-   - IMMEDIATELY identify the best matching service from ServeCircle's catalog.
-   - Set "intent": "SERVICE_PROBLEM".
-   - Set "showServiceRecommendation": true.
-   - Fill in the exact canonical serviceName, category, estimatedPrice, requiredWorkerSkill, and practical safety precautions.
-4. If customer asks a follow-up or price inquiry ("kitna lagega", "kab aa sakte ho", "haan book karo", "theek hai"):
-   - Answer their specific question clearly.
-   - Keep "showServiceRecommendation": true so they can proceed directly with booking.
+    const systemPrompt = `You are ServeCircle AI, a helpful multilingual customer assistant for home and lifestyle services in India.
 
-CATALOG OF AVAILABLE SERVICES IN SERVECIRCLE:
-- "Plumbing": Tap leakage, pipe bursts, drain clog/choke, washbasin, toilet flush/leak, water tank, geyser fitting, water dripping. (Category: "Home Repairs", Skill: "Plumber", Base Price: 350)
-- "Electrical Work": Short circuit, fuse, MCB, switchboard, ceiling fan, wiring, lights, power failure, spark. (Category: "Home Repairs", Skill: "Electrician", Base Price: 300)
-- "AC & Appliance Repair": AC not cooling, AC water leakage, gas refill, fridge repair, washing machine, microwave, water cooler. (Category: "Home Repairs", Skill: "AC Technician", Base Price: 499)
-- "Carpentry": Door lock jammed, latch/handle repair, wardrobe/drawer alignment, hinge fix, furniture assembly, wooden work. (Category: "Home Repairs", Skill: "Carpenter", Base Price: 400)
-- "Painting & Waterproofing": Wall painting, ceiling dampness/seepage waterproofing, primer, putty, whitewash. (Category: "Home Repairs", Skill: "Painter", Base Price: 600)
-- "Home Deep Cleaning": Full house deep cleaning (1BHK/2BHK/3BHK/Villa), floor scrubbing, balcony clean. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 1200)
-- "Sofa & Carpet Cleaning": Sofa fabric shampooing, stain removal, carpet deep clean, mattress sanitization. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 599)
-- "Bathroom & Kitchen Deep Clean": Bathroom tile descaling, toilet bowl deep clean, kitchen chimney & counter degreasing. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 499)
-- "Pest Control": Cockroach, termite (deemak), bed bugs (khatmal), mosquitoes, rodent/rat control spray. (Category: "Cleaning & Hygiene", Skill: "Pest Controller", Base Price: 899)
-- "Relocation & Packers": Local house shifting, room shifting, flat shifting, packing & moving, furniture transport, luggage relocation. (Category: "Relocation & Packers", Skill: "Movers & Packers", Base Price: 2500)
-- "Driver & Chauffeur Service": Outstation driver, daily city driver, airport commute cab/driver, night driver, personal chauffeur. (Category: "Travel & Commute", Skill: "Driver", Base Price: 599)
-- "Home Cook & Catering": Daily home chef, morning/evening family cook, party food catering, tiffin service. (Category: "Food & Kitchen", Skill: "Cook", Base Price: 499)
-- "Pet Grooming & Care": Dog/cat bath & styling at home, nail clipping, vet home visit, dog walking. (Category: "Pet Services", Skill: "Pet Care Specialist", Base Price: 450)
-- "Doctor & Healthcare at Home": Doctor consultation at home, physiotherapy (back/knee pain), home nursing, elderly caretaker. (Category: "Health & Wellness", Skill: "Healthcare Professional", Base Price: 699)
-- "Society Security & Maintenance": Security guard hiring, gate watchman, society common maintenance, lift maintenance. (Category: "Society Management", Skill: "Security Guard", Base Price: 1500)
-- "Events & Celebrations": Birthday party balloon decor, sound & DJ setup, event photographer, party organizer. (Category: "Events & Celebrations", Skill: "Event Coordinator", Base Price: 2499)
-- "Car Wash & Detailing": Doorstep car wash, exterior foam wash, interior vacuuming, bike wash. (Category: "Vehicle Services", Skill: "Car Detailer", Base Price: 399)
-- "Car Repair": Car breakdown, mechanic visit, engine diagnostics, brake/clutch issues. (Category: "Vehicle Services", Skill: "Car Mechanic", Base Price: 799)
-- "Bike Repair": Two-wheeler servicing, chain tightening, puncture, battery jumpstart, brake fix. (Category: "Vehicle Services", Skill: "Bike Mechanic", Base Price: 399)
-- "Home IT & CCTV Support": CCTV camera installation, WiFi router configuration, laptop/PC repair, smart TV installation. (Category: "Home IT & Tech Support", Skill: "IT Technician", Base Price: 449)
-- "Gardener & Lawn Care": Garden maintenance, lawn mowing, trimming, balcony garden setup. (Category: "Garden & Outdoor", Skill: "Gardener", Base Price: 399)
-- "Emergency SOS Repair": 30-min urgent technician for pipe burst, main power breakdown, door lockout. (Category: "Emergency Services", Skill: "Emergency Technician", Base Price: 499)
+Understand English, Hindi in Devanagari, Roman Hindi/Hinglish, mixed Hindi-English spelling, and Gujarati. Accept informal spelling variants such as "muje/mujhe", "chiye/chahiye", and "karvana/karwana" without asking the customer to rephrase. Reply naturally in the language and script the customer used. Examples: "muje society ke liye guard chiye" means they want a society security guard; "geyser garam pani nahi de raha" means geyser repair; "ghar shifting karvana hai" means moving service; "mare dadi mate dava mangavvi chhe" means the customer needs medicine for their grandmother. Use the whole sentence and conversation, not isolated words. Keep replies brief and specific. If the customer writes in Hindi/Hinglish, reply in Hindi/Hinglish rather than English.
 
-OUTPUT FORMAT: Return ONLY the JSON object.
-{
-  "intent": "SERVICE_PROBLEM" or "GENERAL_CONVERSATION",
-  "reply": "Warm, reassuring message in customer's exact language (English/Hindi/Gujarati)",
-  "showServiceRecommendation": false,
-  "serviceName": "",
-  "category": "",
-  "problemType": "",
-  "urgency": "Standard",
-  "requiredWorkerSkill": "Technician",
-  "estimatedPrice": 350,
-  "safetyPrecautions": [],
-  "followUpQuestions": ["Option 1", "Option 2"]
-}`;
+DECISION POLICY (follow in order):
+1. First understand the latest customer message in context. Separate a real request for help/booking from a greeting, general question, incidental mention, negation, or hypothetical. A single service-related word is not enough to infer a request. Examples: "my friend is a plumber", "I don't need cleaning", and "what services do you offer?" are not service booking requests.
+2. For greetings, thanks, capability questions, and general conversation, answer the actual message warmly; do not repeat a fixed welcome or list services every turn. Do not recommend a service.
+3. If the customer describes a task or asks to book, match the meaning of the whole request to the active catalog descriptions and tags, even when their words differ from the service name. Choose the single best service that can actually cover the task. An exact wording match is not required. If a close service covers most of the request, recommend it and clearly explain what it does and does not cover. Ask one short question only when the meaning itself is unclear.
+4. If the latest message is an answer to your previous clarification or a follow-up about the same task, use the history and continue naturally. Keep the same service only when that context clearly resolves the current message. A correction or new task in the latest message takes precedence over older context. Your earlier replies can be wrong: verify them against the active catalog below. If an earlier reply claimed a listed category or service was unavailable, correct it when the catalog shows otherwise.
+5. The catalog below contains services currently marked active in the platform. Use only an entry in this list and copy its exact serviceId, name, category, and price. If the requested service is not offered and no listed service can reasonably cover the task, set intent to UNAVAILABLE, leave serviceId/serviceName/category empty, and politely say that this service is not currently offered. Do not refuse just because the customer's wording differs from the catalog. If the catalog is empty or marked unavailable, say you cannot confirm the service right now. The catalog does not confirm a worker's live slot: never claim a worker is ready or a time slot is available unless that was separately checked.
+6. Never infer urgency from words like "urgent" alone if no task is described. Do not provide unsafe repair instructions; for immediate danger, advise contacting local emergency services.
+
+Return one JSON object. intent must be SERVICE_REQUEST for a clear task, FOLLOW_UP for a related answer/question, GENERAL for ordinary conversation, CLARIFY only when the task meaning is ambiguous, or UNAVAILABLE when no active service can cover a clear request. showServiceRecommendation is true only for SERVICE_REQUEST or relevant FOLLOW_UP with a serviceId from the active catalog. For GENERAL, CLARIFY, and UNAVAILABLE, set it false and leave serviceId/serviceName/category empty. Ask at most one clarification in reply; keep followUpQuestions empty unless genuinely useful.
+
+CURRENT ACTIVE SERVECIRCLE CATALOG (canonical platform services, respecting admin status):
+${activeCatalogPrompt || 'No active catalog entries could be confirmed.'}
+
+JSON fields: intent, reply, showServiceRecommendation, serviceId, serviceName, category, problemType, urgency, requiredWorkerSkill, estimatedPrice, safetyPrecautions, followUpQuestions.`;
 
     // Build chat history
     const messages = [{ role: 'system', content: systemPrompt }];
 
-    if (Array.isArray(conversation) && conversation.length > 0) {
-      for (const msg of conversation.slice(-6)) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
-          messages.push({
-            role: msg.role,
-            content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
-          });
-        }
-      }
-    }
+    messages.push(...recentConversation);
 
     if (image?.base64) {
       messages.push({
@@ -570,26 +429,46 @@ OUTPUT FORMAT: Return ONLY the JSON object.
     const raw = await this.generateText(text, {
       model: image ? this._visionModel : this._textModel,
       messages,
-      jsonMode: true,
-      max_tokens: 800,
-      temperature: 0.3,
+      response_format: { type: 'json_object' },
+      reasoning_effort: 'none',
+      max_tokens: 600,
+      temperature: 0.2,
+      timeoutMs: 15000,
     });
 
     try {
-      return JSON.parse(raw);
-    } catch (e) {
+      const cleaned = String(raw || '').trim();
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
       return {
-        intent: 'GENERAL_CONVERSATION',
-        reply: raw || 'Namaste! Main ServeCircle AI hoon. Main aapki kya madad kar sakta hoon?',
+        intent: parsed.intent || 'GENERAL',
+        reply: parsed.reply || '',
+        showServiceRecommendation: Boolean(parsed.showServiceRecommendation),
+        serviceId: parsed.serviceId || '',
+        serviceName: parsed.serviceName || '',
+        category: parsed.category || '',
+        problemType: parsed.problemType || '',
+        urgency: parsed.urgency || 'Standard',
+        requiredWorkerSkill: parsed.requiredWorkerSkill || 'Technician',
+        estimatedPrice: typeof parsed.estimatedPrice === 'number' ? parsed.estimatedPrice : (Number(parsed.estimatedPrice) || 0),
+        safetyPrecautions: Array.isArray(parsed.safetyPrecautions) ? parsed.safetyPrecautions : [],
+        followUpQuestions: Array.isArray(parsed.followUpQuestions) ? parsed.followUpQuestions : [],
+      };
+    } catch (e) {
+      console.warn('[GroqProvider] Customer chat returned invalid JSON; using a neutral retry reply:', e.message);
+      return {
+        intent: 'CLARIFY',
+        reply: 'Sorry, main aapki baat is baar sahi se process nahi kar paya. Aap apni zaroorat thodi aur detail mein bata sakte hain?',
         showServiceRecommendation: false,
         serviceName: '',
+        serviceId: '',
         category: '',
         problemType: '',
         urgency: 'Scheduled',
         requiredWorkerSkill: 'Technician',
-        estimatedPrice: 350,
+        estimatedPrice: 0,
         safetyPrecautions: [],
-        followUpQuestions: ['Plumbing', 'Electrical Work', 'Cleaning & Hygiene'],
+        followUpQuestions: [],
       };
     }
   }
