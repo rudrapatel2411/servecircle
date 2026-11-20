@@ -21,17 +21,26 @@ import {
   HiXMark as HiClose,
   HiOutlineQrCode,
   HiOutlineChatBubbleLeftRight,
+  HiOutlinePower,
+  HiOutlinePauseCircle,
 } from 'react-icons/hi2';
 import LanguageToggle from './LanguageToggle';
 import WorkerVerifyModal from './WorkerVerifyModal';
 import { socket, joinUserRoom, leaveUserRoom } from '../socket';
 import { getSession, clearSession } from '../utils/authSession';
+import { getWorkerSession, setWorkerSession, updateDutyStatus } from '../pages/worker/workerApi';
 import './DashboardNavbar.css';
 
 const DashboardNavbar = ({ panel }) => {
   const { t } = useTranslation();
   const session = getSession();
   const sessionUser = session?.user;
+  const workerSession = getWorkerSession();
+
+  const [dutyStatus, setDutyStatus] = useState(() => {
+    return workerSession?.user?.dutyStatus || sessionUser?.dutyStatus || 'online';
+  });
+  const [dutyLoading, setDutyLoading] = useState(false);
 
   const [notifications, setNotifications] = useState([]);
   const [showToast, setShowToast] = useState(false);
@@ -40,6 +49,34 @@ const DashboardNavbar = ({ panel }) => {
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  const handleDutyToggle = async (targetStatus) => {
+    if (dutyLoading || dutyStatus === targetStatus) return;
+    setDutyLoading(true);
+    const token = workerSession?.token || session?.token;
+    try {
+      if (token && token !== 'demo-token-worker') {
+        await updateDutyStatus(token, { dutyStatus: targetStatus });
+      }
+      setDutyStatus(targetStatus);
+      if (workerSession?.user) {
+        const next = { ...workerSession, user: { ...workerSession.user, dutyStatus: targetStatus } };
+        setWorkerSession(next);
+      }
+      const toastPayload = {
+        title: 'Duty Status Updated',
+        message: `Your duty is now ${targetStatus.toUpperCase()}. ${targetStatus === 'online' ? 'You are receiving new job alerts.' : 'You will not receive new booking alerts.'}`,
+      };
+      setNotifications((prev) => [toastPayload, ...prev]);
+      setLatestToast(toastPayload);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+    } catch (err) {
+      console.warn('Duty toggle failed:', err);
+    } finally {
+      setDutyLoading(false);
+    }
+  };
 
   useEffect(() => {
     joinUserRoom(sessionUser, panel);
@@ -212,6 +249,43 @@ const DashboardNavbar = ({ panel }) => {
 
       {/* ===== RIGHT ACTIONS ===== */}
       <div className="dash-navbar-actions">
+        {/* Worker Instant Duty Switch in Header (Phase 1 Ground Ops) */}
+        {panel === 'worker' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginRight: '6px' }}>
+            <button
+              type="button"
+              onClick={() => handleDutyToggle(dutyStatus === 'online' ? 'offline' : 'online')}
+              disabled={dutyLoading}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                border: `1.5px solid ${dutyStatus === 'online' ? '#86efac' : '#cbd5e1'}`,
+                background: dutyStatus === 'online' ? '#dcfce7' : '#f1f5f9',
+                color: dutyStatus === 'online' ? '#15803d' : '#475569',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              title="Click to toggle Online/Offline duty"
+            >
+              <span
+                style={{
+                  width: '9px',
+                  height: '9px',
+                  borderRadius: '50%',
+                  background: dutyStatus === 'online' ? '#22c55e' : '#94a3b8',
+                  boxShadow: dutyStatus === 'online' ? '0 0 8px #22c55e' : 'none',
+                }}
+              />
+              <span>{dutyLoading ? 'Updating...' : dutyStatus === 'online' ? '🟢 Duty ON' : '🔴 Duty OFF'}</span>
+            </button>
+          </div>
+        )}
+
         {panel === 'customer' && (
           <button
             className="dash-icon-btn dash-ai-btn"

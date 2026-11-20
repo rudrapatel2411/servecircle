@@ -22,6 +22,7 @@ import {
   HiOutlineMagnifyingGlass,
   HiOutlineCalendarDays,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineSparkles,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
 import './Sidebar.css';

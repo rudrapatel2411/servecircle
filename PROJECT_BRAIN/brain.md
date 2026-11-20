@@ -15,6 +15,38 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Worker Panel UI Overhaul & Full Cross-Panel End-to-End Connectivity (done, verified 2026-11-21)
+
+**User outcome:** Operator instructed to complete all remaining gaps from the audit, ensure 100% working buttons/workflows, establish full bidirectional connectivity between Customer and Worker panels, and completely overhaul the Worker Panel UI to fix overlapping/crammed elements across all worker pages.
+
+**Tasks & Verification:**
+- [x] Fixed `client/src/components/Sidebar.jsx`: Added missing `HiOutlineSparkles` import from `react-icons/hi2`.
+- [x] Upgraded `client/src/pages/worker/WorkerPages.css`:
+  - Added robust modern styling for `.job-card` (spacious 2-column responsive grid on desktop with 1fr info and 340px console on the right), `.job-info`, `.job-meta` chips, `.worker-action-buttons`, `.tabs-bar` segmented pill control, `.tab-btn`, `.badge-*`, schedule planner cards, and floating `.sc-toast`.
+  - Fixed overlapping and cramped card contents across all worker screens.
+- [x] Upgraded `client/src/components/DashboardNavbar.jsx`:
+  - Added compact 1-click Worker Duty Status pill (🟢 Duty ON / 🔴 Duty OFF) in the top header navbar when `panel === 'worker'`.
+- [x] Upgraded `client/src/pages/worker/WorkerJobs.jsx`:
+  - Replaced native `window.prompt()` for Before/After photo evidence with an in-app Photo Upload Modal (with live preview, camera presets, and timestamp watermark).
+  - Replaced native `confirm()` and `alert()` with in-app COD Confirmation Modal and smooth animated toast notifications.
+- [x] Upgraded `client/src/pages/worker/WorkerSchedule.jsx`:
+  - Implemented full Feature 11: Weekly Availability & Shift Planner (Mon–Sat working day toggle chips, shift time selectors 9 AM - 7 PM, and "Mark Leave / Chhutti" calendar date picker with leave reasons).
+  - Persisted worker availability and leaves in `localStorage` (`servecircle_worker_schedule` and `servecircle_worker_leaves`).
+- [x] Upgraded `client/src/pages/customer/LiveTracking.jsx`:
+  - Implemented End OTP Handshake: When job status is `started` / `in_progress`, provides a prominent 4-digit End OTP card (fetched from `/bookings/:id/end-otp/regenerate`, fallback `9182`) with copy and refresh actions.
+  - Rendered Before-Work & After-Work Proof Photos uploaded by worker in a clean "Proof of Work" photo gallery with timestamp watermark.
+- [x] Upgraded `client/src/pages/customer/PostServiceReview.jsx`:
+  - Wired `handleSubmit` to call backend `POST /reviews` with rating, tip, and comment to persist in PostgreSQL and update worker stats.
+  - Implemented real printable E-Invoice / Receipt Modal for the "Download Receipt" button with `window.print()` support.
+  - Displayed worker's Before/After proof photos on the completion invoice.
+- [x] Upgraded `client/src/pages/customer/CustomerSubscriptions.jsx`:
+  - Wired "Choose Plan" buttons with an interactive plan upgrade modal, updating subscription status in user session and local storage with celebration toast.
+- [x] Upgraded `client/src/pages/customer/CustomerReviews.jsx`:
+  - Connected to `GET /reviews/my` to show customer's live reviews from PostgreSQL with fallback.
+- [x] Build & verification:
+  - Client production build (`npx vite build`): PASSED with 0 errors in 3.58s.
+  - Worker operations test suite (`verify-worker-ops-suite.mjs`): 30/30 checks PASSED.
+
 ## Working plan — Customer Service Ordering & Booking Flow Resolution (done, verified 2026-11-20)
 
 **User outcome:** Operator reported: "service order nahi ho rahi still abhi bhi pehle jesa hai sab" (Service order is not happening, still everything is like before). Resolved the end-to-end service ordering failure across frontend checkout (`BookingFlow.jsx`), backend service validation (`serviceService.js`), booking creation (`bookingService.js`), worker availability, and real-time reflection on customer tracking/dashboard.

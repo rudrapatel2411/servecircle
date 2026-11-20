@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineCheckCircle, HiOutlineStar, HiOutlineRocketLaunch,
-  HiOutlineShieldCheck, HiOutlineSparkles
+  HiOutlineShieldCheck, HiOutlineSparkles, HiOutlineXMark
 } from 'react-icons/hi2';
+import { getSession } from '../../utils/authSession';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -36,37 +37,65 @@ const plans = [
 
 const CustomerSubscriptions = () => {
   const { t } = useTranslation();
-  const [currentPlan] = useState('gold');
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const session = getSession();
+
+  const [currentPlan, setCurrentPlan] = useState(() => {
+    try {
+      return localStorage.getItem('servecircle_active_subscription') || 'gold';
+    } catch {
+      return 'gold';
+    }
+  });
+
+  const [pendingPlan, setPendingPlan] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const handleActivatePlan = (plan) => {
+    setCurrentPlan(plan.key);
+    try {
+      localStorage.setItem('servecircle_active_subscription', plan.key);
+    } catch {}
+    setPendingPlan(null);
+    setToastMessage(`🎉 Successfully upgraded to the ${plan.name} Membership! Your benefits are live.`);
+    setTimeout(() => setToastMessage(''), 5000);
+  };
 
   return (
-    <div className="page-content">
+    <div className="page-content" style={{ paddingBottom: '90px' }}>
+      
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="sc-toast success">
+          <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: '#22c55e' }} />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('customer.subscriptions')} ⭐</h1>
-          <p className="page-subtitle">Choose the perfect plan for your service needs</p>
+          <p className="page-subtitle">Choose the perfect plan for priority technician dispatches, discounts, and home audits.</p>
         </div>
       </div>
 
       {/* Current Plan Banner */}
-      <div className="current-plan-banner">
+      <div className="current-plan-banner" style={{ borderRadius: '16px', padding: '18px 24px' }}>
         <div className="current-plan-info">
-          <HiOutlineSparkles />
-          <span>You are currently on the <strong>{currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}</strong> plan</span>
+          <HiOutlineSparkles style={{ fontSize: '1.4rem', color: '#f59e0b' }} />
+          <span>You are currently enjoying the <strong>{currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} Tier</strong> benefits</span>
         </div>
-        <span className="current-plan-badge">Active</span>
+        <span className="current-plan-badge">Active Status</span>
       </div>
 
       {/* Plans Grid */}
       <div className="plans-grid">
         {plans.map((plan) => {
           const isCurrent = plan.key === currentPlan;
-          const isSelected = selectedPlan === plan.key;
           return (
             <div
               key={plan.key}
-              className={`plan-card ${isCurrent ? 'current' : ''} ${isSelected ? 'selected' : ''} ${plan.popular ? 'popular' : ''}`}
-              onClick={() => !isCurrent && setSelectedPlan(plan.key)}
+              className={`plan-card ${isCurrent ? 'current' : ''} ${plan.popular ? 'popular' : ''}`}
+              style={{ borderRadius: '18px', border: isCurrent ? '2px solid #2563eb' : '1px solid #e2e8f0' }}
             >
               {plan.popular && <div className="popular-badge">{t('pricing.popular')}</div>}
               {isCurrent && <div className="current-badge">{t('pricing.currentPlan')}</div>}
@@ -94,15 +123,66 @@ const CustomerSubscriptions = () => {
               </ul>
 
               <button
+                type="button"
                 className={`btn ${isCurrent ? 'btn-outline' : 'btn-primary'} plan-btn`}
                 disabled={isCurrent}
+                onClick={() => !isCurrent && setPendingPlan(plan)}
+                style={{ cursor: isCurrent ? 'default' : 'pointer' }}
               >
-                {isCurrent ? t('pricing.currentPlan') : t('pricing.choosePlan')}
+                {isCurrent ? t('pricing.currentPlan') : `Choose ${plan.name}`}
               </button>
             </div>
           );
         })}
       </div>
+
+      {/* Plan Upgrade Confirmation Modal */}
+      {pendingPlan && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, padding: '20px'
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '20px', maxWidth: '440px', width: '100%',
+            padding: '28px', textAlign: 'center', boxShadow: '0 25px 60px rgba(0,0,0,0.25)', position: 'relative'
+          }}>
+            <button
+              type="button"
+              onClick={() => setPendingPlan(null)}
+              style={{ position: 'absolute', top: '16px', right: '16px', border: 'none', background: 'none', fontSize: '1.3rem', cursor: 'pointer', color: '#64748b' }}
+            >
+              <HiOutlineXMark />
+            </button>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.8rem' }}>
+              <HiOutlineStar />
+            </div>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', marginBottom: '8px' }}>
+              Upgrade to {pendingPlan.name} Plan
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '18px' }}>
+              Enjoy {pendingPlan.features[1] || 'exclusive discounts'} and priority technician dispatches for <strong>{pendingPlan.price}/month</strong>.
+            </p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ flex: 1 }}
+                onClick={() => setPendingPlan(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ flex: 1.5 }}
+                onClick={() => handleActivatePlan(pendingPlan)}
+              >
+                Confirm & Activate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FAQ Section */}
       <div className="dash-section" style={{ marginTop: 40 }}>
