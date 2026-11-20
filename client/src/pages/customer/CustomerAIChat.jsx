@@ -108,27 +108,6 @@ function ctaLabel(analysis) {
   const category = String(analysis?.category || '').toLowerCase();
   const name = String(analysis?.serviceName || '').toLowerCase();
 
-<<<<<<< HEAD
-  if (category.includes('travel') || skill.includes('driver') || name.includes('driver')) return 'Book Driver & Travel';
-  if (category.includes('food') || skill.includes('cook') || skill.includes('chef') || name.includes('cook')) return 'Book Cook & Kitchen';
-  if (category.includes('pet') || skill.includes('pet') || name.includes('pet') || name.includes('dog')) return 'Book Pet Services';
-  if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor') || name.includes('doctor') || name.includes('physio')) return 'Book Healthcare at Home';
-  if (category.includes('event') || skill.includes('event') || name.includes('event') || name.includes('party')) return 'Book Events & Decor';
-  if (category.includes('vehicle') || skill.includes('detailer') || skill.includes('mechanic') || name.includes('car') || name.includes('bike')) return 'Book Vehicle Service';
-  if (category.includes('moving') || category.includes('relocation') || skill.includes('moving') || name.includes('packers') || name.includes('shifting')) return 'Book Relocation & Packers';
-  if (category.includes('society') || skill.includes('security') || name.includes('security') || name.includes('guard')) return 'Book Society Security';
-  if (category.includes('it') || skill.includes('cctv') || name.includes('cctv') || name.includes('wifi')) return 'Book IT & CCTV Support';
-  if (skill.includes('plumb') || name.includes('plumb') || name.includes('tap') || name.includes('leak') || name.includes('pipe')) return 'Book Plumber';
-  if (skill.includes('ac') || name.includes('ac') || name.includes('appliance') || name.includes('fridge') || name.includes('washing')) return 'Book AC Technician';
-  if (skill.includes('electric') || name.includes('electric') || name.includes('wire') || name.includes('switch') || name.includes('fan')) return 'Book Electrician';
-  if (skill.includes('clean') || name.includes('clean') || name.includes('deep clean') || name.includes('sofa')) return 'Book Cleaning Service';
-  if (skill.includes('paint') || name.includes('paint')) return 'Book Painter';
-  if (skill.includes('carpent') || name.includes('carpent') || name.includes('lock')) return 'Book Carpenter';
-  if (skill.includes('pest') || name.includes('pest')) return 'Book Pest Control';
-  if (skill.includes('garden') || name.includes('garden')) return 'Book Gardener';
-
-  return `Book ${analysis?.serviceName || 'Service'}`;
-=======
   let icon = '➔';
   if (category.includes('travel') || skill.includes('driver')) icon = '🚗';
   else if (category.includes('food') || skill.includes('cook') || skill.includes('chef')) icon = '🍳';
@@ -179,7 +158,6 @@ function isValidService(analysis) {
     if (aiCategory && svcCat === aiCategory && aiName.length > 3) return true;
     return false;
   });
->>>>>>> origin/main
 }
 
 const QUICK_SUGGESTIONS = [

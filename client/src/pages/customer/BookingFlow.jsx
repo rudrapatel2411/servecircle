@@ -14,12 +14,9 @@ import {
 import { mockWorkersForService } from './WorkerComparison';
 import { getSession, saveSession, requestApi } from '../../utils/authSession.js';
 import { servicesRegistry } from '../../data/servicesRegistry';
-<<<<<<< HEAD
 import { socket } from '../../socket';
 import { broadcastNotificationToTabs } from '../../utils/notificationSync';
-=======
 import servicesCatalog from '../../data/servicesCatalog.json';
->>>>>>> origin/main
 import '../Dashboard.css';
 import './CustomerPages.css';
 

@@ -1,12 +1,8 @@
 import jwt from 'jsonwebtoken';
-<<<<<<< HEAD
 import mongoose from 'mongoose';
 import User from '../models/User.js';
-import { findFallbackUserById, findFallbackUserByEmail } from '../utils/demoAuthStore.js';
-=======
 import { prisma } from '../config/prisma.js';
-import { findFallbackUserById } from '../utils/demoAuthStore.js';
->>>>>>> origin/main
+import { findFallbackUserById, findFallbackUserByEmail } from '../utils/demoAuthStore.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -61,20 +57,6 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     let user = null;
 
-<<<<<<< HEAD
-    if (!user && decoded.email) {
-      user = findFallbackUserByEmail(decoded.email);
-    }
-
-    if (!user && mongoose.connection.readyState === 1) {
-      try {
-        user = await User.findById(decoded.id).select('-password');
-        if (!user && decoded.email) {
-          user = await User.findOne({ email: decoded.email }).select('-password');
-        }
-      } catch {
-        user = null;
-=======
     // 1. Look up in PostgreSQL via Prisma
     try {
       const dbUser = await prisma.user.findUnique({
@@ -88,12 +70,21 @@ export const protect = async (req, res, next) => {
       // Prisma error fallback
     }
 
-    // 2. Fallback store if not in DB
+    // 2. Mongoose DB fallback if active
+    if (!user && mongoose.connection.readyState === 1) {
+      try {
+        const mUser = await User.findById(decoded.id).select('-password');
+        if (mUser) user = formatUser(mUser.toObject ? mUser.toObject() : mUser);
+      } catch {
+        user = null;
+      }
+    }
+
+    // 3. Fallback demo store if not in DB
     if (!user) {
-      const fbUser = findFallbackUserById(decoded.id);
+      const fbUser = findFallbackUserById(decoded.id) || (decoded.email ? findFallbackUserByEmail(decoded.email) : null);
       if (fbUser) {
         user = formatUser(fbUser);
->>>>>>> origin/main
       }
     }
 

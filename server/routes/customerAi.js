@@ -395,11 +395,6 @@ export function classifyIntent({ text = '', hasImage = false, conversation = [] 
     return 'FOLLOW_UP';
   }
 
-<<<<<<< HEAD
-  const serviceKeywordsEN = /\b(leak|leaking|leakage|pipe|water|tap|sink|bathroom|toilet|drain|ac|cooling|fan|socket|switch|light|power|sparks|mcb|wire|wiring|lock|door|key|geyser|fridge|refrigerator|washing machine|repair|broken|cleaning|clean|pest|cockroach|seepage|short circuit|driver|chauffeur|airport|cab|commute|carpool|cook|chef|tiffin|catering|pet|dog|cat|vet|grooming|nurse|nursing|doctor|physio|physiotherapy|physiotherapist|caretaker|elder|health|society|security|security guard|guard|watchman|birthday|party|event|dj|photographer|car|bike|motorcycle|engine|car wash|detailing|mechanic|shifting|moving|relocation|packers|emergency|sos|paint|painting|wall|carpenter|carpentry|furniture|sofa|carpet|whitewash|putty|waterproofing|appliance|plumber|electrician|cctv|camera|wifi|router|laptop|computer|internet|tv|setup|install|installation|garden|gardener|lawn|service|book)\b/.test(normalized);
-  const serviceKeywordsHI = /\b(pani|paani|tapak|bijli|bijjli|nali|nalka|nal|darwaza|khidki|kidki|chabi|chaabi|gizer|geysar|frij|safai|safaai|kida|chuha|toot|kharab|kharaab|band ho|nahi chal|kaam nahi|nahi aa rahi|problem hai|theek karo|repair karo|service chahiye|chahiye|lagwana|lagana|driver|driver chahiye|gaadi chalane|gadi chalana|outstation driver|khana|rasoi|tiffin|kutta|billi|dawa|doctor|nurse|caretaker|security guard|guard|watchman|society|bday|party|dj|car wash|gadi wash|mechanic|puncture|shifting|samaan shifting|relocation|packers|physio|paint|painting|rang|rangwana|deewar|wall|car|gadi|gaadi|bike|motorcycle|engine|chalu nahi|start nahi|badhiya|plumber|carpenter|electrician|badhai|cctv|camera|wifi|net|computer|sofa|carpet|mali|bagicha|plant)\b/.test(normalized);
-  const serviceKeywordsGU = /\b(pani|nali|nal|door|khidki|chaabi|tamaro|tamari|ghar ma problem|mara ghar|koi toot|saru nathi|joie che|chahiye|madad joie|electrician joie|plumber joie|repair joie|safai joie|driver joie|gadi chalavva|chauffeur|rasoi|khana|pet|vet|doctor|nurse|guard|security|bday|party|gadi wash|car wash|mechanic|shifting|packers|physio|paint|rang|color|car|bike|gadi|motor|cctv|camera|wifi|sofa|mali|service)\b/.test(normalized);
-=======
   // Direct check against all 110 specific platform services:
   if (SPECIFIC_ITEM_SIGNALS.some((item) => item.pattern.test(normalized))) {
     return 'SERVICE_PROBLEM';
@@ -409,7 +404,6 @@ export function classifyIntent({ text = '', hasImage = false, conversation = [] 
   const serviceKeywordsEN = /\b(leak|leaking|leakage|pipe|water|tap|sink|bathroom|toilet|drain|ac|cooling|fan|socket|switch|light|power|sparks|mcb|wire|wiring|lock|door|key|geyser|fridge|refrigerator|washing machine|repair|broken|cleaning|clean|pest|cockroach|seepage|short circuit|driver|chauffeur|airport|cab|commute|carpool|cook|chef|tiffin|catering|pet|dog|puppy|cat|vet|grooming|bath|spa|nail|nurse|nursing|doctor|physio|physiotherapy|physiotherapist|caretaker|elder|health|society|security|security guard|guard|watchman|birthday|party|event|dj|photographer|car|bike|motorcycle|engine|car wash|detailing|mechanic|shifting|moving|relocation|packers|emergency|sos|paint|painting|wall|carpenter|carpentry|furniture|sofa|carpet|whitewash|putty|waterproofing|appliance|plumber|electrician|cctv|camera|wifi|router|laptop|computer|internet|tv|setup|install|installation|garden|gardener|lawn|mow|mowing|service|book|chimney|grease|oil|oily|aquarium|fish tank|jumpstart|battery|puncture|denting|windshield|curtain|parda|wallpaper|welding|gate|inverter|purifier|ro|filter|babysitter|nanny|cake|laundry|ironing|tutor)\b/.test(normalized);
   const serviceKeywordsHI = /\b(pani|paani|tapak|bijli|bijjli|nali|nalka|nal|darwaza|khidki|kidki|chabi|chaabi|gizer|geysar|frij|safai|safaai|kida|chuha|toot|kharab|kharaab|band ho|nahi chal|kaam nahi|nahi aa rahi|problem hai|theek karo|repair karo|service chahiye|chahiye|lagwana|lagana|driver|driver chahiye|gaadi chalane|gadi chalana|outstation driver|khana|rasoi|tiffin|kutta|puppy|pilla|billi|dawa|doctor|nurse|caretaker|security guard|guard|watchman|society|bday|party|dj|car wash|gadi wash|mechanic|puncture|shifting|samaan shifting|relocation|packers|physio|paint|painting|rang|rangwana|deewar|wall|car|gadi|gaadi|bike|motorcycle|engine|chalu nahi|start nahi|badhiya|plumber|carpenter|electrician|badhai|cctv|camera|wifi|net|computer|sofa|carpet|mali|bagicha|plant|chimney|tel|machli|aquarium|loha|lohe ka|welding|wallpaper|parda|tanki|tank safai|garam pani)\b/.test(normalized);
   const serviceKeywordsGU = /\b(pani|nali|nal|door|khidki|chaabi|tamaro|tamari|ghar ma problem|mara ghar|koi toot|saru nathi|joie che|chahiye|madad joie|electrician joie|plumber joie|repair joie|safai joie|driver joie|gadi chalavva|chauffeur|rasoi|khana|pet|vet|doctor|nurse|guard|security|bday|party|gadi wash|car wash|mechanic|shifting|packers|physio|paint|rang|color|car|bike|gadi|motor|cctv|camera|wifi|sofa|mali|service|chimney|kutta|tanki)\b/.test(normalized);
->>>>>>> origin/main
 
   if (serviceKeywordsEN || serviceKeywordsHI || serviceKeywordsGU) return 'SERVICE_PROBLEM';
 
@@ -949,266 +943,6 @@ router.post(
         };
       }
 
-<<<<<<< HEAD
-      // Comprehensive canonical catalog mapper covering all ServeCircle services
-      const CANONICAL_SERVICES = [
-        {
-          keywords: ['plumb', 'leak', 'pipe', 'tap', 'drain', 'toilet', 'water', 'nali', 'nalka', 'tapak', 'washbasin', 'flush', 'sink', 'geyser', 'tank'],
-          name: 'Plumbing',
-          category: 'Home Repairs',
-          skill: 'Plumber',
-          price: 350,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['electric', 'wire', 'switch', 'power', 'light', 'fan', 'bijli', 'socket', 'fuse', 'mcb', 'short circuit', 'spark', 'board', 'wiring'],
-          name: 'Electrical Work',
-          category: 'Home Repairs',
-          skill: 'Electrician',
-          price: 300,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['ac', 'air condition', 'appliance', 'fridge', 'refrigerator', 'washing', 'cool', 'microwave', 'cooler', 'oven', 'purifier'],
-          name: 'AC & Appliance Repair',
-          category: 'Home Repairs',
-          skill: 'AC Technician',
-          price: 499,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['carpent', 'wood', 'furniture', 'door', 'window', 'darwaza', 'khidki', 'lock', 'handle', 'hinge', 'almirah', 'wardrobe', 'drawer', 'bed', 'chabi', 'chaabi'],
-          name: 'Carpentry',
-          category: 'Home Repairs',
-          skill: 'Carpenter',
-          price: 400,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['paint', 'wall', 'color', 'rang', 'putty', 'primer', 'whitewash', 'seepage', 'dampness', 'waterproof'],
-          name: 'Painting & Waterproofing',
-          category: 'Home Repairs',
-          skill: 'Painter',
-          price: 600,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['sofa', 'carpet', 'couch', 'upholstery', 'mattress'],
-          name: 'Sofa & Carpet Cleaning',
-          category: 'Cleaning & Hygiene',
-          skill: 'Cleaning Specialist',
-          price: 599,
-          targetHubRoute: '/customer/general-services/cleaning-services',
-        },
-        {
-          keywords: ['clean', 'deep clean', 'safai', 'house cleaning', 'flat clean', 'home clean', 'bathroom clean', 'kitchen clean'],
-          name: 'Home Deep Cleaning',
-          category: 'Cleaning & Hygiene',
-          skill: 'Cleaning Specialist',
-          price: 1200,
-          targetHubRoute: '/customer/general-services/cleaning-services',
-        },
-        {
-          keywords: ['pest', 'termite', 'cockroach', 'khatmal', 'bed bug', 'deemak', 'mosquito', 'insect', 'chuha', 'chuhe', 'rodent', 'kida'],
-          name: 'Pest Control',
-          category: 'Cleaning & Hygiene',
-          skill: 'Pest Controller',
-          price: 899,
-          targetHubRoute: '/customer/general-services/cleaning-services',
-        },
-        {
-          keywords: ['shift', 'pack', 'relocat', 'mover', 'packers', 'transport', 'samaan', 'room shift', 'house shift'],
-          name: 'Relocation & Packers',
-          category: 'Relocation & Packers',
-          skill: 'Movers & Packers',
-          price: 2500,
-          targetHubRoute: '/customer/relocation',
-        },
-        {
-          keywords: [
-            'driver', 'chauffeur', 'cab', 'taxi', 'airport', 'flight', 'hawai adda', 'railway', 'train', 'station',
-            'bus stand', 'bus terminal', 'pickup', 'pick & drop', 'drop', 'dropoff', 'outstation', 'self drive', 'self-drive',
-            'car rental', 'car', 'gadi', 'gaadi', 'gadi chalane', 'gaadi driver', 'hatchback', 'sedan', 'suv', 'innova', 'crysta',
-            'hycross', 'ertiga', 'creta', 'fortuner', 'swift', 'dzire', 'bmw', 'mercedes', 'audi', 'mustang', 'tempo', 'traveller',
-            'travel', 'travelling', 'traveling', 'commute', 'km', 'kilometer', 'kilometre', 'journey', 'trip', 'tour', 'ride', 'rides',
-            'bhavnagar', 'udaipur', 'ahmedabad', 'mumbai', 'surat', 'pune', 'delhi', 'vadodara', 'rajkot', 'jaipur', 'mount abu', 'dwarka', 'somnath',
-            'kiraya', 'bhaada', 'bhada', 'fare', 'trip cost', 'travelling cost', 'travel cost'
-          ],
-          name: 'City, Station, Airport & Outstation Rides',
-          category: 'Travel & Commute',
-          skill: 'Driver',
-          price: 599,
-          targetHubRoute: '/customer/travel-commute',
-        },
-        {
-          keywords: ['cook', 'chef', 'khana', 'rasoi', 'catering', 'tiffin', 'meal', 'bhojan'],
-          name: 'Home Cook & Catering',
-          category: 'Food & Kitchen',
-          skill: 'Cook',
-          price: 499,
-          targetHubRoute: '/customer/food-kitchen',
-        },
-        {
-          keywords: ['pet', 'dog', 'cat', 'kutta', 'billi', 'groom', 'vet', 'dog walk', 'pet bath'],
-          name: 'Pet Grooming & Care',
-          category: 'Pet Services',
-          skill: 'Pet Care Specialist',
-          price: 450,
-          targetHubRoute: '/customer/pet-services',
-        },
-        {
-          keywords: ['doctor', 'nurse', 'physio', 'physiotherapy', 'health', 'patient', 'elder', 'caretaker', 'dawa', 'medical'],
-          name: 'Doctor & Healthcare at Home',
-          category: 'Health & Wellness',
-          skill: 'Healthcare Professional',
-          price: 699,
-          targetHubRoute: '/customer/health-wellness',
-        },
-        {
-          keywords: ['society', 'security guard', 'gate', 'watchman', 'rwa', 'building', 'guard'],
-          name: 'Society Security & Maintenance',
-          category: 'Society Management',
-          skill: 'Security Guard',
-          price: 1500,
-          targetHubRoute: '/customer/society-management',
-        },
-        {
-          keywords: ['event', 'birthday', 'party', 'decor', 'dj', 'sound', 'celebration', 'photographer', 'wedding'],
-          name: 'Events & Celebrations',
-          category: 'Events & Celebrations',
-          skill: 'Event Coordinator',
-          price: 2499,
-          targetHubRoute: '/customer/events',
-        },
-        {
-          keywords: ['car wash', 'gadi wash', 'foam wash', 'detailing'],
-          name: 'Car Wash & Detailing',
-          category: 'Vehicle Services',
-          skill: 'Car Detailer',
-          price: 399,
-          targetHubRoute: '/customer/services/vehicle-services',
-        },
-        {
-          keywords: ['car repair', 'car mechanic', 'engine', 'four wheeler', 'car breakdown', 'car puncture', 'car service'],
-          name: 'Car Repair',
-          category: 'Vehicle Services',
-          skill: 'Car Mechanic',
-          price: 799,
-          targetHubRoute: '/customer/services/vehicle-services',
-        },
-        {
-          keywords: ['bike', 'motorcycle', 'scooter', 'two wheeler', 'puncture', 'activa'],
-          name: 'Bike Repair',
-          category: 'Vehicle Services',
-          skill: 'Bike Mechanic',
-          price: 399,
-          targetHubRoute: '/customer/services/vehicle-services',
-        },
-        {
-          keywords: ['cctv', 'camera', 'wifi', 'router', 'laptop', 'computer', 'internet', 'smart tv'],
-          name: 'Home IT & CCTV Support',
-          category: 'Home IT & Tech Support',
-          skill: 'IT Technician',
-          price: 449,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['garden', 'lawn', 'plant', 'grass', 'pot', 'pruning', 'gardener', 'mali'],
-          name: 'Gardener & Lawn Care',
-          category: 'Garden & Outdoor',
-          skill: 'Gardener',
-          price: 399,
-          targetHubRoute: null,
-        },
-        {
-          keywords: ['emergency', 'urgent', 'sos', 'immediately', 'turant', 'breakdown'],
-          name: 'Emergency SOS Repair',
-          category: 'Emergency Services',
-          skill: 'Emergency Technician',
-          price: 499,
-          targetHubRoute: '/customer/emergency',
-        },
-      ];
-
-      // Word-boundary safe keyword matcher (prevents 'rat' matching 'rates', 'ac' matching 'pack', 'cat' matching 'location', etc.)
-      const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const hasWordMatch = (haystack, kw) => {
-        const escaped = escapeRegex(kw.toLowerCase());
-        return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:$|[^\\p{L}\\p{N}])`, 'iu').test(haystack);
-      };
-
-      const userHistoryText = Array.isArray(conversation)
-        ? conversation.filter((c) => c?.role === 'user').slice(-3).map((c) => c.content || '').join(' ')
-        : '';
-      const primarySignals = `${text || ''} ${aiResponse?.serviceName || ''} ${aiResponse?.category || ''}`.toLowerCase();
-      const contextSignals = `${primarySignals} ${userHistoryText}`.toLowerCase();
-      const hasTravelIntent = /\b(travel|travelling|traveling|trip|tour|ride|rides|driver|chauffeur|cab|taxi|outstation|suv|innova|crysta|ertiga|creta|swift|dzire|sedan|hatchback|tempo|traveller|self\s*drive|self-drive|bhavnagar|udaipur|ahmedabad|mumbai|surat|pune|delhi|vadodara|rajkot|jaipur|mount abu|dwarka|somnath|pickup|drop|commute|airport|railway|bus\s*stand|bhaada|kiraya|fare|trip cost|travelling cost)\b/i.test(contextSignals);
-
-      const scoreService = (svc, signalText) => {
-        // If customer intent is clearly travel/rides, suppress cleaning, pest control, events, etc.
-        if (hasTravelIntent && svc.category !== 'Travel & Commute') {
-          return 0;
-        }
-
-        let score = 0;
-        for (const kw of svc.keywords) {
-          if (hasWordMatch(signalText, kw)) {
-            score += kw.includes(' ') ? 3 : 2;
-          }
-        }
-        if (aiResponse?.category && svc.category.toLowerCase() === aiResponse.category.toLowerCase()) {
-          score += 3;
-        }
-        if (hasTravelIntent && svc.category === 'Travel & Commute') {
-          score += 15;
-        }
-        return score;
-      };
-
-      let matchedCanonical = null;
-      let bestScore = 0;
-      for (const svc of CANONICAL_SERVICES) {
-        const s = scoreService(svc, primarySignals);
-        if (s > bestScore) {
-          bestScore = s;
-          matchedCanonical = svc;
-        }
-      }
-      if (!matchedCanonical && userHistoryText) {
-        for (const svc of CANONICAL_SERVICES) {
-          const s = scoreService(svc, contextSignals);
-          if (s > bestScore) {
-            bestScore = s;
-            matchedCanonical = svc;
-          }
-        }
-      }
-
-      const classified = classifyIntent({ text, hasImage: Boolean(image), conversation });
-      let showRecommendation = Boolean(
-        (aiResponse && aiResponse.showServiceRecommendation && aiResponse.serviceName && (!hasTravelIntent || aiResponse.category === 'Travel & Commute')) ||
-        (matchedCanonical && (classified === 'SERVICE_PROBLEM' || image || hasLeakageSignal(text) || hasTravelIntent))
-      );
-
-      if (!showRecommendation && matchedCanonical && (text.length > 3 || image)) {
-        showRecommendation = true;
-      }
-
-      let dbService = null;
-      if (showRecommendation && mongoose.connection.readyState === 1) {
-        try {
-          const lookupName = matchedCanonical?.name || aiResponse?.serviceName || '';
-          if (lookupName) {
-            const foundDb = await Service.findOne({
-              name: { $regex: new RegExp(lookupName.trim(), 'i') },
-            }).lean().catch(() => null);
-            if (foundDb && (!matchedCanonical || foundDb.category === matchedCanonical.category)) {
-              dbService = foundDb;
-            }
-          }
-        } catch {
-          dbService = null;
-=======
       if (isPureGeneral && !image && aiResponse) {
         aiResponse.showServiceRecommendation = false;
         aiResponse.serviceId = '';
@@ -1224,8 +958,6 @@ router.post(
       const responseIntent = String(aiResponse?.intent || 'CLARIFY').toUpperCase();
       const intentCanRecommend = !isPureGeneral && (responseIntent === 'SERVICE_REQUEST' || responseIntent === 'FOLLOW_UP');
 
-      // Resolve only an exact catalog ID or exact service name selected by the
-      // model. Text keyword matches are not sufficient to create a booking card.
       if (rawAiServiceId) {
         matchedCanonical = availableServices.find((service) => service.serviceId === rawAiServiceId) || null;
       }
@@ -1237,7 +969,6 @@ router.post(
             const svcName = normalizeServiceName(service.name);
             return svcName.includes(exactName) || exactName.includes(svcName);
           }) || null;
->>>>>>> origin/main
         }
       }
 
@@ -1249,25 +980,6 @@ router.post(
 
       const serviceName = dbService ? dbService.name : (matchedCanonical?.name || aiResponse?.serviceName || 'Home Service');
       const serviceCategory = dbService ? dbService.category : (matchedCanonical?.category || aiResponse?.category || 'Home Repairs');
-<<<<<<< HEAD
-      const baseCandidatePrice = dbService ? (dbService.basePrice || dbService.price || 350) : (matchedCanonical?.price || aiResponse?.estimatedPrice || 350);
-
-      // Deterministic dynamic pricing calculation (include recent km/params if current turn omits km)
-      const hasKmInCurrent = /\d+\s*(?:km|kms|kilometer|kilometres)\b/i.test(text || '');
-      const pricingText = hasKmInCurrent ? text : `${text || ''} ${userHistoryText} ${aiResponse?.reply || ''}`;
-      const dynamicPricing = computeDynamicChatPrice({
-        text: pricingText,
-        serviceName,
-        category: serviceCategory,
-        basePrice: baseCandidatePrice,
-        aiEstimatedPrice: aiResponse?.estimatedPrice,
-      });
-
-      const servicePrice = dynamicPricing.price;
-      const serviceSkill = matchedCanonical?.skill || aiResponse?.requiredWorkerSkill || 'Technician';
-      const targetHubRoute = matchedCanonical?.targetHubRoute || null;
-      const serviceId = dbService ? dbService._id.toString() : '';
-=======
       const catalogMatch = matchedCanonical;
 
       const CATEGORY_HUB_ROUTES = {
@@ -1314,13 +1026,24 @@ router.post(
         'Society Management': 'Security Specialist',
       };
 
-      const servicePrice = dbService
+      const baseCandidatePrice = dbService
         ? (dbService.basePrice || dbService.price || 350)
         : (matchedCanonical?.basePrice || matchedCanonical?.price || catalogMatch?.basePrice || aiResponse?.estimatedPrice || 350);
+
+      const hasKmInCurrent = /\d+\s*(?:km|kms|kilometer|kilometres)\b/i.test(text || '');
+      const pricingText = hasKmInCurrent ? text : `${text || ''} ${userHistoryText} ${aiResponse?.reply || ''}`;
+      const dynamicPricing = computeDynamicChatPrice({
+        text: pricingText,
+        serviceName,
+        category: serviceCategory,
+        basePrice: baseCandidatePrice,
+        aiEstimatedPrice: aiResponse?.estimatedPrice,
+      });
+
+      const servicePrice = dynamicPricing.price;
       const serviceSkill = matchedCanonical?.skill || CATEGORY_DEFAULT_SKILLS[serviceCategory] || aiResponse?.requiredWorkerSkill || 'Technician';
       const targetHubRoute = matchedCanonical?.targetHubRoute || CATEGORY_HUB_ROUTES[serviceCategory] || null;
       const serviceId = dbService ? dbService._id.toString() : (catalogMatch?.serviceId || matchedCanonical?.serviceId || '');
->>>>>>> origin/main
 
       const rawFollowUps = Array.isArray(aiResponse?.followUpQuestions) ? aiResponse.followUpQuestions : [];
       const sanitizedFollowUps = (serviceCategory === 'Travel & Commute' || hasTravelIntent)
@@ -1360,15 +1083,11 @@ router.post(
         intent: responseIntent,
         message: replyMessage,
         showServiceRecommendation: showRecommendation,
-<<<<<<< HEAD
         followUpQuestions: sanitizedFollowUps.length > 0
           ? sanitizedFollowUps
-          : ['Plumbing & Water Leakage', 'Electrical & Wiring Fault', 'AC Repair & Servicing', 'Local House Shifting'],
-=======
-        followUpQuestions: Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
-          ? aiResponse.followUpQuestions
-          : (showRecommendation ? [] : []),  // Only suggest service prompts if we actually matched a service
->>>>>>> origin/main
+          : (Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
+              ? aiResponse.followUpQuestions
+              : (showRecommendation ? [] : [])),
         analysis: showRecommendation ? {
           multimodal: {
             problemAnalysis: {
@@ -1416,11 +1135,7 @@ router.post(
       res.status(StatusCodes.OK).json(payload);
     } catch (err) {
       console.error('[customerAi /chat] Critical error:', err);
-<<<<<<< HEAD
-      const classified = classifyIntent({ text: req.body?.text || '', hasImage: Boolean(req.file) });
-=======
       const fallbackLanguage = detectLanguage(req.body?.text || '');
->>>>>>> origin/main
       res.status(StatusCodes.OK).json({
         status: 'success',
         intent: 'CLARIFY',
