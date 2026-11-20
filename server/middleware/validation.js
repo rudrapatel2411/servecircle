@@ -41,13 +41,25 @@ export const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+// Helper to check valid ID format (UUID, MongoDB ObjectId, or custom format)
+const isValidId = (val) => {
+  if (!val || typeof val !== 'string') return false;
+  // Standard UUID format
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)) return true;
+  // MongoDB ObjectId
+  if (mongoose.Types.ObjectId.isValid(val)) return true;
+  // Custom prefix formats: SC-123, BK-123, demo_...
+  if (/^(SC|BK|SRV|USR|WRK)-[a-zA-Z0-9_-]+$/i.test(val) || String(val).startsWith('demo_')) return true;
+  return false;
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // REUSABLE PARAMETER VALIDATORS
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const validateMongoIdParam = (paramName = 'id') => [
   param(paramName)
-    .custom((val) => mongoose.Types.ObjectId.isValid(val) || /^SC-\d+$/i.test(val) || String(val).startsWith('demo_'))
+    .custom((val) => isValidId(val))
     .withMessage(`Invalid identifier format for parameter '${paramName}'`),
   handleValidationErrors,
 ];
@@ -124,27 +136,27 @@ export const validateCreateBooking = [
 
 export const validateAssignWorker = [
   param('id')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for booking id'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for booking id'),
   body('workerId')
     .exists().withMessage('workerId is required')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for workerId'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for workerId'),
   handleValidationErrors,
 ];
 
 export const validateCancelBooking = [
   param('id')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for booking id'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for booking id'),
   body('reason').optional().isString().withMessage('Cancellation reason must be a string'),
   handleValidationErrors,
 ];
 
 export const validatePayBooking = [
   param('id')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for booking id'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for booking id'),
   body('paymentMethod').optional().isString().withMessage('Payment method must be a string'),
   handleValidationErrors,
 ];
@@ -184,8 +196,8 @@ export const validateSubscription = [
 
 export const validateWorkerStatusUpdate = [
   param('id')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for worker id'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for worker id'),
   body('workerStatus')
     .isIn([
       'pending_interview',
@@ -215,8 +227,8 @@ export const validateCreateService = [
 
 export const validateUpdateService = [
   param('id')
-    .custom((val) => mongoose.Types.ObjectId.isValid(val))
-    .withMessage('Invalid MongoDB ObjectId format for service id'),
+    .custom((val) => isValidId(val))
+    .withMessage('Invalid ID format for service id'),
   body('name').optional().trim().notEmpty().withMessage('Service name cannot be empty'),
   body('category').optional().trim().notEmpty().withMessage('Service category cannot be empty'),
   body('basePrice').optional().isFloat({ min: 0 }).withMessage('basePrice must be a positive number'),

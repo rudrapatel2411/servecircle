@@ -20,17 +20,17 @@ const eventLogSchema = new mongoose.Schema(
 
     // Which resource this event is about
     entityType: { type: String, required: true, trim: true }, // 'Booking' | 'User' | 'Review' | 'Service' etc.
-    entityId:   { type: mongoose.Schema.Types.ObjectId },
+    entityId:   { type: mongoose.Schema.Types.Mixed },
 
     // Who triggered this event
-    actorId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    actorId:   { type: mongoose.Schema.Types.Mixed },
     actorRole: { type: String, trim: true }, // 'customer' | 'worker' | 'admin' | 'system'
 
     // Related entity IDs (for fast querying)
-    bookingId:  { type: mongoose.Schema.Types.ObjectId, ref: 'Booking' },
-    serviceId:  { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
-    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    workerId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    bookingId:  { type: mongoose.Schema.Types.Mixed },
+    serviceId:  { type: mongoose.Schema.Types.Mixed },
+    customerId: { type: mongoose.Schema.Types.Mixed },
+    workerId:   { type: mongoose.Schema.Types.Mixed },
 
     // When this event occurred (authoritative timestamp)
     timestamp: { type: Date, default: Date.now, required: true },

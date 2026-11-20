@@ -1,6 +1,6 @@
+// server/routes/coupons.js
 import express from 'express';
-import mongoose from 'mongoose';
-import Coupon from '../models/Coupon.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize, optionalAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -9,20 +9,36 @@ import { DEMO_COUPONS } from '../utils/demoDataStore.js';
 
 const router = express.Router();
 
+function formatCoupon(c) {
+  if (!c) return null;
+  return {
+    ...c,
+    _id: c.id,
+    discountType: String(c.discountType || '').toLowerCase(),
+  };
+}
+
 // GET /coupons/available — public/customer view of active offers
 router.get(
   '/available',
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.json(DEMO_COUPONS.filter((c) => c.isActive));
+    try {
+      const now = new Date();
+      const coupons = await prisma.coupon.findMany({
+        where: {
+          isActive: true,
+          validFrom: { lte: now },
+          validUntil: { gte: now },
+        },
+        orderBy: { discountValue: 'desc' },
+      });
+      if (coupons.length > 0) {
+        return res.json(coupons.map(formatCoupon));
+      }
+    } catch (err) {
+      console.warn('[Coupons /available] PostgreSQL fallback:', err.message);
     }
-    const now = new Date();
-    const coupons = await Coupon.find({
-      isActive: true,
-      validFrom: { $lte: now },
-      validUntil: { $gte: now },
-    }).sort('-discountValue');
-    res.json(coupons);
+    res.json(DEMO_COUPONS.filter((c) => c.isActive));
   })
 );
 
@@ -34,19 +50,23 @@ router.get(
   asyncHandler(async (req, res) => {
     const { active } = req.query;
 
-    if (mongoose.connection.readyState !== 1) {
+    try {
+      const where = {};
+      if (active === 'true') where.isActive = true;
+      if (active === 'false') where.isActive = false;
+
+      const coupons = await prisma.coupon.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+      });
+      return res.json(coupons.map(formatCoupon));
+    } catch (err) {
+      console.warn('[Coupons /] PostgreSQL fallback:', err.message);
       let list = [...DEMO_COUPONS];
       if (active === 'true') list = list.filter((c) => c.isActive);
       if (active === 'false') list = list.filter((c) => !c.isActive);
-      return res.json(list);
+      res.json(list);
     }
-
-    const query = {};
-    if (active === 'true') query.isActive = true;
-    if (active === 'false') query.isActive = false;
-
-    const coupons = await Coupon.find(query).sort('-createdAt');
-    res.json(coupons);
   })
 );
 
@@ -63,12 +83,12 @@ router.post(
     const cleanCode = String(code).trim().toUpperCase();
     let coupon = null;
 
-    if (mongoose.connection.readyState === 1) {
-      try {
-        coupon = await Coupon.findOne({ code: cleanCode, isActive: true });
-      } catch (err) {
-        console.warn('[Coupon] DB lookup failed, falling back:', err.message);
-      }
+    try {
+      coupon = await prisma.coupon.findFirst({
+        where: { code: cleanCode, isActive: true },
+      });
+    } catch (err) {
+      console.warn('[Coupon] DB lookup failed, falling back:', err.message);
     }
 
     if (!coupon) {
@@ -100,7 +120,8 @@ router.post(
 
     let discount = 0;
     const amount = Number(orderAmount);
-    if (coupon.discountType === 'percentage') {
+    const discType = String(coupon.discountType).toLowerCase();
+    if (discType === 'percentage') {
       discount = (amount * coupon.discountValue) / 100;
       if (coupon.maxDiscount) discount = Math.min(discount, coupon.maxDiscount);
     } else {
@@ -113,7 +134,7 @@ router.post(
       code: coupon.code,
       discount: Math.round(discount),
       finalAmount: Math.max(0, Math.round(amount - discount)),
-      coupon,
+      coupon: formatCoupon(coupon),
     });
   })
 );
@@ -124,61 +145,56 @@ router.post(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
+    const { code, discountValue, discountType, minOrderAmount, maxDiscount, usageLimit, validFrom, validUntil, applicableCategories } = req.body;
+
+    try {
+      const created = await prisma.coupon.create({
+        data: {
+          code: String(code).trim().toUpperCase(),
+          discountValue: Number(discountValue) || 10,
+          discountType: (discountType || 'PERCENTAGE').toUpperCase(),
+          minOrderAmount: Number(minOrderAmount) || 0.0,
+          maxDiscount: maxDiscount ? Number(maxDiscount) : null,
+          usageLimit: Number(usageLimit) || 100,
+          validFrom: validFrom ? new Date(validFrom) : new Date(),
+          validUntil: validUntil ? new Date(validUntil) : new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+          applicableCategories: Array.isArray(applicableCategories) ? applicableCategories : [],
+          isActive: true,
+          createdById: req.user.id || req.user._id,
+        },
+      });
+      return res.status(StatusCodes.CREATED).json(formatCoupon(created));
+    } catch (err) {
+      console.warn('[Coupons POST] PostgreSQL fallback:', err.message);
       const newCoupon = {
         _id: `cpn_${Date.now()}`,
         ...req.body,
-        code: req.body.code.toUpperCase(),
+        code: String(code).trim().toUpperCase(),
+        createdAt: new Date(),
         usedCount: 0,
-        isActive: req.body.isActive !== undefined ? req.body.isActive : true,
       };
       DEMO_COUPONS.unshift(newCoupon);
       return res.status(StatusCodes.CREATED).json(newCoupon);
     }
-
-    const coupon = await Coupon.create({ ...req.body, createdBy: req.user._id }).catch((err) => {
-      if (err.code === 11000) throw new AppError('Coupon code already exists', StatusCodes.BAD_REQUEST);
-      throw err;
-    });
-    res.status(StatusCodes.CREATED).json(coupon);
   })
 );
 
-// PUT /coupons/:id — update coupon (admin)
-router.put(
-  '/:id',
-  protect,
-  authorize('admin'),
-  asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const idx = DEMO_COUPONS.findIndex((c) => c._id === req.params.id);
-      if (idx === -1) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
-      DEMO_COUPONS[idx] = { ...DEMO_COUPONS[idx], ...req.body };
-      return res.json(DEMO_COUPONS[idx]);
-    }
-
-    const coupon = await Coupon.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!coupon) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
-    res.json(coupon);
-  })
-);
-
-// DELETE /coupons/:id — delete coupon (admin)
+// DELETE /coupons/:id
 router.delete(
   '/:id',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const idx = DEMO_COUPONS.findIndex((c) => c._id === req.params.id);
-      if (idx === -1) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
-      DEMO_COUPONS.splice(idx, 1);
+    const { id } = req.params;
+    try {
+      await prisma.coupon.delete({ where: { id } });
+      return res.json({ message: 'Coupon deleted' });
+    } catch (err) {
+      console.warn('[Coupons DELETE] PostgreSQL fallback:', err.message);
+      const idx = DEMO_COUPONS.findIndex((c) => c._id === id || c.code === id);
+      if (idx !== -1) DEMO_COUPONS.splice(idx, 1);
       return res.json({ message: 'Coupon deleted' });
     }
-
-    const coupon = await Coupon.findByIdAndDelete(req.params.id);
-    if (!coupon) throw new AppError('Coupon not found', StatusCodes.NOT_FOUND);
-    res.json({ message: 'Coupon deleted' });
   })
 );
 

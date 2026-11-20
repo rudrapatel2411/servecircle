@@ -32,9 +32,14 @@ import verificationRoutes from './routes/verification.js';
 import aiProviderRoutes from './routes/aiProvider.js';
 import customerAiRoutes from './routes/customerAi.js';
 import { AIProviderManager } from './ai/providers/AIProviderManager.js';
+<<<<<<< HEAD
 import User from './models/User.js';
 import { ensureDemoUsersInDB } from './utils/demoAuthStore.js';
 import { notifyAdmin } from './services/notificationService.js';
+=======
+import { prisma } from './config/prisma.js';
+import { syncAndLoadServiceVectors } from './ai/services/ragService.js';
+>>>>>>> origin/main
 
 const app = express();
 const httpServer = createServer(app);
@@ -335,6 +340,7 @@ const connectDB = async () => {
 
 connectDB();
 
+<<<<<<< HEAD
 // ─── Atlas Keep-Alive Ping ───────────────────────────────────────────────────
 // Free M0 clusters auto-pause after 60 days of no connections.
 // This pings the DB every 24 hours so it never goes idle.
@@ -351,6 +357,19 @@ setInterval(async () => {
 }, KEEP_ALIVE_INTERVAL);
 // ─────────────────────────────────────────────────────────────────────────────
 
+=======
+// PostgreSQL (Prisma ORM) & RAG Layer Initialization
+(async () => {
+  try {
+    await prisma.$connect();
+    console.log('✅ PostgreSQL (Prisma ORM) Connected Successfully');
+    // Pre-cache 110 catalog services into Vector RAG memory
+    await syncAndLoadServiceVectors(false);
+  } catch (err) {
+    console.error('❌ PostgreSQL / RAG Connection Error:', err.message);
+  }
+})();
+>>>>>>> origin/main
 
 // AI Provider Layer
 (async () => {

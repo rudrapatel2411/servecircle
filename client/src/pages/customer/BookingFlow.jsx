@@ -14,8 +14,12 @@ import {
 import { mockWorkersForService } from './WorkerComparison';
 import { getSession, saveSession, requestApi } from '../../utils/authSession.js';
 import { servicesRegistry } from '../../data/servicesRegistry';
+<<<<<<< HEAD
 import { socket } from '../../socket';
 import { broadcastNotificationToTabs } from '../../utils/notificationSync';
+=======
+import servicesCatalog from '../../data/servicesCatalog.json';
+>>>>>>> origin/main
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -90,10 +94,22 @@ const BookingFlow = () => {
   const initialServiceId = searchParams.get('serviceId') || '';
   const initialCategoryParam = searchParams.get('category') || '';
   const resolvedCategory = inferCategoryFromService(initialService, initialServiceId, initialCategoryParam);
-  const matchedService = servicesRegistry.find(s => s.id === initialServiceId || s.id === initialService?.toLowerCase()?.replace(/\s+/g, '-'));
-  const resolvedServiceId = initialServiceId || matchedService?.id || undefined;
+  
+  // Look up in all 110 catalog services first, then fall back to registry
+  const matchedCatalog = servicesCatalog.find(s => 
+    (initialServiceId && s.serviceId === initialServiceId) || 
+    s.name.toLowerCase() === initialService?.toLowerCase()
+  );
+  const matchedRegistry = servicesRegistry.find(s => 
+    (initialServiceId && s.id === initialServiceId) || 
+    s.id === initialService?.toLowerCase()?.replace(/\s+/g, '-')
+  );
+  const matchedService = matchedCatalog || matchedRegistry;
+  const resolvedServiceId = initialServiceId || matchedCatalog?.serviceId || matchedRegistry?.id || undefined;
   const priceParam = searchParams.get('price');
-  const initialBasePrice = priceParam !== null && !isNaN(parseInt(priceParam)) ? parseInt(priceParam) : (matchedService?.basePrice || 499);
+  const initialBasePrice = priceParam !== null && !isNaN(parseInt(priceParam)) 
+    ? parseInt(priceParam) 
+    : (matchedCatalog?.basePrice || matchedRegistry?.basePrice || 499);
   const initialDate = searchParams.get('date') || '';
   const initialTime = searchParams.get('slot') || '';
   const initialTier = searchParams.get('tier') || 'standard';

@@ -1,0 +1,535 @@
+// server/prisma/schema.prisma
+// ServeCircle Core Relational Architecture
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  WORKER
+  ADMIN
+  B2B
+}
+
+enum WorkerStatus {
+  PENDING_INTERVIEW
+  INTERVIEW_DONE
+  APPROVED_ROOKIE
+  APPROVED_JUNIOR
+  APPROVED_SENIOR
+  REJECTED
+}
+
+enum SubscriptionPlan {
+  BASIC
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum ContractType {
+  MONTHLY_CLEANING
+  QUARTERLY_MAINTENANCE
+  WEEKLY_SERVICES
+  ANNUAL_PACKAGE
+  CUSTOM
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  RENEWAL_DUE
+  EXPIRED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING
+  ASSIGNED
+  ACCEPTED
+  EN_ROUTE
+  ARRIVED
+  STARTED
+  COMPLETED
+  PAID
+  CLOSED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum TransactionType {
+  TOPUP
+  PAYMENT
+  REFUND
+  EARNING
+  WITHDRAWAL
+  BONUS
+  COMMISSION
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum ComplaintCategory {
+  SERVICE_QUALITY
+  PAYMENT
+  WORKER_BEHAVIOUR
+  DELAY
+  DAMAGE
+  FRAUD
+  OTHER
+}
+
+enum ComplaintPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ESCALATED
+  CLOSED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FLAT
+}
+
+// ==========================================
+// 1. USER & AUTHENTICATION
+// ==========================================
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  phone          String?
+  password       String
+  role           UserRole  @default(CUSTOMER)
+  avatar         String?
+  city           String?   @default("Mumbai")
+  walletBalance  Float     @default(0.0)
+  isDeleted      Boolean   @default(false)
+  deletedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // 1-to-1 Worker Profile
+  workerProfile  WorkerProfile?
+
+  // Bookings relations
+  customerBookings Booking[] @relation("CustomerBookings")
+  workerBookings   Booking[] @relation("WorkerBookings")
+  traineeBookings  Booking[] @relation("TraineeBookings")
+
+  // Financial relations
+  walletTransactions WalletTransaction[]
+
+  // Reviews
+  customerReviews Review[] @relation("CustomerReviews")
+  workerReviews   Review[] @relation("WorkerReviews")
+
+  // Complaints
+  filedComplaints    Complaint[] @relation("FiledComplaints")
+  assignedComplaints Complaint[] @relation("AgainstUserComplaints")
+  resolvedComplaints Complaint[] @relation("ResolvedByAdminComplaints")
+
+  // Subscriptions & B2B Contracts
+  subscriptions Subscription[]
+  contracts     Contract[]     @relation("PartnerContracts")
+  invoices      Invoice[]      @relation("PartnerInvoices")
+
+  // Coupons created
+  createdCoupons Coupon[] @relation("AdminCoupons")
+
+  @@index([role, isDeleted])
+  @@index([email])
+}
+
+// ==========================================
+// 2. WORKER / PARTNER PROFILE
+// ==========================================
+model WorkerProfile {
+  id              String       @id @default(uuid())
+  userId          String       @unique
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  skills          String[]     @default([])
+  serviceCategory String?      // e.g. 'Home Repairs', 'Vehicle Services'
+  idProof         String?
+  experience      String?      // e.g. 'Fresher', '1-2 Years', '3+ Years'
+
+  workerStatus    WorkerStatus @default(PENDING_INTERVIEW)
+  workerAdminNote String?
+  isVerified      Boolean      @default(false)
+
+  completedJobs   Int          @default(0)
+  shadowJobsDone  Int          @default(0)
+  rating          Float        @default(0.0)
+  isProBadge      Boolean      @default(false)
+  earnings        Float        @default(0.0)
+
+  // QR & Offline Verification
+  workerIdCode    String?      @unique
+  qrToken         String?      @unique
+  qrActive        Boolean      @default(true)
+  qrGeneratedAt   DateTime?
+
+  certificates    String[]     @default([])
+  languages       String[]     @default(["English", "Hindi"])
+
+  // Geo Location
+  latitude        Float?
+  longitude       Float?
+  isAvailable     Boolean      @default(true)
+  lastAssignedAt  DateTime?
+
+  // Services offered by this worker
+  services        WorkerService[]
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([workerStatus, isVerified, serviceCategory])
+  @@index([latitude, longitude])
+}
+
+// ==========================================
+// 3. SERVICE CATALOG (~110 SERVICES) & VECTOR RAG
+// ==========================================
+model Service {
+  id                String          @id @default(uuid())
+  serviceId         String          @unique // e.g. 'ac-repair', 'plumbing-fix'
+  name              String
+  category          String          // e.g. 'Home Repairs', 'Cleaning & Hygiene'
+  subCategory       String?
+  description       String?
+  basePrice         Float
+  estimatedDuration Int             @default(60) // minutes
+  isActive          Boolean         @default(true)
+  icon              String          @default("🔧")
+  image             String          @default("")
+  tags              String[]        @default([])
+  serviceRadius     Int             @default(20) // km
+
+  // 768-dim embedding array (nomic-embed-text)
+  embedding         Float[]         @default([])
+  // In-memory / JSON fallback embedding cache
+  embeddingJson     String?         @db.Text
+
+  isDeleted         Boolean         @default(false)
+  deletedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Many-to-Many Worker relation
+  workers           WorkerService[]
+  bookings          Booking[]
+
+  @@index([category, isActive])
+  @@index([serviceId])
+  @@index([name])
+}
+
+// ==========================================
+// 4. WORKER-SERVICE JUNCTION (CUSTOM PRICING)
+// ==========================================
+model WorkerService {
+  id              String        @id @default(uuid())
+  workerProfileId String
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  serviceId       String
+  service         Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  customPrice     Float?        // Override of basePrice if applicable
+  isApproved      Boolean       @default(true)
+  isActive        Boolean       @default(true)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([workerProfileId, serviceId])
+  @@index([serviceId])
+  @@index([workerProfileId])
+}
+
+// ==========================================
+// 5. BOOKINGS & SECURE OTP LIFECYCLE
+// ==========================================
+model Booking {
+  id                        String        @id @default(uuid())
+  bookingId                 String        @unique // e.g. 'BK-17182939'
+  customerId                String
+  customer                  User          @relation("CustomerBookings", fields: [customerId], references: [id])
+
+  workerId                  String?
+  worker                    User?         @relation("WorkerBookings", fields: [workerId], references: [id])
+
+  traineeId                 String?
+  trainee                   User?         @relation("TraineeBookings", fields: [traineeId], references: [id])
+
+  serviceId                 String?
+  serviceRef                Service?      @relation(fields: [serviceId], references: [id])
+  serviceName               String
+  category                  String
+  description               String?
+
+  scheduledDate             DateTime
+  scheduledTime             String?
+  address                   String
+  city                      String        @default("Mumbai")
+
+  status                    BookingStatus @default(PENDING)
+
+  amount                    Float
+  platformCommission        Float         @default(0.0)
+  workerEarnings            Float         @default(0.0)
+
+  paymentStatus             PaymentStatus @default(PENDING)
+  paymentMethod             String?
+
+  // Trust & Safety Worker Verification before OTP
+  isWorkerVerifiedBeforeOtp Boolean       @default(false)
+  workerVerifiedAt          DateTime?
+
+  // Secure OTP lifecycle
+  startOtp                  String?
+  endOtp                    String?
+  startOtpVerified          Boolean       @default(false)
+  endOtpVerified            Boolean       @default(false)
+  startOtpExpiresAt         DateTime?
+  endOtpExpiresAt           DateTime?
+  startOtpAttempts          Int           @default(0)
+  endOtpAttempts            Int           @default(0)
+  startOtpLocked            Boolean       @default(false)
+  endOtpLocked              Boolean       @default(false)
+
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+
+  transactions              WalletTransaction[]
+  reviews                   Review[]
+  complaints                Complaint[]
+
+  @@index([customerId, status])
+  @@index([workerId, status])
+  @@index([scheduledDate])
+}
+
+// ==========================================
+// 6. WALLET TRANSACTIONS & ACID FINANCIAL LOGS
+// ==========================================
+model WalletTransaction {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type          TransactionType
+  amount        Float
+  balanceAfter  Float
+  description   String
+  reference     String?           // bookingId, orderId, refundRef
+
+  bookingId     String?
+  booking       Booking?          @relation(fields: [bookingId], references: [id])
+
+  status        TransactionStatus @default(COMPLETED)
+  paymentMethod String?
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([bookingId])
+}
+
+// ==========================================
+// 7. SUBSCRIPTIONS & B2B CONTRACTS
+// ==========================================
+model Subscription {
+  id          String             @id @default(uuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan        SubscriptionPlan   @default(BASIC)
+  price       Float              @default(0.0)
+  startDate   DateTime           @default(now())
+  endDate     DateTime
+  status      SubscriptionStatus @default(ACTIVE)
+  autoRenew   Boolean            @default(false)
+
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([userId, status])
+}
+
+model Contract {
+  id           String         @id @default(uuid())
+  contractId   String         @unique
+  partnerId    String
+  partner      User           @relation("PartnerContracts", fields: [partnerId], references: [id], onDelete: Cascade)
+  partnerName  String
+  contractType ContractType
+  services     Json           // [{ name, frequency, pricePerUnit }]
+  locations    Json           // [{ name, address, city }]
+  totalValue   Float
+  startDate    DateTime
+  endDate      DateTime
+  status       ContractStatus @default(DRAFT)
+  autoRenew    Boolean        @default(false)
+  notes        String?
+
+  invoices     Invoice[]
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([partnerId, status])
+}
+
+model Invoice {
+  id          String        @id @default(uuid())
+  invoiceId   String        @unique
+  contractId  String?
+  contract    Contract?     @relation(fields: [contractId], references: [id])
+
+  partnerId   String
+  partner     User          @relation("PartnerInvoices", fields: [partnerId], references: [id])
+
+  items       Json          // [{ description, quantity, unitPrice, total }]
+  subtotal    Float
+  tax         Float         @default(0.0)
+  discount    Float         @default(0.0)
+  totalAmount Float
+  dueDate     DateTime
+  paidDate    DateTime?
+  status      InvoiceStatus @default(DRAFT)
+  paymentMethod String?
+  notes       String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([partnerId, status])
+  @@index([contractId])
+}
+
+// ==========================================
+// 8. REVIEWS, COMPLAINTS, COUPONS
+// ==========================================
+model Review {
+  id         String    @id @default(uuid())
+  bookingId  String
+  booking    Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  customerId String
+  customer   User      @relation("CustomerReviews", fields: [customerId], references: [id])
+
+  workerId   String
+  worker     User      @relation("WorkerReviews", fields: [workerId], references: [id])
+
+  service    String
+  rating     Int       // 1 - 5
+  comment    String?
+  reply      String?
+  isEdited   Boolean   @default(false)
+  isDeleted  Boolean   @default(false)
+  deletedAt  DateTime?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([bookingId, customerId])
+  @@index([workerId, isDeleted])
+}
+
+model Complaint {
+  id          String            @id @default(uuid())
+  complaintId String            @unique
+  bookingId   String?
+  booking     Booking?          @relation(fields: [bookingId], references: [id])
+
+  filedById   String
+  filedBy     User              @relation("FiledComplaints", fields: [filedById], references: [id])
+
+  againstUserId String?
+  againstUser User?             @relation("AgainstUserComplaints", fields: [againstUserId], references: [id])
+
+  subject     String
+  description String
+  category    ComplaintCategory @default(OTHER)
+  priority    ComplaintPriority @default(MEDIUM)
+  status      ComplaintStatus   @default(OPEN)
+
+  resolution  String?
+  resolvedById String?
+  resolvedBy  User?             @relation("ResolvedByAdminComplaints", fields: [resolvedById], references: [id])
+  resolvedAt  DateTime?
+  attachments String[]          @default([])
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([filedById, status])
+  @@index([againstUserId])
+}
+
+model Coupon {
+  id                   String           @id @default(uuid())
+  code                 String           @unique
+  description          String?
+  discountType         DiscountType     @default(PERCENTAGE)
+  discountValue        Float
+  minOrderAmount       Float            @default(0.0)
+  maxDiscount          Float?
+  usageLimit           Int              @default(100)
+  usedCount            Int              @default(0)
+  validFrom            DateTime         @default(now())
+  validUntil           DateTime
+  applicableCategories String[]         @default([])
+  applicablePlans      SubscriptionPlan[] @default([])
+  isActive             Boolean          @default(true)
+
+  createdById          String?
+  createdBy            User?            @relation("AdminCoupons", fields: [createdById], references: [id])
+
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([code, isActive])
+}

@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineBell, HiOutlinePaperAirplane, HiOutlineTrash,
+<<<<<<< HEAD
   HiOutlineUsers, HiOutlineMegaphone, HiOutlineSparkles,
   HiOutlineCog6Tooth, HiOutlinePhone, HiOutlineArrowPath,
+=======
+  HiOutlineUsers, HiOutlineMegaphone, HiOutlineSparkles, HiOutlineCog6Tooth
+>>>>>>> origin/main
 } from 'react-icons/hi2';
 import { socket } from '../../socket';
 import { getSession, API_BASE } from '../../utils/authSession';

@@ -26,6 +26,7 @@ import '../Dashboard.css';
 import './CustomerAIChat.css';
 
 import { API_BASE, getSession } from '../../utils/authSession.js';
+import servicesCatalog from '../../data/servicesCatalog.json';
 const ACTIVE_SESSION_ID_KEY = 'servecircle_ai_active_session_id';
 const SESSIONS_STORAGE_KEY = 'servecircle_ai_chat_sessions';
 
@@ -95,16 +96,19 @@ function getAnalysisParts(response) {
     price: rawPrice ? `₹${rawPrice}` : 'From ₹349',
     rawPrice: rawPrice || 499,
     targetHubRoute: service.targetHubRoute || null,
+    serviceId: service.serviceId || recommendation.recommendedService?.serviceId || '',
     questions: response?.followUpQuestions || problem.aiAnalysisRaw?.followUpQuestions || recommendation.additionalQuestions?.map((q) => q.question) || [],
     actions: problem.aiAnalysisRaw?.recommendedActions || service.safetyPrecautions || recommendation.recommendedService?.safetyPrecautions || [],
   };
 }
 
 function ctaLabel(analysis) {
+  const serviceName = analysis?.serviceName || 'Service';
   const skill = String(analysis?.skill || '').toLowerCase();
   const category = String(analysis?.category || '').toLowerCase();
   const name = String(analysis?.serviceName || '').toLowerCase();
 
+<<<<<<< HEAD
   if (category.includes('travel') || skill.includes('driver') || name.includes('driver')) return 'Book Driver & Travel';
   if (category.includes('food') || skill.includes('cook') || skill.includes('chef') || name.includes('cook')) return 'Book Cook & Kitchen';
   if (category.includes('pet') || skill.includes('pet') || name.includes('pet') || name.includes('dog')) return 'Book Pet Services';
@@ -124,6 +128,58 @@ function ctaLabel(analysis) {
   if (skill.includes('garden') || name.includes('garden')) return 'Book Gardener';
 
   return `Book ${analysis?.serviceName || 'Service'}`;
+=======
+  let icon = '➔';
+  if (category.includes('travel') || skill.includes('driver')) icon = '🚗';
+  else if (category.includes('food') || skill.includes('cook') || skill.includes('chef')) icon = '🍳';
+  else if (category.includes('pet') || skill.includes('pet') || name.includes('dog')) icon = '🐶';
+  else if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor')) icon = '🩺';
+  else if (category.includes('event') || skill.includes('event')) icon = '🎈';
+  else if (category.includes('vehicle') || skill.includes('detailer') || skill.includes('mechanic')) icon = '🚗';
+  else if (category.includes('moving') || category.includes('relocation')) icon = '📦';
+  else if (category.includes('society') || skill.includes('security')) icon = '🏢';
+  else if (category.includes('it') || skill.includes('cctv')) icon = '📹';
+  else if (skill.includes('plumb') || name.includes('plumb') || name.includes('leak') || name.includes('pipe')) icon = '🔧';
+  else if (skill.includes('ac') || name.includes('ac') || name.includes('cooling')) icon = '❄️';
+  else if (skill.includes('electric') || name.includes('electric') || name.includes('wire')) icon = '⚡';
+  else if (skill.includes('clean') || name.includes('clean') || name.includes('safai')) icon = '🧹';
+  else if (skill.includes('paint') || name.includes('paint')) icon = '🎨';
+  else if (skill.includes('carpent') || name.includes('carpent') || name.includes('lock')) icon = '🪚';
+  else if (skill.includes('pest') || name.includes('pest')) icon = '🐜';
+  else if (skill.includes('garden') || name.includes('garden')) icon = '🌿';
+
+  return `Book ${serviceName} ${icon}`;
+}
+
+/**
+ * Returns true only when the AI analysis points to a service that actually
+ * exists in the platform catalog. This prevents random / hallucinated service
+ * cards from appearing after general conversation messages.
+ *
+ * Matching strategy (in priority order):
+ *  1. Exact name match (case-insensitive)
+ *  2. Partial name match (AI name contains catalog name or vice-versa)
+ *  3. Category keyword match as a last-resort safety net
+ */
+function isValidService(analysis) {
+  if (!analysis) return false;
+  const aiServiceId = String(analysis.serviceId || '').trim();
+  const aiName = String(analysis.serviceName || '').toLowerCase().trim();
+  const aiCategory = String(analysis.category || '').toLowerCase().trim();
+  if (!aiName && !aiServiceId) return false;
+
+  return servicesCatalog.some((svc) => {
+    if (aiServiceId && svc.serviceId === aiServiceId) return true;
+    const svcName = svc.name.toLowerCase();
+    const svcCat  = svc.category.toLowerCase();
+    // Exact or partial name match
+    if (svcName === aiName) return true;
+    if (svcName.includes(aiName) || aiName.includes(svcName)) return true;
+    // Category alignment as fallback (e.g. "Home Repairs" catches many sub-services)
+    if (aiCategory && svcCat === aiCategory && aiName.length > 3) return true;
+    return false;
+  });
+>>>>>>> origin/main
 }
 
 const QUICK_SUGGESTIONS = [
@@ -301,8 +357,10 @@ const CustomerAIChat = () => {
     const formData = new FormData();
     formData.append('text', text);
     if (attachedImage?.file) formData.append('image', attachedImage.file);
-    formData.append('conversation', JSON.stringify(messages.slice(-8).map(({ role, content, intent }) => ({ role, content, intent }))));
+    formData.append('conversation', JSON.stringify(messages.slice(-12).map(({ role, content, intent }) => ({ role, content, intent }))));
     formData.append('customerContext', JSON.stringify({ preferredLanguage: 'auto' }));
+    const controller = new AbortController();
+    const requestTimeout = window.setTimeout(() => controller.abort(), 35000);
 
     try {
       const session = getSession();
@@ -315,6 +373,7 @@ const CustomerAIChat = () => {
         method: 'POST',
         headers,
         body: formData,
+        signal: controller.signal,
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'AI request failed');
@@ -335,17 +394,21 @@ const CustomerAIChat = () => {
         setInput(text);
         if (attachedImage) setImage(attachedImage);
       }
-      setError(err.message || 'AI is unavailable right now.');
+      const userMessage = err.name === 'AbortError'
+        ? 'AI response timed out. Please try sending your message again.'
+        : (err.message || 'AI is unavailable right now.');
+      setError(userMessage);
       setMessages((prev) => [
         ...prev,
         {
           id: `err-${Date.now()}`,
           role: 'assistant',
-          content: err.message || 'AI is unavailable right now. You can retry or browse services manually.',
+          content: userMessage,
           isError: true,
         },
       ]);
     } finally {
+      window.clearTimeout(requestTimeout);
       setIsSending(false);
     }
   };
@@ -386,7 +449,14 @@ const CustomerAIChat = () => {
     const serviceName = analysis?.serviceName || 'Home Service';
     const category = analysis?.category || 'Home Repairs';
     const price = analysis?.rawPrice || 499;
-    navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=${encodeURIComponent(category)}&price=${price}`);
+    const serviceId = analysis?.serviceId || '';
+    const params = new URLSearchParams({
+      service: serviceName,
+      category,
+      price: String(price),
+    });
+    if (serviceId) params.set('serviceId', serviceId);
+    navigate(`/customer/book?${params.toString()}`);
   };
 
   return (
@@ -455,13 +525,14 @@ const CustomerAIChat = () => {
                 </div>
               )}
 
-              {message.analysis && (
+              {/* Service result card — only render when the AI matched a real platform service */}
+              {message.analysis && isValidService(message.analysis) && (
                 <div className="ai-result-card">
                   <div className="ai-result-head">
                     <HiOutlineWrenchScrewdriver />
                     <div>
-                      <h2>{message.analysis.title}</h2>
-                      <span>{message.analysis.serviceName}</span>
+                      <h2>{message.analysis.serviceName || message.analysis.title}</h2>
+                      <span>{message.analysis.category ? `${message.analysis.category} • Verified Expert` : (message.analysis.skill || 'Professional Service')}</span>
                     </div>
                   </div>
                   <div className="ai-result-grid">

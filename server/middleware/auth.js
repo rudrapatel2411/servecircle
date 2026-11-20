@@ -1,12 +1,31 @@
 import jwt from 'jsonwebtoken';
+<<<<<<< HEAD
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { findFallbackUserById, findFallbackUserByEmail } from '../utils/demoAuthStore.js';
+=======
+import { prisma } from '../config/prisma.js';
+import { findFallbackUserById } from '../utils/demoAuthStore.js';
+>>>>>>> origin/main
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is required to start auth middleware');
+}
+
+/**
+ * Format user object to maintain backward compatibility with MongoDB _id / id
+ */
+function formatUser(user) {
+  if (!user) return null;
+  const roleLower = String(user.role || '').toLowerCase();
+  return {
+    ...user,
+    _id: user.id,
+    role: roleLower,
+    rawRole: user.role,
+  };
 }
 
 // Verify JWT token and attach user to request
@@ -40,8 +59,9 @@ export const protect = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    let user = findFallbackUserById(decoded.id);
+    let user = null;
 
+<<<<<<< HEAD
     if (!user && decoded.email) {
       user = findFallbackUserByEmail(decoded.email);
     }
@@ -54,6 +74,26 @@ export const protect = async (req, res, next) => {
         }
       } catch {
         user = null;
+=======
+    // 1. Look up in PostgreSQL via Prisma
+    try {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: decoded.id },
+        include: { workerProfile: true },
+      });
+      if (dbUser && !dbUser.isDeleted) {
+        user = formatUser(dbUser);
+      }
+    } catch (err) {
+      // Prisma error fallback
+    }
+
+    // 2. Fallback store if not in DB
+    if (!user) {
+      const fbUser = findFallbackUserById(decoded.id);
+      if (fbUser) {
+        user = formatUser(fbUser);
+>>>>>>> origin/main
       }
     }
 
@@ -87,7 +127,9 @@ export const protect = async (req, res, next) => {
 // Role-based access control
 export const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user?.role)) {
+    const userRole = String(req.user?.role || '').toLowerCase();
+    const allowed = roles.map((r) => String(r).toLowerCase());
+    if (!allowed.includes(userRole)) {
       return res.status(403).json({
         message: `Access denied — role '${req.user?.role}' is not authorized for this route`,
       });
@@ -105,13 +147,19 @@ export const optionalAuth = async (req, res, next) => {
     }
     if (token) {
       const decoded = jwt.verify(token, JWT_SECRET);
-      let user = findFallbackUserById(decoded.id);
-      if (!user && mongoose.connection.readyState === 1) {
-        try {
-          user = await User.findById(decoded.id).select('-password');
-        } catch {
-          user = null;
+      let user = null;
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: decoded.id },
+          include: { workerProfile: true },
+        });
+        if (dbUser && !dbUser.isDeleted) {
+          user = formatUser(dbUser);
         }
+      } catch {}
+      if (!user) {
+        const fbUser = findFallbackUserById(decoded.id);
+        if (fbUser) user = formatUser(fbUser);
       }
       req.user = user || null;
     }
@@ -120,4 +168,3 @@ export const optionalAuth = async (req, res, next) => {
   }
   next();
 };
-

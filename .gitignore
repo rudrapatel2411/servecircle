@@ -15,3 +15,13 @@ yarn-debug.log*
 server/__cust.json
 server/__work.json
 server/_r_register.json
+*.zip
+.agents/
+.claude/
+.cursor/
+.devin/
+**/.agents/
+**/.claude/
+**/.cursor/
+**/.devin/
+

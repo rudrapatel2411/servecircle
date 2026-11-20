@@ -38,18 +38,20 @@ export const AI_MANAGER_EVENTS = Object.freeze({
 
 class AIProviderManagerClass {
   constructor() {
-    this._provider       = null;
-    this._providerName   = null;
-    this._health         = new ProviderHealth();
-    this._initialized    = false;
-    this._initPromise    = null;   // Guard against concurrent initialize() calls
+    this._provider             = null;
+    this._providerName         = null;
+    this._fallbackProvider     = null;
+    this._fallbackProviderName = null;
+    this._health               = new ProviderHealth();
+    this._initialized          = false;
+    this._initPromise          = null;   // Guard against concurrent initialize() calls
   }
 
   // ─── initialize ─────────────────────────────────────────────────────────────
 
   /**
    * Initialize the AI provider layer.
-   * Reads AI_PROVIDER from environment (default: 'gemini').
+   * Reads AI_PROVIDER from environment (default: 'ollama').
    * Idempotent — safe to call multiple times.
    *
    * @returns {Promise<void>}
@@ -60,7 +62,7 @@ class AIProviderManagerClass {
 
     this._initPromise = (async () => {
       const providerName = ProviderRegistry.getDefaultProviderName();
-      this._log(AI_MANAGER_EVENTS.AI_REQUEST, `Initializing provider: ${providerName}`);
+      this._log(AI_MANAGER_EVENTS.AI_REQUEST, `Initializing primary provider: ${providerName}`);
 
       try {
         const provider = ProviderRegistry.create(providerName);
@@ -76,8 +78,38 @@ class AIProviderManagerClass {
 
         this._log(
           AI_MANAGER_EVENTS.AI_PROVIDER_INITIALIZED,
-          `[AIProviderManager] Provider "${providerName}" initialized — ready: ${healthResult.ready}`
+          `[AIProviderManager] Primary "${providerName}" initialized — ready: ${healthResult.ready}`
         );
+
+        // Arm secondary hot-standby fallback provider for enterprise 100% uptime
+        const fallbackTarget = providerName === 'ollama' ? 'groq' : 'ollama';
+        if (fallbackTarget === 'groq' && process.env.GROQ_API_KEY) {
+          try {
+            const fallback = ProviderRegistry.create('groq');
+            await fallback.initialize();
+            this._fallbackProvider = fallback;
+            this._fallbackProviderName = 'groq';
+            this._log(
+              AI_MANAGER_EVENTS.AI_PROVIDER_INITIALIZED,
+              `[AIProviderManager] Enterprise Hot-Standby fallback "groq" armed & verified`
+            );
+          } catch (fbErr) {
+            console.warn('[AIProviderManager] Groq fallback standby warning:', fbErr.message);
+          }
+        } else if (fallbackTarget === 'ollama') {
+          try {
+            const fallback = ProviderRegistry.create('ollama');
+            await fallback.initialize();
+            this._fallbackProvider = fallback;
+            this._fallbackProviderName = 'ollama';
+            this._log(
+              AI_MANAGER_EVENTS.AI_PROVIDER_INITIALIZED,
+              `[AIProviderManager] Enterprise Hot-Standby fallback "ollama" armed & verified`
+            );
+          } catch (fbErr) {
+            console.warn('[AIProviderManager] Ollama fallback standby warning:', fbErr.message);
+          }
+        }
       } catch (err) {
         this._health.reset();
         this._log(AI_MANAGER_EVENTS.AI_PROVIDER_FAILED, `Initialization failed: ${err.message}`);
@@ -345,21 +377,69 @@ class AIProviderManagerClass {
   }
 
   /**
-   * Master Customer Chat interface via active provider.
+   * Master Customer Chat interface via active provider with instant greeting guard
+   * and automatic hot-standby cloud failover.
    */
   async chatWithCustomer(payload, options = {}) {
     this._assertInitialized('chatWithCustomer');
-    this._log(AI_MANAGER_EVENTS.AI_REQUEST, `chatWithCustomer — provider: ${this._providerName}`);
 
+    // 1. Zero-latency instant deterministic response for pure greetings & pleasantries
+    const textTrim = String(payload?.text || '').trim().toLowerCase();
+    const cleanTokens = textTrim.replace(/[^a-z0-9\s]/g, ' ').trim().split(/\s+/).filter((t) => t.length > 0);
+    const GREETINGS = new Set(['hi', 'hello', 'hey', 'namaste', 'pranam', 'kem', 'cho', 'hola', 'sup', 'yo', 'morning', 'evening', 'afternoon', 'good', 'namaskar', 'halo', 'kaise', 'ho']);
+    const isPureGreeting = cleanTokens.length <= 3 && cleanTokens.every((t) => GREETINGS.has(t)) && !payload?.image;
+
+    if (isPureGreeting) {
+      return {
+        intent: 'GENERAL',
+        reply: 'Namaste! Welcome to ServeCircle. How can I assist you today? You can describe any home repairs, cleaning, appliance fixing, shifting services, or upload a photo of the problem.',
+        showServiceRecommendation: false,
+        serviceId: '',
+        serviceName: '',
+        category: '',
+        problemType: 'General Greeting',
+        urgency: 'Standard',
+        requiredWorkerSkill: 'Customer Support',
+        estimatedPrice: 0,
+        safetyPrecautions: [],
+        followUpQuestions: [
+          'AC Repair & Servicing',
+          'Plumbing & Tap Leakage',
+          'Home Deep Cleaning',
+          'Electrician & Fan Repair',
+        ],
+        recommendations: [],
+      };
+    }
+
+    this._log(AI_MANAGER_EVENTS.AI_REQUEST, `chatWithCustomer — primary provider: ${this._providerName}`);
+
+    // 2. Primary Provider Attempt
     try {
       if (typeof this._provider.chatWithCustomer === 'function') {
         const result = await this._provider.chatWithCustomer(payload, options);
-        this._log(AI_MANAGER_EVENTS.AI_RESPONSE, `chatWithCustomer OK`);
+        this._log(AI_MANAGER_EVENTS.AI_RESPONSE, `chatWithCustomer OK (${this._providerName})`);
         return result;
       }
-      return this._provider.analyzeCustomerProblem(payload.text, options);
+      return await this._provider.analyzeCustomerProblem(payload.text, options);
     } catch (err) {
-      this._log(AI_MANAGER_EVENTS.AI_PROVIDER_FAILED, `chatWithCustomer failed: ${err.message}`);
+      this._log(AI_MANAGER_EVENTS.AI_PROVIDER_FAILED, `Primary (${this._providerName}) failed: ${err.message}`);
+
+      // 3. Instant Hot-Standby Failover
+      if (this._fallbackProvider) {
+        try {
+          this._log(AI_MANAGER_EVENTS.AI_REQUEST, `Executing failover to: ${this._fallbackProviderName}`);
+          if (typeof this._fallbackProvider.chatWithCustomer === 'function') {
+            const fallbackResult = await this._fallbackProvider.chatWithCustomer(payload, options);
+            this._log(AI_MANAGER_EVENTS.AI_RESPONSE, `Failover (${this._fallbackProviderName}) OK`);
+            return fallbackResult;
+          }
+          return await this._fallbackProvider.analyzeCustomerProblem(payload.text, options);
+        } catch (fallbackErr) {
+          this._log(AI_MANAGER_EVENTS.AI_PROVIDER_FAILED, `Fallback (${this._fallbackProviderName}) failed too: ${fallbackErr.message}`);
+        }
+      }
+
       throw err;
     }
   }
