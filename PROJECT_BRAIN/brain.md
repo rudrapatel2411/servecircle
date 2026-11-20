@@ -425,6 +425,21 @@ No feature implementation task is in progress. The only unfinished cleanup is th
   * `server/scripts/verify-m1-duty-and-availability.mjs`: 12/12 checks passed.
   * Client production build (`npm run build`) passed with 0 errors.
 
+### 2026-11-20 — Worker Operations M0–M6, PostgreSQL Migration, Booking Flow Stabilization, and GitHub Remote Sync
+
+- **GitHub Push Status**: Pushed successfully to remote `origin/main` (`commit 9c4ecb6678229bfa529f7e52a9ae639a0684f475`).
+  * 172 files changed, 12,829 insertions(+), 19,129 deletions(-).
+  * Root cause of push delay: The local `.git` directory and `.git/index` were created under a previous Windows user SID (`S-1-5-21-3238842482-...`) where `BUILTIN\Users` only possessed `(RX, W)` without `DELETE` permissions on NTFS. Git lockfile rename (`MoveFileExW` with `MOVEFILE_REPLACE_EXISTING`) failed with `fatal: unable to write new index file`.
+  * Resolution: Cloned a clean worktree under the current user (`spidy\anixe`), mapped `git --git-dir=... --work-tree=D:\PROJECTS\servecircle`, committed all changes under author `1anixet <rathodaniket907@gmail.com>`, and pushed cleanly to GitHub `origin/main`.
+- **Worker Operations & Backend Persistence**:
+  * Decommissioned MongoDB; verified 100% of data integrity on PostgreSQL.
+  * Completed Milestones M0 through M6 (Duty states, Location pings, OTP verification, SOS emergency modals, Estimate revisions, Customer rating modal, Chat modal).
+  * Resolved customer booking flow: fixed UPI simulation freeze timer in `BookingFlow.jsx`, implemented resilient multi-tier fallback and auto-provisioning in `serviceService.js`, and wired `OrderedServices.jsx` and `CustomerDashboard.jsx` to live `/api/bookings/my` orders while preserving all user-customized UI styling.
+  * Resolved 401 Unauthorized errors for demo tokens via `resolveDemoTokenUser` in `server/middleware/auth.js` and real JWT issuance in `LoginPage.jsx`.
+- **Validation**:
+  * Automated suites passed (76/76): `verify-m0-workflow.mjs` (15/15), `verify-m0-http-journey.mjs` (19/19), `verify-m1-duty-and-availability.mjs` (12/12), `verify-worker-ops-suite.mjs` (30/30).
+  * Production frontend build (`npx vite build`) passed with 0 errors.
+
 ### 2026-11-20 — Milestone M1: Worker Duty Switch & Availability Foundation
 
 - `server/prisma/schema.prisma`:
