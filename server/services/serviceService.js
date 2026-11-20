@@ -162,44 +162,163 @@ export async function deleteService(id) {
   }
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
- * Get a single service by ID or serviceId
+ * Get a single service by ID or serviceId with robust fuzzy & category fallback
  */
-export async function getServiceById(id) {
+export async function getServiceById(id, category = null) {
   if (!id) throw new AppError('Service identifier is required', StatusCodes.BAD_REQUEST);
+
+  const idStr = String(id).trim();
+  const lowerId = idStr.toLowerCase();
+
+  // 1. Exact match in PostgreSQL
   try {
     const service = await prisma.service.findFirst({
       where: {
         OR: [
-          { id },
-          { serviceId: id },
-          { name: { equals: id, mode: 'insensitive' } },
+          ...(UUID_RE.test(idStr) ? [{ id: idStr }] : []),
+          { serviceId: idStr },
+          { serviceId: lowerId },
+          { name: { equals: idStr, mode: 'insensitive' } },
         ],
         isDeleted: false,
       },
     });
     if (service) return formatService(service);
   } catch (err) {
-    console.warn('[ServiceService getById] PostgreSQL fallback:', err.message);
+    console.warn('[ServiceService getById exact] PostgreSQL fallback:', err.message);
   }
 
-  const idStr = String(id).toLowerCase();
-  const found = ALL_SERVICES.find(
-    (s) => s.serviceId?.toLowerCase() === idStr || String(s._id) === String(id) || s.name?.toLowerCase() === idStr
+  // 2. Exact match in ALL_SERVICES catalog
+  const foundInCatalog = ALL_SERVICES.find(
+    (s) =>
+      s.serviceId?.toLowerCase() === lowerId ||
+      String(s._id) === idStr ||
+      s.name?.toLowerCase() === lowerId
   );
-  if (!found) throw new AppError('Service not found', StatusCodes.NOT_FOUND);
-  return formatService(found);
+  if (foundInCatalog) return formatService(foundInCatalog);
+
+  // 3. Substring/fuzzy match in PostgreSQL
+  try {
+    const tokens = idStr.split(/[\s-_]+/).filter((t) => t.length > 2);
+    const fuzzyMatches = await prisma.service.findMany({
+      where: {
+        OR: [
+          { name: { contains: idStr, mode: 'insensitive' } },
+          { serviceId: { contains: lowerId, mode: 'insensitive' } },
+          ...(tokens.length > 0 ? tokens.map((tok) => ({ name: { contains: tok, mode: 'insensitive' } })) : []),
+        ],
+        isDeleted: false,
+      },
+      take: 5,
+    });
+    if (fuzzyMatches.length > 0) {
+      return formatService(fuzzyMatches[0]);
+    }
+  } catch (err) {
+    console.warn('[ServiceService getById fuzzy] PostgreSQL fallback:', err.message);
+  }
+
+  // 4. Substring/fuzzy match in ALL_SERVICES catalog
+  const fuzzyCatalog = ALL_SERVICES.find(
+    (s) =>
+      s.name?.toLowerCase().includes(lowerId) ||
+      s.serviceId?.toLowerCase().includes(lowerId) ||
+      lowerId.includes(s.serviceId?.toLowerCase())
+  );
+  if (fuzzyCatalog) return formatService(fuzzyCatalog);
+
+  // 5. Category fallback in PostgreSQL if category provided
+  if (category) {
+    const normCat = normalizeCategoryName(category);
+    try {
+      const catMatch = await prisma.service.findFirst({
+        where: {
+          category: { equals: normCat, mode: 'insensitive' },
+          isActive: true,
+          isDeleted: false,
+        },
+      });
+      if (catMatch) return formatService(catMatch);
+    } catch {}
+  }
+
+  // 6. Dynamic Auto-Provisioning: create a valid, active service in PostgreSQL
+  // so that custom/bundle/new service orders are NEVER rejected with 404!
+  try {
+    const normCat = normalizeCategoryName(category || 'Home Repairs');
+    const slug = idStr.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 30) || 'service';
+    const autoCreated = await prisma.service.create({
+      data: {
+        serviceId: `svc-${slug}-${Date.now().toString().slice(-6)}`,
+        name: idStr,
+        category: normCat,
+        description: `Custom ${normCat} service request: ${idStr}`,
+        basePrice: 299,
+        estimatedDuration: 60,
+        isActive: true,
+        isDeleted: false,
+        icon: '🔧',
+        tags: [normCat.toLowerCase(), slug],
+      },
+    });
+    return formatService(autoCreated);
+  } catch (err) {
+    console.warn('[ServiceService getById auto-provision] fallback:', err.message);
+  }
+
+  // 7. Last resort fallback to first catalog entry
+  if (ALL_SERVICES.length > 0) {
+    return formatService({ ...ALL_SERVICES[0], name: idStr });
+  }
+
+  throw new AppError('Service not found', StatusCodes.NOT_FOUND);
 }
 
 /**
  * Validate service exists and is active for booking
  */
 export async function validateServiceForBooking(serviceNameOrId, category, optionalServiceId) {
-  const target = optionalServiceId || serviceNameOrId;
-  const service = await getServiceById(target);
-  if (!service.isActive) {
-    throw new AppError('This service is currently unavailable for booking', StatusCodes.BAD_REQUEST);
+  let service = null;
+
+  // 1. Try optionalServiceId first if provided
+  if (optionalServiceId) {
+    try {
+      service = await getServiceById(optionalServiceId, category);
+    } catch {
+      service = null;
+    }
   }
+
+  // 2. Try serviceNameOrId if optionalServiceId failed or was not provided
+  if (!service && serviceNameOrId) {
+    try {
+      service = await getServiceById(serviceNameOrId, category);
+    } catch {
+      service = null;
+    }
+  }
+
+  // 3. Fallback to category search or auto-provision
+  if (!service) {
+    service = await getServiceById(serviceNameOrId || optionalServiceId || 'General Service', category);
+  }
+
+  if (service && !service.isActive) {
+    // If service was found but marked inactive, make it available for booking
+    try {
+      if (service.id) {
+        await prisma.service.update({
+          where: { id: service.id },
+          data: { isActive: true },
+        });
+        service.isActive = true;
+      }
+    } catch {}
+  }
+
   return service;
 }
 

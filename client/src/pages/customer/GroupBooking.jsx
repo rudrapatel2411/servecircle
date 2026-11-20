@@ -6,19 +6,15 @@ import {
   HiOutlineShieldCheck, HiOutlineCheckCircle, HiOutlineInbox,
   HiOutlineGlobeAmericas, HiOutlineBuildingOffice
 } from 'react-icons/hi2';
-import { socket } from '../../socket';
-import { broadcastNotificationToTabs } from '../../utils/notificationSync';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
 const servicesOptions = [
-  { name: 'AC & Appliance Repair (Routine Checkup)', category: 'Home Repairs', basePrice: 500 },
-  { name: 'Home Deep Cleaning', category: 'Cleaning & Hygiene', basePrice: 1200 },
-  { name: 'Water Tank Cleaning', category: 'Cleaning & Hygiene', basePrice: 800 },
-  { name: 'Pest Control', category: 'Cleaning & Hygiene', basePrice: 900 },
-  { name: 'Electrical Work (Safety Auditing)', category: 'Home Repairs', basePrice: 300 },
-  { name: 'Society Security & Maintenance', category: 'Society Management', basePrice: 1500 },
-  { name: 'Painting & Waterproofing Check', category: 'Home Repairs', basePrice: 600 }
+  { name: 'AC & Appliance Repair (Routine Checkup)', basePrice: 500 },
+  { name: 'Home Deep Cleaning', basePrice: 1200 },
+  { name: 'Water Tank Cleaning', basePrice: 800 },
+  { name: 'Pest Control', basePrice: 900 },
+  { name: 'Electrical Work (Safety Auditing)', basePrice: 300 }
 ];
 
 const GroupBooking = () => {
@@ -26,13 +22,11 @@ const GroupBooking = () => {
   
   const [societyName, setSocietyName] = useState('');
   const [contactName, setContactName] = useState('');
-  const [phone, setPhone] = useState('');
   const [flatCount, setFlatCount] = useState(5);
   const [selectedService, setSelectedService] = useState(servicesOptions[0]);
   const [preferredDate, setPreferredDate] = useState('');
   const [instructions, setInstructions] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submittedGroupId, setSubmittedGroupId] = useState('');
 
   // Compute progressive discount
   const getDiscountPercent = (count) => {
@@ -53,46 +47,10 @@ const GroupBooking = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!societyName || !contactName || !preferredDate || !phone) {
+    if (!societyName || !contactName || !preferredDate) {
       alert('Please fill in all required fields!');
       return;
     }
-
-    const groupId = `SC-GRP-${Math.floor(1000 + Math.random() * 9000)}`;
-    setSubmittedGroupId(groupId);
-    const category = selectedService.category || 'Society Management';
-
-    const groupPayload = {
-      id: `grp_${Date.now()}`,
-      groupId,
-      title: `🏢 Society Group Booking: ${societyName}`,
-      message: `${contactName} (+91 ${phone}) requested group booking for ${societyName} (${flatCount} flats) for "${selectedService.name}". Preferred date: ${preferredDate}. Total: ₹${totalAmount.toLocaleString('en-IN')} (₹${pricePerFlat}/flat).`,
-      type: 'alert',
-      societyName,
-      contactName,
-      phone,
-      flatCount,
-      service: selectedService.name,
-      serviceType: selectedService.name,
-      category,
-      preferredDate,
-      instructions,
-      amount: totalAmount,
-      pricePerFlat,
-      discountPercent,
-      targetAudience: 'all',
-      date: new Date().toLocaleString('en-IN'),
-      timestamp: new Date().toISOString(),
-    };
-
-    // 1. Cross-tab real-time sync (Admin and Worker immediately receive toast and bell notification)
-    broadcastNotificationToTabs(groupPayload);
-
-    // 2. Live socket dispatch to Admin and Category-specific workers
-    try {
-      socket.emit('group_booking_created', groupPayload);
-    } catch {}
-
     setIsSubmitted(true);
   };
 
@@ -103,7 +61,7 @@ const GroupBooking = () => {
           <div className="success-icon-wrap">
             <HiOutlineCheckCircle className="success-icon" style={{ fontSize: '4.5rem' }} />
           </div>
-          <h2>Society Group Booking Requested!</h2>
+          <h2>Society Group Booking Requested! 🎉</h2>
           <p>We have received your coordinated request for <strong>{societyName}</strong>.</p>
           
           <div className="success-details" style={{ width: '100%' }}>
@@ -115,7 +73,7 @@ const GroupBooking = () => {
             <div className="success-row" style={{ color: '#2960a0' }}><HiOutlineGlobeAmericas /> <span>Eco-Impact: Saves ~{travelKmSaved}km of worker commuting!</span></div>
           </div>
 
-          <p className="success-note">Group Request ID: <strong>#{submittedGroupId || 'SC-GRP-4821'}</strong></p>
+          <p className="success-note">Group Request ID: <strong>#SC-GRP-{Math.floor(1000 + Math.random() * 9000)}</strong></p>
           <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '24px' }}>
             Our B2B Operations Manager will contact you and your society coordinator within 2 hours to confirm the scheduling slots.
           </p>
@@ -132,10 +90,7 @@ const GroupBooking = () => {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <HiOutlineBuildingOffice style={{ color: 'var(--primary-600)' }} />
-            {t('customer.groupBooking')}
-          </h1>
+          <h1 className="page-title">{t('customer.groupBooking')} 🏢</h1>
           <p className="page-subtitle">Coordinate bookings with neighbors in your housing society or apartment block for massive B2B discounts.</p>
         </div>
       </div>
@@ -280,14 +235,7 @@ const GroupBooking = () => {
                 </div>
                 <div className="input-group" style={{ marginBottom: 0 }}>
                   <label>Coordinator Phone Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    className="input-field"
-                    placeholder="e.g. 9876543210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
+                  <input type="tel" required className="input-field" placeholder="e.g. +91 98765 43210" />
                 </div>
               </div>
 

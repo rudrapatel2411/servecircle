@@ -12,6 +12,8 @@
  */
 
 import WorkerMetrics from '../models/WorkerMetrics.js';
+const legacyStoreReady = () => false;
+
 import CustomerMetrics from '../models/CustomerMetrics.js';
 
 // ─── WORKER METRICS ───────────────────────────────────────────────────────────
@@ -22,6 +24,7 @@ import CustomerMetrics from '../models/CustomerMetrics.js';
  * proactively on worker verification.
  */
 export async function ensureWorkerMetrics(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   await WorkerMetrics.updateOne(
     { workerId },
     { $setOnInsert: { workerId } },
@@ -33,6 +36,7 @@ export async function ensureWorkerMetrics(workerId) {
  * Record a new assignment for a worker.
  */
 export async function recordWorkerAssignment(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerMetrics.updateOne(
       { workerId },
@@ -54,6 +58,7 @@ export async function recordWorkerAssignment(workerId) {
  * Optionally records response time (ms from assignment to acceptance).
  */
 export async function recordWorkerAcceptance(workerId, responseTimeMs) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const update = {
       $inc: { totalAcceptances: 1 },
@@ -76,6 +81,7 @@ export async function recordWorkerAcceptance(workerId, responseTimeMs) {
  * Record a rejection by the worker.
  */
 export async function recordWorkerRejection(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerMetrics.updateOne(
       { workerId },
@@ -97,6 +103,7 @@ export async function recordWorkerRejection(workerId) {
  * Optionally records arrival time (ms from accepted to arrived).
  */
 export async function recordWorkerArrival(workerId, arrivalTimeMs) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const update = {
       $set: { lastUpdated: new Date() },
@@ -117,6 +124,7 @@ export async function recordWorkerArrival(workerId, arrivalTimeMs) {
  * Records completion time (ms from started to completed).
  */
 export async function recordWorkerCompletion(workerId, completionTimeMs, customerId, category, jobCompletedAt) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const inc = {
       totalCompletions: 1,
@@ -146,6 +154,7 @@ export async function recordWorkerCompletion(workerId, completionTimeMs, custome
  * Record a worker cancellation.
  */
 export async function recordWorkerCancellation(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerMetrics.updateOne(
       { workerId },
@@ -166,6 +175,7 @@ export async function recordWorkerCancellation(workerId) {
  * Record an OTP failure for a worker.
  */
 export async function recordWorkerOtpFailure(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerMetrics.updateOne(
       { workerId },
@@ -188,6 +198,7 @@ export async function recordWorkerOtpFailure(workerId) {
  * @param {object} ratingBreakdown — { overall, quality, punctuality, communication, professionalism, cleanliness, valueForMoney }
  */
 export async function updateWorkerRating(workerId, ratingBreakdown) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const metrics = await WorkerMetrics.findOne({ workerId });
     if (!metrics) {
@@ -236,6 +247,7 @@ export async function updateWorkerRating(workerId, ratingBreakdown) {
  * Ensure a CustomerMetrics document exists for this customer.
  */
 export async function ensureCustomerMetrics(customerId) {
+  if (!legacyStoreReady(customerId)) return;
   await CustomerMetrics.updateOne(
     { customerId },
     { $setOnInsert: { customerId } },
@@ -247,6 +259,7 @@ export async function ensureCustomerMetrics(customerId) {
  * Record a new booking created by a customer.
  */
 export async function recordCustomerBooking(customerId, amount, category, isEmergency, bookingDate) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     const update = {
       $inc: {
@@ -278,6 +291,7 @@ export async function recordCustomerBooking(customerId, amount, category, isEmer
  * Record a completed booking for the customer.
  */
 export async function recordCustomerCompletion(customerId, workerId) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     await CustomerMetrics.updateOne(
       { customerId },
@@ -303,6 +317,7 @@ export async function recordCustomerCompletion(customerId, workerId) {
  * Record a cancellation by the customer.
  */
 export async function recordCustomerCancellation(customerId) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     await CustomerMetrics.updateOne(
       { customerId },
@@ -322,6 +337,7 @@ export async function recordCustomerCancellation(customerId) {
  * Update customer rating behaviour when they submit a review.
  */
 export async function recordCustomerReview(customerId, rating) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     const metrics = await CustomerMetrics.findOneAndUpdate(
       { customerId },

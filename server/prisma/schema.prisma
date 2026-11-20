@@ -26,6 +26,46 @@ enum WorkerStatus {
   REJECTED
 }
 
+enum DutyStatus {
+  ONLINE
+  OFFLINE
+  PAUSED
+}
+
+enum ProofType {
+  BEFORE_WORK
+  AFTER_WORK
+}
+
+enum RevisionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PayoutType {
+  BANK_ACCOUNT
+  UPI
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  REJECTED
+}
+
+enum SosSeverity {
+  HIGH
+  CRITICAL
+}
+
+enum SosStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+}
+
 enum SubscriptionPlan {
   BASIC
   SILVER
@@ -175,6 +215,24 @@ model User {
   // Coupons created
   createdCoupons Coupon[] @relation("AdminCoupons")
 
+  // M2: In-app chat messages
+  sentBookingMessages BookingMessage[] @relation("SentMessages")
+
+  // M3: Proof submissions
+  submittedProofs BookingProof[]
+
+  // M5: Payout requests
+  payoutRequests PayoutRequest[]
+
+  // M6: SOS incidents & 2-way reviews
+  sosIncidents WorkerSosIncident[]
+  workerCustomerRatingsGiven WorkerCustomerRating[] @relation("WorkerGivesRating")
+  customerRatingsReceived WorkerCustomerRating[] @relation("CustomerGetsRating")
+
+  // Partners & Notifications
+  partners Partner[]
+  sentNotifications Notification[] @relation("SentNotifications")
+
   @@index([role, isDeleted])
   @@index([email])
 }
@@ -211,14 +269,21 @@ model WorkerProfile {
   certificates    String[]     @default([])
   languages       String[]     @default(["English", "Hindi"])
 
-  // Geo Location
-  latitude        Float?
-  longitude       Float?
-  isAvailable     Boolean      @default(true)
-  lastAssignedAt  DateTime?
+  // Geo Location & Availability
+  latitude            Float?
+  longitude           Float?
+  isAvailable         Boolean               @default(true)
+  dutyStatus          DutyStatus            @default(OFFLINE)
+  dutyStatusUpdatedAt DateTime?             @default(now())
+  serviceRadius       Int                   @default(25) // km coverage radius
+  lastAssignedAt      DateTime?
 
   // Services offered by this worker
-  services        WorkerService[]
+  services            WorkerService[]
+  availabilities      WorkerAvailability[]
+  leaves              WorkerLeave[]
+  payoutAccount       WorkerPayoutAccount?
+  certifications      WorkerCertification[]
 
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
@@ -288,6 +353,42 @@ model WorkerService {
 }
 
 // ==========================================
+// 4b. WORKER AVAILABILITY & LEAVE (FEATURE 11 DATA CONTRACT)
+// ==========================================
+model WorkerAvailability {
+  id              String        @id @default(uuid())
+  workerProfileId String
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  dayOfWeek       Int           // 0 = Sunday, 1 = Monday, ... 6 = Saturday
+  startTime       String        // e.g. "09:00"
+  endTime         String        // e.g. "18:00"
+  isActive        Boolean       @default(true)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([workerProfileId, dayOfWeek])
+  @@index([workerProfileId])
+}
+
+model WorkerLeave {
+  id              String        @id @default(uuid())
+  workerProfileId String
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  startDate       DateTime
+  endDate         DateTime
+  reason          String?
+  isApproved      Boolean       @default(true)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([workerProfileId, startDate, endDate])
+}
+
+// ==========================================
 // 5. BOOKINGS & SECURE OTP LIFECYCLE
 // ==========================================
 model Booking {
@@ -315,6 +416,17 @@ model Booking {
 
   status                    BookingStatus @default(PENDING)
 
+  // Lifecycle Timestamps & History
+  assignedAt                DateTime?
+  acceptedAt                DateTime?
+  enRouteAt                 DateTime?
+  arrivedAt                 DateTime?
+  startedAt                 DateTime?
+  completedAt               DateTime?
+  cancelledAt               DateTime?
+  cancelReason              String?
+  cancelledBy               String?
+
   amount                    Float
   platformCommission        Float         @default(0.0)
   workerEarnings            Float         @default(0.0)
@@ -325,6 +437,19 @@ model Booking {
   // Trust & Safety Worker Verification before OTP
   isWorkerVerifiedBeforeOtp Boolean       @default(false)
   workerVerifiedAt          DateTime?
+
+  // Destination Pin Coordinates (M2 Navigation)
+  destinationLat            Float?
+  destinationLng            Float?
+
+  // Photo Proof flags (M3)
+  hasBeforeProof            Boolean       @default(false)
+  hasAfterProof             Boolean       @default(false)
+
+  // COD Collection flags (M5)
+  isCodCollected            Boolean       @default(false)
+  codCollectedAt            DateTime?
+  codAmountCollected        Float?
 
   // Secure OTP lifecycle
   startOtp                  String?
@@ -344,6 +469,11 @@ model Booking {
   transactions              WalletTransaction[]
   reviews                   Review[]
   complaints                Complaint[]
+  messages                  BookingMessage[]
+  proofs                    BookingProof[]
+  quoteRevisions            QuoteRevision[]
+  sosIncidents              WorkerSosIncident[]
+  workerCustomerRating      WorkerCustomerRating?
 
   @@index([customerId, status])
   @@index([workerId, status])
@@ -532,4 +662,339 @@ model Coupon {
   updatedAt            DateTime         @updatedAt
 
   @@index([code, isActive])
+}
+
+// ==========================================
+// 9. WORKER OPERATIONS EXTENSIONS (MILESTONES M2–M6)
+// ==========================================
+
+// M2: Booking-scoped chat & messages
+model BookingMessage {
+  id        String   @id @default(uuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  senderId  String
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  text      String
+  read      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([bookingId, createdAt])
+}
+
+// M3: Before / After Work Photos
+model BookingProof {
+  id        String    @id @default(uuid())
+  bookingId String
+  booking   Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  workerId  String
+  worker    User      @relation(fields: [workerId], references: [id])
+
+  type      ProofType
+  imageUrl  String
+  notes     String?
+
+  createdAt DateTime  @default(now())
+
+  @@index([bookingId, type])
+}
+
+// M4: Quote Revisions (Spare parts / extra materials)
+model QuoteRevision {
+  id           String         @id @default(uuid())
+  bookingId    String
+  booking      Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  requestedBy  String         // worker user id
+  items        Json           // array of { name, quantity, unitPrice, amount }
+  totalAmount  Float
+  status       RevisionStatus @default(PENDING)
+  notes        String?
+  customerNote String?
+  decidedAt    DateTime?
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([bookingId, status])
+}
+
+// M4: Worker Payout Account Destination (Masked / Protected)
+model WorkerPayoutAccount {
+  id              String        @id @default(uuid())
+  workerProfileId String        @unique
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  type            PayoutType    @default(UPI)
+  accountNumber   String?       // encrypted / masked (e.g. "******1234")
+  ifscCode        String?
+  upiId           String?       // e.g. "worker@upi"
+  accountHolder   String?
+  isVerified      Boolean       @default(false)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+// M5: Payout Withdrawal Requests & Ledger
+model PayoutRequest {
+  id          String        @id @default(uuid())
+  workerId    String
+  worker      User          @relation(fields: [workerId], references: [id])
+
+  amount      Float
+  fee         Float         @default(0.0)
+  netAmount   Float
+  payoutType  PayoutType
+  destination String        // Masked VPA or bank destination
+  status      PayoutStatus  @default(PENDING)
+  utr         String?
+  notes       String?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([workerId, status])
+}
+
+// M6: Emergency Worker SOS Incidents
+model WorkerSosIncident {
+  id         String      @id @default(uuid())
+  workerId   String
+  worker     User        @relation(fields: [workerId], references: [id])
+
+  bookingId  String?
+  booking    Booking?    @relation(fields: [bookingId], references: [id])
+
+  latitude   Float?
+  longitude  Float?
+  severity   SosSeverity @default(HIGH)
+  status     SosStatus   @default(ACTIVE)
+  adminNote  String?
+  resolvedAt DateTime?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([status, createdAt])
+}
+
+// M6: Worker Skill Certifications
+model WorkerCertification {
+  id              String        @id @default(uuid())
+  workerProfileId String
+  workerProfile   WorkerProfile @relation(fields: [workerProfileId], references: [id], onDelete: Cascade)
+
+  moduleName      String
+  score           Int           @default(100)
+  certificateCode String        @unique
+  issuedAt        DateTime      @default(now())
+
+  @@index([workerProfileId])
+}
+
+// M6: Worker-to-Customer Reviews (Two-way Rating)
+model WorkerCustomerRating {
+  id         String   @id @default(uuid())
+  bookingId  String   @unique
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  workerId   String
+  worker     User     @relation("WorkerGivesRating", fields: [workerId], references: [id])
+
+  customerId String
+  customer   User     @relation("CustomerGetsRating", fields: [customerId], references: [id])
+
+  rating     Int      // 1 to 5
+  tags       String[] @default([])
+  comment    String?
+
+  createdAt  DateTime @default(now())
+
+  @@index([customerId])
+  @@index([workerId])
+}
+
+// ==========================================
+// 10. PARTNERS, NOTIFICATIONS & SYSTEM LOGS (POSTGRES UNIFICATION)
+// ==========================================
+
+enum PartnerType {
+  NGO
+  GOVERNMENT
+  CORPORATE
+  SOCIETY
+  OTHER
+}
+
+enum PartnershipType {
+  TRAINING
+  EMPLOYMENT
+  SERVICE_PROVIDER
+  BULK_CLIENT
+  SOCIAL_IMPACT
+}
+
+enum PartnerStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+model Partner {
+  id              String          @id @default(uuid())
+  name            String
+  type            PartnerType     @default(OTHER)
+  contactPerson   String
+  email           String
+  phone           String?
+  description     String?
+  website         String?
+  address         String?
+  city            String?
+  partnershipType PartnershipType @default(SERVICE_PROVIDER)
+  status          PartnerStatus   @default(PENDING)
+  startDate       DateTime?
+  logo            String?
+  linkedUserId    String?
+  linkedUser      User?           @relation(fields: [linkedUserId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status, type])
+}
+
+enum NotificationType {
+  BROADCAST
+  PERSONAL
+  BOOKING_UPDATE
+  PROMOTION
+  ALERT
+  SYSTEM
+}
+
+enum NotificationAudience {
+  ALL
+  CUSTOMERS
+  WORKERS
+  B2B
+  SPECIFIC
+}
+
+model Notification {
+  id             String               @id @default(uuid())
+  title          String
+  message        String
+  type           NotificationType     @default(PERSONAL)
+  targetAudience NotificationAudience @default(ALL)
+  targetUsers    String[]             @default([]) // user IDs
+  readBy         String[]             @default([]) // user IDs
+  sentById       String?
+  sentBy         User?                @relation("SentNotifications", fields: [sentById], references: [id])
+  isActive       Boolean              @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@index([targetAudience, isActive])
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  role       String?
+  action     String
+  module     String?
+  targetId   String?
+  targetRef  String?
+  duration   Int?
+  device     String?
+  platform   String?
+  browser    String?
+  userAgent  String?
+  country    String?
+  city       String?
+  requestId  String?
+  ipAddress  String?
+  timestamp  DateTime @default(now())
+
+  @@index([userId, timestamp])
+  @@index([action, module])
+}
+
+model EventLog {
+  id            String   @id @default(uuid())
+  eventId       String   @unique
+  eventType     String
+  entityType    String
+  entityId      String?
+  actorId       String?
+  actorRole     String?
+  bookingId     String?
+  serviceId     String?
+  customerId    String?
+  workerId      String?
+  timestamp     DateTime @default(now())
+  previousState String?
+  currentState  String?
+  metadata      Json?    @default("{}")
+  requestId     String?
+  ipAddress     String?
+  userAgent     String?
+
+  @@index([eventType, entityType])
+  @@index([bookingId])
+  @@index([timestamp])
+}
+
+model AIAnalysis {
+  id          String   @id @default(uuid())
+  analysisId  String   @unique
+  requestId   String?
+  provider    String   @default("gemini")
+  model       String   @default("gemini-2.0-flash")
+  feature     String
+  bookingId   String?
+  customerId  String?
+  workerId    String?
+  language    String   @default("English")
+  imageHash   String?
+  rawResponse Json?
+  result      Json?
+  createdAt   DateTime @default(now())
+
+  @@index([analysisId])
+  @@index([feature, createdAt])
+}
+
+model DocumentHistory {
+  id            String   @id @default(uuid())
+  collection    String
+  documentId    String
+  version       Int
+  changedFields String[] @default([])
+  oldValues     Json?    @default("{}")
+  newValues     Json?    @default("{}")
+  snapshot      Json?    @default("{}")
+  changedById   String?
+  changedByRole String?
+  changeReason  String?
+  timestamp     DateTime @default(now())
+
+  @@index([collection, documentId])
+}
+
+model AnalyticsRecord {
+  id         String   @id @default(uuid())
+  metricType String   // 'CUSTOMER_METRIC', 'WORKER_METRIC', 'TRUST_PROFILE', 'DEMAND_HISTORY', etc.
+  entityId   String?
+  data       Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([metricType, entityId])
 }

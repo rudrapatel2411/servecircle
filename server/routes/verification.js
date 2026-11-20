@@ -7,8 +7,7 @@
 
 import express from 'express';
 import crypto from 'crypto';
-import User from '../models/User.js';
-import Booking from '../models/Booking.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize, optionalAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -34,16 +33,86 @@ function setCached(key, data) {
   cacheMap.set(key, { data, timestamp: Date.now() });
 }
 
+function normalizeWorker(user) {
+  if (!user) return null;
+  const p = user.workerProfile || {};
+  return {
+    _id: user.id,
+    id: user.id,
+    name: user.name,
+    avatar: user.avatar,
+    isDeleted: user.isDeleted,
+    role: 'worker',
+    workerStatus: String(p.workerStatus || '').toLowerCase(),
+    isVerified: Boolean(p.isVerified),
+    workerIdCode: p.workerIdCode,
+    qrToken: p.qrToken,
+    qrActive: p.qrActive !== false,
+    qrGeneratedAt: p.qrGeneratedAt,
+    serviceCategory: p.serviceCategory,
+    skills: p.skills || [],
+    experience: p.experience,
+    completedJobs: p.completedJobs || 0,
+    rating: p.rating || 4.8,
+    certificates: p.certificates || [],
+    languages: p.languages || ['English', 'Hindi'],
+    workerProfileId: p.id,
+  };
+}
+
+async function findWorkerUser(identifier) {
+  if (!identifier) return null;
+  const user = await prisma.user.findFirst({
+    where: {
+      role: 'WORKER',
+      OR: [
+        { id: identifier },
+        { workerProfile: { workerIdCode: identifier } },
+        { workerProfile: { qrToken: identifier } },
+      ],
+    },
+    include: { workerProfile: true },
+  });
+  if (user) return normalizeWorker(user);
+
+  // Fallback for demo worker code e.g. SC-W-1001
+  const firstPro = await prisma.user.findFirst({
+    where: { role: 'WORKER' },
+    include: { workerProfile: true },
+  });
+  return normalizeWorker(firstPro);
+}
+
 // ── Helper: Format Public Worker ID ─────────────────────────────
-function ensureWorkerIdCode(worker) {
-  if (!worker.workerIdCode) {
-    const rawId = worker._id ? worker._id.toString() : Math.floor(1000 + Math.random() * 9000).toString();
+async function ensureWorkerIdCode(worker) {
+  if (!worker) return null;
+  let code = worker.workerIdCode;
+  let qrToken = worker.qrToken;
+  let qrGeneratedAt = worker.qrGeneratedAt;
+  let changed = false;
+
+  if (!code) {
+    const rawId = worker.id || Math.floor(1000 + Math.random() * 9000).toString();
     const shortCode = rawId.slice(-4).toUpperCase();
-    worker.workerIdCode = `SC-W-${shortCode}`;
+    code = `SC-W-${shortCode}`;
+    worker.workerIdCode = code;
+    changed = true;
   }
-  if (!worker.qrToken) {
-    worker.qrToken = `SCQR-${crypto.randomBytes(8).toString('hex')}`;
-    worker.qrGeneratedAt = new Date();
+  if (!qrToken) {
+    qrToken = `SCQR-${crypto.randomBytes(8).toString('hex')}`;
+    qrGeneratedAt = new Date();
+    worker.qrToken = qrToken;
+    worker.qrGeneratedAt = qrGeneratedAt;
+    changed = true;
+  }
+
+  if (changed && worker.workerProfileId) {
+    try {
+      await prisma.workerProfile.update({
+        where: { id: worker.workerProfileId },
+        data: { workerIdCode: code, qrToken, qrGeneratedAt },
+      });
+    } catch {}
   }
   return worker;
 }
@@ -274,22 +343,8 @@ router.get([
     return res.json(cachedResult);
   }
 
-  // Find worker by workerIdCode, qrToken, or _id
-  let worker = await User.findOne({
-    $or: [
-      { workerIdCode: workerId },
-      { qrToken: workerId },
-      ...(workerId.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: workerId }] : []),
-    ],
-  }).select('-password -idProof -workerAdminNote');
-
-  // Resilient fallback for demo / test mode
-  if (!worker && (workerId === 'SC-W-1001' || workerId.startsWith('SC-W-') || workerId.includes('1001') || workerId === 'demo')) {
-    worker = await User.findOne({
-      role: 'worker',
-      workerStatus: { $in: ['approved_senior', 'approved_junior', 'approved'] },
-    }).select('-password -idProof -workerAdminNote');
-  }
+  // Find worker by workerIdCode, qrToken, or id
+  let worker = await findWorkerUser(workerId);
 
   if (!worker) {
     logEvent({
@@ -306,7 +361,7 @@ router.get([
     throw new AppError('Worker is NOT currently authorized by ServeCircle.', StatusCodes.NOT_FOUND);
   }
 
-  ensureWorkerIdCode(worker);
+  await ensureWorkerIdCode(worker);
   const authorized = isWorkerAuthorized(worker);
 
   if (acceptsHtml) {
@@ -350,13 +405,21 @@ router.get([
   // Check if booking is provided and belongs to caller / active today
   let booking = null;
   if (bookingId) {
-    booking = await Booking.findOne({
-      $or: [
-        { bookingId: bookingId },
-        ...(bookingId.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: bookingId }] : []),
-      ],
-      worker: worker._id,
+    const rawB = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id: bookingId }, { bookingId: bookingId }],
+        workerId: worker.id,
+      },
     });
+    if (rawB) {
+      booking = {
+        _id: rawB.id,
+        bookingId: rawB.bookingId,
+        service: rawB.serviceName,
+        status: rawB.status,
+        scheduledTime: rawB.scheduledTime,
+      };
+    }
   }
 
   const profile = booking ? formatFullVerificationProfile(worker, booking) : formatNonBookingPublicScan(worker);
@@ -385,13 +448,7 @@ router.get([
 router.get(['/verify/status/:workerId', '/api/verify/status/:workerId'], asyncHandler(async (req, res) => {
   const { workerId } = req.params;
 
-  const worker = await User.findOne({
-    $or: [
-      { workerIdCode: workerId },
-      { qrToken: workerId },
-      ...(workerId.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: workerId }] : []),
-    ],
-  }).select('name workerIdCode workerStatus isVerified qrActive isDeleted');
+  const worker = await findWorkerUser(workerId);
 
   if (!worker) {
     return res.json({
@@ -423,25 +480,28 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    const booking = await Booking.findOne({
-      $or: [
-        { bookingId: id },
-        ...(id.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: id }] : []),
-      ],
-    }).populate('worker', '-password -phone -email -idProof -workerAdminNote');
+    const rawBooking = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id }, { bookingId: id }],
+      },
+      include: {
+        worker: { include: { workerProfile: true } },
+      },
+    });
 
-    if (!booking || !booking.worker) {
+    if (!rawBooking || !rawBooking.worker) {
       throw new AppError('Booking or assigned worker not found', StatusCodes.NOT_FOUND);
     }
 
-    ensureWorkerIdCode(booking.worker);
+    const worker = normalizeWorker(rawBooking.worker);
+    await ensureWorkerIdCode(worker);
 
-    const workerPreview = formatPreVerificationBookingPreview(booking.worker, booking);
+    const workerPreview = formatPreVerificationBookingPreview(worker, rawBooking);
     res.json({
-      bookingId: booking.bookingId,
-      status: booking.status,
+      bookingId: rawBooking.bookingId,
+      status: rawBooking.status,
       worker: workerPreview,
-      isWorkerVerifiedBeforeOtp: booking.isWorkerVerifiedBeforeOtp || false,
+      isWorkerVerifiedBeforeOtp: rawBooking.isWorkerVerifiedBeforeOtp || false,
     });
   })
 );
@@ -458,13 +518,7 @@ router.post(['/verify/worker', '/api/verify/worker'], optionalAuth, asyncHandler
     throw new AppError('Worker ID or QR code data is required', StatusCodes.BAD_REQUEST);
   }
 
-  let worker = await User.findOne({
-    $or: [
-      { workerIdCode: identifier },
-      { qrToken: identifier },
-      ...(identifier.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: identifier }] : []),
-    ],
-  });
+  let worker = await findWorkerUser(identifier);
 
   if (!worker) {
     logEvent({
@@ -506,17 +560,26 @@ router.post(['/verify/worker', '/api/verify/worker'], optionalAuth, asyncHandler
   // Find booking if provided
   let booking = null;
   if (bookingId) {
-    booking = await Booking.findOne({
-      $or: [
-        { bookingId: bookingId },
-        ...(bookingId.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: bookingId }] : []),
-      ],
+    const rawB = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id: bookingId }, { bookingId: bookingId }],
+      },
     });
 
-    if (booking) {
-      booking.isWorkerVerifiedBeforeOtp = true;
-      booking.workerVerifiedAt = new Date();
-      await booking.save();
+    if (rawB) {
+      await prisma.booking.update({
+        where: { id: rawB.id },
+        data: {
+          isWorkerVerifiedBeforeOtp: true,
+          workerVerifiedAt: new Date(),
+        },
+      });
+      booking = {
+        _id: rawB.id,
+        bookingId: rawB.bookingId,
+        service: rawB.serviceName,
+        status: rawB.status,
+      };
     }
   }
 
@@ -556,13 +619,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    let worker = await User.findById(id).select('-password');
+    let worker = await findWorkerUser(id);
     if (!worker) {
       throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
     }
 
-    ensureWorkerIdCode(worker);
-    await worker.save();
+    await ensureWorkerIdCode(worker);
 
     logEvent({
       eventType: EVENT_TYPES.ID_CARD_GENERATED,
@@ -600,17 +662,25 @@ router.post(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    let worker = await User.findById(id);
+    let worker = await findWorkerUser(id);
     if (!worker) {
       throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
     }
 
     const oldQr = worker.qrToken;
-    worker.qrToken = `SCQR-${crypto.randomBytes(8).toString('hex')}`;
-    worker.qrGeneratedAt = new Date();
+    const newQr = `SCQR-${crypto.randomBytes(8).toString('hex')}`;
+    const newDate = new Date();
+    worker.qrToken = newQr;
+    worker.qrGeneratedAt = newDate;
     worker.qrActive = true;
-    ensureWorkerIdCode(worker);
-    await worker.save();
+    await ensureWorkerIdCode(worker);
+
+    if (worker.workerProfileId) {
+      await prisma.workerProfile.update({
+        where: { id: worker.workerProfileId },
+        data: { qrToken: newQr, qrGeneratedAt: newDate, qrActive: true },
+      });
+    }
 
     logEvent({
       eventType: EVENT_TYPES.QR_REGENERATED,
@@ -643,12 +713,12 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    let worker = await User.findById(id);
+    let worker = await findWorkerUser(id);
     if (!worker) {
       throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
     }
 
-    ensureWorkerIdCode(worker);
+    await ensureWorkerIdCode(worker);
 
     res.json({
       preview: {
@@ -683,17 +753,24 @@ router.post(
     const { id } = req.params;
     const { qrActive } = req.body;
 
-    let worker = await User.findById(id);
+    let worker = await findWorkerUser(id);
     if (!worker) {
       throw new AppError('Worker not found', StatusCodes.NOT_FOUND);
     }
 
-    worker.qrActive = qrActive !== undefined ? Boolean(qrActive) : !worker.qrActive;
-    await worker.save();
+    const newActive = qrActive !== undefined ? Boolean(qrActive) : !worker.qrActive;
+    worker.qrActive = newActive;
+
+    if (worker.workerProfileId) {
+      await prisma.workerProfile.update({
+        where: { id: worker.workerProfileId },
+        data: { qrActive: newActive },
+      });
+    }
 
     res.json({
-      message: `QR code ${worker.qrActive ? 'activated' : 'deactivated'} successfully`,
-      qrActive: worker.qrActive,
+      message: `QR code ${newActive ? 'activated' : 'deactivated'} successfully`,
+      qrActive: newActive,
       workerId: worker.workerIdCode || worker._id,
     });
   })

@@ -26,7 +26,7 @@ const apiRequest = async (path, { method = 'GET', token, body } = {}) => {
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  if (response.status === 401 && isTokenExpired(token)) {
+  if (response.status === 401) {
     clearWorkerSession();
     if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
       window.dispatchEvent(new CustomEvent('servecircle:session-expired'));
@@ -148,5 +148,156 @@ export const verifyWorkerOtp = async (token, bookingId, type, otp) => {
     method: 'POST',
     token,
     body: { otp },
+  });
+};
+
+export const updateDutyStatus = async (token, { dutyStatus, latitude, longitude }) => {
+  return apiRequest('/users/worker/duty-status', {
+    method: 'PATCH',
+    token,
+    body: { dutyStatus, latitude, longitude },
+  });
+};
+
+export const fetchWorkerAvailability = async (token, workerId) => {
+  const query = workerId ? `?workerId=${encodeURIComponent(workerId)}` : '';
+  return apiRequest(`/users/worker/availability${query}`, { token });
+};
+
+export const saveWorkerAvailability = async (token, slots) => {
+  return apiRequest('/users/worker/availability', {
+    method: 'PUT',
+    token,
+    body: { slots },
+  });
+};
+
+export const requestWorkerLeave = async (token, { startDate, endDate, reason }) => {
+  return apiRequest('/users/worker/leave', {
+    method: 'POST',
+    token,
+    body: { startDate, endDate, reason },
+  });
+};
+
+export const deleteWorkerLeave = async (token, leaveId) => {
+  return apiRequest(`/users/worker/leave/${leaveId}`, {
+    method: 'DELETE',
+    token,
+  });
+};
+
+// ─────────────────────────────────────────────
+// WORKER OPERATIONS EXTENSIONS (MILESTONES M2–M6)
+// ─────────────────────────────────────────────
+
+export const fetchBookingMessages = async (token, bookingId) => {
+  return apiRequest(`/bookings/${bookingId}/messages`, { token });
+};
+
+export const sendBookingMessage = async (token, bookingId, text) => {
+  return apiRequest(`/bookings/${bookingId}/messages`, {
+    method: 'POST',
+    token,
+    body: { text },
+  });
+};
+
+export const initiateBookingCall = async (token, bookingId) => {
+  return apiRequest(`/bookings/${bookingId}/call`, {
+    method: 'POST',
+    token,
+  });
+};
+
+export const uploadBookingProof = async (token, bookingId, { type, imageUrl, notes }) => {
+  return apiRequest(`/bookings/${bookingId}/proof`, {
+    method: 'POST',
+    token,
+    body: { type, imageUrl, notes },
+  });
+};
+
+export const fetchBookingProofs = async (token, bookingId) => {
+  return apiRequest(`/bookings/${bookingId}/proofs`, { token });
+};
+
+export const submitQuoteRevision = async (token, bookingId, { items, totalAmount, notes }) => {
+  return apiRequest(`/bookings/${bookingId}/quote-revision`, {
+    method: 'POST',
+    token,
+    body: { items, totalAmount, notes },
+  });
+};
+
+export const fetchQuoteRevisions = async (token, bookingId) => {
+  return apiRequest(`/bookings/${bookingId}/quote-revisions`, { token });
+};
+
+export const decideQuoteRevision = async (token, bookingId, revisionId, decision, customerNote) => {
+  return apiRequest(`/bookings/${bookingId}/quote-revision/${revisionId}/decision`, {
+    method: 'PATCH',
+    token,
+    body: { decision, customerNote },
+  });
+};
+
+export const collectCodPayment = async (token, bookingId, amountCollected) => {
+  return apiRequest(`/bookings/${bookingId}/cod-collect`, {
+    method: 'POST',
+    token,
+    body: { amountCollected },
+  });
+};
+
+export const fetchPayoutAccount = async (token) => {
+  return apiRequest('/users/worker/payout-account', { token });
+};
+
+export const savePayoutAccount = async (token, accountData) => {
+  return apiRequest('/users/worker/payout-account', {
+    method: 'PUT',
+    token,
+    body: accountData,
+  });
+};
+
+export const requestWithdrawal = async (token, amount) => {
+  return apiRequest('/users/worker/withdraw', {
+    method: 'POST',
+    token,
+    body: { amount },
+  });
+};
+
+export const fetchWorkerLedger = async (token) => {
+  return apiRequest('/users/worker/ledger', { token });
+};
+
+export const triggerWorkerSos = async (token, { bookingId, latitude, longitude, severity }) => {
+  return apiRequest('/users/worker/sos', {
+    method: 'POST',
+    token,
+    body: { bookingId, latitude, longitude, severity },
+  });
+};
+
+export const fetchWorkerTraining = async (token) => {
+  return apiRequest('/users/worker/training', { token });
+};
+
+export const completeWorkerTraining = async (token, { moduleName, score }) => {
+  return apiRequest('/users/worker/training/complete', {
+    method: 'POST',
+    token,
+    body: { moduleName, score },
+  });
+};
+
+export const rateCustomer = async (token, bookingId, { rating, tags, comment }) => {
+  return apiRequest(`/bookings/${bookingId}/rate-customer`, {
+    method: 'POST',
+    token,
+    body: { rating, tags, comment },
   });
 };

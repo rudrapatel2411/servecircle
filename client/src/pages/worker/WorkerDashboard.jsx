@@ -20,12 +20,10 @@ import {
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
+import WorkerDutySwitch from '../../components/WorkerDutySwitch';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
-import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
-import { broadcastNotificationToTabs, subscribeToCrossTabNotifications } from '../../utils/notificationSync';
-import { socket } from '../../socket';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -33,7 +31,7 @@ import './WorkerPages.css';
 
 const WorkerDashboard = () => {
   const { t } = useTranslation();
-  const { token, user, isAuthenticated, workerStatus, workerTier, signIn, authError, authLoading, isDemoMode } = useWorkerAuth();
+  const { token, user, isAuthenticated, workerStatus, dutyStatus, dutyStatusUpdatedAt, updateDuty, workerTier, signIn, authError, authLoading, isDemoMode } = useWorkerAuth();
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -151,6 +149,16 @@ const WorkerDashboard = () => {
         </div>
       </div>
 
+      {/* ===== WORKER DUTY SWITCH (ONLINE / PAUSED / OFFLINE) ===== */}
+      <WorkerDutySwitch
+        token={token}
+        currentStatus={dutyStatus}
+        lastUpdated={dutyStatusUpdatedAt}
+        isVerified={user?.isVerified}
+        workerStatus={workerStatus}
+        onStatusChange={(newStatus, updatedUser) => updateDuty(updatedUser || newStatus)}
+      />
+
       {/* ===== TIER STATUS CARD ===== */}
       {isRookie && (
         <div style={{
@@ -259,11 +267,11 @@ const WorkerDashboard = () => {
       {loading ? (
         <div className="chart-placeholder">Loading dashboard...</div>
       ) : (
-        <div className="stats-container">
+        <div className="dashboard-grid">
           {stats.map((stat, index) => (
             <div key={index} className="stat-card animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
               <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
-              <div className="stat-details">
+              <div>
                 <div className="stat-value">{stat.value}</div>
                 <div className="stat-label">{stat.label}</div>
               </div>

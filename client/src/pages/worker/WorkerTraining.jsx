@@ -10,7 +10,12 @@ import {
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import { useWorkerAuth } from './useWorkerAuth';
-import { fetchWorkerJobs, fetchWorkerProfile } from './workerApi';
+import {
+  fetchWorkerJobs,
+  fetchWorkerProfile,
+  fetchWorkerTraining,
+  completeWorkerTraining,
+} from './workerApi';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -55,28 +60,30 @@ const WorkerTraining = () => {
 
   const [profile, setProfile] = useState(null);
   const [jobs, setJobs] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+  const [completingModule, setCompletingModule] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [watched, setWatched] = useState(() => {
-    try {
-      const raw = localStorage.getItem('servecircle_worker_training_watched');
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [watched, setWatched] = useState([]);
 
   const loadTrainingData = async () => {
     if (!token) return;
     setLoading(true);
     setError('');
     try {
-      const [workerProfile, workerJobs] = await Promise.all([
-        fetchWorkerProfile(token),
-        fetchWorkerJobs(token),
+      const [workerProfile, workerJobs, trainingRes] = await Promise.all([
+        fetchWorkerProfile(token).catch(() => null),
+        fetchWorkerJobs(token).catch(() => []),
+        fetchWorkerTraining(token).catch(() => null),
       ]);
       setProfile(workerProfile);
-      setJobs(workerJobs);
+      setJobs(Array.isArray(workerJobs) ? workerJobs : []);
+      if (trainingRes) {
+        setCertificates(trainingRes.certificates || []);
+        if (Array.isArray(trainingRes.completedModules)) {
+          setWatched(trainingRes.completedModules);
+        }
+      }
     } catch (err) {
       setError(err.message || 'Could not load training data');
     } finally {
@@ -89,9 +96,26 @@ const WorkerTraining = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  useEffect(() => {
-    localStorage.setItem('servecircle_worker_training_watched', JSON.stringify(watched));
-  }, [watched]);
+  const handleCompleteModule = async (module) => {
+    if (!token) return;
+    setCompletingModule(module.id);
+    try {
+      const res = await completeWorkerTraining(token, {
+        moduleId: module.id,
+        title: module.title,
+        category: module.category,
+      });
+      setWatched((prev) => Array.from(new Set([...prev, module.id])));
+      if (res.certificate) {
+        setCertificates((prev) => [res.certificate, ...prev.filter((c) => c.id !== res.certificate.id)]);
+      }
+      alert(`🎉 Congratulations! You have completed "${module.title}". Your digital certificate has been issued!`);
+    } catch (err) {
+      alert(err.message || 'Could not record module completion');
+    } finally {
+      setCompletingModule('');
+    }
+  };
 
   const completedJobs = useMemo(
     () => jobs.filter((job) => job.status === 'completed').length,
@@ -201,10 +225,43 @@ const WorkerTraining = () => {
               
               {isProUnlocked && (
                 <button className="btn btn-primary" style={{ marginTop: '20px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
-                  <HiOutlineIdentification style={{ fontSize: '1.2rem' }} /> Download Digital Certificate
+                  <HiOutlineIdentification style={{ fontSize: '1.2rem' }} /> Download Pro Certificate
                 </button>
               )}
             </div>
+
+            {/* Issued Digital Certificates */}
+            {certificates.length > 0 && (
+              <div style={{ marginTop: '20px' }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '10px', color: 'var(--navy-900)' }}>
+                  🎓 Your Verified Certificates ({certificates.length})
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+                  {certificates.map((cert) => (
+                    <div key={cert.id} style={{
+                      padding: '14px',
+                      borderRadius: '10px',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#3b82f6', background: '#eff6ff', padding: '2px 8px', borderRadius: '4px' }}>
+                          {cert.certificateCode}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>● VERIFIED</span>
+                      </div>
+                      <strong style={{ fontSize: '0.9rem', color: 'var(--navy-900)', marginTop: '4px' }}>{cert.title}</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
+                        Issued: {new Date(cert.issuedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="dash-section">
@@ -212,6 +269,7 @@ const WorkerTraining = () => {
             <div className="training-grid">
               {modules.map((module) => {
                 const done = watched.includes(module.id);
+                const isWorking = completingModule === module.id;
                 return (
                   <div key={module.id} className="training-card" style={{ border: done ? '1px solid #3b7dc1' : '1px solid var(--gray-200)' }}>
                     <div className="training-thumb" style={{ background: done ? '#e1ebf5' : '#f1f5f9', color: done ? '#3b7dc1' : '#64748b' }}>
@@ -227,10 +285,15 @@ const WorkerTraining = () => {
                         <span className="training-duration"><HiOutlineClock style={{ verticalAlign: 'middle' }} /> {module.duration}</span>
                         <button
                           className={done ? 'btn btn-outline btn-sm' : 'btn btn-primary btn-sm'}
-                          onClick={() => toggleWatched(module.id)}
-                          style={done ? { borderColor: '#3b7dc1', color: '#3b7dc1' } : {}}
+                          onClick={() => {
+                            if (!done) {
+                              handleCompleteModule(module);
+                            }
+                          }}
+                          disabled={isWorking}
+                          style={done ? { borderColor: '#16a34a', color: '#16a34a' } : {}}
                         >
-                          {done ? 'Watched' : 'Watch Now'}
+                          {done ? '✓ Certified' : (isWorking ? 'Completing...' : 'Watch & Certify')}
                         </button>
                       </div>
                     </div>

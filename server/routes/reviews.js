@@ -1,34 +1,43 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import Review from '../models/Review.js';
-import User from '../models/User.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
-import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
-import { updateWorkerRating, recordCustomerReview } from '../services/metricsService.js';
-import { captureSnapshot } from '../services/historyService.js';
-import { recordSkillRating, recordBehaviourReview, syncTrustProfile } from '../services/featureService.js';
-import { DEMO_REVIEWS } from '../utils/demoDataStore.js';
 
 const router = express.Router();
+
+function formatReview(r) {
+  if (!r) return null;
+  return {
+    _id: r.id,
+    id: r.id,
+    booking: r.booking ? { _id: r.booking.id, bookingId: r.booking.bookingId, service: r.booking.serviceName } : r.bookingId,
+    customer: r.customer ? { _id: r.customer.id, name: r.customer.name, avatar: r.customer.avatar } : { _id: r.customerId, name: 'Customer' },
+    worker: r.worker ? { _id: r.worker.id, name: r.worker.name, avatar: r.worker.avatar } : { _id: r.workerId, name: 'Worker' },
+    service: r.service,
+    rating: r.rating,
+    comment: r.comment,
+    reply: r.reply,
+    isEdited: r.isEdited,
+    isDeleted: r.isDeleted,
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+  };
+}
 
 // GET reviews by worker
 router.get(
   '/worker/:workerId',
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const workerReviews = DEMO_REVIEWS.filter(
-        (r) => !r.isDeleted && (r.worker?._id === req.params.workerId || String(r.worker) === req.params.workerId)
-      );
-      return res.json(workerReviews);
-    }
-
-    const reviews = await Review.find({ worker: req.params.workerId })
-      .populate('customer', 'name avatar')
-      .sort('-createdAt');
-    res.json(reviews);
+    const reviews = await prisma.review.findMany({
+      where: { workerId: req.params.workerId, isDeleted: false },
+      include: {
+        customer: { select: { id: true, name: true, avatar: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(reviews.map(formatReview));
   })
 );
 
@@ -37,17 +46,15 @@ router.get(
   '/my',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const myReviews = DEMO_REVIEWS.filter(
-        (r) => !r.isDeleted && (r.customer?._id === req.user._id || String(r.customer) === req.user._id)
-      );
-      return res.json(myReviews);
-    }
-
-    const reviews = await Review.find({ customer: req.user._id })
-      .populate('worker', 'name avatar')
-      .sort('-createdAt');
-    res.json(reviews);
+    const userId = req.user._id || req.user.id;
+    const reviews = await prisma.review.findMany({
+      where: { customerId: userId, isDeleted: false },
+      include: {
+        worker: { select: { id: true, name: true, avatar: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(reviews.map(formatReview));
   })
 );
 
@@ -57,51 +64,66 @@ router.post(
   protect,
   authorize('customer'),
   asyncHandler(async (req, res) => {
-    const { booking, worker, service, rating, comment } = req.body;
+    const { booking: bookingInput, worker: workerInput, service, rating, comment } = req.body;
+    const customerId = req.user._id || req.user.id;
 
-    if (mongoose.connection.readyState !== 1) {
-      const newReview = {
-        _id: `rev_${Date.now()}`,
-        booking,
-        customer: { _id: req.user._id, name: req.user.name, avatar: req.user.avatar || '' },
-        worker: { _id: worker, name: 'Service Professional' },
-        service: service || 'Home Service',
-        rating: Number(rating) || 5,
-        comment: comment || '',
-        createdAt: new Date(),
-        isEdited: false,
-        isDeleted: false,
-      };
-      DEMO_REVIEWS.unshift(newReview);
-      return res.status(StatusCodes.CREATED).json(newReview);
+    // Resolve booking
+    let bookingId = bookingInput;
+    const b = await prisma.booking.findFirst({
+      where: { OR: [{ id: bookingInput }, { bookingId: bookingInput }] },
+    });
+    if (b) {
+      bookingId = b.id;
+    } else {
+      throw new AppError('Valid booking required for review', StatusCodes.BAD_REQUEST);
     }
 
-    const review = await Review.create({
-      booking,
-      customer: req.user._id,
-      worker,
-      service,
-      rating,
-      comment,
-    }).catch((err) => {
-      if (err.code === 11000) throw new AppError('You have already reviewed this booking', StatusCodes.BAD_REQUEST);
-      throw err;
+    // Resolve worker
+    let workerId = workerInput;
+    if (!workerId && b.workerId) workerId = b.workerId;
+    if (!workerId) throw new AppError('Worker ID required for review', StatusCodes.BAD_REQUEST);
+
+    const review = await prisma.review.upsert({
+      where: {
+        bookingId_customerId: {
+          bookingId,
+          customerId,
+        },
+      },
+      update: {
+        rating: Number(rating) || 5,
+        comment: comment || '',
+        service: service || b.serviceName || 'Home Service',
+        isEdited: true,
+      },
+      create: {
+        bookingId,
+        customerId,
+        workerId,
+        service: service || b.serviceName || 'Home Service',
+        rating: Number(rating) || 5,
+        comment: comment || '',
+      },
+      include: {
+        customer: { select: { id: true, name: true, avatar: true } },
+        worker: { select: { id: true, name: true, avatar: true } },
+      },
     });
 
-    const allReviews = await Review.find({ worker });
-    const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-    await User.findByIdAndUpdate(worker, { rating: Math.round(avgRating * 10) / 10 });
+    // Update worker average rating in WorkerProfile
+    const allReviews = await prisma.review.findMany({
+      where: { workerId, isDeleted: false },
+      select: { rating: true },
+    });
+    if (allReviews.length > 0) {
+      const avg = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+      await prisma.workerProfile.updateMany({
+        where: { userId: workerId },
+        data: { rating: Math.round(avg * 10) / 10 },
+      });
+    }
 
-    // Phase 2: metrics + event + Batch 2 signals
-    updateWorkerRating(worker, req.body.ratingBreakdown || { overall: rating });
-    const custMetrics = await recordCustomerReview(req.user._id, rating);
-    logEvent({ eventType: EVENT_TYPES.REVIEW_ADDED, entityType: ENTITY_TYPES.REVIEW, entityId: review._id, actorId: req.user._id, actorRole: 'customer', metadata: { worker, service, rating, bookingId: booking }, ...req.reqCtx });
-    captureSnapshot({ collection: 'reviews', documentId: review._id, before: {}, after: review.toObject ? review.toObject() : review, changedBy: req.user._id, changedByRole: 'customer', changeReason: EVENT_TYPES.REVIEW_ADDED });
-    recordSkillRating(worker, service, req.body.category || '', rating);
-    recordBehaviourReview(req.user._id, rating, custMetrics?.completedBookings || 1);
-    syncTrustProfile(worker);
-
-    res.status(StatusCodes.CREATED).json(review);
+    res.status(StatusCodes.CREATED).json(formatReview(review));
   })
 );
 
@@ -110,34 +132,28 @@ router.put(
   '/:id',
   protect,
   asyncHandler(async (req, res) => {
+    const userId = req.user._id || req.user.id;
     const { rating, comment } = req.body;
 
-    if (mongoose.connection.readyState !== 1) {
-      const rev = DEMO_REVIEWS.find((r) => r._id === req.params.id && String(r.customer?._id || r.customer) === String(req.user._id));
-      if (!rev) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
-      if (rating) rev.rating = rating;
-      if (comment !== undefined) rev.comment = comment;
-      rev.isEdited = true;
-      return res.json(rev);
-    }
+    const existing = await prisma.review.findFirst({
+      where: { id: req.params.id, customerId: userId, isDeleted: false },
+    });
+    if (!existing) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
 
-    const review = await Review.findOne({ _id: req.params.id, customer: req.user._id });
-    if (!review) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
+    const updated = await prisma.review.update({
+      where: { id: existing.id },
+      data: {
+        ...(rating ? { rating: Number(rating) } : {}),
+        ...(comment !== undefined ? { comment } : {}),
+        isEdited: true,
+      },
+      include: {
+        customer: { select: { id: true, name: true, avatar: true } },
+        worker: { select: { id: true, name: true, avatar: true } },
+      },
+    });
 
-    const before = { rating: review.rating, comment: review.comment };
-    if (rating) review.rating = rating;
-    if (comment !== undefined) review.comment = comment;
-    review.isEdited = true;
-    await review.save();
-
-    const allReviews = await Review.find({ worker: review.worker });
-    const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-    await User.findByIdAndUpdate(review.worker, { rating: Math.round(avgRating * 10) / 10 });
-
-    logEvent({ eventType: EVENT_TYPES.REVIEW_EDITED, entityType: ENTITY_TYPES.REVIEW, entityId: review._id, actorId: req.user._id, actorRole: 'customer', metadata: { newRating: rating }, ...req.reqCtx });
-    captureSnapshot({ collection: 'reviews', documentId: review._id, before, after: { rating: review.rating, comment: review.comment }, changedBy: req.user._id, changedByRole: 'customer', changeReason: EVENT_TYPES.REVIEW_EDITED });
-
-    res.json(review);
+    res.json(formatReview(updated));
   })
 );
 
@@ -146,21 +162,17 @@ router.delete(
   '/:id',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const rev = DEMO_REVIEWS.find((r) => r._id === req.params.id && String(r.customer?._id || r.customer) === String(req.user._id));
-      if (!rev) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
-      rev.isDeleted = true;
-      return res.json({ message: 'Review deleted' });
-    }
+    const userId = req.user._id || req.user.id;
+    const existing = await prisma.review.findFirst({
+      where: { id: req.params.id, customerId: userId },
+    });
+    if (!existing) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
 
-    const review = await Review.findOne({ _id: req.params.id, customer: req.user._id });
-    if (!review) throw new AppError('Review not found', StatusCodes.NOT_FOUND);
-
-    await Review.findByIdAndUpdate(req.params.id, {
-      $set: { isDeleted: true, deletedAt: new Date() },
+    await prisma.review.update({
+      where: { id: existing.id },
+      data: { isDeleted: true, deletedAt: new Date() },
     });
 
-    logEvent({ eventType: EVENT_TYPES.REVIEW_DELETED, entityType: ENTITY_TYPES.REVIEW, entityId: review._id, actorId: req.user._id, actorRole: 'customer', metadata: { worker: review.worker }, ...req.reqCtx });
     res.json({ message: 'Review deleted' });
   })
 );

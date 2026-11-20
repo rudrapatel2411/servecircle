@@ -32,7 +32,13 @@ function formatAuthResponse(user) {
     city: user.city || '',
     walletBalance: user.walletBalance ?? 0,
     avatar: user.avatar || '',
-    workerStatus: user.workerProfile?.workerStatus || null,
+    workerStatus: user.workerProfile?.workerStatus
+      ? String(user.workerProfile.workerStatus).toLowerCase()
+      : null,
+    dutyStatus: user.workerProfile?.dutyStatus
+      ? String(user.workerProfile.dutyStatus).toLowerCase()
+      : 'offline',
+    dutyStatusUpdatedAt: user.workerProfile?.dutyStatusUpdatedAt || null,
     skills: user.workerProfile?.skills || [],
     serviceCategory: user.workerProfile?.serviceCategory || '',
     rating: user.workerProfile?.rating ?? 5.0,
@@ -142,62 +148,6 @@ router.post(
         user: newUser,
       });
     }
-<<<<<<< HEAD
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new AppError('User already exists with this email', StatusCodes.BAD_REQUEST);
-    }
-
-    const userData = { name, email, phone, password, role: normalizedRole };
-    if (normalizedRole === 'worker') {
-      userData.skills = skills || [];
-      userData.serviceCategory = serviceCategory || '';
-      userData.city = city || '';
-      userData.experience = experience || 'Fresher';
-      userData.workerStatus = 'pending_interview';
-    }
-    if (normalizedRole === 'b2b') {
-      userData.companyName = companyName;
-    }
-
-    const user = await User.create(userData);
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        email: user.email,
-        name: user.name,
-        serviceCategory: user.serviceCategory || '',
-        workerStatus: user.workerStatus || 'approved_senior',
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Phase 2: log registration event
-    try {
-      logEvent({ eventType: EVENT_TYPES.USER_REGISTERED, entityType: ENTITY_TYPES.USER, entityId: user._id, actorId: user._id, actorRole: user.role, metadata: { name: user.name, email: user.email, role: user.role }, ...req.reqCtx });
-    } catch {
-      // ignore logging errors
-    }
-
-    res.status(StatusCodes.CREATED).json({
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        workerStatus: user.workerStatus,
-        subscription: user.subscription,
-        walletBalance: user.walletBalance,
-        avatar: user.avatar,
-      },
-    });
-=======
->>>>>>> origin/main
   })
 );
 
@@ -233,23 +183,6 @@ router.post(
         if (isMatch) {
           user = fallbackUser;
         }
-<<<<<<< HEAD
-        user = fallbackUser;
-      }
-    } else {
-      let isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        // Fallback: Check if this matches our fixed demo accounts (auto-sync password in DB)
-        const fallbackUser = findFallbackUserByEmail(email);
-        if (fallbackUser && (await verifyPassword(fallbackUser, password))) {
-          user.password = password;
-          await user.save();
-          isMatch = true;
-        } else {
-          throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
-        }
-=======
->>>>>>> origin/main
       }
     }
 
@@ -257,24 +190,9 @@ router.post(
       throw new AppError('Invalid email or password', StatusCodes.BAD_REQUEST);
     }
 
-<<<<<<< HEAD
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        email: user.email,
-        name: user.name,
-        serviceCategory: user.serviceCategory || '',
-        workerStatus: user.workerStatus || 'approved_senior',
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-=======
     const userId = user.id || user._id;
     const userRole = String(user.role || '').toLowerCase();
     const token = jwt.sign({ id: userId, role: userRole }, JWT_SECRET, { expiresIn: '7d' });
->>>>>>> origin/main
 
     try {
       logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: userId, actorId: userId, actorRole: userRole, metadata: { email: user.email }, ...req.reqCtx });

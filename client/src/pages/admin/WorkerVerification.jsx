@@ -10,6 +10,7 @@ import {
   HiOutlineEye, HiOutlineArrowPath, HiXMark,
 } from 'react-icons/hi2';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
+import { getSession } from '../../utils/authSession';
 import '../Dashboard.css';
 import './AdminPages.css';
 
@@ -90,7 +91,7 @@ const WorkerVerification = () => {
   const [expandedId, setExpandedId] = useState(null);
   const [approvalModal, setApprovalModal] = useState(null); // { workerId, action }
   const [adminNote, setAdminNote] = useState('');
-  const [adminToken, setAdminToken] = useState(localStorage.getItem('servecircle_admin_token') || '');
+  const [adminToken] = useState(() => getSession()?.user?.role === 'admin' ? getSession().token : '');
   const [previewCardWorker, setPreviewCardWorker] = useState(null);
 
   const handleRegenerateQr = async (worker) => {
@@ -179,57 +180,28 @@ const WorkerVerification = () => {
       // Map MongoDB _id to id, format date, and set defaults
       const mapped = data.map(w => ({
         ...w,
-        id: w._id,
+        id: w.id || w._id,
         skills: w.skills || [],
         appliedDate: w.createdAt 
           ? new Date(w.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
           : 'Today',
-        workerStatus: w.workerStatus || 'pending_interview'
+        workerStatus: w.workerStatus || 'pending_interview',
+        dutyStatus: w.dutyStatus || 'offline',
       }));
 
-      // Merge with mock workers (removing duplicates by email to avoid losing initial set for demo)
-      const mockFiltered = mockWorkers.filter(mw => !mapped.some(w => w.email === mw.email));
-      setWorkers([...mapped, ...mockFiltered]);
+      setWorkers(mapped);
     } catch (err) {
       console.error('Error fetching real workers:', err);
-      // Fallback to mock workers if API fails
-      setWorkers(mockWorkers);
+      setWorkers([]);
+      setError('Could not load worker records. Check the API connection and try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const getAdminToken = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'admin@servecircle.in', password: 'admin123' })
-      });
-      if (!res.ok) throw new Error('Admin login failed');
-      const data = await res.json();
-      localStorage.setItem('servecircle_admin_token', data.token);
-      setAdminToken(data.token);
-      return data.token;
-    } catch (err) {
-      console.error('Failed to auto-login admin:', err);
-      return '';
-    }
-  };
-
   useEffect(() => {
-    const init = async () => {
-      let token = adminToken;
-      if (!token) {
-        token = await getAdminToken();
-      }
-      if (token) {
-        await fetchWorkers(token);
-      } else {
-        setWorkers(mockWorkers);
-      }
-    };
-    init();
+    if (adminToken) fetchWorkers(adminToken);
+    else setError('Sign in with an admin account to review worker applications.');
   }, [adminToken]);
 
   const filtered = workers.filter((w) => w.workerStatus === tab);
@@ -243,10 +215,9 @@ const WorkerVerification = () => {
     const { workerId, action } = approvalModal;
     setError('');
 
-    // If it's a real worker from DB (indicated by a 24-character hex ID typical of Mongo)
-    const isMongoId = typeof workerId === 'string' && workerId.length === 24;
-
-    if (isMongoId && adminToken) {
+    // Every worker in this list comes from the API, so status changes must go
+    // back to the API. There is no local-only approval path.
+    if (workerId && adminToken) {
       try {
         const res = await fetch(`${API_BASE}/users/${workerId}/worker-status`, {
           method: 'PATCH',
@@ -270,16 +241,11 @@ const WorkerVerification = () => {
       } catch (err) {
         console.error('Backend status update failed:', err);
         setError(err.message || 'Failed to update status on server');
-        // Update locally anyway as fallback
-        setWorkers((prev) => prev.map((w) =>
-          (w.id === workerId || w._id === workerId) ? { ...w, workerStatus: action, workerAdminNote: adminNote } : w
-        ));
+        return;
       }
     } else {
-      // Local mock worker update
-      setWorkers((prev) => prev.map((w) =>
-        w.id === workerId ? { ...w, workerStatus: action, workerAdminNote: adminNote } : w
-      ));
+      setError('This worker record cannot be updated because it is not a persisted database record.');
+      return;
     }
 
     setApprovalModal(null);
@@ -366,8 +332,23 @@ const WorkerVerification = () => {
                     <span><HiOutlineEnvelope /> {worker.email}</span>
                   </div>
                 </div>
-                <div style={{ background: statusConf.bg, color: statusConf.color, fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '100px', flexShrink: 0 }}>
-                  {statusConf.icon} {statusConf.label}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+                  <div style={{ background: statusConf.bg, color: statusConf.color, fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '100px' }}>
+                    {statusConf.icon} {statusConf.label}
+                  </div>
+                  <span
+                    style={{
+                      background: worker.dutyStatus === 'online' ? '#dcfce7' : worker.dutyStatus === 'paused' ? '#fef3c7' : '#f1f5f9',
+                      color: worker.dutyStatus === 'online' ? '#16a34a' : worker.dutyStatus === 'paused' ? '#d97706' : '#64748b',
+                      fontSize: '0.68rem',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '100px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    ● {worker.dutyStatus || 'offline'}
+                  </span>
                 </div>
               </div>
 

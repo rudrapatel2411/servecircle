@@ -1,220 +1,152 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import Notification from '../models/Notification.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
-import { DEMO_NOTIFICATIONS } from '../utils/demoDataStore.js';
 
 const router = express.Router();
 
+function formatNotif(n) {
+  if (!n) return null;
+  return {
+    _id: n.id,
+    id: n.id,
+    title: n.title,
+    message: n.message,
+    type: String(n.type).toLowerCase(),
+    targetAudience: String(n.targetAudience).toLowerCase(),
+    targetUsers: n.targetUsers || [],
+    readBy: n.readBy || [],
+    sentBy: n.sentById,
+    isActive: n.isActive,
+    expiresAt: n.expiresAt,
+    createdAt: n.createdAt,
+    updatedAt: n.updatedAt,
+  };
+}
+
+// GET user notifications
 router.get(
   '/',
   protect,
   asyncHandler(async (req, res) => {
-    const role = req.user.role;
+    const userId = req.user._id || req.user.id;
+    const role = (req.user.role || 'customer').toLowerCase();
+    const audienceRole = role === 'customer' ? 'CUSTOMERS' : role === 'worker' ? 'WORKERS' : 'B2B';
 
-    if (mongoose.connection.readyState !== 1) {
-      let userNotifs = [];
-      if (role === 'admin') {
-        userNotifs = DEMO_NOTIFICATIONS.filter(
-          (n) => n.isActive && (n.targetAudience === 'admin' || n.targetAudience === 'all' || !n.targetAudience)
-        );
-      } else {
-        const audience = role === 'customer' ? 'customers' : role === 'worker' ? 'workers' : 'b2b';
-        userNotifs = DEMO_NOTIFICATIONS.filter(
-          (n) => n.isActive && (n.targetAudience === 'all' || n.targetAudience === audience)
-        );
-      }
+    const notifications = await prisma.notification.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { targetAudience: 'ALL' },
+          { targetAudience: audienceRole },
+          { targetUsers: { has: userId } },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
 
-      const unreadCount = userNotifs.filter(
-        (n) => !n.readBy.some((id) => String(id) === String(req.user._id))
-      ).length;
-      return res.json({ notifications: userNotifs, unreadCount });
-    }
-
-    let query = { isActive: true };
-    if (role === 'admin') {
-      query.$or = [
-        { targetAudience: 'all' },
-        { targetAudience: 'admin' },
-        { targetUsers: req.user._id },
-      ];
-    } else {
-      const audience = role === 'customer' ? 'customers' : role === 'worker' ? 'workers' : 'b2b';
-      query.$or = [
-        { targetAudience: 'all' },
-        { targetAudience: audience },
-        { targetUsers: req.user._id },
-      ];
-    }
-
-    const notifications = await Notification.find(query).sort('-createdAt').limit(50);
-    const unreadCount = notifications.filter((n) => !n.readBy.includes(req.user._id)).length;
-    res.json({ notifications, unreadCount });
+    const unreadCount = notifications.filter((n) => !n.readBy.includes(userId)).length;
+    res.json({
+      notifications: notifications.map(formatNotif),
+      unreadCount,
+    });
   })
 );
 
+// PUT mark notification as read
 router.put(
   '/:id/read',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const notif = DEMO_NOTIFICATIONS.find((n) => n._id === req.params.id);
-      if (notif && !notif.readBy.includes(req.user._id)) {
-        notif.readBy.push(req.user._id);
-      }
-      return res.json({ message: 'Marked as read' });
+    const userId = req.user._id || req.user.id;
+    const notif = await prisma.notification.findUnique({
+      where: { id: req.params.id },
+    });
+    if (!notif) throw new AppError('Notification not found', StatusCodes.NOT_FOUND);
+
+    if (!notif.readBy.includes(userId)) {
+      await prisma.notification.update({
+        where: { id: notif.id },
+        data: {
+          readBy: { push: userId },
+        },
+      });
     }
 
-    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
-      await Notification.findByIdAndUpdate(req.params.id, { $addToSet: { readBy: req.user._id } });
-    }
     res.json({ message: 'Marked as read' });
   })
 );
 
-// PUT /notifications/read-all
-router.put(
-  '/read-all',
-  protect,
-  asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      DEMO_NOTIFICATIONS.forEach((n) => {
-        if (!n.readBy.includes(req.user._id)) {
-          n.readBy.push(req.user._id);
-        }
-      });
-      return res.json({ message: 'All marked as read' });
-    }
-
-    await Notification.updateMany({}, { $addToSet: { readBy: req.user._id } });
-    res.json({ message: 'All marked as read' });
-  })
-);
-
+// POST create notification (admin)
 router.post(
   '/',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    const { title, message, type, targetAudience } = req.body;
+    const { title, message, type, targetAudience, targetUsers } = req.body;
+    const sentById = req.user._id || req.user.id;
 
-    if (mongoose.connection.readyState !== 1) {
-      const newNotif = {
-        _id: `notif_${Date.now()}`,
-        ...req.body,
+    const audienceMap = {
+      all: 'ALL',
+      customers: 'CUSTOMERS',
+      workers: 'WORKERS',
+      b2b: 'B2B',
+      specific: 'SPECIFIC',
+    };
+
+    const typeMap = {
+      broadcast: 'BROADCAST',
+      personal: 'PERSONAL',
+      booking_update: 'BOOKING_UPDATE',
+      promotion: 'PROMOTION',
+      alert: 'ALERT',
+      system: 'SYSTEM',
+    };
+
+    const notif = await prisma.notification.create({
+      data: {
+        title: title || 'Notification',
+        message: message || '',
+        type: typeMap[type?.toLowerCase()] || 'BROADCAST',
+        targetAudience: audienceMap[targetAudience?.toLowerCase()] || 'ALL',
+        targetUsers: Array.isArray(targetUsers) ? targetUsers : [],
         readBy: [],
-        sentBy: req.user._id,
+        sentById,
         isActive: true,
-        createdAt: new Date(),
-      };
-      DEMO_NOTIFICATIONS.unshift(newNotif);
+      },
+    });
 
-      // Emit via socket to all relevant rooms
-      if (req.io) {
-        const payload = {
-          id: newNotif._id,
-          title,
-          message,
-          type: type || 'broadcast',
-          date: new Date().toLocaleString('en-IN'),
-          timestamp: new Date().toISOString(),
-          reads: 0,
-        };
-        // Always notify admin room & broadcast
-        req.io.to('admin_room').emit('admin_notification', payload);
-        req.io.emit('admin_notification', payload);
-
-        // Notify audience
-        const audience = targetAudience || 'all';
-        if (audience === 'all' || audience === 'customers') {
-          req.io.emit('customer_notification', { ...payload, targetAudience: audience });
-        }
-        if (audience === 'all' || audience === 'workers') {
-          req.io.to('workers_broadcast').emit('worker_notification', { ...payload, targetAudience: audience });
-        }
-        if (audience === 'all' || audience === 'b2b') {
-          req.io.emit('b2b_notification', { ...payload, targetAudience: audience });
-        }
-      }
-
-      return res.status(StatusCodes.CREATED).json(newNotif);
-    }
-
-    const notification = await Notification.create({ ...req.body, sentBy: req.user._id });
-
-    // Emit via socket to all relevant rooms (live delivery)
-    if (req.io) {
-      const payload = {
-        id: notification._id,
-        title,
-        message,
-        type: type || 'broadcast',
-        date: new Date().toLocaleString('en-IN'),
-        timestamp: new Date().toISOString(),
-        reads: 0,
-      };
-      req.io.to('admin_room').emit('admin_notification', payload);
-      req.io.emit('admin_notification', payload);
-
-      const audience = targetAudience || 'all';
-      if (audience === 'all' || audience === 'customers') {
-        req.io.emit('customer_notification', { ...payload, targetAudience: audience });
-      }
-      if (audience === 'all' || audience === 'workers') {
-        req.io.to('workers_broadcast').emit('worker_notification', { ...payload, targetAudience: audience });
-      }
-      if (audience === 'all' || audience === 'b2b') {
-        req.io.emit('b2b_notification', { ...payload, targetAudience: audience });
-      }
-    }
-
-    res.status(StatusCodes.CREATED).json(notification);
+    res.status(StatusCodes.CREATED).json(formatNotif(notif));
   })
 );
 
+// GET all notifications (admin)
 router.get(
   '/all',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.json(DEMO_NOTIFICATIONS);
-    }
-    const notifications = await Notification.find().populate('sentBy', 'name').sort('-createdAt');
-    res.json(notifications);
+    const list = await prisma.notification.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    res.json(list.map(formatNotif));
   })
 );
 
+// DELETE notification (admin)
 router.delete(
   '/:id',
   protect,
+  authorize('admin'),
   asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    const isAdmin = req.user.role === 'admin';
-
-    if (mongoose.connection.readyState !== 1) {
-      const idx = DEMO_NOTIFICATIONS.findIndex((n) => n._id === id || n.id === id);
-      if (idx !== -1) {
-        if (isAdmin) {
-          DEMO_NOTIFICATIONS.splice(idx, 1);
-        } else if (!DEMO_NOTIFICATIONS[idx].readBy.includes(req.user._id)) {
-          DEMO_NOTIFICATIONS[idx].readBy.push(req.user._id);
-        }
-      }
-      return res.json({ message: 'Notification dismissed' });
-    }
-
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      if (isAdmin) {
-        await Notification.findByIdAndDelete(id);
-      } else {
-        await Notification.findByIdAndUpdate(id, { $addToSet: { readBy: req.user._id } });
-      }
-    }
-    res.json({ message: 'Notification dismissed' });
+    await prisma.notification.deleteMany({
+      where: { id: req.params.id },
+    });
+    res.json({ message: 'Notification deleted' });
   })
 );
 

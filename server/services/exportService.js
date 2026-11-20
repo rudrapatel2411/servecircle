@@ -1,50 +1,51 @@
 /**
- * exportService.js — Phase 2 Batch 2
+ * exportService.js — Phase 2 Batch 2 (PostgreSQL / Prisma)
  *
  * Admin-only dataset export service.
- * Supports JSON and CSV formats for all ML training collections.
+ * Supports JSON and CSV formats for all ML analytics collections.
  *
  * Usage: GET /api/admin/export/:collection?format=csv&limit=1000
  */
 
-import WorkerMetrics from '../models/WorkerMetrics.js';
-import CustomerMetrics from '../models/CustomerMetrics.js';
-import TrustProfile from '../models/TrustProfile.js';
-import ComplaintMetrics from '../models/ComplaintMetrics.js';
-import DemandHistory from '../models/DemandHistory.js';
-import FeatureStore from '../models/FeatureStore.js';
-import WorkerSkillHistory from '../models/WorkerSkillHistory.js';
-import CustomerBehaviour from '../models/CustomerBehaviour.js';
+import { prisma } from '../config/prisma.js';
 
-const EXPORT_COLLECTIONS = {
-  worker_metrics:      WorkerMetrics,
-  customer_metrics:    CustomerMetrics,
-  trust_profiles:      TrustProfile,
-  complaint_metrics:   ComplaintMetrics,
-  demand_history:      DemandHistory,
-  feature_store:       FeatureStore,
-  worker_skill_history:WorkerSkillHistory,
-  customer_behaviour:  CustomerBehaviour,
-};
+export const VALID_COLLECTIONS = [
+  'worker_metrics',
+  'customer_metrics',
+  'trust_profiles',
+  'complaint_metrics',
+  'demand_history',
+  'feature_store',
+  'worker_skill_history',
+  'customer_behaviour',
+];
 
 /**
- * Fetch records from an exportable collection.
+ * Fetch records from an exportable collection stored in PostgreSQL AnalyticsRecord.
  *
- * @param {string} collection  — key from EXPORT_COLLECTIONS
+ * @param {string} collection
  * @param {object} opts
- * @param {number} opts.limit  — max records (default: 5000, max: 50000)
- * @param {number} opts.skip   — pagination offset
- * @param {object} opts.filter — additional MongoDB filter
+ * @param {number} opts.limit
+ * @param {number} opts.skip
  * @returns {Promise<object[]>}
  */
-export async function fetchExportData(collection, { limit = 5000, skip = 0, filter = {} } = {}) {
-  const Model = EXPORT_COLLECTIONS[collection];
-  if (!Model) {
-    throw new Error(`Unknown export collection: "${collection}". Valid: ${Object.keys(EXPORT_COLLECTIONS).join(', ')}`);
-  }
-
+export async function fetchExportData(collection, { limit = 5000, skip = 0 } = {}) {
+  const norm = collection.replace(/_/g, '').toLowerCase();
   const safeLimit = Math.min(parseInt(limit) || 5000, 50000);
-  return Model.find(filter).lean().skip(skip).limit(safeLimit);
+
+  try {
+    const records = await prisma.analyticsRecord.findMany({
+      where: {
+        collection: { contains: norm, mode: 'insensitive' },
+      },
+      skip,
+      take: safeLimit,
+    });
+    return records.map((r) => r.data);
+  } catch (err) {
+    console.error('[ExportService] fetchExportData failed:', err.message);
+    return [];
+  }
 }
 
 /**
@@ -56,19 +57,15 @@ export async function fetchExportData(collection, { limit = 5000, skip = 0, filt
 export function toCSV(records) {
   if (!records || records.length === 0) return '';
 
-  // Flatten nested objects one level deep for CSV compatibility
   const flattenRecord = (doc, prefix = '') => {
     const result = {};
     for (const [key, value] of Object.entries(doc)) {
-      // Skip internal Mongoose fields and arrays of objects
       if (key === '__v') continue;
       const fullKey = prefix ? `${prefix}.${key}` : key;
       if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
-        // Flatten one level
         const nested = flattenRecord(value, fullKey);
         Object.assign(result, nested);
       } else if (Array.isArray(value)) {
-        // Serialize arrays as JSON string
         result[fullKey] = JSON.stringify(value);
       } else {
         result[fullKey] = value instanceof Date ? value.toISOString() : value;
@@ -77,10 +74,8 @@ export function toCSV(records) {
     return result;
   };
 
-  const flat = records.map(r => flattenRecord(r));
-
-  // Collect all unique headers
-  const headers = [...new Set(flat.flatMap(r => Object.keys(r)))];
+  const flat = records.map((r) => flattenRecord(r));
+  const headers = [...new Set(flat.flatMap((r) => Object.keys(r)))];
 
   const escape = (v) => {
     if (v === null || v === undefined) return '';
@@ -93,7 +88,7 @@ export function toCSV(records) {
 
   const lines = [
     headers.join(','),
-    ...flat.map(r => headers.map(h => escape(r[h])).join(',')),
+    ...flat.map((r) => headers.map((h) => escape(r[h])).join(',')),
   ];
 
   return lines.join('\n');
@@ -107,15 +102,17 @@ export function toCSV(records) {
 export async function getExportManifest() {
   const manifest = {};
   await Promise.all(
-    Object.entries(EXPORT_COLLECTIONS).map(async ([key, Model]) => {
+    VALID_COLLECTIONS.map(async (key) => {
+      const norm = key.replace(/_/g, '').toLowerCase();
       try {
-        manifest[key] = { count: await Model.countDocuments() };
+        const count = await prisma.analyticsRecord.count({
+          where: { collection: { contains: norm, mode: 'insensitive' } },
+        });
+        manifest[key] = { count };
       } catch {
-        manifest[key] = { count: 0, error: 'count failed' };
+        manifest[key] = { count: 0 };
       }
     })
   );
   return manifest;
 }
-
-export const VALID_COLLECTIONS = Object.keys(EXPORT_COLLECTIONS);

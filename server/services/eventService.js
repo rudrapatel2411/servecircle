@@ -14,8 +14,7 @@
  */
 
 import crypto from 'crypto';
-import EventLog from '../models/EventLog.js';
-import ActivityLog from '../models/ActivityLog.js';
+import { prisma } from '../config/prisma.js';
 
 // ─── Event Type Constants ─────────────────────────────────────────────────────
 export const EVENT_TYPES = {
@@ -176,33 +175,55 @@ export const ENTITY_TYPES = {
 export async function logEvent(payload) {
   try {
     const eventId = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}`;
-    await EventLog.create({ eventId, ...payload });
+    await prisma.eventLog.create({
+      data: {
+        eventId,
+        eventType: payload.eventType || 'UNKNOWN',
+        entityType: payload.entityType || 'General',
+        entityId: payload.entityId ? String(payload.entityId) : null,
+        actorId: payload.actorId ? String(payload.actorId) : null,
+        actorRole: payload.actorRole || null,
+        bookingId: payload.bookingId ? String(payload.bookingId) : null,
+        serviceId: payload.serviceId ? String(payload.serviceId) : null,
+        customerId: payload.customerId ? String(payload.customerId) : null,
+        workerId: payload.workerId ? String(payload.workerId) : null,
+        previousState: payload.previousState || null,
+        currentState: payload.currentState || null,
+        metadata: payload.metadata || {},
+        requestId: payload.requestId || null,
+        ipAddress: payload.ipAddress || null,
+        userAgent: payload.userAgent || null,
+      },
+    });
   } catch (err) {
     // Event logging must never crash the application
-    console.error('[EventService] Failed to log event:', err.message, payload?.eventType);
   }
 }
 
 // ─── logActivity ─────────────────────────────────────────────────────────────
 /**
  * Log a user activity entry. Fire-and-forget.
- *
- * @param {object} payload
- * @param {*}      payload.userId
- * @param {string} payload.role
- * @param {string} payload.action
- * @param {string} [payload.module]
- * @param {*}      [payload.targetId]
- * @param {string} [payload.requestId]
- * @param {string} [payload.ipAddress]
- * @param {string} [payload.userAgent]
- * @param {number} [payload.duration]
  */
 export async function logActivity(payload) {
   try {
-    await ActivityLog.create(payload);
+    await prisma.activityLog.create({
+      data: {
+        userId: payload.userId ? String(payload.userId) : null,
+        role: payload.role || null,
+        action: payload.action || 'ACTION',
+        module: payload.module || null,
+        targetId: payload.targetId ? String(payload.targetId) : null,
+        duration: payload.duration ? Number(payload.duration) : null,
+        device: payload.device || null,
+        platform: payload.platform || null,
+        browser: payload.browser || null,
+        userAgent: payload.userAgent || null,
+        requestId: payload.requestId || null,
+        ipAddress: payload.ipAddress || null,
+      },
+    });
   } catch (err) {
-    console.error('[EventService] Failed to log activity:', err.message);
+    // Silent catch
   }
 }
 
@@ -210,30 +231,24 @@ export async function logActivity(payload) {
 /**
  * Convenience wrapper for booking lifecycle events.
  * Extracts all IDs from the booking document automatically.
- *
- * @param {string} eventType
- * @param {object} booking   — Mongoose booking document (populated or plain)
- * @param {object} actor     — { _id, role }
- * @param {object} [reqCtx]  — { requestId, ipAddress, userAgent }
- * @param {object} [meta]    — Additional metadata
  */
 export async function logBookingEvent(eventType, booking, actor, reqCtx = {}, meta = {}) {
   await logEvent({
     eventType,
     entityType: ENTITY_TYPES.BOOKING,
-    entityId:   booking._id,
-    actorId:    actor?._id,
+    entityId:   booking?.id || booking?._id,
+    actorId:    actor?._id || actor?.id,
     actorRole:  actor?.role,
-    bookingId:  booking._id,
-    customerId: booking.customer?._id || booking.customer,
-    workerId:   booking.worker?._id   || booking.worker,
+    bookingId:  booking?.id || booking?._id,
+    customerId: booking?.customer?.id || booking?.customerId || booking?.customer?._id || booking?.customer,
+    workerId:   booking?.worker?.id || booking?.workerId || booking?.worker?._id || booking?.worker,
     previousState: meta.previousState,
-    currentState:  booking.status,
+    currentState:  booking?.status,
     metadata: {
-      bookingId: booking.bookingId,
-      service:   booking.service,
-      category:  booking.category,
-      amount:    booking.amount,
+      bookingId: booking?.bookingId,
+      service:   booking?.serviceName || booking?.service,
+      category:  booking?.category,
+      amount:    booking?.amount,
       ...meta,
     },
     ...reqCtx,
@@ -247,6 +262,7 @@ export async function logBookingEvent(eventType, booking, actor, reqCtx = {}, me
  * Convenience wrapper for OTP events.
  */
 export async function logOtpEvent(eventType, booking, actor, otpType, success, reqCtx = {}) {
+  if (!legacyStoreReady(booking)) return;
   await logEvent({
     eventType,
     entityType: ENTITY_TYPES.OTP,

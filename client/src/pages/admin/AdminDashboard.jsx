@@ -4,29 +4,72 @@ import { Link } from 'react-router-dom';
 import {
   HiOutlineBanknotes, HiOutlineUsers, HiOutlineShieldCheck,
   HiOutlineExclamationTriangle, HiOutlineArrowTrendingUp,
-  HiOutlinePhone, HiOutlineBell, HiOutlineClock,
+  HiOutlinePhone, HiOutlineMapPin, HiOutlineCheckCircle,
 } from 'react-icons/hi2';
 import { socket } from '../../socket';
-import { getSession } from '../../utils/authSession';
-import { subscribeToCrossTabNotifications, getCachedNotifications } from '../../utils/notificationSync';
+import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 
 const AdminDashboard = () => {
   const { t } = useTranslation();
-  const [liveAlerts, setLiveAlerts] = useState(() => {
+  const session = getSession();
+  const token = session?.token;
+
+  const [activeSosList, setActiveSosList] = useState([]);
+  const [resolvingId, setResolvingId] = useState('');
+
+  const loadActiveSos = async () => {
+    if (!token) return;
     try {
-      const cached = getCachedNotifications();
-      return cached.slice(0, 5);
+      const data = await requestApi('/users/worker/sos/active', { token });
+      if (Array.isArray(data)) {
+        setActiveSosList(data);
+      }
     } catch {
-      return [];
+      // ignore
     }
-  });
+  };
+
+  useEffect(() => {
+    loadActiveSos();
+    const handleSos = (alertData) => {
+      setActiveSosList((prev) => [alertData, ...prev.filter((item) => item.id !== alertData.id)]);
+      try {
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(() => {});
+      } catch {}
+    };
+
+    socket.on('emergency:sos_alert', handleSos);
+    return () => {
+      socket.off('emergency:sos_alert', handleSos);
+    };
+  }, [token]);
+
+  const handleResolveSos = async (sosId) => {
+    const note = prompt('Enter resolution summary / action taken:', 'Contacted worker, verified safe');
+    if (note === null) return;
+    setResolvingId(sosId);
+    try {
+      await requestApi(`/users/worker/sos/${sosId}/resolve`, {
+        method: 'PATCH',
+        body: { resolutionNote: note },
+        token,
+      });
+      setActiveSosList((prev) => prev.filter((item) => item.id !== sosId));
+      alert('SOS incident marked as resolved.');
+    } catch (err) {
+      alert(err.message || 'Failed to resolve SOS incident');
+    } finally {
+      setResolvingId('');
+    }
+  };
 
   const stats = [
     { icon: <HiOutlineBanknotes />, value: '₹4,82,500', label: t('admin.totalRevenue'), color: '#3b7dc1', bg: '#e1ebf5' },
     { icon: <HiOutlineUsers />, value: '12,450', label: t('admin.activeUsers'), color: '#3b82f6', bg: '#dbeafe' },
     { icon: <HiOutlineShieldCheck />, value: '18', label: t('admin.pendingVerifications'), color: '#f59e0b', bg: '#fef3c7' },
-    { icon: <HiOutlineExclamationTriangle />, value: '7', label: t('admin.openComplaints'), color: '#ef4444', bg: '#fee2e2' },
+    { icon: <HiOutlineExclamationTriangle />, value: String(activeSosList.length + 7), label: t('admin.openComplaints'), color: '#ef4444', bg: '#fee2e2' },
   ];
 
   const recentBookings = [
@@ -37,34 +80,6 @@ const AdminDashboard = () => {
     { id: '#SC-2837', service: 'Car Wash', customer: 'Deepak K.', worker: 'Suresh T.', status: 'Completed', statusColor: 'success' },
   ];
 
-  useEffect(() => {
-    const handleNewAlert = (data) => {
-      setLiveAlerts((prev) => [
-        {
-          id: data.id || `alert_${Date.now()}`,
-          title: data.title || 'New Alert',
-          message: data.message || '',
-          type: data.type || 'alert',
-          time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-        },
-        ...prev.filter((a) => a.id !== data.id),
-      ].slice(0, 8));
-    };
-
-    socket.on('admin_notification', handleNewAlert);
-    socket.on('call_request', handleNewAlert);
-
-    const unsubscribeCrossTab = subscribeToCrossTabNotifications((crossData) => {
-      handleNewAlert(crossData);
-    });
-
-    return () => {
-      socket.off('admin_notification', handleNewAlert);
-      socket.off('call_request', handleNewAlert);
-      unsubscribeCrossTab();
-    };
-  }, []);
-
   return (
     <div className="page-content">
       <div className="page-header">
@@ -72,86 +87,81 @@ const AdminDashboard = () => {
           <h1 className="page-title">Admin Dashboard</h1>
           <p className="page-subtitle">Platform overview and management tools.</p>
         </div>
-        <Link to="/admin/notifications" className="btn btn-outline btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-          <HiOutlineBell /> View All Notifications
-        </Link>
       </div>
 
-      {/* ── LIVE REAL-TIME INCOMING ACTIVITY TICKER ── */}
-      {liveAlerts.length > 0 && (
-        <div style={{
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          borderRadius: '16px',
-          padding: '20px 24px',
-          marginBottom: '28px',
-          color: 'white',
-          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.3)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                display: 'inline-block',
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                background: '#10b981',
-                boxShadow: '0 0 12px #10b981',
-                animation: 'pulse 1.5s infinite',
-              }} />
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'white', letterSpacing: '0.02em' }}>
-                Live Customer Activity & Requests (Real-Time)
-              </h3>
-            </div>
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Auto-updating via Socket.IO
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {liveAlerts.slice(0, 3).map((alert, idx) => (
-              <div
-                key={alert.id || idx}
-                style={{
-                  background: alert.type === 'call_request' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                  border: `1px solid ${alert.type === 'call_request' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
-                  borderRadius: '10px',
-                  padding: '10px 14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '12px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '1.2rem' }}>
-                    {alert.type === 'call_request' ? '📞' : '📋'}
-                  </span>
-                  <div>
-                    <strong style={{ fontSize: '0.85rem', color: 'white', display: 'block' }}>
-                      {alert.title}
-                    </strong>
-                    <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
-                      {alert.message}
-                    </span>
-                  </div>
+      {/* M6 Active Emergency SOS Alert Desk */}
+      {activeSosList.length > 0 && (
+        <div style={{ marginBottom: '24px' }}>
+          {activeSosList.map((sos) => (
+            <div
+              key={sos.id}
+              style={{
+                background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
+                border: '2px solid #dc2626',
+                borderRadius: '12px',
+                padding: '20px',
+                color: '#991b1b',
+                boxShadow: '0 8px 24px rgba(220, 38, 38, 0.25)',
+                marginBottom: '12px',
+                animation: 'pulse 2s infinite',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px', color: '#7f1d1d' }}>
+                    🚨 WORKER EMERGENCY SOS TRIGGERED
+                  </h3>
+                  <p style={{ margin: '0 0 8px 0', fontSize: '0.9rem', fontWeight: 700 }}>
+                    Worker: {sos.worker?.name || 'Assigned Worker'} ({sos.worker?.phone || 'No phone'}) | Booking ID: {sos.bookingId || 'On-duty'}
+                  </p>
+                  <p style={{ margin: 0, fontSize: '0.85rem' }}>
+                    <strong>Trigger Reason:</strong> {sos.reason || 'Panic button pressed'}
+                  </p>
+                  {sos.latitude && sos.longitude && (
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <HiOutlineMapPin /> GPS Location: {sos.latitude.toFixed(5)}, {sos.longitude.toFixed(5)}
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${sos.latitude},${sos.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: '#2563eb', textDecoration: 'underline', marginLeft: '6px' }}
+                      >
+                        Open in Google Maps ↗
+                      </a>
+                    </p>
+                  )}
                 </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <span style={{ fontSize: '0.7rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <HiOutlineClock /> {alert.time || alert.date || 'Just now'}
-                  </span>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  {sos.worker?.phone && (
+                    <a
+                      href={`tel:${sos.worker.phone}`}
+                      className="btn btn-outline"
+                      style={{ background: 'white', borderColor: '#b91c1c', color: '#b91c1c' }}
+                    >
+                      <HiOutlinePhone /> Call Worker
+                    </a>
+                  )}
+                  <button
+                    className="btn btn-primary"
+                    style={{ background: '#dc2626' }}
+                    disabled={resolvingId === sos.id}
+                    onClick={() => handleResolveSos(sos.id)}
+                  >
+                    <HiOutlineCheckCircle /> {resolvingId === sos.id ? 'Resolving...' : 'Mark Incident Resolved'}
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       )}
 
-      <div className="stats-container">
+      <div className="dashboard-grid">
         {stats.map((stat, i) => (
           <div key={i} className="stat-card animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s` }}>
             <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
-            <div className="stat-details">
+            <div>
               <div className="stat-value">{stat.value}</div>
               <div className="stat-label">{stat.label}</div>
             </div>

@@ -116,154 +116,10 @@ export class GroqProvider extends BaseAIProvider {
       }
       return text;
     } catch (err) {
-<<<<<<< HEAD
-      console.error('[GroqProvider] generateText error:', err.message);
-
-      // Robust recovery if Groq's json_object validator rejects natural conversational text:
-      const errMsg = String(err?.message || '');
-      if (err?.error?.code === 'json_validate_failed' || errMsg.includes('json_validate_failed')) {
-        let failedGen = err?.error?.failed_generation;
-        if (!failedGen) {
-          const match = errMsg.match(/"failed_generation"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          if (match) {
-            try {
-              failedGen = JSON.parse(`"${match[1]}"`);
-            } catch {
-              failedGen = match[1];
-            }
-          }
-        }
-
-        const inferFallbackByContext = (sampleText = '') => {
-          const t = sampleText.toLowerCase();
-          const isTravel = /\b(driver|chauffeur|cab|car|ride|suv|innova|crysta|ertiga|creta|hatchback|sedan|swift|dzire|bmw|tempo|traveller|outstation|travel|travelling|traveling|commute|airport|railway|station|bhavnagar|udaipur|ahmedabad|mumbai|surat|self\s*drive|self-drive|batta|rental)\b/i.test(t);
-          if (isTravel) {
-            return {
-              intent: 'SERVICE_PROBLEM',
-              showServiceRecommendation: true,
-              serviceName: 'City, Station, Airport & Outstation Rides',
-              category: 'Travel & Commute',
-              problemType: 'Outstation / Commute Ride',
-              urgency: 'Scheduled',
-              requiredWorkerSkill: 'Driver',
-              estimatedPrice: 599,
-              safetyPrecautions: ['Verified commercial license driver', 'GPS tracked vehicle', 'Zero hidden charges'],
-              followUpQuestions: ['With Driver vs Self Drive rates', 'Multi-day Outstation Tour', 'Railway Station / Bus Stand Pick & Drop'],
-            };
-          }
-
-          const isPlumbing = /\b(plumb|leak|pipe|tap|drain|toilet|water|sink|flush|geyser)\b/i.test(t);
-          if (isPlumbing) {
-            return {
-              intent: 'SERVICE_PROBLEM',
-              showServiceRecommendation: true,
-              serviceName: 'Plumbing',
-              category: 'Home Repairs',
-              problemType: 'Plumbing Leakage / Repair',
-              urgency: 'Standard',
-              requiredWorkerSkill: 'Plumber',
-              estimatedPrice: 350,
-              safetyPrecautions: ['Turn off main valve if heavy leakage exists'],
-              followUpQuestions: ['Pipe / Tap leak repair', 'Bathroom drain blockage', 'Water motor / tank issue'],
-            };
-          }
-
-          const isElectrical = /\b(electric|wire|switch|power|fan|short\s*circuit|mcb|spark|light)\b/i.test(t);
-          if (isElectrical) {
-            return {
-              intent: 'SERVICE_PROBLEM',
-              showServiceRecommendation: true,
-              serviceName: 'Electrical Work',
-              category: 'Home Repairs',
-              problemType: 'Electrical Repair',
-              urgency: 'Standard',
-              requiredWorkerSkill: 'Electrician',
-              estimatedPrice: 300,
-              safetyPrecautions: ['Switch off main MCB before touching exposed wires'],
-              followUpQuestions: ['Short circuit or tripping MCB', 'Switchboard & wiring check', 'Ceiling fan / light installation'],
-            };
-          }
-
-          return {
-            intent: 'GENERAL_CONVERSATION',
-            showServiceRecommendation: false,
-            serviceName: '',
-            category: '',
-            problemType: '',
-            urgency: 'Scheduled',
-            requiredWorkerSkill: 'Technician',
-            estimatedPrice: 350,
-            safetyPrecautions: [],
-            followUpQuestions: ['How else can I assist you?', 'Browse popular services', 'Book a verified technician'],
-          };
-        };
-
-        if (failedGen && typeof failedGen === 'string' && failedGen.trim()) {
-          console.log('[GroqProvider] Successfully recovered message from failed_generation');
-          const jsonMatch = failedGen.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            try {
-              JSON.parse(jsonMatch[0]);
-              return jsonMatch[0];
-            } catch {}
-          }
-          const inferred = inferFallbackByContext(`${text} ${failedGen}`);
-          return JSON.stringify({
-            intent: inferred.intent,
-            reply: failedGen.trim(),
-            showServiceRecommendation: inferred.showServiceRecommendation,
-            serviceName: inferred.serviceName,
-            category: inferred.category,
-            problemType: inferred.problemType,
-            urgency: inferred.urgency,
-            requiredWorkerSkill: inferred.requiredWorkerSkill,
-            estimatedPrice: inferred.estimatedPrice,
-            safetyPrecautions: inferred.safetyPrecautions,
-            followUpQuestions: inferred.followUpQuestions,
-          });
-        }
-
-        // Retry without response_format json_object enforcement
-        try {
-          console.log('[GroqProvider] Retrying completion without strict json_object enforcement...');
-          delete requestPayload.response_format;
-          const retryCompletion = await this._client.chat.completions.create(requestPayload);
-          const rawText = retryCompletion.choices[0]?.message?.content || '';
-          if (rawText.trim()) {
-            const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              try {
-                JSON.parse(jsonMatch[0]);
-                return jsonMatch[0];
-              } catch {}
-            }
-            const inferred = inferFallbackByContext(`${text} ${rawText}`);
-            return JSON.stringify({
-              intent: inferred.intent,
-              reply: rawText.trim(),
-              showServiceRecommendation: inferred.showServiceRecommendation,
-              serviceName: inferred.serviceName,
-              category: inferred.category,
-              problemType: inferred.problemType,
-              urgency: inferred.urgency,
-              requiredWorkerSkill: inferred.requiredWorkerSkill,
-              estimatedPrice: inferred.estimatedPrice,
-              safetyPrecautions: inferred.safetyPrecautions,
-              followUpQuestions: inferred.followUpQuestions,
-            });
-          }
-        } catch (retryErr) {
-          console.error('[GroqProvider] Retry also failed:', retryErr.message);
-        }
-      }
-
-      throw new AppError(`AI Generation Error: ${err.message}`, StatusCodes.INTERNAL_SERVER_ERROR);
-=======
       return await recoverFromGroqJsonError(err, requestPayload,
         (payload) => this._client.chat.completions.create(payload, options.timeoutMs ? { timeout: options.timeoutMs } : undefined),
         'generateText'
       );
->>>>>>> origin/main
     }
   }
 
@@ -527,83 +383,6 @@ Customer Language: "${inputs.customerLanguage || 'English/Hinglish'}"`;
     }
     recentConversation.reverse();
 
-<<<<<<< HEAD
-YOUR CAPABILITIES & RULES:
-1. Fluently understand English, Hindi, Hinglish (mixed Hindi-English), and Gujarati. Always reply in the SAME language and tone the customer used.
-2. If customer is doing PURE GREETING with NO service need (e.g., "hi", "hello", "kaise ho", "kya kar sakte ho", "shukriya"):
-   - Be warm, welcoming, and mention 3-4 key services they can ask for (Plumbing, AC/Appliance, Cleaning, Shifting/Packers, Driver, etc.).
-   - Set "intent": "GENERAL_CONVERSATION".
-   - Set "showServiceRecommendation": false.
-   - Set "followUpQuestions": ["AC Repair & Cooling", "Plumbing & Tap Leakage", "Local House Shifting", "Deep Cleaning"].
-3. If customer mentions or describes ANY service need, problem, repair, maintenance, task, shifting, driver, maid/cook, security, grooming, doctor, or asks "chahiye / need / book / kharab / repair":
-   - IMMEDIATELY identify the best matching service from ServeCircle's catalog.
-   - Set "intent": "SERVICE_PROBLEM".
-   - Set "showServiceRecommendation": true.
-   - Fill in the exact canonical serviceName, category, estimatedPrice, requiredWorkerSkill, and practical safety precautions.
-4. If customer asks a follow-up or price inquiry ("kitna lagega", "kab aa sakte ho", "haan book karo", "theek hai"):
-   - Answer their specific question clearly.
-   - Keep "showServiceRecommendation": true so they can proceed directly with booking.
-5. DYNAMIC PRICING INSTRUCTION (CRITICAL - NEVER QUOTE STATIC/FIXED PRICES WHEN USER PROVIDES KM OR CUSTOM PARAMETERS):
-   - When distance (km), airport transfer route, drive mode (with driver vs self drive), vehicle class/brand, days, BHK size, or guest count is mentioned, dynamically compute realistic pricing:
-     * City, Station & Airport Pick & Drop (Standard AC Cab, single unified category — NO luxury/SUV upsell):
-       - Airport Terminal pickup/drop: ₹199 base pickup (includes parking) + ₹18/km.
-       - Railway Station or Bus Terminal (ISBT/GSRTC) pickup/drop: ₹129 base pickup + ₹18/km.
-       - Any City Address / Doorstep pickup & drop: ₹99 base pickup + ₹18/km.
-       - Optional: +25% Night Pickup surcharge, +₹200 Extra Luggage. Always price strictly by distance (km) from pickup to drop!
-     * Multi-Day Outstation & Rentals (Supports BOTH With Driver & Self Drive across all car types):
-       - Hatchback (Swift / i20): With Driver ₹11/km + ₹400/day batta | Self Drive ₹10/km + ₹900/day vehicle rental.
-       - Sedan (Dzire / City): With Driver ₹14/km + ₹500/day batta | Self Drive ₹12/km + ₹1,200/day vehicle rental.
-       - Compact SUV (Ertiga / Creta): With Driver ₹17/km + ₹600/day batta | Self Drive ₹15/km + ₹1,600/day vehicle rental.
-       - Premium SUV (Innova Crysta): With Driver ₹22/km + ₹700/day batta | Self Drive ₹19/km + ₹2,100/day vehicle rental.
-       - Luxury Fleet (Mercedes / BMW / Audi): With Driver ₹38/km + ₹1,200/day batta | Self Drive ₹34/km + ₹3,500/day vehicle rental.
-       - Tempo Traveller (12-Seater, With Driver only): ₹28/km + ₹900/day batta.
-       - Formula: Total = (billedKm * perKmRate) + (days * dailyFee). If user specifies Pickup & Drop cities without km (e.g. Bhavnagar to Udaipur ≈ 350 km, Ahmedabad to Udaipur ≈ 260 km), automatically estimate road km and state it clearly. Always use one-way distance unless user specifically asks for round-trip (×2). Do NOT add extra night/toll charges on outstation estimates so rates match the Travel & Commute Hub 100%!
-     * Relocation & Packers:
-       - 1BHK: ₹3,500 + (km * 16), 2BHK: ₹6,500 + (km * 16), 3BHK: ₹10,500 + (km * 16).
-     * Home Cook / Catering:
-       - Base ₹599 (up to 4 guests) + ₹110 per additional guest.
-   - Always clearly state this dynamic calculation breakdown in your 'reply' and set 'estimatedPrice' to the exact calculated amount!
-
-CATALOG OF AVAILABLE SERVICES IN SERVECIRCLE:
-- "Plumbing": Tap leakage, pipe bursts, drain clog/choke, washbasin, toilet flush/leak, water tank, geyser fitting, water dripping. (Category: "Home Repairs", Skill: "Plumber", Base Price: 350)
-- "Electrical Work": Short circuit, fuse, MCB, switchboard, ceiling fan, wiring, lights, power failure, spark. (Category: "Home Repairs", Skill: "Electrician", Base Price: 300)
-- "AC & Appliance Repair": AC not cooling, AC water leakage, gas refill, fridge repair, washing machine, microwave, water cooler. (Category: "Home Repairs", Skill: "AC Technician", Base Price: 499)
-- "Carpentry": Door lock jammed, latch/handle repair, wardrobe/drawer alignment, hinge fix, furniture assembly, wooden work. (Category: "Home Repairs", Skill: "Carpenter", Base Price: 400)
-- "Painting & Waterproofing": Wall painting, ceiling dampness/seepage waterproofing, primer, putty, whitewash. (Category: "Home Repairs", Skill: "Painter", Base Price: 600)
-- "Home Deep Cleaning": Full house deep cleaning (1BHK/2BHK/3BHK/Villa), floor scrubbing, balcony clean. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 1200)
-- "Sofa & Carpet Cleaning": Sofa fabric shampooing, stain removal, carpet deep clean, mattress sanitization. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 599)
-- "Bathroom & Kitchen Deep Clean": Bathroom tile descaling, toilet bowl deep clean, kitchen chimney & counter degreasing. (Category: "Cleaning & Hygiene", Skill: "Cleaning Specialist", Base Price: 499)
-- "Pest Control": Cockroach, termite (deemak), bed bugs (khatmal), mosquitoes, rodent/rat control spray. (Category: "Cleaning & Hygiene", Skill: "Pest Controller", Base Price: 899)
-- "Relocation & Packers": Local house shifting, room shifting, flat shifting, packing & moving, furniture transport, luggage relocation. (Category: "Relocation & Packers", Skill: "Movers & Packers", Base Price: 2500)
-- "City, Station, Airport & Outstation Rides": Outstation travel, airport/railway station/bus stand pick & drop, car rental (Hatchback/Swift, Sedan/Dzire, Compact SUV/Ertiga/Creta, Premium SUV/Innova Crysta, Luxury/BMW/Mercedes, Tempo Traveller), with driver & self-drive, daily city driver. (Category: "Travel & Commute", Skill: "Driver", Base Price: 599)
-- "Home Cook & Catering": Daily home chef, morning/evening family cook, party food catering, tiffin service. (Category: "Food & Kitchen", Skill: "Cook", Base Price: 499)
-- "Pet Grooming & Care": Dog/cat bath & styling at home, nail clipping, vet home visit, dog walking. (Category: "Pet Services", Skill: "Pet Care Specialist", Base Price: 450)
-- "Doctor & Healthcare at Home": Doctor consultation at home, physiotherapy (back/knee pain), home nursing, elderly caretaker. (Category: "Health & Wellness", Skill: "Healthcare Professional", Base Price: 699)
-- "Society Security & Maintenance": Security guard hiring, gate watchman, society common maintenance, lift maintenance. (Category: "Society Management", Skill: "Security Guard", Base Price: 1500)
-- "Events & Celebrations": Birthday party balloon decor, sound & DJ setup, event photographer, party organizer. (Category: "Events & Celebrations", Skill: "Event Coordinator", Base Price: 2499)
-- "Car Wash & Detailing": Doorstep car wash, exterior foam wash, interior vacuuming, bike wash. (Category: "Vehicle Services", Skill: "Car Detailer", Base Price: 399)
-- "Car Repair": Car breakdown, mechanic visit, engine diagnostics, brake/clutch issues. (Category: "Vehicle Services", Skill: "Car Mechanic", Base Price: 799)
-- "Bike Repair": Two-wheeler servicing, chain tightening, puncture, battery jumpstart, brake fix. (Category: "Vehicle Services", Skill: "Bike Mechanic", Base Price: 399)
-- "Home IT & CCTV Support": CCTV camera installation, WiFi router configuration, laptop/PC repair, smart TV installation. (Category: "Home IT & Tech Support", Skill: "IT Technician", Base Price: 449)
-- "Gardener & Lawn Care": Garden maintenance, lawn mowing, trimming, balcony garden setup. (Category: "Garden & Outdoor", Skill: "Gardener", Base Price: 399)
-- "Emergency SOS Repair": 30-min urgent technician for pipe burst, main power breakdown, door lockout. (Category: "Emergency Services", Skill: "Emergency Technician", Base Price: 499)
-
-OUTPUT FORMAT: Return ONLY the JSON object.
-{
-  "intent": "SERVICE_PROBLEM" or "GENERAL_CONVERSATION",
-  "reply": "Warm, reassuring message in customer's exact language (English/Hindi/Gujarati)",
-  "showServiceRecommendation": false,
-  "serviceName": "",
-  "category": "",
-  "problemType": "",
-  "urgency": "Standard",
-  "requiredWorkerSkill": "Technician",
-  "estimatedPrice": 350,
-  "safetyPrecautions": [],
-  "followUpQuestions": ["Relevant follow-up 1", "Relevant follow-up 2"]
-}
-Note: Always keep 'serviceName', 'category', and 'followUpQuestions' strictly relevant to the active conversation topic (e.g., for Travel queries ONLY suggest Travel/Car/Driver follow-ups, NEVER suggest Pest Control, Cleaning, or Parties).`;
-=======
     const systemPrompt = `You are ServeCircle AI, a helpful multilingual customer assistant for home and lifestyle services in India.
 
 Understand English, Hindi in Devanagari, Roman Hindi/Hinglish, mixed Hindi-English spelling, and Gujarati. Accept informal spelling variants such as "muje/mujhe", "chiye/chahiye", and "karvana/karwana" without asking the customer to rephrase. Reply naturally in the language and script the customer used. Examples: "muje society ke liye guard chiye" means they want a society security guard; "geyser garam pani nahi de raha" means geyser repair; "ghar shifting karvana hai" means moving service; "mare dadi mate dava mangavvi chhe" means the customer needs medicine for their grandmother. Use the whole sentence and conversation, not isolated words. Keep replies brief and specific. If the customer writes in Hindi/Hinglish, reply in Hindi/Hinglish rather than English.
@@ -622,7 +401,6 @@ CURRENT ACTIVE SERVECIRCLE CATALOG (canonical platform services, respecting admi
 ${activeCatalogPrompt || 'No active catalog entries could be confirmed.'}
 
 JSON fields: intent, reply, showServiceRecommendation, serviceId, serviceName, category, problemType, urgency, requiredWorkerSkill, estimatedPrice, safetyPrecautions, followUpQuestions.`;
->>>>>>> origin/main
 
     // Build chat history
     const messages = [{ role: 'system', content: systemPrompt }];
@@ -702,3 +480,4 @@ JSON fields: intent, reply, showServiceRecommendation, serviceId, serviceName, c
     return Math.ceil(String(prompt || '').length / 4);
   }
 }
+

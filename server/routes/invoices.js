@@ -1,119 +1,143 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import Invoice from '../models/Invoice.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
-import { DEMO_INVOICES } from '../utils/demoDataStore.js';
 
 const router = express.Router();
 
+function formatInvoice(inv) {
+  if (!inv) return null;
+  return {
+    _id: inv.id,
+    id: inv.id,
+    invoiceId: inv.invoiceId,
+    partner: inv.partner ? { _id: inv.partner.id, name: inv.partner.name } : inv.partnerId,
+    contract: inv.contract ? { _id: inv.contract.id, contractId: inv.contract.contractId, contractType: inv.contract.contractType } : inv.contractId,
+    items: inv.items || [],
+    subtotal: inv.subtotal,
+    tax: inv.tax,
+    discount: inv.discount,
+    totalAmount: inv.totalAmount,
+    dueDate: inv.dueDate,
+    paidDate: inv.paidDate,
+    status: String(inv.status).toLowerCase(),
+    paymentMethod: inv.paymentMethod,
+    notes: inv.notes,
+    createdAt: inv.createdAt,
+    updatedAt: inv.updatedAt,
+  };
+}
+
+// GET all invoices (admin)
 router.get(
   '/all',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.json(DEMO_INVOICES);
-    }
-
-    const invoices = await Invoice.find()
-      .populate('partner', 'name companyName')
-      .populate('contract', 'contractId contractType')
-      .sort('-createdAt');
-    res.json(invoices);
+    const invoices = await prisma.invoice.findMany({
+      include: {
+        partner: { select: { id: true, name: true } },
+        contract: { select: { id: true, contractId: true, contractType: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(invoices.map(formatInvoice));
   })
 );
 
+// GET invoices by partner / role
 router.get(
   '/',
   protect,
   authorize('b2b', 'admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      let list = [...DEMO_INVOICES];
-      if (req.user.role === 'b2b') {
-        list = list.filter((inv) => String(inv.partner) === String(req.user._id));
-      }
-      if (req.query.status) {
-        list = list.filter((inv) => inv.status === req.query.status);
-      }
-      return res.json(list);
+    const where = {};
+    if (req.user.role === 'b2b') {
+      where.partnerId = req.user._id || req.user.id;
+    }
+    if (req.query.status) {
+      where.status = req.query.status.toUpperCase();
     }
 
-    const query = req.user.role === 'admin' ? {} : { partner: req.user._id };
-    if (req.query.status) query.status = req.query.status;
-    const invoices = await Invoice.find(query)
-      .populate('contract', 'contractId contractType')
-      .sort('-createdAt');
-    res.json(invoices);
+    const invoices = await prisma.invoice.findMany({
+      where,
+      include: {
+        partner: { select: { id: true, name: true } },
+        contract: { select: { id: true, contractId: true, contractType: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(invoices.map(formatInvoice));
   })
 );
 
+// POST create invoice
 router.post(
   '/',
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
     const items = req.body.items || [];
-    const subtotal = items.reduce((s, i) => s + (i.total || i.quantity * i.unitPrice), 0);
-    const tax = req.body.tax || Math.round(subtotal * 0.18);
-    const discount = req.body.discount || 0;
+    const subtotal = items.reduce((s, i) => s + (Number(i.total) || Number(i.quantity * i.unitPrice) || 0), 0);
+    const tax = req.body.tax ? Number(req.body.tax) : Math.round(subtotal * 0.18);
+    const discount = Number(req.body.discount || 0);
     const totalAmount = subtotal + tax - discount;
 
-    if (mongoose.connection.readyState !== 1) {
-      const count = DEMO_INVOICES.length;
-      const invoiceId = `INV-${count + 5001}`;
-      const newInvoice = {
-        _id: `inv_${Date.now()}`,
-        ...req.body,
+    const count = await prisma.invoice.count();
+    const invoiceId = `INV-${count + 5001}`;
+
+    let partnerId = req.body.partnerId || req.body.partner;
+    if (!partnerId) {
+      const firstUser = await prisma.user.findFirst({ where: { role: 'B2B' } }) || await prisma.user.findFirst();
+      partnerId = firstUser.id;
+    }
+
+    const invoice = await prisma.invoice.create({
+      data: {
         invoiceId,
+        partnerId,
+        contractId: req.body.contractId || null,
         items,
         subtotal,
         tax,
         discount,
         totalAmount,
-        status: req.body.status || 'sent',
-        createdAt: new Date(),
-      };
-      DEMO_INVOICES.unshift(newInvoice);
-      return res.status(StatusCodes.CREATED).json(newInvoice);
-    }
-
-    const count = await Invoice.countDocuments();
-    const invoiceId = `INV-${count + 5001}`;
-    const invoice = await Invoice.create({
-      ...req.body,
-      invoiceId,
-      items,
-      subtotal,
-      tax,
-      discount,
-      totalAmount,
+        dueDate: req.body.dueDate ? new Date(req.body.dueDate) : new Date(Date.now() + 30 * 86400000),
+        status: req.body.status ? req.body.status.toUpperCase() : 'SENT',
+        notes: req.body.notes || null,
+      },
     });
-    res.status(StatusCodes.CREATED).json(invoice);
+
+    res.status(StatusCodes.CREATED).json(formatInvoice(invoice));
   })
 );
 
+// PUT update invoice status
 router.put(
   '/:id',
   protect,
-  authorize('admin', 'b2b'),
+  authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const inv = DEMO_INVOICES.find((i) => i._id === req.params.id || i.invoiceId === req.params.id);
-      if (!inv) throw new AppError('Invoice not found', StatusCodes.NOT_FOUND);
-      Object.assign(inv, req.body);
-      if (req.body.status === 'paid') inv.paidDate = new Date();
-      return res.json(inv);
-    }
+    const existing = await prisma.invoice.findFirst({
+      where: { OR: [{ id: req.params.id }, { invoiceId: req.params.id }] },
+    });
+    if (!existing) throw new AppError('Invoice not found', StatusCodes.NOT_FOUND);
 
-    const updates = { ...req.body };
-    if (req.body.status === 'paid') updates.paidDate = new Date();
-    const invoice = await Invoice.findByIdAndUpdate(req.params.id, updates, { new: true });
-    if (!invoice) throw new AppError('Invoice not found', StatusCodes.NOT_FOUND);
-    res.json(invoice);
+    const data = {};
+    if (req.body.status) data.status = req.body.status.toUpperCase();
+    if (req.body.status?.toLowerCase() === 'paid') {
+      data.paidDate = new Date();
+    }
+    if (req.body.paymentMethod) data.paymentMethod = req.body.paymentMethod;
+
+    const updated = await prisma.invoice.update({
+      where: { id: existing.id },
+      data,
+    });
+
+    res.json(formatInvoice(updated));
   })
 );
 
