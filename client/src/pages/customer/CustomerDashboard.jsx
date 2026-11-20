@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -6,10 +7,33 @@ import {
   HiOutlineClock, HiOutlineArrowRight, HiOutlineArrowUpRight, HiOutlineMapPin, HiOutlineInbox,
   HiOutlineHome
 } from 'react-icons/hi2';
+import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 
 const CustomerDashboard = () => {
   const { t } = useTranslation();
+  const [realBookings, setRealBookings] = useState([]);
+
+  useEffect(() => {
+    const session = getSession();
+    if (!session?.token) return;
+    requestApi('/bookings/my', { token: session.token })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((b) => ({
+            id: b.bookingId ? `#${b.bookingId}` : `#SC-${String(b.id || b._id).slice(0, 6)}`,
+            rawId: b.id || b._id,
+            service: b.service || b.serviceName || 'Home Service',
+            worker: b.worker?.name || 'Assigning Pro...',
+            date: b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString('en-IN') : 'Scheduled',
+            status: ['completed', 'closed'].includes(b.status) ? t('dashboardTable.completed', 'Completed') : t('dashboardTable.active', 'Active'),
+            statusColor: ['completed', 'closed'].includes(b.status) ? 'success' : 'primary',
+          }));
+          setRealBookings(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Dynamic time-based greeting
   const getGreeting = () => {
@@ -19,12 +43,24 @@ const CustomerDashboard = () => {
     return t('common.goodEvening', 'Good Evening');
   };
 
+  const recentBookings = [
+    { id: '#SC-2841', service: t('dashboardTable.acServicing', 'AC Servicing'), worker: 'Ramesh Kumar', date: '14 May 2026', status: t('dashboardTable.completed', 'Completed'), statusColor: 'success' },
+    { id: '#SC-2839', service: t('dashboardTable.deepCleaning', 'Deep Cleaning'), worker: 'Priya Sharma', date: '12 May 2026', status: t('dashboardTable.active', 'Active'), statusColor: 'primary' },
+    { id: '#SC-2835', service: t('dashboardTable.plumbingFix', 'Plumbing Fix'), worker: 'Ajay Patel', date: '10 May 2026', status: t('dashboardTable.completed', 'Completed'), statusColor: 'success' },
+    { id: '#SC-2830', service: t('dashboardTable.carWashing', 'Car Washing'), worker: 'Deepak Singh', date: '8 May 2026', status: t('dashboardTable.completed', 'Completed'), statusColor: 'success' },
+  ];
+
+  const displayBookings = realBookings.length > 0 ? [...realBookings, ...recentBookings] : recentBookings;
+  const activeBookings = displayBookings.filter(
+    (b) => b.status === t('dashboardTable.active', 'Active') || b.statusColor === 'primary'
+  );
+
   const stats = [
     { 
       icon: <HiOutlineCalendarDays />, 
-      value: '3', 
+      value: String(activeBookings.length), 
       label: t('customer.activeBookings'), 
-      trend: '1 scheduled today',
+      trend: `${activeBookings.length} scheduled`,
       trendClass: 'positive'
     },
     { 
@@ -36,7 +72,7 @@ const CustomerDashboard = () => {
     },
     { 
       icon: <HiOutlineClipboardDocumentCheck />, 
-      value: '27', 
+      value: String(displayBookings.length), 
       label: t('customer.totalBookings'), 
       trend: 'No cancellations',
       trendClass: 'neutral'
@@ -51,24 +87,15 @@ const CustomerDashboard = () => {
   ];
 
   const quickServices = [
-    { icon: <HiOutlineWrench />, name: t('dashboardTable.electrician') },
-    { icon: <HiOutlineSparkles />, name: t('dashboardTable.cleaning') },
-    { icon: <HiOutlineTruck />, name: t('dashboardTable.carRepair') },
-    { icon: <HiOutlineBolt />, name: t('dashboardTable.emergency') },
-  ];
-
-  const recentBookings = [
-    { id: '#SC-2841', service: t('dashboardTable.acServicing'), worker: 'Ramesh Kumar', date: '14 May 2026', status: t('dashboardTable.completed'), statusColor: 'success' },
-    { id: '#SC-2839', service: t('dashboardTable.deepCleaning'), worker: 'Priya Sharma', date: '12 May 2026', status: t('dashboardTable.active'), statusColor: 'primary' },
-    { id: '#SC-2835', service: t('dashboardTable.plumbingFix'), worker: 'Ajay Patel', date: '10 May 2026', status: t('dashboardTable.completed'), statusColor: 'success' },
-    { id: '#SC-2830', service: t('dashboardTable.carWashing'), worker: 'Deepak Singh', date: '8 May 2026', status: t('dashboardTable.completed'), statusColor: 'success' },
+    { icon: <HiOutlineWrench />, name: t('dashboardTable.electrician', 'Electrician'), link: '/customer/general-services/repair-services' },
+    { icon: <HiOutlineSparkles />, name: t('dashboardTable.cleaning', 'Cleaning'), link: '/customer/general-services/cleaning-services' },
+    { icon: <HiOutlineTruck />, name: t('dashboardTable.carRepair', 'Car Repair'), link: '/customer/services/vehicle-services' },
+    { icon: <HiOutlineBolt />, name: t('dashboardTable.emergency', 'Emergency'), link: '/customer/emergency' },
   ];
 
   return (
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-
-
       {/* 1. User Bookings & Stats (Grid spanning full screen width) */}
       <div className="stats-container">
         {stats.map((stat, i) => (
@@ -179,15 +206,18 @@ const CustomerDashboard = () => {
       {/* 3. Quick Booking */}
       <div className="dash-section" style={{ margin: 0 }}>
         <h3 className="dash-section-title" style={{ marginBottom: '16px' }}>
-          {t('dashboardTable.quickBook')}
+          {t('dashboardTable.quickBook', 'Quick Book')}
         </h3>
         <div className="quick-services-grid">
           {quickServices.map((svc, i) => (
-            <Link to="/customer/services" key={i} className="quick-service-card">
+            <Link to={svc.link || '/customer/services'} key={i} className="quick-service-card">
               <div className="quick-service-icon">
                 {svc.icon}
               </div>
               <span className="quick-service-name">{svc.name}</span>
+              <span className="quick-service-action">
+                Book <HiOutlineArrowRight size={13} />
+              </span>
             </Link>
           ))}
         </div>
@@ -198,24 +228,23 @@ const CustomerDashboard = () => {
         <div className="dash-section-header">
           <h3 className="dash-section-title">Active Tracking Alerts</h3>
           <Link to="/customer/bookings" className="dash-view-all">
-            {t('common.viewAll')} →
+            {t('common.viewAll', 'View All')} →
           </Link>
         </div>
         
         <div>
-          {recentBookings.filter(b => b.status === t('dashboardTable.active') || b.statusColor === 'primary').length > 0 ? (
-            recentBookings.filter(b => b.status === t('dashboardTable.active') || b.statusColor === 'primary').map((b) => (
+          {activeBookings.length > 0 ? (
+            activeBookings.map((b) => (
               <Link 
                 key={b.id} 
-                to={`/customer/live-tracking?bookingId=${b.id.replace('#', '')}&service=${encodeURIComponent(b.service)}&worker=${encodeURIComponent(b.worker)}`} 
+                to={`/customer/live-tracking?bookingId=${encodeURIComponent(b.rawId || b.id.replace('#', ''))}&service=${encodeURIComponent(b.service)}&worker=${encodeURIComponent(b.worker)}`} 
                 className="active-tracking-pass"
-                style={{ maxWidth: '640px' }}
               >
                 <div className="tracking-header">
                   <span className="tracking-badge">
                     <span className="radar-dot" /> Live Map Tracking
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--navy-400)', fontWeight: 800 }}>
+                  <span className="tracking-id">
                     {b.id}
                   </span>
                 </div>
@@ -228,7 +257,7 @@ const CustomerDashboard = () => {
                 
                 <div className="tracking-worker-profile">
                   <img 
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.worker)}&background=eef2ff&color=4f46e5`} 
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(b.worker)}&background=eff6ff&color=1d4ed8&bold=true`} 
                     alt={b.worker} 
                     className="tracking-worker-avatar"
                   />
@@ -238,12 +267,17 @@ const CustomerDashboard = () => {
                       <HiOutlineMapPin /> Arriving in 15 mins
                     </div>
                   </div>
+                  <span className="tracking-track-btn">
+                    Track Live <HiOutlineArrowUpRight size={14} />
+                  </span>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="empty-tracking-card" style={{ maxWidth: '640px' }}>
-              <span className="empty-tracking-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--navy-400)' }}><HiOutlineInbox size={32} /></span>
+            <div className="empty-tracking-card">
+              <span className="empty-tracking-icon">
+                <HiOutlineInbox size={34} />
+              </span>
               <span className="empty-tracking-text">No active tracking alerts right now.</span>
             </div>
           )}

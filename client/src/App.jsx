@@ -4,15 +4,11 @@ import i18next from 'i18next';
 // Global override for Number formatting to support localized digits
 const originalToLocaleString = Number.prototype.toLocaleString;
 Number.prototype.toLocaleString = function (locales, options) {
-  try {
-    const lang = i18next.language || 'en';
-    const numSystem = lang === 'hi' ? 'deva' : lang === 'gu' ? 'gujr' : 'latn';
-    const resolvedLocales = locales || (lang === 'hi' ? 'hi-IN' : lang === 'gu' ? 'gu-IN' : 'en-IN');
-    const resolvedOptions = typeof options === 'object' && options !== null ? { ...options, numberingSystem: numSystem } : { numberingSystem: numSystem };
-    return originalToLocaleString.call(this, resolvedLocales, resolvedOptions);
-  } catch {
-    return originalToLocaleString.call(this, locales, options);
-  }
+  const lang = i18next.language || 'en';
+  const numSystem = lang === 'hi' ? 'deva' : lang === 'gu' ? 'gujr' : 'latn';
+  const resolvedLocales = locales || (lang === 'hi' ? 'hi-IN' : lang === 'gu' ? 'gu-IN' : 'en-IN');
+  const resolvedOptions = { ...options, numberingSystem: numSystem };
+  return originalToLocaleString.call(this, resolvedLocales, resolvedOptions);
 };
 
 /* Layouts */
@@ -25,7 +21,6 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import WorkerRegister from './pages/auth/WorkerRegister';
 import ImpactDetail from './pages/ImpactDetail';
-import ProjectSummary from './pages/ProjectSummary';
 
 /* Customer */
 import CustomerDashboard from './pages/customer/CustomerDashboard';
@@ -117,7 +112,6 @@ function App() {
         <Route path="/login" element={<><Navbar /><LoginPage /></>} />
         <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
         <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
-        <Route path="/project-summary" element={<><Navbar /><ProjectSummary /></>} />
         <Route path="/ai-chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/ai-diagnosis" element={<Navigate to="/customer/ai-diagnosis" replace />} />

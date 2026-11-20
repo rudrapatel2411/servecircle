@@ -31,14 +31,7 @@ import { buildPreferenceProfile }                from '../ai/trustmatch/customer
 import { RECOMMENDATION_LEVELS, SCORE_WEIGHTS }  from '../ai/trustmatch/recommendationEngine.js';
 
 import { logEvent, EVENT_TYPES, ENTITY_TYPES }  from '../services/eventService.js';
-
-import Booking          from '../models/Booking.js';
-import User             from '../models/User.js';
-import WorkerMetrics    from '../models/WorkerMetrics.js';
-import TrustProfile     from '../models/TrustProfile.js';
-import WorkerSkillHistory from '../models/WorkerSkillHistory.js';
-import CustomerMetrics  from '../models/CustomerMetrics.js';
-import CustomerBehaviour from '../models/CustomerBehaviour.js';
+import { prisma }                                from '../config/prisma.js';
 
 const router = express.Router();
 
@@ -65,12 +58,15 @@ router.post(
     }
 
     // Find booking
-    const booking = await Booking.findOne({
-      $or: [
-        { bookingId },
-        { _id: bookingId.length === 24 ? bookingId : undefined },
-      ].filter(Boolean),
-    }).lean();
+    const booking = await prisma.booking.findFirst({
+      where: {
+        OR: [
+          { id: bookingId },
+          { bookingId: bookingId },
+        ],
+      },
+      include: { customer: true, worker: true },
+    });
 
     if (!booking) {
       throw new AppError(`Booking not found: ${bookingId}`, StatusCodes.NOT_FOUND);
@@ -102,15 +98,22 @@ router.get(
     const { workerId } = req.params;
     const { bookingId } = req.query;
 
-    const worker = await User.findById(workerId).lean();
-    if (!worker || worker.role !== 'worker') {
+    const worker = await prisma.user.findFirst({
+      where: { id: workerId, role: 'WORKER' },
+      include: { workerProfile: true },
+    });
+    if (!worker) {
       throw new AppError(`Worker not found: ${workerId}`, StatusCodes.NOT_FOUND);
     }
 
     let booking = null;
     if (bookingId) {
-      booking = await Booking.findOne({ bookingId }).lean()
-        ?? await Booking.findById(bookingId).lean();
+      booking = await prisma.booking.findFirst({
+        where: {
+          OR: [{ id: bookingId }, { bookingId }],
+        },
+        include: { customer: true, worker: true },
+      });
     }
 
     const result = await runWorkerTrustMatch({
@@ -139,8 +142,12 @@ router.get(
     const maxResults    = parseInt(req.query.maxResults, 10) || 10;
     const excludeFlagged = req.query.excludeFlagged !== 'false';
 
-    const booking = await Booking.findOne({ bookingId }).lean()
-      ?? await Booking.findById(bookingId).lean();
+    const booking = await prisma.booking.findFirst({
+      where: {
+        OR: [{ id: bookingId }, { bookingId }],
+      },
+      include: { customer: true, worker: true },
+    });
 
     if (!booking) {
       throw new AppError(`Booking not found: ${bookingId}`, StatusCodes.NOT_FOUND);

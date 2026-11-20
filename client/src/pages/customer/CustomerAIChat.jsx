@@ -11,14 +11,6 @@ import {
   HiOutlineTrash,
   HiOutlineWrenchScrewdriver,
   HiOutlineXMark,
-  HiOutlineBolt,
-  HiOutlineTruck,
-  HiOutlineHeart,
-  HiOutlineCamera,
-  HiOutlineCube,
-  HiOutlineHomeModern,
-  HiOutlineCake,
-  HiOutlineArrowRight,
   HiPlus,
   HiStopCircle,
 } from 'react-icons/hi2';
@@ -161,18 +153,18 @@ function isValidService(analysis) {
 }
 
 const QUICK_SUGGESTIONS = [
-  { label: 'AC Repair / Cooling', prompt: 'AC is blowing warm air, need urgent cooling repair', icon: HiOutlineBolt },
-  { label: 'Tap & Pipe Leakage', prompt: 'Bathroom pipe se water leak ho raha hai, plumber chahiye', icon: HiOutlineWrenchScrewdriver },
-  { label: 'Fan / Switch Repair', prompt: 'Ceiling fan is not running and switch board sparked', icon: HiOutlineBolt },
-  { label: 'Packers & Movers', prompt: 'Need packers and movers for 2BHK house shifting', icon: HiOutlineCube },
-  { label: 'Need a Driver', prompt: 'Need a verified driver for outstation travel', icon: HiOutlineTruck },
-  { label: 'Pet Grooming / Bath', prompt: 'Need dog grooming and bathing service at home', icon: HiOutlineHeart },
-  { label: 'Deep Cleaning', prompt: 'Need complete deep cleaning for 2BHK flat', icon: HiOutlineSparkles },
-  { label: 'Sofa & Carpet Clean', prompt: 'Need sofa shampoo and carpet dry cleaning at home', icon: HiOutlineHomeModern },
-  { label: 'Door Lock / Carpentry', prompt: 'Main door wooden lock is jammed, need carpenter', icon: HiOutlineWrenchScrewdriver },
-  { label: 'Home Cook / Chef', prompt: 'Need daily home cook service for family meals', icon: HiOutlineCake },
-  { label: 'CCTV & IT Setup', prompt: 'Need CCTV camera installation and WiFi setup', icon: HiOutlineCamera },
-  { label: 'Doctor / Physio', prompt: 'Need doctor consultation and physiotherapy at home', icon: HiOutlineHeart },
+  { label: '❄️ AC Repair / Cooling', prompt: 'AC is blowing warm air, need urgent cooling repair' },
+  { label: '🔧 Tap & Pipe Leakage', prompt: 'Bathroom pipe se water leak ho raha hai, plumber chahiye' },
+  { label: '⚡ Fan / Switch Repair', prompt: 'Ceiling fan is not running and switch board sparked' },
+  { label: '📦 Packers & Movers', prompt: 'Need packers and movers for 2BHK house shifting' },
+  { label: '🚗 Need a Driver', prompt: 'Need a verified driver for outstation travel' },
+  { label: '🐶 Pet Grooming / Bath', prompt: 'Need dog grooming and bathing service at home' },
+  { label: '🧹 Deep Cleaning', prompt: 'Need complete deep cleaning for 2BHK flat' },
+  { label: '🛋️ Sofa & Carpet Clean', prompt: 'Need sofa shampoo and carpet dry cleaning at home' },
+  { label: '🚪 Door Lock / Carpentry', prompt: 'Main door wooden lock is jammed, need carpenter' },
+  { label: '🍳 Home Cook / Chef', prompt: 'Need daily home cook service for family meals' },
+  { label: '📹 CCTV & IT Setup', prompt: 'Need CCTV camera installation and WiFi setup' },
+  { label: '🩺 Doctor / Physio', prompt: 'Need doctor consultation and physiotherapy at home' },
 ];
 
 const CustomerAIChat = () => {
@@ -479,26 +471,19 @@ const CustomerAIChat = () => {
 
               {message.id === 'welcome' && messages.length <= 1 && (
                 <div className="ai-suggestions-box">
-                  <span className="ai-suggestions-label" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                    <HiOutlineBolt style={{ color: 'var(--primary-600)' }} /> Quick Prompts for Testing & Demo:
-                  </span>
+                  <span className="ai-suggestions-label">⚡ Quick Prompts for Testing & Demo:</span>
                   <div className="ai-suggestions-list">
-                    {QUICK_SUGGESTIONS.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <button
-                          key={item.label}
-                          type="button"
-                          className="ai-suggestion-chip"
-                          onClick={() => sendMessage(item.prompt)}
-                          disabled={isSending}
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                        >
-                          {Icon && <Icon style={{ fontSize: '0.9rem', flexShrink: 0 }} />}
-                          {item.label}
-                        </button>
-                      );
-                    })}
+                    {QUICK_SUGGESTIONS.map((item) => (
+                      <button
+                        key={item.label}
+                        type="button"
+                        className="ai-suggestion-chip"
+                        onClick={() => sendMessage(item.prompt)}
+                        disabled={isSending}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               )}
@@ -537,20 +522,20 @@ const CustomerAIChat = () => {
                     <button
                       type="button"
                       className="ai-book-btn"
-                      style={{ flex: 1, marginTop: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      style={{ flex: 1, marginTop: 0 }}
                       onClick={() => bookRecommended(message.analysis)}
                     >
-                      {ctaLabel(message.analysis)} <HiOutlineArrowRight />
+                      {ctaLabel(message.analysis)}
                     </button>
                     {message.analysis.targetHubRoute && message.analysis.targetHubRoute !== '/customer/services' && (
                       <button
                         type="button"
                         className="btn btn-outline-secondary"
-                        style={{ padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                        style={{ padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap' }}
                         onClick={() => navigate(message.analysis.targetHubRoute)}
                         title="View Category Hub"
                       >
-                        Hub <HiOutlineArrowRight />
+                        Hub ➔
                       </button>
                     )}
                   </div>

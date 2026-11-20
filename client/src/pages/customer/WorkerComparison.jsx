@@ -173,13 +173,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
                     cursor: 'pointer'
                   }}
                 >
-                  {isSelected ? (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <HiOutlineCheckCircle /> {t('workerComparison.professionalSelected')}
-                    </span>
-                  ) : (
-                    t('workerComparison.chooseProfessional')
-                  )}
+                  {isSelected ? `✓ ${t('workerComparison.professionalSelected')}` : t('workerComparison.chooseProfessional')}
                 </button>
               </div>
             </div>

@@ -481,3 +481,4 @@ Note: Always keep 'serviceName', 'category', and 'followUpQuestions' strictly re
     return Math.ceil(String(prompt || '').length / 4);
   }
 }
+

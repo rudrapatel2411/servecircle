@@ -13,8 +13,6 @@
  *   bookingService → historyService   (Phase 2)
  */
 
-import mongoose from 'mongoose';
-import Booking from '../models/Booking.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
 import {
@@ -22,7 +20,7 @@ import {
   transitionTimestampField,
   CANCELLABLE_STATES,
 } from '../constants/bookingStates.js';
-import { assignWorker, findBestWorker } from './assignmentService.js';
+import { assignWorker, findBestWorker, withAssignmentTransaction } from './assignmentService.js';
 import { notifyAdmin, notifyWorker, notifyCustomer, emitBookingStatus } from './notificationService.js';
 import { validateServiceForBooking } from './serviceService.js';
 import { generateStartOtp, generateEndOtp } from './otpService.js';
@@ -56,10 +54,44 @@ import {
 } from './featureService.js';
 import { prisma } from '../config/prisma.js';
 
+/** Prisma stores booking status as an uppercase enum ("EN_ROUTE") */
+function toDbStatus(status) {
+  return String(status || '').toUpperCase().replace(/-/g, '_');
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Build a safe Prisma lookup for a booking identifier. The `id` column is a
+ * UUID, so a human booking reference ("SC-2800") must never be compared to it.
+ */
+function bookingLookupWhere(identifier) {
+  const value = String(identifier || '');
+  return UUID_RE.test(value)
+    ? { OR: [{ id: value }, { bookingId: value }] }
+    : { bookingId: value };
+}
+
+/** Fields a generic PATCH /bookings/:id is allowed to change */
+const GENERIC_UPDATE_ALLOWLIST = new Set([
+  'description',
+  'address',
+  'city',
+  'scheduledDate',
+  'scheduledTime',
+]);
+
 function formatPrismaBooking(booking) {
   if (!booking) return null;
+  // OTP codes are secrets: never serialise them into booking payloads.
+  const { startOtp, endOtp, ...safeBooking } = booking;
+  const destCoords = booking.destinationLat && booking.destinationLng
+    ? `${booking.destinationLat},${booking.destinationLng}`
+    : encodeURIComponent(`${booking.address || ''}, ${booking.city || 'Mumbai'}`);
+  const navigationUrl = `https://www.google.com/maps/dir/?api=1&destination=${destCoords}`;
+
   return {
-    ...booking,
+    ...safeBooking,
     _id: booking.id,
     service: booking.serviceName || booking.service,
     customer: booking.customer ? { ...booking.customer, _id: booking.customer.id } : booking.customerId,
@@ -67,6 +99,11 @@ function formatPrismaBooking(booking) {
     status: (booking.status || 'PENDING').toLowerCase().replace('_', '-'),
     paymentStatus: (booking.paymentStatus || 'PENDING').toLowerCase(),
     paymentMethod: booking.paymentMethod || 'Wallet',
+    navigationUrl,
+    hasBeforeProof: Boolean(booking.hasBeforeProof),
+    hasAfterProof: Boolean(booking.hasAfterProof),
+    isCodCollected: Boolean(booking.isCodCollected),
+    codAmountCollected: booking.codAmountCollected || null,
   };
 }
 
@@ -81,33 +118,73 @@ function formatPrismaBooking(booking) {
 // @param {object} [extraUpdates]
 // @returns {Promise<Booking>}  populated booking document
 // ─────────────────────────────────────────────────────────────────────────────
-async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdates = {}) {
+async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdates = {}, client = null) {
   validateTransition(currentStatus, nextStatus, AppError, StatusCodes);
 
-  // 1. PostgreSQL (Prisma) Attempt
-  try {
-    const prismaStatus = nextStatus.toUpperCase().replace('-', '_');
-    const updateData = { status: prismaStatus };
-    if (extraUpdates.worker) updateData.workerId = extraUpdates.worker;
-    if (extraUpdates.paymentStatus) updateData.paymentStatus = extraUpdates.paymentStatus.toUpperCase();
-    if (extraUpdates.paymentMethod) updateData.paymentMethod = extraUpdates.paymentMethod;
+  const db = client || prisma;
 
-    const existing = await prisma.booking.findFirst({
-      where: { OR: [{ id: bookingId }, { bookingId }] }
+  // 1. PostgreSQL (Prisma) — authoritative path
+  let existing = null;
+  try {
+    existing = await db.booking.findFirst({
+      where: bookingLookupWhere(bookingId),
+      select: { id: true, status: true },
     });
-    if (existing) {
-      const updated = await prisma.booking.update({
-        where: { id: existing.id },
-        data: updateData,
-        include: {
-          customer: { select: { id: true, name: true, email: true, phone: true } },
-          worker: { select: { id: true, name: true, phone: true } },
-        },
-      });
-      return formatPrismaBooking(updated);
-    }
   } catch (prismaErr) {
-    // If not found in Prisma or error, fall through to MongoDB / Demo
+    existing = null;
+  }
+
+  if (existing) {
+    const data = { status: toDbStatus(nextStatus) };
+    if (extraUpdates.worker !== undefined) data.workerId = extraUpdates.worker || null;
+    if (extraUpdates.paymentStatus) data.paymentStatus = String(extraUpdates.paymentStatus).toUpperCase();
+    if (extraUpdates.paymentMethod) data.paymentMethod = extraUpdates.paymentMethod;
+
+    // Record authoritative lifecycle timestamps
+    const now = new Date();
+    const upperNext = toDbStatus(nextStatus);
+    if (upperNext === 'ASSIGNED') data.assignedAt = now;
+    else if (upperNext === 'ACCEPTED') data.acceptedAt = now;
+    else if (upperNext === 'EN_ROUTE') data.enRouteAt = now;
+    else if (upperNext === 'ARRIVED') data.arrivedAt = now;
+    else if (upperNext === 'STARTED') data.startedAt = now;
+    else if (upperNext === 'COMPLETED') data.completedAt = now;
+    else if (upperNext === 'CANCELLED') {
+      data.cancelledAt = now;
+      if (extraUpdates.cancelReason) data.cancelReason = extraUpdates.cancelReason;
+      if (extraUpdates.cancelledBy) data.cancelledBy = extraUpdates.cancelledBy;
+    }
+
+    // Optimistic guard: the row must still be in the status we validated.
+    const result = await db.booking.updateMany({
+      where: { id: existing.id, status: toDbStatus(currentStatus) },
+      data,
+    });
+
+    if (result.count === 0) {
+      const current = await db.booking.findUnique({
+        where: { id: existing.id },
+        select: { status: true },
+      });
+      throw new AppError(
+        `Transition conflict: booking status changed to "${String(current?.status || 'unknown').toLowerCase()}" before this update could be applied.`,
+        StatusCodes.CONFLICT
+      );
+    }
+
+    const updated = await db.booking.findUnique({
+      where: { id: existing.id },
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, phone: true } },
+      },
+    });
+    return formatPrismaBooking(updated);
+  }
+
+  if (client) {
+    // Inside an assignment transaction there is no fallback.
+    throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
   }
 
   const tsField = transitionTimestampField(nextStatus);
@@ -117,29 +194,8 @@ async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdate
     ...(tsField ? { [tsField]: new Date() } : {}),
   };
 
-  if (mongoose.connection.readyState !== 1) {
-    const updated = updateDemoBooking(bookingId, update);
-    if (!updated) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-    return updated;
-  }
-
-  const updated = await Booking.findOneAndUpdate(
-    { _id: bookingId, status: currentStatus, isDeleted: { $ne: true } },
-    { $set: update },
-    { new: true, runValidators: true }
-  )
-    .populate('customer', 'name email phone')
-    .populate('worker', 'name');
-
-  if (!updated) {
-    const exists = await Booking.findById(bookingId);
-    if (!exists) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-    throw new AppError(
-      `Transition conflict: booking status changed to "${exists.status}" before this update could be applied.`,
-      StatusCodes.CONFLICT
-    );
-  }
-
+  const updated = updateDemoBooking(bookingId, update);
+  if (!updated) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
   return updated;
 }
 
@@ -155,18 +211,18 @@ async function applyTransition(bookingId, currentStatus, nextStatus, extraUpdate
 // @returns {Promise<Booking>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function createBooking(data, customerId, io, customerName, reqCtx = {}) {
-  // Validate service existence, active status and category match
-  await validateServiceForBooking(data.service, data.category, data.serviceId);
+  // Validate service existence, active status and category match (robust fallback)
+  const validService = await validateServiceForBooking(data.service, data.category, data.serviceId);
 
-  // 1. PostgreSQL (Prisma) Creation
+  // 1. PostgreSQL (Prisma) creation — authoritative persistence path
   try {
-    const count = await prisma.booking.count();
-    const bookingId = `SC-${count + 2800}`;
-
-    let matchedService = null;
-    if (data.serviceId) {
+    let matchedService = validService;
+    if (!matchedService && data.serviceId) {
+      const serviceKey = String(data.serviceId);
       matchedService = await prisma.service.findFirst({
-        where: { OR: [{ id: data.serviceId }, { serviceId: data.serviceId }] },
+        where: UUID_RE.test(serviceKey)
+          ? { OR: [{ id: serviceKey }, { serviceId: serviceKey }] }
+          : { serviceId: serviceKey },
       });
     }
     if (!matchedService && data.service) {
@@ -176,108 +232,85 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
     }
 
     const amount = Number(data.amount) || 0;
-    const created = await prisma.booking.create({
-      data: {
-        bookingId,
-        customerId,
-        serviceId: matchedService ? matchedService.id : undefined,
-        serviceName: data.service || (matchedService ? matchedService.name : 'General Service'),
-        category: data.category || (matchedService ? matchedService.category : 'Home Repairs'),
-        description: data.description || '',
-        scheduledDate: data.scheduledDate ? new Date(data.scheduledDate) : new Date(),
-        scheduledTime: data.scheduledTime || '10:00 AM',
-        address: data.address || '',
-        city: data.city || 'Mumbai',
-        amount,
-        platformCommission: Math.round(amount * 0.1 * 100) / 100,
-        workerEarnings: Math.round(amount * 0.9 * 100) / 100,
-        status: 'PENDING',
-      },
-      include: {
-        customer: { select: { id: true, name: true, email: true, phone: true } },
-        worker: { select: { id: true, name: true, phone: true } },
-      },
-    });
+    let created = null;
+
+    for (let attempt = 0; attempt < 5 && !created; attempt += 1) {
+      const count = await prisma.booking.count();
+      const bookingId = attempt === 0
+        ? `SC-${count + 2800}`
+        : `SC-${count + 2800}-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
+      try {
+        created = await prisma.booking.create({
+          data: {
+            bookingId,
+            customerId,
+            serviceId: matchedService ? matchedService.id : undefined,
+            serviceName: data.service || (matchedService ? matchedService.name : 'General Service'),
+            category: (matchedService ? matchedService.category : null) || data.category || 'Home Repairs',
+            description: data.description || '',
+            scheduledDate: data.scheduledDate ? new Date(data.scheduledDate) : new Date(),
+            scheduledTime: data.scheduledTime || '10:00 AM',
+            address: data.address || '',
+            city: data.city || 'Mumbai',
+            amount,
+            platformCommission: Math.round(amount * 0.1 * 100) / 100,
+            workerEarnings: Math.round(amount * 0.9 * 100) / 100,
+            status: 'PENDING',
+          },
+          include: {
+            customer: { select: { id: true, name: true, email: true, phone: true } },
+            worker: { select: { id: true, name: true, phone: true } },
+          },
+        });
+      } catch (createErr) {
+        // Booking ID collision (unique constraint) — retry with a time suffix.
+        if (createErr.code !== 'P2002' || attempt === 2) throw createErr;
+      }
+    }
+
+    if (!created) {
+      throw new AppError('Could not allocate a booking ID', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
 
     notifyAdmin(
       io,
       'New Booking',
-      `Booking ${bookingId} created by ${customerName || 'Customer'}.`,
+      `Booking ${created.bookingId} created by ${customerName || 'Customer'}.`,
       'alert'
     );
 
-    return formatPrismaBooking(created);
+    const formatted = formatPrismaBooking(created);
+
+    // Auto-assignment runs against the SAME store that created the booking.
+    try {
+      const bestWorker = await findBestWorker(formatted);
+      if (bestWorker) {
+        return await assignBooking(formatted._id, bestWorker._id, io, reqCtx);
+      }
+      notifyAdmin(
+        io,
+        'No Worker Available',
+        `Booking ${created.bookingId} has no eligible worker right now. Assign manually or retry dispatch.`,
+        'alert'
+      );
+    } catch (assignErr) {
+      console.warn(
+        `[AssignmentService] Auto-assignment skipped for ${created.bookingId}: ${assignErr.message}`
+      );
+    }
+
+    return formatted;
   } catch (prismaErr) {
     console.warn('[createBooking] Prisma creation fallback:', prismaErr.message);
   }
 
-  if (mongoose.connection.readyState !== 1) {
-    const booking = createDemoBooking(data, customerId, customerName);
-    notifyAdmin(
-      io,
-      'New Booking',
-      `Booking ${booking.bookingId} created by ${customerName || 'Customer'}.`,
-      'alert'
-    );
-    return booking;
-  }
-
-  const count = await Booking.countDocuments();
-  const bookingId = `SC-${count + 2800}`;
-
-  const initialTimeline = [{
-    event:     EVENT_TYPES.BOOKING_CREATED,
-    actorRole: 'customer',
-    actor:     customerId,
-    timestamp: new Date(),
-    metadata:  { service: data.service, category: data.category, amount: data.amount },
-  }];
-
-  let booking = await Booking.create({
-    ...data,
-    bookingId,
-    customer: customerId,
-    status: 'pending',
-    timeline: initialTimeline,
-  });
-
+  const booking = createDemoBooking(data, customerId, customerName);
   notifyAdmin(
     io,
     'New Booking',
-    `Booking ${bookingId} created by ${customerName || 'Customer'}.`,
+    `Booking ${booking.bookingId} created by ${customerName || 'Customer'}.`,
     'alert'
   );
-
-  // Phase 2 Batch 1: Log event, record metrics, capture snapshot
-  logBookingEvent(EVENT_TYPES.BOOKING_CREATED, booking, { _id: customerId, role: 'customer' }, reqCtx, {
-    currentState: 'pending',
-  });
-  recordCustomerBooking(
-    customerId, data.amount, data.category, data.isEmergency, booking.createdAt
-  );
-  captureSnapshot({
-    collection:   'bookings',
-    documentId:   booking._id,
-    before:       {},
-    after:        booking.toObject ? booking.toObject() : booking,
-    changedBy:    customerId,
-    changedByRole:'customer',
-    changeReason: EVENT_TYPES.BOOKING_CREATED,
-  });
-  // Phase 2 Batch 2: Demand + Behaviour
-  recordDemand(booking, 'created');
-  recordBehaviourBooking(customerId, booking);
-
-  // Attempt rule-based automatic worker assignment (Batch 4)
-  try {
-    const bestWorker = await findBestWorker(booking);
-    if (bestWorker) {
-      booking = await assignBooking(booking._id, bestWorker._id, io, reqCtx);
-    }
-  } catch (err) {
-    console.log(`[AssignmentService] Auto-assignment skipped for ${bookingId}: ${err.message}`);
-  }
-
   return booking;
 }
 
@@ -289,55 +322,34 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
 // @returns {Promise<{bookings, total, page, pages}>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getAllBookings({ status, page = 1, limit = 20, search } = {}) {
-  // 1. Try PostgreSQL (Prisma)
+  // 1. PostgreSQL (Prisma)
   try {
     const where = {};
     if (status) where.status = status.toUpperCase().replace('-', '_');
     if (search) where.bookingId = { contains: search, mode: 'insensitive' };
     const total = await prisma.booking.count({ where });
-    if (total > 0 || mongoose.connection.readyState !== 1) {
-      const bookings = await prisma.booking.findMany({
-        where,
-        include: {
-          customer: { select: { id: true, name: true, email: true, phone: true } },
-          worker: { select: { id: true, name: true, email: true, phone: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * limit,
-        take: parseInt(limit),
-      });
-      return {
-        bookings: bookings.map(formatPrismaBooking),
-        total,
-        page: parseInt(page),
-        pages: Math.ceil(total / limit) || 1,
-      };
-    }
+    const bookings = await prisma.booking.findMany({
+      where,
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, email: true, phone: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: parseInt(limit),
+    });
+    return {
+      bookings: bookings.map(formatPrismaBooking),
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / limit) || 1,
+    };
   } catch (prismaErr) {
-    // Fall back
-  }
-
-  if (mongoose.connection.readyState !== 1) {
     const all = getAllDemoBookings({ status, search });
     const total = all.length;
     const paginated = all.slice((page - 1) * limit, page * limit);
     return { bookings: paginated, total, page: parseInt(page), pages: Math.ceil(total / limit) || 1 };
   }
-
-  const query = {};
-  if (status) query.status = status;
-  if (search) query.bookingId = { $regex: search, $options: 'i' };
-
-  const bookings = await Booking.find(query)
-    .populate('customer', 'name email phone')
-    .populate('worker', 'name email phone')
-    .sort('-createdAt')
-    .skip((page - 1) * limit)
-    .limit(parseInt(limit))
-    .lean();
-
-  const total = await Booking.countDocuments(query);
-  return { bookings, total, page: parseInt(page), pages: Math.ceil(total / limit) };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -349,7 +361,7 @@ export async function getAllBookings({ status, page = 1, limit = 20, search } = 
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getCustomerBookings(customerId, status) {
-  // 1. Try PostgreSQL (Prisma)
+  // 1. PostgreSQL (Prisma)
   try {
     const where = { customerId };
     if (status) where.status = status.toUpperCase().replace('-', '_');
@@ -360,20 +372,10 @@ export async function getCustomerBookings(customerId, status) {
       },
       orderBy: { createdAt: 'desc' },
     });
-    if (bookings.length > 0 || mongoose.connection.readyState !== 1) {
-      return bookings.map(formatPrismaBooking);
-    }
+    return bookings.map(formatPrismaBooking);
   } catch (prismaErr) {
-    // Fall back
-  }
-
-  if (mongoose.connection.readyState !== 1) {
     return getDemoBookingsForCustomer(customerId, status);
   }
-
-  const query = { customer: customerId };
-  if (status) query.status = status;
-  return Booking.find(query).populate('worker', 'name rating workerIdCode').sort('-createdAt').lean();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -385,7 +387,7 @@ export async function getCustomerBookings(customerId, status) {
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getWorkerJobs(workerId, status) {
-  // 1. Try PostgreSQL (Prisma)
+  // 1. PostgreSQL (Prisma)
   try {
     const where = { workerId };
     if (status) where.status = status.toUpperCase().replace('-', '_');
@@ -396,20 +398,10 @@ export async function getWorkerJobs(workerId, status) {
       },
       orderBy: { scheduledDate: 'desc' },
     });
-    if (bookings.length > 0 || mongoose.connection.readyState !== 1) {
-      return bookings.map(formatPrismaBooking);
-    }
+    return bookings.map(formatPrismaBooking);
   } catch (prismaErr) {
-    // Fall back
-  }
-
-  if (mongoose.connection.readyState !== 1) {
     return getDemoBookingsForWorker(workerId, status);
   }
-
-  const query = { worker: workerId };
-  if (status) query.status = status;
-  return Booking.find(query).populate('customer', 'name phone address').sort('-scheduledDate').lean();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -420,12 +412,35 @@ export async function getWorkerJobs(workerId, status) {
 // @param {object} requestingUser   — { _id, role }
 // @returns {Promise<Booking>}
 // ─────────────────────────────────────────────────────────────────────────────
+function assertBookingReadAccess(booking, requestingUser) {
+  const role = requestingUser?.role;
+  const requesterId = String(requestingUser?._id || requestingUser?.id || '');
+
+  if (role === 'admin') return;
+
+  if (role === 'customer' || role === 'b2b') {
+    if (!requesterId || String(booking.customerId) !== requesterId) {
+      throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+    }
+    return;
+  }
+
+  if (role === 'worker') {
+    if (!booking.workerId || String(booking.workerId) !== requesterId) {
+      throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+    }
+    return;
+  }
+
+  throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+}
+
 export async function getBookingById(bookingId, requestingUser) {
   // 1. Try PostgreSQL (Prisma)
   try {
     const booking = await prisma.booking.findFirst({
       where: {
-        OR: [{ id: bookingId }, { bookingId: bookingId }],
+        ...bookingLookupWhere(bookingId),
       },
       include: {
         customer: { select: { id: true, name: true, email: true, phone: true } },
@@ -434,54 +449,15 @@ export async function getBookingById(bookingId, requestingUser) {
     });
     if (booking) {
       const formatted = formatPrismaBooking(booking);
-      if (
-        requestingUser.role === 'customer' &&
-        String(formatted.customerId) !== String(requestingUser._id) &&
-        String(formatted.customerId) !== String(requestingUser.id)
-      ) {
-        throw new AppError('Access denied', StatusCodes.FORBIDDEN);
-      }
-      if (
-        requestingUser.role === 'worker' &&
-        formatted.workerId &&
-        String(formatted.workerId) !== String(requestingUser._id) &&
-        String(formatted.workerId) !== String(requestingUser.id)
-      ) {
-        throw new AppError('Access denied', StatusCodes.FORBIDDEN);
-      }
+      assertBookingReadAccess(formatted, requestingUser);
       return formatted;
     }
   } catch (prismaErr) {
     if (prismaErr instanceof AppError) throw prismaErr;
   }
 
-  if (mongoose.connection.readyState !== 1) {
-    const booking = findDemoBookingById(bookingId);
-    if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-    return booking;
-  }
-
-  const booking = await Booking.findById(bookingId)
-    .populate('customer', 'name email phone')
-    .populate('worker', 'name workerIdCode');
-
+  const booking = findDemoBookingById(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-
-  if (
-    requestingUser.role === 'customer' &&
-    booking.customer._id.toString() !== requestingUser._id.toString()
-  ) {
-    throw new AppError('Access denied', StatusCodes.FORBIDDEN);
-  }
-
-  if (
-    requestingUser.role === 'worker' &&
-    booking.worker &&
-    booking.worker._id.toString() !== requestingUser._id.toString()
-  ) {
-    throw new AppError('Access denied', StatusCodes.FORBIDDEN);
-  }
-
   return booking;
 }
 
@@ -493,34 +469,82 @@ export async function getBookingById(bookingId, requestingUser) {
 // @param {object} updates   — must not contain 'status'
 // @returns {Promise<Booking>}
 // ─────────────────────────────────────────────────────────────────────────────
-export async function updateBookingFields(bookingId, updates) {
-  if ('status' in updates) {
+export async function updateBookingFields(bookingId, updates, requestingUser) {
+  if ('status' in (updates || {})) {
     throw new AppError(
       'Status changes must use dedicated workflow endpoints (/assign, /accept, /reject, etc.)',
       StatusCodes.METHOD_NOT_ALLOWED
     );
   }
 
-  if (mongoose.connection.readyState !== 1) {
-    const updated = updateDemoBooking(bookingId, updates);
-    if (!updated) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-    return updated;
+  // Field allowlist: amounts, assignment, payment and status are never generic.
+  const safeUpdates = {};
+  for (const [field, value] of Object.entries(updates || {})) {
+    if (!GENERIC_UPDATE_ALLOWLIST.has(field) || value === undefined) continue;
+    safeUpdates[field] = value;
   }
 
-  const booking = await Booking.findByIdAndUpdate(
-    bookingId,
-    { $set: updates },
-    { new: true, runValidators: true }
-  );
-  if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
-  return booking;
+  if (Object.keys(safeUpdates).length === 0) {
+    throw new AppError(
+      `No updatable fields supplied. Allowed fields: ${[...GENERIC_UPDATE_ALLOWLIST].join(', ')}`,
+      StatusCodes.BAD_REQUEST
+    );
+  }
+
+  if (safeUpdates.scheduledDate !== undefined) {
+    const parsed = new Date(safeUpdates.scheduledDate);
+    if (isNaN(parsed.getTime())) {
+      throw new AppError('scheduledDate must be a valid date', StatusCodes.UNPROCESSABLE_ENTITY);
+    }
+    safeUpdates.scheduledDate = parsed;
+  }
+
+  if (safeUpdates.address !== undefined) {
+    const address = String(safeUpdates.address).trim();
+    if (!address) throw new AppError('Address cannot be empty', StatusCodes.UNPROCESSABLE_ENTITY);
+    safeUpdates.address = address;
+  }
+
+  // 1. PostgreSQL (Prisma)
+  let existing = null;
+  try {
+    existing = await prisma.booking.findFirst({
+      where: bookingLookupWhere(bookingId),
+    });
+  } catch (prismaErr) {
+    existing = null;
+  }
+
+  if (existing) {
+    const requesterId = requestingUser?._id || requestingUser?.id;
+    const role = requestingUser?.role;
+    const ownsBooking = String(existing.customerId) === String(requesterId);
+
+    if (role !== 'admin' && !(('customer' === role || role === 'b2b') && ownsBooking)) {
+      throw new AppError('Access denied', StatusCodes.FORBIDDEN);
+    }
+
+    const updated = await prisma.booking.update({
+      where: { id: existing.id },
+      data: safeUpdates,
+      include: {
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, phone: true } },
+      },
+    });
+    return formatPrismaBooking(updated);
+  }
+
+  const fallback = updateDemoBooking(bookingId, safeUpdates);
+  if (!fallback) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
+  return fallback;
 }
 
 export async function findAnyBooking(bookingId) {
   try {
     const pgBooking = await prisma.booking.findFirst({
       where: {
-        OR: [{ id: bookingId }, { bookingId }],
+        ...bookingLookupWhere(bookingId),
       },
       include: {
         customer: { select: { id: true, name: true, email: true, phone: true } },
@@ -530,12 +554,6 @@ export async function findAnyBooking(bookingId) {
     if (pgBooking) return formatPrismaBooking(pgBooking);
   } catch (err) {}
 
-  if (mongoose.connection.readyState === 1) {
-    try {
-      const b = await Booking.findById(bookingId).populate('customer', 'name email phone').populate('worker', 'name workerIdCode');
-      if (b) return b;
-    } catch {}
-  }
   return findDemoBookingById(bookingId);
 }
 
@@ -548,17 +566,32 @@ export async function assignBooking(bookingId, workerId, io, reqCtx = {}) {
   const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
-  await assignWorker(workerId, booking.category);
+  // Friendly early validation (category match, eligibility, obvious busy state)
+  await assignWorker(workerId, booking.category, booking.serviceId);
 
   const prevStatus = booking.status;
-  const updated = await applyTransition(bookingId, prevStatus, 'assigned', { worker: workerId });
 
-  // Phase 2: timeline entry
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_ASSIGNED, actor: workerId, actorRole: 'system', timestamp: new Date() } },
+  // Serialisable transaction: re-check "worker is free" at the same instant the
+  // assignment is committed, so concurrent bookings cannot overbook a worker.
+  const updated = await withAssignmentTransaction(async (tx) => {
+    const busy = await tx.booking.findFirst({
+      where: {
+        workerId,
+        OR: [
+          { status: { in: ['ASSIGNED', 'ACCEPTED', 'EN_ROUTE', 'ARRIVED', 'STARTED'] } },
+          { status: 'COMPLETED', paymentStatus: { not: 'PAID' } },
+        ],
+      },
+      select: { id: true },
     });
-  }
+    if (busy) {
+      throw new AppError(
+        'Worker is currently busy with another active booking',
+        StatusCodes.CONFLICT
+      );
+    }
+    return applyTransition(bookingId, prevStatus, 'assigned', { worker: workerId }, tx);
+  });
 
   notifyAdmin(io, 'Booking Assigned', `Booking ${updated.bookingId} assigned to worker.`, 'broadcast');
   notifyWorker(io, workerId, 'New Job Assigned', `You have been assigned booking ${updated.bookingId}.`);
@@ -585,12 +618,6 @@ export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
   const responseTimeMs = booking.assignedAt ? Date.now() - new Date(booking.assignedAt).getTime() : null;
   const updated = await applyTransition(bookingId, prevStatus, 'accepted');
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_ACCEPTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-    });
-  }
   notifyCustomer(io, booking.customer?._id || booking.customer, 'Booking Accepted', `Worker accepted your booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_ACCEPTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -612,12 +639,6 @@ export async function rejectBooking(bookingId, workerId, reqCtx = {}) {
   const prevStatus = booking.status;
   const intermediate = await applyTransition(bookingId, prevStatus, 'rejected');
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_REJECTED, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-    });
-  }
   logBookingEvent(EVENT_TYPES.BOOKING_REJECTED, intermediate, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerRejection(workerId);
 
@@ -636,12 +657,6 @@ export async function setEnRoute(bookingId, workerId, io, reqCtx = {}) {
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'en-route');
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_EN_ROUTE, actor: workerId, actorRole: 'worker', timestamp: new Date() } },
-    });
-  }
   notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker En Route', `Your worker is on the way for booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_EN_ROUTE, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -664,14 +679,12 @@ export async function setArrived(bookingId, workerId, io, reqCtx = {}) {
   const updated = await applyTransition(bookingId, prevStatus, 'arrived');
   try {
     await generateStartOtp(bookingId);
-  } catch (e) {}
-
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_ARRIVED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { otpGenerated: true } } },
-    });
+  } catch (e) {
+    // Arrival is committed; the customer can regenerate a Start OTP from the
+    // tracking page, so surface the failure instead of hiding it.
+    console.warn(`[setArrived] Start OTP generation failed for ${bookingId}: ${e.message}`);
   }
+
   notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker Arrived', `Your worker has arrived for booking ${updated.bookingId}. Your Start OTP has been generated.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_ARRIVED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -690,18 +703,22 @@ export async function startBooking(bookingId, workerId, io, reqCtx = {}) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
   }
 
+  // Start OTP is mandatory: the customer's arrival code authorises work to begin.
+  if (!booking.startOtpVerified) {
+    throw new AppError(
+      'The customer Start OTP must be verified before this job can start.',
+      StatusCodes.UNPROCESSABLE_ENTITY
+    );
+  }
+
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'started', { jobStartedAt: new Date() });
   try {
     await generateEndOtp(bookingId);
-  } catch (e) {}
-
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_STARTED, actor: workerId, actorRole: 'worker', timestamp: new Date(), metadata: { endOtpGenerated: true } } },
-    });
+  } catch (e) {
+    console.warn(`[startBooking] End OTP generation failed for ${bookingId}: ${e.message}`);
   }
+
   notifyCustomer(io, booking.customer?._id || booking.customer, 'Job Started', `Your job has started for booking ${updated.bookingId}. Your End OTP has been generated.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_STARTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -722,14 +739,17 @@ export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
   const prevStatus = booking.status;
   const completionTimeMs = booking.startedAt ? Date.now() - new Date(booking.startedAt).getTime() : null;
   const now = new Date();
+
+  // End OTP is mandatory: the customer's handover code authorises completion.
+  if (!booking.endOtpVerified) {
+    throw new AppError(
+      'The customer End OTP must be verified before this job can be completed.',
+      StatusCodes.UNPROCESSABLE_ENTITY
+    );
+  }
+
   const updated = await applyTransition(bookingId, prevStatus, 'completed', { jobCompletedAt: now });
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_COMPLETED, actor: workerId, actorRole: 'worker', timestamp: now } },
-    });
-  }
   notifyAdmin(io, 'Job Completed', `Booking ${updated.bookingId} marked as completed.`, 'broadcast');
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_COMPLETED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
@@ -764,13 +784,9 @@ export async function payBooking(bookingId, requestingUser, paymentMethod, reqCt
 
   const updated = await applyTransition(bookingId, prevStatus, 'paid', extraUpdates);
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_PAID, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { paymentMethod } } },
-    });
-    logBookingEvent(EVENT_TYPES.BOOKING_PAID, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { paymentMethod, amount: booking.amount } });
-  }
+  // Legacy timeline entries live on the Mongo booking document; Postgres
+  // bookings have no timeline column, so status history is emitted as events.
+  logBookingEvent(EVENT_TYPES.BOOKING_PAID, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { paymentMethod, amount: booking.amount } });
 
   return updated;
 }
@@ -782,15 +798,9 @@ export async function closeBooking(bookingId, requestingUser, reqCtx = {}) {
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'closed');
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_CLOSED, actor: requestingUser?._id, actorRole: requestingUser?.role, timestamp: new Date() } },
-    });
-    logBookingEvent(EVENT_TYPES.BOOKING_CLOSED, updated, requestingUser, reqCtx, { previousState: prevStatus });
-    // Phase 2 Batch 2: generate ML feature record on close
-    generateFeatureRecord(bookingId);
-  }
+  logBookingEvent(EVENT_TYPES.BOOKING_CLOSED, updated, requestingUser, reqCtx, { previousState: prevStatus });
+  // Phase 2 Batch 2: generate ML feature record on close
+  generateFeatureRecord(bookingId);
 
   return updated;
 }
@@ -828,27 +838,21 @@ export async function cancelBooking(bookingId, requestingUser, reason, io, reqCt
     ...(reason ? { cancellationReason: reason } : {}),
   });
 
-  // Phase 2
-  if (mongoose.connection.readyState === 1) {
-    await Booking.findByIdAndUpdate(bookingId, {
-      $push: { timeline: { event: EVENT_TYPES.BOOKING_CANCELLED, actor: requestingUser._id, actorRole: requestingUser.role, timestamp: new Date(), metadata: { reason } } },
-    });
-    notifyAdmin(
-      io,
-      'Booking Cancelled',
-      `Booking ${updated.bookingId} cancelled by ${requestingUser.name || requestingUser.role}.`,
-      'danger'
-    );
-    emitBookingStatus(io, updated, prevStatus);
-    logBookingEvent(EVENT_TYPES.BOOKING_CANCELLED, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { reason } });
-    if (booking.worker) recordWorkerCancellation(booking.worker);
-    if (requestingUser.role === 'customer') recordCustomerCancellation(requestingUser._id);
-    captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'cancelled', cancellationReason: reason }, changedBy: requestingUser._id, changeReason: EVENT_TYPES.BOOKING_CANCELLED });
-    // Phase 2 Batch 2: behaviour + demand
-    if (requestingUser.role === 'customer') recordBehaviourCancellation(requestingUser._id, reason);
-    if (booking.worker) syncTrustProfile(booking.worker);
-    recordDemand(booking, 'cancelled');
-  }
+  notifyAdmin(
+    io,
+    'Booking Cancelled',
+    `Booking ${updated.bookingId} cancelled by ${requestingUser.name || requestingUser.role}.`,
+    'danger'
+  );
+  emitBookingStatus(io, updated, prevStatus);
+  logBookingEvent(EVENT_TYPES.BOOKING_CANCELLED, updated, requestingUser, reqCtx, { previousState: prevStatus, metadata: { reason } });
+  if (booking.worker) recordWorkerCancellation(booking.worker);
+  if (requestingUser.role === 'customer') recordCustomerCancellation(requestingUser._id);
+  captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'cancelled', cancellationReason: reason }, changedBy: requestingUser._id, changeReason: EVENT_TYPES.BOOKING_CANCELLED });
+  // Phase 2 Batch 2: behaviour + demand
+  if (requestingUser.role === 'customer') recordBehaviourCancellation(requestingUser._id, reason);
+  if (booking.worker) syncTrustProfile(booking.worker);
+  recordDemand(booking, 'cancelled');
 
   return updated;
 }

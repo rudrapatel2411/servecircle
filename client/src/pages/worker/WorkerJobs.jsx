@@ -14,23 +14,32 @@ import {
   HiOutlineExclamationTriangle,
   HiOutlineCheckCircle,
   HiOutlineTruck,
+  HiOutlineCamera,
+  HiOutlineArrowTopRightOnSquare,
+  HiOutlineDocumentText,
+  HiOutlineStar,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import { useWorkerAuth } from './useWorkerAuth';
+import WorkerDutySwitch from '../../components/WorkerDutySwitch';
+import BookingChatModal from '../../components/BookingChatModal';
+import WorkerEstimateRevisionModal from '../../components/WorkerEstimateRevisionModal';
+import WorkerRateCustomerModal from '../../components/WorkerRateCustomerModal';
+import WorkerSosModal from '../../components/WorkerSosModal';
 import {
   fetchWorkerJobs,
   respondToJobRequest,
   updateWorkerJobStatus,
   verifyWorkerOtp,
+  uploadBookingProof,
+  collectCodPayment,
+  initiateBookingCall,
 } from './workerApi';
 import {
   formatDate,
   formatInr,
   getStatusBadgeClass,
 } from './workerHelpers';
-import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
-import { broadcastNotificationToTabs, subscribeToCrossTabNotifications } from '../../utils/notificationSync';
-import { socket } from '../../socket';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -45,6 +54,9 @@ const tabs = [
   { key: 'cancelled', label: 'Cancelled' },
 ];
 
+// Generate a random 4-digit OTP
+const generateOtp = () => Math.floor(1000 + Math.random() * 9000).toString();
+
 const DEMO_JOBS = [
   {
     _id: 'demo-job-001',
@@ -56,8 +68,7 @@ const DEMO_JOBS = [
     amount: 799,
     status: 'pending',
     isEmergency: false,
-    customer: { name: 'Rudra Shah', phone: '9876543210' },
-    startOtp: '4821',
+    customer: { name: 'Rudra Shah' },
   },
   {
     _id: 'demo-job-002',
@@ -69,21 +80,19 @@ const DEMO_JOBS = [
     amount: 1200,
     status: 'accepted',
     isEmergency: true,
-    customer: { name: 'Priya Desai', phone: '9876543211' },
-    startOtp: '4821',
+    customer: { name: 'Priya Desai' },
   },
   {
     _id: 'demo-job-003',
-    service: 'Full Car Detailing & Oil Check',
-    category: 'Vehicle Services',
+    service: 'Electrical Fan Installation',
+    category: 'Home Repairs',
     scheduledDate: new Date().toISOString(),
     scheduledTime: '11:00 AM',
     address: 'SG Highway, Ahmedabad',
-    amount: 899,
-    status: 'pending',
+    amount: 450,
+    status: 'arrived',
     isEmergency: false,
-    customer: { name: 'Amit Mehta', phone: '9876543212' },
-    startOtp: '4821',
+    customer: { name: 'Amit Patel' },
   },
   {
     _id: 'demo-job-004',
@@ -95,14 +104,13 @@ const DEMO_JOBS = [
     amount: 1500,
     status: 'completed',
     isEmergency: false,
-    customer: { name: 'Rudra Shah', phone: '9876543210' },
-    startOtp: '4821',
+    customer: { name: 'Rudra Shah' },
   },
 ];
 
 const WorkerJobs = () => {
   const { t } = useTranslation();
-  const { token, user, isAuthenticated, signIn, authError, authLoading, isDemoMode, workerStatus } = useWorkerAuth();
+  const { token, user, isAuthenticated, signIn, authError, authLoading, isDemoMode, workerStatus, dutyStatus, dutyStatusUpdatedAt, updateDuty } = useWorkerAuth();
 
   const [activeTab, setActiveTab] = useState('all');
   const [jobs, setJobs] = useState([]);
@@ -111,125 +119,67 @@ const WorkerJobs = () => {
   const [actionLoading, setActionLoading] = useState('');
 
   // OTP verification UI state
-  const [otpInput, setOtpInput] = useState({});
-  const [otpError, setOtpError] = useState({});
-  const [cantResolveModal, setCantResolveModal] = useState(null);
+  const [otpInput, setOtpInput] = useState({}); // { [jobId]: '1234' }
+  const [otpError, setOtpError] = useState({}); // { [jobId]: 'Wrong OTP' }
+  const [cantResolveModal, setCantResolveModal] = useState(null); // jobId or null
   const [cantResolveReason, setCantResolveReason] = useState('');
-  const workerCategory = getWorkerCategory(user);
 
-  const notifyAdminOfWorkerAction = (job, actionLabel) => {
-    const workerName = user?.name || 'Verified Worker';
-    const workerEmail = user?.email || '';
-    const workerPhone = user?.phone || '9876543210';
-    const service = job?.service || workerCategory;
-    const customerName = job?.customer?.name || 'Customer';
-    const customerPhone = job?.customer?.phone || '9876543210';
+  // Operations Modals (M2–M6)
+  const [activeChatJob, setActiveChatJob] = useState(null);
+  const [activeRevisionJob, setActiveRevisionJob] = useState(null);
+  const [activeRateJob, setActiveRateJob] = useState(null);
+  const [showSosModal, setShowSosModal] = useState(false);
+  const [uploadingProof, setUploadingProof] = useState({});
 
+  const handleUploadProof = async (jobId, type) => {
+    const defaultImg = type === 'BEFORE_WORK'
+      ? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800'
+      : 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800';
+    const imageUrl = prompt(`Enter ${type === 'BEFORE_WORK' ? 'before-work' : 'after-work'} photo URL or camera proof link:`, defaultImg);
+    if (!imageUrl) return;
+    setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: true }));
     try {
-      socket.emit('worker_accepted_job', {
-        bookingId: job?._id,
-        workerId: user?._id || user?.id,
-        workerName,
-        workerEmail,
-        workerPhone,
-        workerCategory,
-        service,
-        phone: customerPhone,
-        action: actionLabel,
-      });
-    } catch {}
-
-    broadcastNotificationToTabs({
-      id: `worker_job_${job?._id}_${Date.now()}`,
-      title: `✅ Worker ${actionLabel}: ${service}`,
-      message: `Worker "${workerName}" (${workerEmail}) ${actionLabel.toLowerCase()} booking ${job?._id} for ${customerName} (${job?.address || ''}) — ₹${job?.amount || 0}.`,
-      type: 'alert',
-      targetAudience: 'admin',
-      bookingId: job?._id,
-      workerName,
-      workerEmail,
-      workerPhone,
-      service,
-      customerName,
-    });
+      await uploadBookingProof(token, jobId, { type, imageUrl, notes: 'Uploaded from worker app' });
+      alert(`${type === 'BEFORE_WORK' ? 'Before' : 'After'} proof uploaded successfully!`);
+      await loadJobs(activeTab);
+    } catch (err) {
+      alert(err.message || 'Proof upload failed');
+    } finally {
+      setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: false }));
+    }
   };
 
-  const saveLocalJobState = (jobId, nextStatus) => {
+  const handleCollectCod = async (jobId, amount) => {
+    if (!confirm(`Confirm cash collection of ₹${amount} from customer?`)) return;
+    setActionLoading(`${jobId}-cod`);
     try {
-      const states = JSON.parse(localStorage.getItem('servecircle_worker_job_states') || '{}');
-      states[jobId] = nextStatus;
-      localStorage.setItem('servecircle_worker_job_states', JSON.stringify(states));
-
-      const bookings = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
-      const updated = bookings.map((b) =>
-        b.id === jobId || b.bookingId === jobId ? { ...b, workerJobStatus: nextStatus, status: nextStatus } : b
-      );
-      localStorage.setItem('servecircle_customer_bookings', JSON.stringify(updated));
-    } catch {}
+      await collectCodPayment(token, jobId, amount);
+      alert(`₹${amount} Cash Collection Confirmed! Payment updated.`);
+      await loadJobs(activeTab);
+    } catch (err) {
+      alert(err.message || 'COD collection failed');
+    } finally {
+      setActionLoading('');
+    }
   };
 
   const loadJobs = async (status = activeTab) => {
-    let savedStates = {};
-    try {
-      savedStates = JSON.parse(localStorage.getItem('servecircle_worker_job_states') || '{}');
-    } catch {}
-
-    let matchingLocal = [];
-    try {
-      const stored = JSON.parse(localStorage.getItem('servecircle_customer_bookings') || '[]');
-      const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
-      matchingLocal = stored
-        .filter((b) => doesServiceMatchWorker(workerCategory, b.category, b.service))
-        .map((b) => {
-          const id = b.id || b.bookingId;
-          const rawStatus = savedStates[id] || b.workerJobStatus || b.status || 'pending';
-          const normalizedStatus = rawStatus === 'confirmed' ? 'pending' : rawStatus;
-          return {
-            _id: id,
-            service: b.service,
-            category: b.category || workerCategory,
-            scheduledDate: b.date || new Date().toISOString(),
-            scheduledTime: b.time || '10:00 AM',
-            address: `${b.address || 'Civil Lines'}, ${b.city || 'Ahmedabad'}`,
-            amount: b.amount || 799,
-            status: normalizedStatus,
-            isEmergency: b.isEmergency || false,
-            customer: { name: b.customerName || 'Rahul Shah', phone: b.customerPhone || '9876543210' },
-            startOtp: b.startOtp || otpMap[id] || '4821',
-          };
-        });
-    } catch {}
-
-    const otpMap = JSON.parse(localStorage.getItem('servecircle_booking_otps') || '{}');
-    const catDemo = DEMO_JOBS
-      .filter((j) => doesServiceMatchWorker(workerCategory, j.category, j.service))
-      .map((j) => ({ ...j, status: savedStates[j._id] || j.status, startOtp: otpMap[j._id] || j.startOtp || '4821' }));
-    const demoPool = (catDemo.length > 0 ? catDemo : DEMO_JOBS).map((j) => ({ ...j, status: savedStates[j._id] || j.status, startOtp: otpMap[j._id] || j.startOtp || '4821' }));
-
-    if (isDemoMode || !token) {
-      const combined = [...matchingLocal, ...demoPool];
-      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
-      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
+    if (isDemoMode) {
+      // Demo mode: filter mock jobs
+      const filtered = status === 'all'
+        ? DEMO_JOBS
+        : DEMO_JOBS.filter((j) => j.status === status);
       setJobs(filtered);
       return;
     }
-
+    if (!token) return;
     setLoading(true);
     setError('');
     try {
       const data = await fetchWorkerJobs(token, status);
-      const serverJobs = (Array.isArray(data) ? data : []).filter((j) =>
-        doesServiceMatchWorker(workerCategory, j.category, j.service)
-      );
-      const combined = [...matchingLocal, ...serverJobs, ...demoPool];
-      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
-      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
-      setJobs(filtered);
+      setJobs(data);
     } catch (err) {
-      const combined = [...matchingLocal, ...demoPool];
-      const unique = combined.filter((v, i, a) => a.findIndex((tItem) => tItem._id === v._id) === i);
-      const filtered = status === 'all' ? unique : unique.filter((j) => j.status === status);
-      setJobs(filtered);
+      setError(err.message || 'Failed to load jobs');
     } finally {
       setLoading(false);
     }
@@ -237,152 +187,45 @@ const WorkerJobs = () => {
 
   useEffect(() => {
     loadJobs(activeTab);
-
-    const handleLiveBooking = (data) => {
-      if (doesServiceMatchWorker(workerCategory, data?.category, data?.service)) {
-        loadJobs(activeTab);
-      }
-    };
-
-    socket.on('worker_notification', handleLiveBooking);
-    const unsubCrossTab = subscribeToCrossTabNotifications(handleLiveBooking);
-
-    return () => {
-      socket.off('worker_notification', handleLiveBooking);
-      unsubCrossTab();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, activeTab, workerCategory]);
+  }, [token, activeTab]);
 
   const handleRespond = async (bookingId, action) => {
+    if (!token) return;
     setActionLoading(`${bookingId}-${action}`);
     setError('');
-    const nextStatus = action === 'accept' ? 'accepted' : 'cancelled';
-    const targetJob = jobs.find((j) => j._id === bookingId);
-
-    // 1. Update local state & localStorage immediately
-    saveLocalJobState(bookingId, nextStatus);
-    setJobs((prev) =>
-      prev
-        .map((j) => (j._id === bookingId ? { ...j, status: nextStatus } : j))
-        .filter((j) => activeTab === 'all' || j.status === activeTab)
-    );
-
-    // 2. Notify Admin with full worker & job details
-    notifyAdminOfWorkerAction(targetJob, action === 'accept' ? 'Accepted Job' : 'Declined Job');
-
-    // 3. Call backend API for MongoDB jobs
-    const isLocalOrDemo = String(bookingId).startsWith('SC-') || String(bookingId).startsWith('demo-');
-    if (token && !isLocalOrDemo) {
-      try {
-        await respondToJobRequest(token, bookingId, action);
-      } catch (err) {
-        console.warn('Respond API fallback notice:', err.message);
-      }
+    try {
+      await respondToJobRequest(token, bookingId, action);
+      await loadJobs(activeTab);
+    } catch (err) {
+      setError(err.message || 'Could not update request');
+    } finally {
+      setActionLoading('');
     }
-    setActionLoading('');
   };
 
   const handleStatus = async (bookingId, nextStatus) => {
+    if (!token) return;
     setActionLoading(`${bookingId}-${nextStatus}`);
     setError('');
-    const targetJob = jobs.find((j) => j._id === bookingId);
-
-    saveLocalJobState(bookingId, nextStatus);
-    setJobs((prev) =>
-      prev
-        .map((j) => (j._id === bookingId ? { ...j, status: nextStatus } : j))
-        .filter((j) => activeTab === 'all' || j.status === activeTab)
-    );
-
-    // 1. Real-time socket status change to customer tracking
     try {
-      socket.emit('booking_status_changed', {
-        bookingId,
-        currentStatus: nextStatus,
-        status: nextStatus,
-        workerName: user?.name || 'Assigned Worker',
-        workerId: user?._id || user?.id,
-      });
-    } catch {}
-
-    // 2. Cross-tab notification broadcast so customer tab immediately reflects arrived/en-route
-    broadcastNotificationToTabs({
-      id: `status_change_${bookingId}_${Date.now()}`,
-      title: nextStatus === 'arrived' ? '🔔 Worker Arrived at Doorstep!' : `Job ${nextStatus}`,
-      message: nextStatus === 'arrived'
-        ? `Worker "${user?.name || 'Assigned Worker'}" has arrived at your doorstep. Please share your 4-digit Start OTP to begin.`
-        : `Booking #${bookingId} is now ${nextStatus}.`,
-      type: 'booking_status',
-      bookingId,
-      currentStatus: nextStatus,
-      status: nextStatus,
-      targetAudience: 'all',
-    });
-
-    const labelMap = { 'en-route': 'Started Journey (En-Route)', arrived: 'Arrived at Location', completed: 'Completed Job' };
-    notifyAdminOfWorkerAction(targetJob, labelMap[nextStatus] || `Updated to ${nextStatus}`);
-
-    const isLocalOrDemo = String(bookingId).startsWith('SC-') || String(bookingId).startsWith('demo-');
-    if (token && !isLocalOrDemo) {
-      try {
-        await updateWorkerJobStatus(token, bookingId, nextStatus);
-      } catch (err) {
-        console.warn('Status API fallback notice:', err.message);
-      }
+      await updateWorkerJobStatus(token, bookingId, nextStatus);
+      await loadJobs(activeTab);
+    } catch (err) {
+      setError(err.message || 'Could not update job status');
+    } finally {
+      setActionLoading('');
     }
-    setActionLoading('');
   };
 
   const handleVerifyStartOtp = async (jobId) => {
-    const entered = (otpInput[jobId] || '').trim();
-    if (!entered) {
-      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit Start OTP.' }));
-      return;
-    }
+    const entered = otpInput[jobId] || '';
+    if (!entered) return;
     setActionLoading(`${jobId}-start`);
-    const targetJob = jobs.find((j) => j._id === jobId);
-    const expectedOtp = String(targetJob?.startOtp || '4821');
-
-    if (entered !== expectedOtp) {
-      setOtpError((prev) => ({ ...prev, [jobId]: `❌ Incorrect OTP! Customer screen par jo 4-digit Start OTP dikh raha hai wahi enter karein.` }));
-      setActionLoading('');
-      return;
-    }
-
-    const isLocalOrDemo = String(jobId).startsWith('SC-') || String(jobId).startsWith('demo-');
-
     try {
-      if (token && !isLocalOrDemo) {
-        await verifyWorkerOtp(token, jobId, 'start', entered);
-      }
-      saveLocalJobState(jobId, 'started');
+      await verifyWorkerOtp(token, jobId, 'start', entered);
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      setJobs((prev) => prev.map((j) => (j._id === jobId ? { ...j, status: 'started' } : j)));
-
-      // Real-time broadcast to Customer Live Tracking
-      try {
-        socket.emit('booking_status_changed', {
-          bookingId: jobId,
-          currentStatus: 'started',
-          status: 'started',
-          workerName: user?.name || 'Assigned Worker',
-          workerId: user?._id || user?.id,
-        });
-      } catch {}
-
-      broadcastNotificationToTabs({
-        id: `status_started_${jobId}_${Date.now()}`,
-        title: '✅ Start OTP Verified — Work Begun!',
-        message: `Worker "${user?.name || 'Worker'}" verified the Start OTP. Work is now in progress!`,
-        type: 'booking_status',
-        bookingId: jobId,
-        currentStatus: 'started',
-        status: 'started',
-        targetAudience: 'all',
-      });
-
-      notifyAdminOfWorkerAction(targetJob, 'Verified Start OTP & Started Work');
+      await loadJobs(activeTab);
     } catch (err) {
       setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify Start OTP.' }));
     } finally {
@@ -391,46 +234,13 @@ const WorkerJobs = () => {
   };
 
   const handleVerifyEndOtp = async (jobId) => {
-    const entered = (otpInput[jobId] || '').trim();
-    if (!entered) {
-      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit End OTP.' }));
-      return;
-    }
+    const entered = otpInput[jobId] || '';
+    if (!entered) return;
     setActionLoading(`${jobId}-end`);
-    const targetJob = jobs.find((j) => j._id === jobId);
-    const isLocalOrDemo = String(jobId).startsWith('SC-') || String(jobId).startsWith('demo-');
-
     try {
-      if (token && !isLocalOrDemo) {
-        await verifyWorkerOtp(token, jobId, 'end', entered);
-      }
-      saveLocalJobState(jobId, 'completed');
+      await verifyWorkerOtp(token, jobId, 'end', entered);
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
-      setJobs((prev) => prev.map((j) => (j._id === jobId ? { ...j, status: 'completed' } : j)));
-
-      // Real-time broadcast to Customer Live Tracking
-      try {
-        socket.emit('booking_status_changed', {
-          bookingId: jobId,
-          currentStatus: 'completed',
-          status: 'completed',
-          workerName: user?.name || 'Assigned Worker',
-          workerId: user?._id || user?.id,
-        });
-      } catch {}
-
-      broadcastNotificationToTabs({
-        id: `status_completed_${jobId}_${Date.now()}`,
-        title: '🎉 Job Completed Successfully!',
-        message: `Worker "${user?.name || 'Worker'}" completed the service. Review is now active!`,
-        type: 'booking_status',
-        bookingId: jobId,
-        currentStatus: 'completed',
-        status: 'completed',
-        targetAudience: 'all',
-      });
-
-      notifyAdminOfWorkerAction(targetJob, 'Completed Job & Verified End OTP');
+      await loadJobs(activeTab);
     } catch (err) {
       setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify End OTP.' }));
     } finally {
@@ -445,9 +255,8 @@ const WorkerJobs = () => {
 
   const submitCantResolve = () => {
     if (!cantResolveReason.trim()) return;
-    const targetJob = jobs.find((j) => j._id === cantResolveModal);
-    notifyAdminOfWorkerAction(targetJob, `Reported Issue: "${cantResolveReason}"`);
-    alert(`Support team & Admin notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
+    // In production: send to backend with reason
+    alert(`Support team notified. Reason: "${cantResolveReason}". You can now leave the premises.`);
     setCantResolveModal(null);
     loadJobs(activeTab);
   };
@@ -457,38 +266,35 @@ const WorkerJobs = () => {
   }
 
   return (
-    <div className="page-content worker-page-content" style={{ paddingBottom: '100px' }}>
+    <div className="page-content worker-page-content">
       <div className="page-header">
         <div>
           <h1 className="page-title">{t('worker.jobRequests', 'Job Requests')}</h1>
-          <p className="page-subtitle">
-            Category: <strong>{workerCategory}</strong> — Accept, track, and complete jobs with OTP verification.
-          </p>
+          <p className="page-subtitle">Accept, track, and complete jobs with OTP verification.</p>
         </div>
-        <button className="btn btn-outline" onClick={() => loadJobs(activeTab)}>
-          <HiOutlineArrowPath /> Refresh
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button
+            className="btn btn-outline"
+            style={{ borderColor: '#ef4444', color: '#dc2626', background: '#fef2f2', fontWeight: 700 }}
+            onClick={() => setShowSosModal(true)}
+          >
+            🚨 Emergency SOS
+          </button>
+          <button className="btn btn-outline" onClick={() => loadJobs(activeTab)}>
+            <HiOutlineArrowPath /> Refresh
+          </button>
+        </div>
       </div>
 
-      {/* Live Broadcast Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '14px 20px',
-        marginBottom: '20px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        color: 'white',
-      }}>
-        <div>
-          <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>Live {workerCategory} Dispatch Active</div>
-          <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>New {workerCategory} bookings appear here automatically. Admin sees every action you take.</div>
-        </div>
-        <div style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.15)', borderRadius: '100px', padding: '4px 14px', fontSize: '0.8rem', fontWeight: 800 }}>
-          Online
-        </div>
-      </div>
+      {/* ===== WORKER DUTY SWITCH (ONLINE / PAUSED / OFFLINE) ===== */}
+      <WorkerDutySwitch
+        token={token}
+        currentStatus={dutyStatus}
+        lastUpdated={dutyStatusUpdatedAt}
+        isVerified={user?.isVerified}
+        workerStatus={workerStatus}
+        onStatusChange={(newStatus, updatedUser) => updateDuty(updatedUser || newStatus)}
+      />
 
       <div className="tabs-bar">
         {tabs.map((tab) => (
@@ -513,7 +319,7 @@ const WorkerJobs = () => {
       {!loading && jobs.length === 0 && <div className="card">No jobs found for this filter.</div>}
 
       {!loading && jobs.map((job) => {
-        const isEmergency = job.isEmergency || job.service?.toLowerCase().includes('emergency') || job.service?.toLowerCase().includes('leak');
+        const isEmergency = job.service?.toLowerCase().includes('emergency') || job.service?.toLowerCase().includes('leak');
 
         return (
           <AnimatePresence key={job._id}>
@@ -535,6 +341,33 @@ const WorkerJobs = () => {
                   <span style={{ color: '#3b7dc1', fontWeight: 800 }}><HiOutlineCurrencyRupee /> {formatInr(job.amount)}</span>
                   <span><HiOutlineUser /> {job.customer?.name || 'Customer'}</span>
                   <span className={`badge ${getStatusBadgeClass(job.status)}`}>{job.status}</span>
+                  {job.trainee && (
+                    <span style={{ background: '#f0fdf4', color: '#166534', padding: '2px 10px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 700 }}>
+                      Training: {job.trainee?.name || 'Trainee'}
+                    </span>
+                  )}
+                  {['accepted', 'en-route', 'arrived'].includes(job.status) && (
+                    <a
+                      href={job.navigationUrl || `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(job.address + ', ' + (job.city || 'Ahmedabad'))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: '#2563eb',
+                        backgroundColor: '#eff6ff',
+                        padding: '2px 10px',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        border: '1px solid #bfdbfe',
+                      }}
+                    >
+                      🧭 Navigate <HiOutlineArrowTopRightOnSquare style={{ fontSize: '0.85rem' }} />
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -545,11 +378,11 @@ const WorkerJobs = () => {
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
                       className="btn btn-primary"
-                      style={{ flex: 1, background: '#16a34a', borderColor: '#16a34a' }}
+                      style={{ flex: 1 }}
                       onClick={() => handleRespond(job._id, 'accept')}
                       disabled={actionLoading === `${job._id}-accept`}
                     >
-                      {actionLoading === `${job._id}-accept` ? 'Accepting...' : 'Accept Job'}
+                      {actionLoading === `${job._id}-accept` ? '...' : 'Accept Job'}
                     </button>
                     <button
                       className="btn btn-outline"
@@ -567,7 +400,7 @@ const WorkerJobs = () => {
                   <div>
                     <div style={{ background: '#eff6ff', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#1e40af', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlinePhone style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>Accepted! Admin has been notified. Click <strong>"Ready to Go"</strong> to begin your journey.</span>
+                      <span>Once you click <strong>"Ready to Go"</strong>, your phone number will be shared with the customer so they can guide you.</span>
                     </div>
                     <button
                       className="btn btn-primary"
@@ -594,20 +427,44 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 4: ARRIVED — Verify Start OTP ===== */}
+                {/* ===== STEP 4: ARRIVED — Verify Start OTP & Photo Proof ===== */}
                 {job.status === 'arrived' && (
                   <div>
+                    <div style={{ marginBottom: '10px' }}>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => handleUploadProof(job._id, 'BEFORE_WORK')}
+                        disabled={uploadingProof[`${job._id}-BEFORE_WORK`]}
+                        style={{
+                          width: '100%',
+                          fontSize: '0.82rem',
+                          padding: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          borderColor: job.hasBeforeProof ? '#16a34a' : '#cbd5e1',
+                          color: job.hasBeforeProof ? '#16a34a' : '#1e293b',
+                          background: job.hasBeforeProof ? '#f0fdf4' : '#ffffff',
+                          fontWeight: 600,
+                        }}
+                      >
+                        <HiOutlineCamera />
+                        {job.hasBeforeProof ? '✓ Before Work Photo Uploaded' : '📷 Upload Before Work Photo'}
+                      </button>
+                    </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <input
                         type="number"
                         maxLength={4}
-                        placeholder="Start OTP"
+                        placeholder="Enter Start OTP"
                         value={otpInput[job._id] || ''}
                         onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
                         style={{
                           flex: 1, padding: '10px 14px', borderRadius: '8px',
                           border: '2px solid #e2e8f0', fontSize: '1.2rem',
-                          fontWeight: 800, letterSpacing: '6px', textAlign: 'center',
+                          fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
                           outline: 'none',
                         }}
                       />
@@ -626,24 +483,70 @@ const WorkerJobs = () => {
                   </div>
                 )}
 
-                {/* ===== STEP 5: STARTED — Enter End OTP ===== */}
+                {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP & Proof ===== */}
                 {job.status === 'started' && (
                   <div>
                     <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                       <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>Job is in progress. When work is done, enter the <strong>End OTP</strong> from the customer to complete.</span>
+                      <span>Job is in progress. Upload after-work photo and get the <strong>End OTP</strong> from the customer to close this job.</span>
                     </div>
+
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => handleUploadProof(job._id, 'AFTER_WORK')}
+                        disabled={uploadingProof[`${job._id}-AFTER_WORK`]}
+                        style={{
+                          flex: 1,
+                          fontSize: '0.8rem',
+                          padding: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          borderColor: job.hasAfterProof ? '#16a34a' : '#cbd5e1',
+                          color: job.hasAfterProof ? '#16a34a' : '#1e293b',
+                          background: job.hasAfterProof ? '#f0fdf4' : '#ffffff',
+                          fontWeight: 600,
+                        }}
+                      >
+                        <HiOutlineCamera />
+                        {job.hasAfterProof ? '✓ After Photo' : '📷 After Photo'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => setActiveRevisionJob(job)}
+                        style={{
+                          flex: 1,
+                          fontSize: '0.8rem',
+                          padding: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          borderColor: '#3b82f6',
+                          color: '#2563eb',
+                          background: '#eff6ff',
+                          fontWeight: 600,
+                        }}
+                      >
+                        <HiOutlineDocumentText /> Revise Estimate
+                      </button>
+                    </div>
+
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
                       <input
                         type="number"
                         maxLength={4}
-                        placeholder="End OTP"
+                        placeholder="Enter End OTP"
                         value={otpInput[job._id] || ''}
                         onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
                         style={{
                           flex: 1, padding: '10px 14px', borderRadius: '8px',
                           border: '2px solid #e2e8f0', fontSize: '1.2rem',
-                          fontWeight: 800, letterSpacing: '6px', textAlign: 'center',
+                          fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
                           outline: 'none',
                         }}
                       />
@@ -659,33 +562,67 @@ const WorkerJobs = () => {
                     {otpError[job._id] && (
                       <p style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px', fontWeight: 600 }}>{otpError[job._id]}</p>
                     )}
+                    {/* Can't Resolve option */}
                     <button
                       className="btn btn-outline"
                       style={{ width: '100%', color: '#b45309', borderColor: '#fde68a', background: '#fffbeb', fontSize: '0.8rem' }}
                       onClick={() => handleCantResolve(job._id)}
                     >
                       <HiOutlineExclamationTriangle style={{ marginRight: '6px' }} />
-                      Can&apos;t Resolve — Contact Support
+                      Can't Resolve — Contact Support
                     </button>
                   </div>
                 )}
 
-                {/* Quick contact buttons for accepted, en-route, started */}
-                {(job.status === 'accepted' || job.status === 'en-route' || job.status === 'started') && (
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                    <a
-                      href={`tel:${job.customer?.phone || '9876543210'}`}
+                {/* ===== STEP 6: COMPLETED — COD & Rating ===== */}
+                {job.status === 'completed' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {job.paymentMethod === 'COD' && !job.isCodCollected && (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => handleCollectCod(job._id, job.amount)}
+                        disabled={actionLoading === `${job._id}-cod`}
+                        style={{ width: '100%', backgroundColor: '#059669', fontSize: '0.85rem' }}
+                      >
+                        <HiOutlineCurrencyRupee style={{ marginRight: '4px' }} />
+                        Confirm Cash Collection (₹{job.amount})
+                      </button>
+                    )}
+                    <button
+                      type="button"
                       className="btn btn-outline"
-                      style={{ flex: 1, fontSize: '0.8rem', padding: '8px', textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                      onClick={() => setActiveRateJob(job)}
+                      style={{ width: '100%', fontSize: '0.82rem', borderColor: '#facc15', color: '#a16207', backgroundColor: '#fefce8', fontWeight: 600 }}
                     >
-                      <HiOutlinePhone /> Call Customer
-                    </a>
+                      <HiOutlineStar style={{ marginRight: '4px' }} /> Rate Customer Experience
+                    </button>
+                  </div>
+                )}
+
+                {/* Quick contact buttons for en-route, arrived, and started */}
+                {['en-route', 'arrived', 'started'].includes(job.status) && (
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
                     <button
                       className="btn btn-outline"
                       style={{ flex: 1, fontSize: '0.8rem', padding: '8px' }}
-                      onClick={() => alert(`Chat connected with ${job.customer?.name || 'Customer'} (+91 ${job.customer?.phone || '9876543210'})`)}
+                      onClick={async () => {
+                        try {
+                          const res = await initiateBookingCall(token, job._id);
+                          alert(res.message);
+                        } catch (err) {
+                          alert(err.message);
+                        }
+                      }}
                     >
-                      <HiOutlineChatBubbleLeftRight /> Chat
+                      <HiOutlinePhone /> Call
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ flex: 1, fontSize: '0.8rem', padding: '8px', background: '#eff6ff', color: '#2563eb', borderColor: '#bfdbfe' }}
+                      onClick={() => setActiveChatJob(job)}
+                    >
+                      <HiOutlineChatBubbleLeftRight /> In-App Chat
                     </button>
                   </div>
                 )}
@@ -722,7 +659,7 @@ const WorkerJobs = () => {
                 <HiOutlineExclamationTriangle style={{ color: '#f59e0b' }} /> Report Issue
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '16px' }}>
-                Please describe the issue. ServeCircle support &amp; Admin will be notified immediately.
+                Please describe the issue. ServeCircle support will be notified immediately. Once submitted, you are authorized to leave.
               </p>
               <textarea
                 placeholder="Describe the problem (e.g. part unavailable, customer unresponsive, safety concern...)"
@@ -749,13 +686,51 @@ const WorkerJobs = () => {
                   onClick={submitCantResolve}
                   disabled={!cantResolveReason.trim()}
                 >
-                  Notify Support &amp; Exit
+                  Notify Support & Exit
                 </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* M2 In-App Booking Chat & Relay */}
+      <BookingChatModal
+        isOpen={Boolean(activeChatJob)}
+        onClose={() => setActiveChatJob(null)}
+        token={token}
+        bookingId={activeChatJob?._id || activeChatJob?.id}
+        customerName={activeChatJob?.customer?.name}
+        currentUserRole="worker"
+      />
+
+      {/* M4 Quote Revision Modal */}
+      <WorkerEstimateRevisionModal
+        isOpen={Boolean(activeRevisionJob)}
+        onClose={() => setActiveRevisionJob(null)}
+        token={token}
+        bookingId={activeRevisionJob?._id || activeRevisionJob?.id}
+        originalAmount={activeRevisionJob?.amount}
+        onSuccess={() => loadJobs(activeTab)}
+      />
+
+      {/* M6 Rate Customer Modal */}
+      <WorkerRateCustomerModal
+        isOpen={Boolean(activeRateJob)}
+        onClose={() => setActiveRateJob(null)}
+        token={token}
+        bookingId={activeRateJob?._id || activeRateJob?.id}
+        customerName={activeRateJob?.customer?.name}
+        onSuccess={() => loadJobs(activeTab)}
+      />
+
+      {/* M6 SOS Emergency Modal */}
+      <WorkerSosModal
+        isOpen={showSosModal}
+        onClose={() => setShowSosModal(false)}
+        token={token}
+        bookingId={jobs.find((j) => ['en-route', 'arrived', 'started'].includes(j.status))?._id || jobs[0]?._id}
+      />
     </div>
   );
 };

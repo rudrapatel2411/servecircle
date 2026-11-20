@@ -32,7 +32,6 @@ import {
 } from '../ai/intelligence/intelligenceManager.js';
 
 import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
-import Booking from '../models/Booking.js';
 
 const router = express.Router();
 

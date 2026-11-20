@@ -9,6 +9,8 @@
  */
 
 import Booking from '../models/Booking.js';
+const legacyStoreReady = () => false;
+
 import WorkerMetrics from '../models/WorkerMetrics.js';
 import CustomerMetrics from '../models/CustomerMetrics.js';
 import TrustProfile from '../models/TrustProfile.js';
@@ -26,6 +28,7 @@ import ComplaintMetrics from '../models/ComplaintMetrics.js';
  * Data-only: no score calculation.
  */
 export async function syncTrustProfile(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const wm = await WorkerMetrics.findOne({ workerId }).lean();
     if (!wm) return;
@@ -70,6 +73,7 @@ export async function syncTrustProfile(workerId) {
  * Update TrustProfile when worker is verified/approved/suspended by admin.
  */
 export async function updateTrustVerification(workerId, workerStatus, user) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const isVerified = ['approved_rookie', 'approved_junior', 'approved_senior'].includes(workerStatus);
     const isSuspended = workerStatus === 'suspended';
@@ -113,6 +117,7 @@ export async function updateTrustVerification(workerId, workerStatus, user) {
  * Record complaint-related trust signal on worker's TrustProfile.
  */
 export async function recordTrustComplaint(workerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const wm = await WorkerMetrics.findOne({ workerId }).lean();
     const complaintRate = wm && wm.totalCompletions > 0
@@ -134,6 +139,7 @@ export async function recordTrustComplaint(workerId) {
  * Record a completed job in WorkerSkillHistory.
  */
 export async function recordSkillCompletion(workerId, service, category, completionTimeMs, customerId) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     const filter = { workerId, service, category };
 
@@ -189,6 +195,7 @@ export async function recordSkillCompletion(workerId, service, category, complet
  * Update skill rating after a review is submitted.
  */
 export async function recordSkillRating(workerId, service, category, rating) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     if (!rating) return;
     const filter = { workerId, service, category };
@@ -212,6 +219,7 @@ export async function recordSkillRating(workerId, service, category, rating) {
  * Increment photo evidence counts.
  */
 export async function recordSkillPhotos(workerId, service, category, beforeCount, afterCount) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerSkillHistory.updateOne(
       { workerId, service, category },
@@ -235,6 +243,7 @@ export async function recordSkillPhotos(workerId, service, category, beforeCount
  * Append a geo record after a booking reaches arrived/completed state.
  */
 export async function appendGeoHistory(workerId, bookingId, city, serviceCategory, service) {
+  if (!legacyStoreReady(workerId)) return;
   try {
     await WorkerGeoHistory.create({
       workerId,
@@ -258,6 +267,7 @@ export async function appendGeoHistory(workerId, bookingId, city, serviceCategor
  * Update CustomerBehaviour on new booking.
  */
 export async function recordBehaviourBooking(customerId, booking) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     const scheduled = booking.scheduledDate ? new Date(booking.scheduledDate) : new Date();
     const hour = scheduled.getHours();
@@ -320,6 +330,7 @@ export async function recordBehaviourBooking(customerId, booking) {
  * Update cancellation pattern on customer cancellation.
  */
 export async function recordBehaviourCancellation(customerId, reason) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     const b = await CustomerBehaviour.findOne({ customerId });
     const totalBookings = (await CustomerMetrics.findOne({ customerId }))?.totalBookings || 1;
@@ -347,6 +358,7 @@ export async function recordBehaviourCancellation(customerId, reason) {
  * Update review pattern after customer submits a review.
  */
 export async function recordBehaviourReview(customerId, rating, completedBookings) {
+  if (!legacyStoreReady(customerId)) return;
   try {
     const b = await CustomerBehaviour.findOne({ customerId });
     const newTotal = (b?.reviewPattern?.totalReviews || 0) + 1;
@@ -384,6 +396,7 @@ export async function recordBehaviourReview(customerId, rating, completedBooking
  * Increment demand bucket for a booking event.
  */
 export async function recordDemand(booking, eventType) {
+  if (!legacyStoreReady(booking)) return;
   try {
     const now = booking.createdAt ? new Date(booking.createdAt) : new Date();
     const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -437,6 +450,7 @@ export async function recordDemand(booking, eventType) {
  * Update ComplaintMetrics on complaint creation.
  */
 export async function recordComplaintCreated(complaint) {
+  if (!legacyStoreReady(complaint)) return;
   try {
     const againstRole = complaint.againstRole || 'worker'; // 'worker' | 'customer'
     const category    = complaint.category || 'other';
@@ -486,6 +500,7 @@ export async function recordComplaintCreated(complaint) {
  * Update ComplaintMetrics on complaint resolution.
  */
 export async function recordComplaintResolved(complaint, resolutionTimeMs) {
+  if (!legacyStoreReady(complaint)) return;
   try {
     const againstRole = complaint.againstRole || 'worker';
 
@@ -524,6 +539,7 @@ export async function recordComplaintResolved(complaint, resolutionTimeMs) {
  * Fetches point-in-time snapshots from metrics/trust models.
  */
 export async function generateFeatureRecord(bookingId) {
+  if (!legacyStoreReady(bookingId)) return;
   try {
     const booking = await Booking.findById(bookingId).lean();
     if (!booking || booking.status !== 'closed') return;

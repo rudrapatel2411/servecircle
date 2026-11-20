@@ -4,8 +4,7 @@ import {
   HiOutlineArrowPath,
   HiOutlineCheckBadge,
   HiOutlineUserCircle,
-  HiOutlineShieldCheck,
-  HiOutlineStar,
+  HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
@@ -153,7 +152,7 @@ const WorkerProfile = () => {
             <HiOutlineUserCircle />
           </div>
           <div>
-            <div className="stat-value">{profile?.rating || '4.9'} <HiOutlineStar style={{ fontSize: '1.1rem', color: '#f59e0b', verticalAlign: '-1px', display: 'inline-block' }} /></div>
+            <div className="stat-value">{profile?.rating || '4.9'} <span style={{ fontSize: '1rem', color: '#f59e0b' }}>★</span></div>
             <div className="stat-label">Current Rating</div>
           </div>
         </div>

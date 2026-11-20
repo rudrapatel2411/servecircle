@@ -12,7 +12,6 @@
 
 import { validationResult, body, param, query } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import mongoose from 'mongoose';
 
 /**
  * Handle validation results from express-validator chains.
@@ -41,13 +40,13 @@ export const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// Helper to check valid ID format (UUID, MongoDB ObjectId, or custom format)
+// Helper to check valid ID format (UUID, hex ID, or custom format)
 const isValidId = (val) => {
   if (!val || typeof val !== 'string') return false;
   // Standard UUID format
   if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)) return true;
-  // MongoDB ObjectId
-  if (mongoose.Types.ObjectId.isValid(val)) return true;
+  // 24-character hex ID (legacy/compatible)
+  if (/^[0-9a-fA-F]{24}$/.test(val)) return true;
   // Custom prefix formats: SC-123, BK-123, demo_...
   if (/^(SC|BK|SRV|USR|WRK)-[a-zA-Z0-9_-]+$/i.test(val) || String(val).startsWith('demo_')) return true;
   return false;

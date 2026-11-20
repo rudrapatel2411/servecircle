@@ -30,8 +30,20 @@ export const useWorkerAuth = () => {
     return APPROVED_STATUSES.includes(user.workerStatus);
   }, [token, user]);
 
-  // workerStatus for the current session user
+  // workerStatus and dutyStatus for the current session user
   const workerStatus = user?.workerStatus || null;
+  const dutyStatus = user?.dutyStatus || 'offline';
+  const dutyStatusUpdatedAt = user?.dutyStatusUpdatedAt || null;
+
+  const updateDuty = (updatedUserOrStatus) => {
+    if (!session) return;
+    const nextUser = typeof updatedUserOrStatus === 'string'
+      ? { ...session.user, dutyStatus: updatedUserOrStatus, dutyStatusUpdatedAt: new Date().toISOString() }
+      : { ...session.user, ...updatedUserOrStatus };
+    const nextSession = { ...session, user: nextUser };
+    setSession(nextSession);
+    setWorkerSession(nextSession);
+  };
 
   // Derived tier info for use in UI
   const workerTier = useMemo(() => {
@@ -77,8 +89,9 @@ export const useWorkerAuth = () => {
       setWorkerSession(nextSession);
       return profile;
     } catch (err) {
-      console.warn('Worker profile refresh failed, retaining cached session:', err.message);
-      return session?.user;
+      clearWorkerSession();
+      setSession(null);
+      throw err;
     }
   };
 
@@ -93,12 +106,15 @@ export const useWorkerAuth = () => {
     user,
     isAuthenticated,
     workerStatus,
+    dutyStatus,
+    dutyStatusUpdatedAt,
     workerTier,
     authLoading,
     authError,
     signIn,
     signOut,
     refreshProfile,
+    updateDuty,
     isDemoMode: isDemoToken(token),
   };
 };

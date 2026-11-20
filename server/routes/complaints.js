@@ -1,15 +1,34 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import Complaint from '../models/Complaint.js';
+import { prisma } from '../config/prisma.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
 import { recordComplaintCreated, recordComplaintResolved } from '../services/featureService.js';
 import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
-import { DEMO_COMPLAINTS } from '../utils/demoDataStore.js';
 
 const router = express.Router();
+
+function formatComplaint(c) {
+  if (!c) return null;
+  return {
+    _id: c.id,
+    id: c.id,
+    complaintId: c.complaintId,
+    booking: c.booking ? { _id: c.booking.id, bookingId: c.booking.bookingId, service: c.booking.serviceName } : null,
+    filedBy: c.filedBy ? { _id: c.filedBy.id, name: c.filedBy.name, email: c.filedBy.email, role: String(c.filedBy.role).toLowerCase() } : null,
+    againstUser: c.againstUser ? { _id: c.againstUser.id, name: c.againstUser.name, email: c.againstUser.email, role: String(c.againstUser.role).toLowerCase() } : null,
+    subject: c.subject,
+    description: c.description,
+    category: String(c.category || 'other').toLowerCase(),
+    priority: String(c.priority || 'medium').toLowerCase(),
+    status: String(c.status || 'open').toLowerCase(),
+    resolution: c.resolution,
+    resolvedAt: c.resolvedAt,
+    createdAt: c.createdAt,
+    updatedAt: c.updatedAt,
+  };
+}
 
 // GET all complaints (admin)
 router.get(
@@ -19,32 +38,31 @@ router.get(
   asyncHandler(async (req, res) => {
     const { status, priority, page = 1, limit = 20 } = req.query;
 
-    if (mongoose.connection.readyState !== 1) {
-      let list = [...DEMO_COMPLAINTS];
-      if (status) list = list.filter((c) => c.status === status);
-      if (priority) list = list.filter((c) => c.priority === priority);
-      return res.json({
-        complaints: list.slice((page - 1) * limit, page * limit),
-        total: list.length,
-        page: parseInt(page),
-        pages: Math.ceil(list.length / limit) || 1,
-      });
-    }
+    const where = {};
+    if (status) where.status = status.toUpperCase();
+    if (priority) where.priority = priority.toUpperCase();
 
-    const query = {};
-    if (status) query.status = status;
-    if (priority) query.priority = priority;
+    const [complaints, total] = await Promise.all([
+      prisma.complaint.findMany({
+        where,
+        include: {
+          filedBy: { select: { id: true, name: true, email: true, role: true } },
+          againstUser: { select: { id: true, name: true, email: true, role: true } },
+          booking: { select: { id: true, bookingId: true, serviceName: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      }),
+      prisma.complaint.count({ where }),
+    ]);
 
-    const complaints = await Complaint.find(query)
-      .populate('filedBy', 'name email role')
-      .populate('againstUser', 'name email role')
-      .populate('booking', 'bookingId service')
-      .sort('-createdAt')
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    const total = await Complaint.countDocuments(query);
-    res.json({ complaints, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+    res.json({
+      complaints: complaints.map(formatComplaint),
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / limit) || 1,
+    });
   })
 );
 
@@ -53,17 +71,16 @@ router.get(
   '/my',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const myComplaints = DEMO_COMPLAINTS.filter(
-        (c) => c.filedBy?._id === req.user._id || String(c.filedBy) === String(req.user._id)
-      );
-      return res.json(myComplaints);
-    }
-
-    const complaints = await Complaint.find({ filedBy: req.user._id })
-      .populate('booking', 'bookingId service')
-      .sort('-createdAt');
-    res.json(complaints);
+    const userId = req.user._id || req.user.id;
+    const complaints = await prisma.complaint.findMany({
+      where: { filedById: userId },
+      include: {
+        booking: { select: { id: true, bookingId: true, serviceName: true } },
+        againstUser: { select: { id: true, name: true, email: true, role: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(complaints.map(formatComplaint));
   })
 );
 
@@ -72,40 +89,54 @@ router.post(
   '/',
   protect,
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const count = DEMO_COMPLAINTS.length;
-      const complaintId = `CMP-${(count + 1001).toString()}`;
-      const newComplaint = {
-        _id: `cmp_${Date.now()}`,
-        ...req.body,
-        complaintId,
-        filedBy: { _id: req.user._id, name: req.user.name, email: req.user.email, role: req.user.role },
-        status: 'open',
-        createdAt: new Date(),
-      };
-      DEMO_COMPLAINTS.unshift(newComplaint);
-
-      if (req.io) {
-        req.io.to('admin_room').emit('admin_notification', {
-          id: Date.now(),
-          title: 'New Complaint',
-          message: `Complaint ${complaintId} filed by ${req.user.name || 'User'}.`,
-          type: 'danger',
-          date: new Date().toLocaleString(),
-          reads: 0,
-        });
-      }
-
-      return res.status(StatusCodes.CREATED).json(newComplaint);
-    }
-
-    const count = await Complaint.countDocuments();
+    const userId = req.user._id || req.user.id;
+    const count = await prisma.complaint.count();
     const complaintId = `CMP-${(count + 1001).toString()}`;
 
-    const complaint = await Complaint.create({
-      ...req.body,
-      complaintId,
-      filedBy: req.user._id,
+    const { subject, description, bookingId, againstUserId, category, priority } = req.body;
+
+    const categoryMap = {
+      service_quality: 'SERVICE_QUALITY',
+      payment: 'PAYMENT',
+      worker_behaviour: 'WORKER_BEHAVIOUR',
+      delay: 'DELAY',
+      damage: 'DAMAGE',
+      fraud: 'FRAUD',
+      other: 'OTHER',
+    };
+
+    const priorityMap = {
+      low: 'LOW',
+      medium: 'MEDIUM',
+      high: 'HIGH',
+      critical: 'CRITICAL',
+    };
+
+    let resolvedBookingId = null;
+    if (bookingId) {
+      const b = await prisma.booking.findFirst({
+        where: { OR: [{ id: bookingId }, { bookingId: bookingId }] },
+      });
+      if (b) resolvedBookingId = b.id;
+    }
+
+    const complaint = await prisma.complaint.create({
+      data: {
+        complaintId,
+        filedById: userId,
+        bookingId: resolvedBookingId,
+        againstUserId: againstUserId || null,
+        subject: subject || 'Complaint',
+        description: description || '',
+        category: categoryMap[category?.toLowerCase()] || 'OTHER',
+        priority: priorityMap[priority?.toLowerCase()] || 'MEDIUM',
+        status: 'OPEN',
+      },
+      include: {
+        filedBy: { select: { id: true, name: true, email: true, role: true } },
+        againstUser: { select: { id: true, name: true, email: true, role: true } },
+        booking: { select: { id: true, bookingId: true, serviceName: true } },
+      },
     });
 
     if (req.io) {
@@ -119,18 +150,7 @@ router.post(
       });
     }
 
-    res.status(StatusCodes.CREATED).json(complaint);
-
-    try {
-      recordComplaintCreated({
-        ...complaint.toObject(),
-        againstRole: req.body.againstRole || 'worker',
-        category: req.body.category || 'other',
-      });
-      logEvent({ eventType: EVENT_TYPES.COMPLAINT_CREATED, entityType: ENTITY_TYPES.USER, entityId: complaint._id, actorId: req.user._id, actorRole: req.user.role, metadata: { complaintId, againstUser: req.body.againstUser }, ...req.reqCtx });
-    } catch {
-      // ignore
-    }
+    res.status(StatusCodes.CREATED).json(formatComplaint(complaint));
   })
 );
 
@@ -140,36 +160,39 @@ router.put(
   protect,
   authorize('admin'),
   asyncHandler(async (req, res) => {
-    if (mongoose.connection.readyState !== 1) {
-      const cmp = DEMO_COMPLAINTS.find((c) => c._id === req.params.id || c.complaintId === req.params.id);
-      if (!cmp) throw new AppError('Complaint not found', StatusCodes.NOT_FOUND);
-      Object.assign(cmp, req.body);
-      if (req.body.status === 'resolved') {
-        cmp.resolvedBy = req.user._id;
-        cmp.resolvedAt = new Date();
-      }
-      return res.json(cmp);
+    const id = req.params.id;
+    const existing = await prisma.complaint.findFirst({
+      where: { OR: [{ id }, { complaintId: id }] },
+    });
+    if (!existing) throw new AppError('Complaint not found', StatusCodes.NOT_FOUND);
+
+    const statusMap = {
+      open: 'OPEN',
+      in_progress: 'IN_PROGRESS',
+      resolved: 'RESOLVED',
+      escalated: 'ESCALATED',
+      closed: 'CLOSED',
+    };
+
+    const data = {};
+    if (req.body.status) data.status = statusMap[req.body.status?.toLowerCase()] || 'OPEN';
+    if (req.body.resolution) data.resolution = req.body.resolution;
+    if (req.body.status?.toLowerCase() === 'resolved') {
+      data.resolvedById = req.user._id || req.user.id;
+      data.resolvedAt = new Date();
     }
 
-    const updates = { ...req.body };
-    if (req.body.status === 'resolved') {
-      updates.resolvedBy = req.user._id;
-      updates.resolvedAt = new Date();
-    }
+    const complaint = await prisma.complaint.update({
+      where: { id: existing.id },
+      data,
+      include: {
+        filedBy: { select: { id: true, name: true, email: true, role: true } },
+        againstUser: { select: { id: true, name: true, email: true, role: true } },
+        booking: { select: { id: true, bookingId: true, serviceName: true } },
+      },
+    });
 
-    const complaint = await Complaint.findByIdAndUpdate(req.params.id, updates, { new: true })
-      .populate('filedBy', 'name email role')
-      .populate('againstUser', 'name email role');
-
-    if (!complaint) throw new AppError('Complaint not found', StatusCodes.NOT_FOUND);
-
-    if (req.body.status === 'resolved' && complaint.createdAt) {
-      const resolutionTimeMs = Date.now() - new Date(complaint.createdAt).getTime();
-      recordComplaintResolved(complaint.toObject ? complaint.toObject() : complaint, resolutionTimeMs);
-    }
-    logEvent({ eventType: EVENT_TYPES.COMPLAINT_UPDATED, entityType: ENTITY_TYPES.USER, entityId: complaint._id, actorId: req.user._id, actorRole: 'admin', metadata: { status: req.body.status }, ...req.reqCtx });
-
-    res.json(complaint);
+    res.json(formatComplaint(complaint));
   })
 );
 

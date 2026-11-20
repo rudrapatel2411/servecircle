@@ -1130,7 +1130,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
               onClick={(e) => { e.stopPropagation(); setShowHealthModal(true); }}
               style={{ width: '100%', padding: '10px', fontSize: '0.85rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 700, borderRadius: '10px' }}
             >
-              <HiOutlineChartBar /> View Detailed Health Audit
+              📊 View Detailed Health Audit
             </button>
           </div>
 
@@ -1775,7 +1775,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
               onClick={() => setShowHealthModal(false)}
               style={{ position: 'absolute', top: '20px', right: '20px', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <HiOutlineXMark />
+              ✕
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>

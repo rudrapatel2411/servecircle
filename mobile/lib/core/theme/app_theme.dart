@@ -6,7 +6,7 @@ import 'app_typography.dart';
 ///
 /// Implements the Neomorphism v2.0 design system as the authoritative Flutter [ThemeData].
 ///
-/// Source of Truth: `docs/flutter-migration/PHASE2-DESIGN-SYSTEM.md`
+/// Source of Truth: `PROJECT_BRAIN/brain.md (repository map); this source file owns its implementation`
 class AppTheme {
   AppTheme._();
 

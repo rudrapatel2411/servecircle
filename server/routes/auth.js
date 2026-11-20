@@ -32,7 +32,13 @@ function formatAuthResponse(user) {
     city: user.city || '',
     walletBalance: user.walletBalance ?? 0,
     avatar: user.avatar || '',
-    workerStatus: user.workerProfile?.workerStatus || null,
+    workerStatus: user.workerProfile?.workerStatus
+      ? String(user.workerProfile.workerStatus).toLowerCase()
+      : null,
+    dutyStatus: user.workerProfile?.dutyStatus
+      ? String(user.workerProfile.dutyStatus).toLowerCase()
+      : 'offline',
+    dutyStatusUpdatedAt: user.workerProfile?.dutyStatusUpdatedAt || null,
     skills: user.workerProfile?.skills || [],
     serviceCategory: user.workerProfile?.serviceCategory || '',
     rating: user.workerProfile?.rating ?? 5.0,

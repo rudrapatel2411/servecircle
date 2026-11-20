@@ -245,26 +245,31 @@ function normalizeText(value = '') {
 /**
  * Normalize common Hindi/Gujarati romanized spelling mistakes and variants
  * so that keyword matching still works even with typos.
+ *
+ * Examples:
+ *   "leakej" → "leakage"    "plumar" → "plumber"
+ *   "bijili" → "bijli"      "pani tapakna" stays "pani tapakna"
+ *   "electrisian" → "electrician"
  */
 function spellNormalize(text = '') {
   let t = String(text).toLowerCase();
 
-  // Plumbing variants
+  // ── Plumbing variants ────────────────────────────────────────────────────────
   t = t.replace(/\bleakej[a-z]*/g, 'leakage');
   t = t.replace(/\bleakig[a-z]*/g, 'leaking');
   t = t.replace(/\blikage\b/g, 'leakage');
   t = t.replace(/\bleakege\b/g, 'leakage');
-  t = t.replace(/\bnanal\b/g, 'nal');
-  t = t.replace(/\bnala\b/g, 'drain');
+  t = t.replace(/\bnanal\b/g, 'nal');         // nal = tap pipe
+  t = t.replace(/\bnala\b/g, 'drain');         // nala = drain
   t = t.replace(/\bplumber?s?\b/g, 'plumber');
   t = t.replace(/\bplumar\b/g, 'plumber');
   t = t.replace(/\bplambur\b/g, 'plumber');
   t = t.replace(/\bpaipa\b/g, 'pipe');
   t = t.replace(/\bpipe?s\b/g, 'pipe');
-  t = t.replace(/\bpani\b/g, 'pani');
+  t = t.replace(/\bpani\b/g, 'pani');          // water
   t = t.replace(/\bpaani\b/g, 'pani');
   t = t.replace(/\bwatar\b/g, 'water');
-  t = t.replace(/\btapak[a-z]*/g, 'tapak');
+  t = t.replace(/\btapak[a-z]*/g, 'tapak');    // dripping
   t = t.replace(/\btopak\b/g, 'tapak');
   t = t.replace(/\btoilit\b/g, 'toilet');
   t = t.replace(/\btoilet[s]?\b/g, 'toilet');
@@ -273,10 +278,10 @@ function spellNormalize(text = '') {
   t = t.replace(/\bgeysar\b/g, 'geyser');
   t = t.replace(/\bgeyser\b/g, 'geyser');
 
-  // Electrical variants
-  t = t.replace(/\bbijili\b/g, 'bijli');
+  // ── Electrical variants ───────────────────────────────────────────────────────
+  t = t.replace(/\bbijili\b/g, 'bijli');       // electricity
   t = t.replace(/\bbijjli\b/g, 'bijli');
-  t = t.replace(/\bbijale\b/g, 'bijli');
+  t = t.replace(/\bbijale\b/g, 'bijli');       // Gujarati variant
   t = t.replace(/\bvijali\b/g, 'bijli');
   t = t.replace(/\blight[s]?\b/g, 'light');
   t = t.replace(/\blite\b/g, 'light');
@@ -292,7 +297,7 @@ function spellNormalize(text = '') {
   t = t.replace(/\bshort.?circit\b/g, 'short circuit');
   t = t.replace(/\bspark[s]?\b/g, 'spark');
 
-  // Appliance variants
+  // ── Appliance variants ───────────────────────────────────────────────────────
   t = t.replace(/\bfrij\b/g, 'fridge');
   t = t.replace(/\bfrig\b/g, 'fridge');
   t = t.replace(/\bwashing machen\b/g, 'washing machine');
@@ -301,31 +306,31 @@ function spellNormalize(text = '') {
   t = t.replace(/\bair.?condition[ea]r\b/g, 'ac');
   t = t.replace(/\ba\.?c\.?\b/g, 'ac');
 
-  // Carpentry/door variants
+  // ── Carpentry/door variants ──────────────────────────────────────────────────
   t = t.replace(/\bdor\b/g, 'door');
-  t = t.replace(/\bdarwaja\b/g, 'door');
+  t = t.replace(/\bdarwaja\b/g, 'door');       // darwaza = door Hindi
   t = t.replace(/\bdarwaza\b/g, 'door');
-  t = t.replace(/\bkidki\b/g, 'window');
+  t = t.replace(/\bkidki\b/g, 'window');       // khidki = window
   t = t.replace(/\bkhidki\b/g, 'window');
   t = t.replace(/\balmirah\b/g, 'wardrobe');
   t = t.replace(/\balmira\b/g, 'wardrobe');
 
-  // Security/lock variants
+  // ── Security/lock variants ───────────────────────────────────────────────────
   t = t.replace(/\block[s]?\b/g, 'lock');
   t = t.replace(/\blok\b/g, 'lock');
-  t = t.replace(/\bchabi\b/g, 'key');
+  t = t.replace(/\bchabi\b/g, 'key');          // chaabi = key
   t = t.replace(/\bchaabi\b/g, 'key');
-  t = t.replace(/\bchavi\b/g, 'key');
+  t = t.replace(/\bchavi\b/g, 'key');          // Gujarati
 
-  // Cleaning variants
-  t = t.replace(/\bsafaai\b/g, 'safai');
+  // ── Cleaning variants ────────────────────────────────────────────────────────
+  t = t.replace(/\bsafaai\b/g, 'safai');       // cleaning
   t = t.replace(/\bsafai\b/g, 'cleaning');
   t = t.replace(/\bcockroch\b/g, 'cockroach');
   t = t.replace(/\bkackroch\b/g, 'cockroach');
   t = t.replace(/\b(dusrty|durty|dirti)\b/g, 'dirty');
   t = t.replace(/\bwater.?tank\b/g, 'water tank');
 
-  // General corrections
+  // ── General corrections ──────────────────────────────────────────────────────
   t = t.replace(/\bprobem\b/g, 'problem');
   t = t.replace(/\bprobelm\b/g, 'problem');
   t = t.replace(/\bproblem\b/g, 'problem');
@@ -336,27 +341,33 @@ function spellNormalize(text = '') {
   t = t.replace(/\bnahi chal[a-z]*/g, 'nahi chal raha');
   t = t.replace(/\bkaam nhi\b/g, 'kaam nahi');
   t = t.replace(/\bnhi\b/g, 'nahi');
-  t = t.replace(/\bnai\b/g, 'nahi');
+  t = t.replace(/\bnai\b/g, 'nahi');           // nai = nahi in Hinglish
 
   return t;
 }
 
 /**
- * Detect language from text — supports Hindi, Gujarati, and English.
+ * Detect language from text — supports Hindi (Devanagari + Romanized),
+ * Gujarati (native script + Romanized), and English.
+ *
+ * Returns: 'hindi' | 'gujarati' | 'english'
  */
 function detectLanguage(text = '') {
   const raw = String(text);
   const lower = raw.toLowerCase();
 
-  if (/[\u0A80-\u0AFF]/.test(raw)) return 'gujarati';
-  if (/[\u0900-\u097F]/.test(raw)) return 'hindi';
+  // ── Script-based detection (most reliable) ────────────────────────────────────
+  if (/[\u0A80-\u0AFF]/.test(raw)) return 'gujarati';  // Gujarati script
+  if (/[\u0900-\u097F]/.test(raw)) return 'hindi';      // Devanagari script
 
+  // ── Gujarati romanized patterns ───────────────────────────────────────────────
   const gujaratiPatterns = [
     /\b(gujarati|kem cho|tame|shu|vaat|kari shako|moklo|tamari|chhe|nathi|joie|avo|jao|karo|che|kem|su che|tamne|taro|bahu|badhu|kevi)\b/,
     /\b(pani joie|koi problem|tamne koi|mane madad|ghar ma|mara ghar|tamari ghar)\b/,
   ];
   if (gujaratiPatterns.some(p => p.test(lower))) return 'gujarati';
 
+  // ── Hindi romanized patterns ──────────────────────────────────────────────────
   const hindiPatterns = [
     /\b(hai|hain|nahi|nai|nhi|main|mein|aap|apka|apni|karo|karna|karta|karti|chahiye|chahie|bata|batao|sakta|sakti|sakte|hoga|hogi|hote|bhi|toh|tto|yeh|ye|woh|wo|iska|uska|mera|tera|mujhe|aapko|hume|humko|kyun|kyon|kaise|kitna|kab|kahan|kya|agar|lekin|aur|par|pe|mein|se|ko|ka|ki|ke|ne)\b/,
     /\b(bijli|pani|ghar|kamra|chhat|deewar|darwaza|khidki|almirah|nalka|nali|paani|tapak|toota|toot|band|jam|jam gaya|chalu|chal raha|nahi chal|kaam nahi|help karo|bata do|samjha do|theek karo|theek karna|kab aayenge|kharcha|kitne mein|kitna lagega)\b/,
@@ -364,6 +375,7 @@ function detectLanguage(text = '') {
   ];
   if (hindiPatterns.some(p => p.test(lower))) return 'hindi';
 
+  // ── Hinglish heuristic: short text with mixed cues ────────────────────────────
   const hinglishCues = /\b(nahi|nai|hain|karo|theek|toh|matlab|samjhe|achha|thik|bol|sab|bas|kuch|abhi|yahan|wahan)\b/.test(lower);
   if (hinglishCues) return 'hindi';
 
@@ -371,6 +383,7 @@ function detectLanguage(text = '') {
 }
 
 export function classifyIntent({ text = '', hasImage = false, conversation = [] } = {}) {
+  // Apply spell normalization before matching
   const normalized = normalizeText(spellNormalize(text));
   const priorText = normalizeText(spellNormalize(conversation.map((item) => item.content).join(' ')));
   const hasServiceHistory = /\b(leak|pipe|water|pani|ac|cooling|fan|switch|socket|light|lock|door|sink|tap|geyser|fridge|washing|clean|repair|plumber|electrician|leakage|toot|nahi|problem|issue|service|bijli|bijjli|socket|tapak|nali|nalka|darwaza|almirah)\b/.test(priorText);
@@ -411,6 +424,7 @@ export function classifyIntent({ text = '', hasImage = false, conversation = [] 
 }
 
 function hasLeakageSignal(text = '') {
+  // Apply spell normalization so "leakej", "tapakna", "paani tapak rahi" etc. are caught
   const normalized = normalizeText(spellNormalize(text));
   return /\b(water leakage|water leak|water leaking|water aa raha|pani leak|paani leak|pani tapak|paani tapak|pani aa raha|paani aa raha|leakage|leak|leaking|tapak|nal se pani|nali se pani|chhat se pani|seepage|seeped|nala overflow)\b/.test(normalized);
 }
@@ -557,10 +571,134 @@ function buildResolvedRoute({ problemCategory, problemId = null, problemName, co
   };
 }
 
+function applyLeakageGuard(result, guard) {
+  if (!guard?.guardOnly) return null;
+
+  const category = result?.multimodal?.serviceResolution?.problemCategory
+    || result?.multimodal?.problemAnalysis?.problemCategory
+    || '';
+  const serviceName = normalizeText(result?.multimodal?.serviceResolution?.service || '');
+  const confidence = getConfidenceScore(result);
+  const isWrongCleaning = category === 'cleaning' || serviceName.includes('cleaning');
+  const isUnknown = !category || category === 'Unknown Problem' || category === 'unknown problem';
+  const isLowConfidence = confidence > 0 && confidence < 0.5;
+
+  if (isWrongCleaning || isUnknown || isLowConfidence) {
+    return guard.fallback;
+  }
+
+  return null;
+}
+
+/**
+ * General service category guard for image-based pipeline results.
+ * Detects hallucinated categories (e.g., "cleaning" for water leak images)
+ * and returns a corrected fallback for any service type.
+ *
+ * Applied to ALL image analyses as a final safety layer.
+ *
+ * @param {object} result - Full runMultimodalInference result
+ * @param {boolean} hasImage - Whether the request included an image
+ * @returns {object|null} Corrected response or null if result is valid
+ */
+function applyServiceCategoryGuard(result, hasImage) {
+  if (!hasImage) return null;
+
+  const problemAnalysis  = result?.multimodal?.problemAnalysis  || {};
+  const serviceResolution = result?.multimodal?.serviceResolution || {};
+  const aiRaw = problemAnalysis.aiAnalysisRaw || {};
+
+  const category    = (serviceResolution.problemCategory || problemAnalysis.problemCategory || '').toLowerCase();
+  const serviceName = normalizeText(serviceResolution.service || '');
+  const confidence  = getConfidenceScore(result);
+
+  // Build a combined signal string from all AI output fields for cross-checking
+  const allSignals = normalizeText([
+    aiRaw.problemType     || '',
+    aiRaw.serviceCategory || '',
+    aiRaw.reasoningEnglish || '',
+    ...(Array.isArray(aiRaw.visibleDamage)   ? aiRaw.visibleDamage   : []),
+    ...(Array.isArray(aiRaw.visibleObjects)   ? aiRaw.visibleObjects   : []),
+    ...(Array.isArray(aiRaw.possibleCauses)   ? aiRaw.possibleCauses   : []),
+    ...(Array.isArray(aiRaw.recommendedActions) ? aiRaw.recommendedActions : []),
+  ].join(' '));
+
+  const WATER_SIGNAL = /\b(water|leak|seepage|pipe|drain|tap|pani|paani|sewage|toilet|geyser|overflow|drip|tapak|plumb|ceiling water|wet|damp|moisture)\b/.test(allSignals);
+  const ELEC_SIGNAL  = /\b(electric|wire|socket|switch|mcb|circuit|spark|bijli|switchboard|fuse|breaker|outlet)\b/.test(allSignals);
+  const APPL_SIGNAL  = /\b(ac|air condition|fridge|refrigerator|washing machine|microwave|television|tv|purifier|appliance)\b/.test(allSignals);
+
+  // Guard 1: "cleaning" service suggested but water/pipe signals present → plumbing correction
+  if ((category === 'cleaning' || serviceName.includes('cleaning')) && WATER_SIGNAL && !APPL_SIGNAL) {
+    console.warn('[customerAi] applyServiceCategoryGuard: cleaning override → plumbing (water signals detected)');
+    const correction = buildResolvedRoute({
+      problemCategory: 'plumbing',
+      problemId: 'PLMB_001',
+      problemName: 'Water Leak / Seepage',
+      confidence: Math.max(confidence, 0.72),
+    });
+    return {
+      ...correction,
+      message: 'Photo dekh kar lag raha hai ki yeh paani ka leak/seepage issue hai. Iske liye plumbing service suitable lag rahi hai.',
+      _guardApplied: 'cleaning_to_plumbing',
+    };
+  }
+
+  // Guard 2: "cleaning" suggested but electrical signals present → electrical correction
+  if ((category === 'cleaning' || serviceName.includes('cleaning')) && ELEC_SIGNAL && !WATER_SIGNAL) {
+    console.warn('[customerAi] applyServiceCategoryGuard: cleaning override → electrical (electrical signals detected)');
+    const correction = buildResolvedRoute({
+      problemCategory: 'electrical',
+      problemId: 'ELEC_001',
+      problemName: 'Electrical Issue',
+      confidence: Math.max(confidence, 0.70),
+    });
+    return {
+      ...correction,
+      message: 'Photo dekh kar lag raha hai ki yeh electrical issue hai. Iske liye electrician service suitable lag rahi hai.',
+      _guardApplied: 'cleaning_to_electrical',
+    };
+  }
+
+  // Guard 3: "cleaning" suggested but appliance signals present → appliance correction
+  if ((category === 'cleaning' || serviceName.includes('cleaning')) && APPL_SIGNAL) {
+    console.warn('[customerAi] applyServiceCategoryGuard: cleaning override → appliance (appliance signals detected)');
+    const correction = buildResolvedRoute({
+      problemCategory: 'appliance',
+      problemId: 'APPL_001',
+      problemName: 'Appliance Issue',
+      confidence: Math.max(confidence, 0.68),
+    });
+    return {
+      ...correction,
+      message: 'Photo dekh kar lag raha hai ki yeh appliance issue hai. Iske liye appliance repair service suitable lag rahi hai.',
+      _guardApplied: 'cleaning_to_appliance',
+    };
+  }
+
+  // Guard 4: Unknown/unresolved category with low confidence → ask for more info
+  const KNOWN_CATEGORIES = ['plumbing', 'electrical', 'cleaning', 'carpentry', 'painting', 'appliance', 'security', 'moving'];
+  if ((!category || !KNOWN_CATEGORIES.includes(category)) && confidence < 0.5) {
+    return {
+      intent: 'FOLLOW_UP',
+      message: 'Photo mujhe clearly nahi samajh aayi. Kya aap problem ka thoda aur detail bata sakte hain ya ek aur photo bhej sakte hain?',
+      showServiceRecommendation: false,
+      followUpQuestions: [
+        'Problem kaunse room/jagah mein hai?',
+        'Kya yeh water/bijli/appliance se related hai?',
+        'Ek aur clear photo bhejein',
+      ],
+      _guardApplied: 'unknown_category_low_confidence',
+    };
+  }
+
+  return null;
+}
+
 export function generalMessage(text = '') {
   const normalized = normalizeText(spellNormalize(text));
   const language = detectLanguage(text);
 
+  // ── Language preference requests ───────────────────────────────────────────
   if (/\b(gujarati|gujarati ma|vaat kari shako|gujarati me bolo)\b/.test(normalized)) {
     return 'Ha, bilkul! Tame Gujarati ma vaat kari shako cho. Tamari ghar-service problem mane janavo, athva photo moklo. Hu plumbing, electrical, cleaning, carpentry — koi pan service mate madad kari shakish.';
   }
@@ -568,27 +706,92 @@ export function generalMessage(text = '') {
     return 'Bilkul! Main Hindi mein baat kar sakta hoon. Aap ghar mein kisi bhi cheez ki problem bataiye — pani ka leak, bijli ki problem, AC kharab, darwaza toot gaya, ya kuch aur. Main sahi service dhundh kar dunga.';
   }
 
+  // ── What can you do / help requests ───────────────────────────────────────
   if (/\b(what can you do|services do you provide|kya kar sakte|kya help|madad karo|help chahiye|kya karte ho|kya services)\b/.test(normalized)) {
     if (language === 'gujarati') return 'Hu home-service problem samajva, sahi service identify karva ane booking sudhi lai java help kari shaku chu. Plumbing, electrical, cleaning, carpentry, painting, appliance repair, security, moving — badhi services mate photo moklo ya type karo.';
     if (language === 'hindi') return 'Main aapki ghar ki kisi bhi problem ko samjhkar sahi service dhundh sakta hoon. Plumbing, bijli, cleaning, carpentry, AC/fridge repair, lock service, ya shifting — bas photo bhejiye ya problem type kariye.';
     return 'I can understand home-service problems, analyze photos, ask follow-up questions, recommend the right service, and take you to booking. Try: plumbing, electrical, cleaning, carpentry, painting, appliance repair, or moving services.';
   }
 
+  // ── Thank you ──────────────────────────────────────────────────────────────
   if (/\b(thank|thanks|thank you|shukriya|dhanyavad|shukriyo|aabhar)\b/.test(normalized)) {
     if (language === 'gujarati') return 'Welcome! Biji koi service help joie hoy to mane janavo. Hu hamesha yahan chu.';
     if (language === 'hindi') return 'Welcome! Aur kisi service mein help chahiye ho to kabhi bhi puchh sakte hain.';
     return 'You are welcome! Let me know anytime you need help with a service.';
   }
 
+  // ── Bye ────────────────────────────────────────────────────────────────────
   if (/\b(bye|goodbye|alvida|phir milenge|ok bye)\b/.test(normalized)) {
     if (language === 'hindi') return 'Theek hai! Phir kab bhi zaroorat ho, main yahan hoon.';
     if (language === 'gujarati') return 'Theek chhe! Phir koi jaroor pade to mane yaad karo.';
     return 'Bye! I am here whenever you need help with a home service.';
   }
 
+  // ── Default greeting ───────────────────────────────────────────────────────
   if (language === 'gujarati') return 'Hello! Hu ServeCircle AI chu. Tamari ghar ni koi pan problem type karo — ya photo moklo. Plumbing, electrical, cleaning, carpentry, appliance repair — badha mate help karis.';
   if (language === 'hindi') return 'Hello! Main ServeCircle AI hoon. Aap ghar ki koi bhi problem type kar sakte hain ya photo bhej sakte hain — plumbing, bijli, cleaning, carpentry, ya appliance repair. Aapki language mein baat kar sakta hoon.';
   return 'Hey! I am ServeCircle AI. Tell me what needs fixing at home, or send a photo. I understand English, Hindi, and Gujarati.';
+}
+
+function getConfidenceScore(result) {
+  const overall = result?.multimodal?.recommendation?.confidence?.overall;
+  if (typeof overall?.score === 'number') return overall.score;
+  if (typeof result?.confidence === 'number') return result.confidence;
+  if (typeof result?.multimodal?.problemAnalysis?.confidence?.score === 'number') return result.multimodal.problemAnalysis.confidence.score;
+  return 0;
+}
+
+function shouldShowRecommendation(result) {
+  const multimodal = result?.multimodal || {};
+  const problem = multimodal.problemAnalysis || {};
+  const service = multimodal.serviceResolution || {};
+  if (!service.resolved || !service.service) return false;
+  const category = String(problem.problemCategory || service.category || '').toLowerCase();
+  if (category === 'unknown problem' || category === 'unknown' || category === 'out_of_scope') return false;
+  return true;
+}
+
+function cleanCustomerLabel(value, fallback) {
+  const label = String(value || '').trim();
+  if (!label) return fallback;
+  const lower = label.toLowerCase();
+  if (lower.includes('conversation context') || lower.includes('previous conversation') || lower.includes('latest customer message')) {
+    return fallback;
+  }
+  if (label.length > 90) return fallback;
+  return label;
+}
+
+function buildAssistantMessage({ result, intent, hasImage, originalText }) {
+  const multimodal = result?.multimodal || {};
+  const problem = multimodal.problemAnalysis || {};
+  const service = multimodal.serviceResolution || {};
+  const raw = problem.aiAnalysisRaw || {};
+  const language = detectLanguage(originalText || raw.reasoningLocalized || '');
+  const problemName = cleanCustomerLabel(raw.problemType || problem.possibleProblems?.[0]?.name || multimodal.summary?.topProblem, 'this issue');
+  const serviceName = cleanCustomerLabel(service.service || raw.serviceCategory, 'the right service');
+
+  if (hasImage) {
+    return language === 'gujarati'
+      ? `Photo joi ne lage che ke ${problemName} ni problem che. Aa mate ${serviceName} best rahese. Niche aapi details thi direct book kari shako cho:`
+      : language === 'hindi'
+      ? `Photo dekhkar lag raha hai ki ${problemName} ki problem hai. Iske liye ${serviceName} best service rahegi. Aap neeche se direct booking kar sakte hain:`
+      : `From your photo, this looks like ${problemName}. ${serviceName} is the recommended service. You can book directly below:`;
+  }
+
+  if (intent === 'FOLLOW_UP') {
+    return language === 'gujarati'
+      ? `Thanks! Detail note kari lidhi che. ${serviceName} mate verified worker available che. Niche thi direct booking confirm kari shako cho:`
+      : language === 'hindi'
+      ? `Thanks, detail note kar li hai! ${serviceName} ke liye verified technician ready hain. Aap neeche card se direct booking confirm kar sakte hain:`
+      : `Thanks! Details noted for ${serviceName}. You can proceed with direct booking below:`;
+  }
+
+  return language === 'gujarati'
+    ? `Samajh gayu. ${problemName} mate ${serviceName} suitable service che. Niche aapi card mathi direct book karo:`
+    : language === 'hindi'
+    ? `Samajh gaya. ${problemName} ke liye ${serviceName} recommended service hai. Aap neeche card se direct booking kar sakte hain:`
+    : `Got it! For ${problemName}, we recommend ${serviceName}. Here are the details and booking options:`;
 }
 
 function sanitizeError(err) {
@@ -605,218 +808,6 @@ function sanitizeError(err) {
   return 'AI assistant is temporarily unable to process this request. Please try again.';
 }
 
-const AI_CITY_COORDS = {
-  ahmedabad: [23.0225, 72.5714], bhavnagar: [21.7645, 72.1519], surat: [21.1702, 72.8311],
-  vadodara: [22.3072, 73.1812], rajkot: [22.3039, 70.8022], jamnagar: [22.4707, 70.0577],
-  dwarka: [22.2442, 68.9685], somnath: [20.8880, 70.4012], junagadh: [21.5222, 70.4579],
-  bhuj: [23.2420, 69.6669], udaipur: [24.5854, 73.7125], 'mount abu': [24.5926, 72.7156],
-  jaipur: [26.9124, 75.7873], jodhpur: [26.2389, 73.0243], mumbai: [19.0760, 72.8777],
-  pune: [18.5204, 73.8567], goa: [15.2993, 74.1240], delhi: [28.6139, 77.2090],
-  agra: [27.1767, 78.0081], bengaluru: [12.9716, 77.5946], bangalore: [12.9716, 77.5946],
-  mysore: [12.2958, 76.6394], coorg: [12.3375, 75.8069], hyderabad: [17.3850, 78.4867],
-  indore: [22.7196, 75.8577],
-};
-
-const AI_EXACT_ROUTE_KM = {
-  'ahmedabad|udaipur': 260, 'bhavnagar|udaipur': 350, 'ahmedabad|mount abu': 225,
-  'ahmedabad|jaipur': 660, 'ahmedabad|dwarka': 440, 'ahmedabad|somnath': 410,
-  'ahmedabad|surat': 265, 'ahmedabad|vadodara': 112, 'ahmedabad|rajkot': 215,
-  'ahmedabad|mumbai': 525, 'bhavnagar|ahmedabad': 175, 'bhavnagar|somnath': 260,
-  'bhavnagar|dwarka': 410, 'surat|mumbai': 280, 'surat|udaipur': 485,
-  'mumbai|pune': 150, 'mumbai|goa': 590, 'delhi|jaipur': 280,
-  'delhi|agra': 230, 'bengaluru|mysore': 145, 'bengaluru|coorg': 265,
-};
-
-function estimateCityPairKmFromText(cleanText = '') {
-  const matchedCities = [];
-  for (const key of Object.keys(AI_CITY_COORDS)) {
-    const regex = new RegExp(`\\b${key}\\b`, 'i');
-    if (regex.test(cleanText)) {
-      matchedCities.push(key);
-    }
-  }
-  if (matchedCities.length < 2) return null;
-  const [c1, c2] = matchedCities;
-  if (AI_EXACT_ROUTE_KM[`${c1}|${c2}`]) return AI_EXACT_ROUTE_KM[`${c1}|${c2}`];
-  if (AI_EXACT_ROUTE_KM[`${c2}|${c1}`]) return AI_EXACT_ROUTE_KM[`${c2}|${c1}`];
-  const [lat1, lon1] = AI_CITY_COORDS[c1];
-  const [lat2, lon2] = AI_CITY_COORDS[c2];
-  const toRad = (v) => (v * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  const straight = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.max(40, Math.round((straight * 1.28) / 5) * 5);
-}
-
-/**
- * Dynamic Fare & Pricing Calculator for ServeCircle AI Chatbot
- * Identical formulas to client/src/utils/pricingEngine.js so UI & AI always match.
- */
-function computeDynamicChatPrice({ text = '', serviceName = '', category = '', basePrice = 350, aiEstimatedPrice = null }) {
-  const clean = (text || '').toLowerCase();
-  let price = null;
-  let breakdown = '';
-  let isDynamic = false;
-
-  // 1. Distance extraction (or auto-estimate from Pickup & Drop city names):
-  let km = null;
-  const kmRegex = /(?:(\d+(?:\.\d+)?)\s*(?:km|kms|kilometer|kilometres|kilo|k\.m\.)|(?:distance|door|safar|drive|travel|gaye|jana|chala|kitna).{0,15}?(\d+(?:\.\d+)?)\s*(?:km|kms)?)/i;
-  const kmMatch = clean.match(kmRegex);
-  if (kmMatch) {
-    const val = parseFloat(kmMatch[1] || kmMatch[2]);
-    if (!isNaN(val) && val > 0 && val < 5000) {
-      km = val;
-    }
-  }
-  if (!km) {
-    const directKm = clean.match(/(\d{2,4})\s*(?:km|kms)\b/i);
-    if (directKm) km = parseFloat(directKm[1]);
-  }
-  if (!km) {
-    km = estimateCityPairKmFromText(clean);
-  }
-  const isRoundTrip = /round.?trip|return|wapas|both side|up\s*and\s*down|up\s*down/i.test(clean);
-
-  // 2. Point-to-Point Pick & Drop (Airport / Railway / Bus / Any Place) vs Outstation Drive Mode & Vehicle classification
-  const isAirport = /airport|flight|terminal|hawai adda|airport pickup|airport drop/i.test(clean) || /airport/i.test(serviceName);
-  const isRailway = /railway|train|station|junction|kalupur|sabarmati|ndls|pnr/i.test(clean);
-  const isBus = /bus|bus stand|bus terminal|isbt|gsrtc|brts/i.test(clean);
-  const isPickDrop = isAirport || isRailway || isBus || (/pick\s*(?:&|and|up)?\s*drop|pickup.*drop|drop.*pickup/i.test(clean) && !/outstation|multi.?day/i.test(clean));
-  const isSelfDrive = /self.?drive|without driver|no driver|bina driver|khud chalani|khud drive/i.test(clean);
-
-  const isTempo = /tempo|traveller|12 seater|minibus/i.test(clean);
-  const isLuxury = /luxury|mercedes|bmw|audi|jaguar|mustang|lexus|porsche|roll|royce|range rover|achhi brand|acche brand|top brand|top model|vip/i.test(clean);
-  const isPremiumSuv = /innova|crysta|hycross|fortuner|safari|xuv700|7 seater|seven seater/i.test(clean);
-  const isCompactSuv = /suv|ertiga|creta|harrier|scorpio|seltos|brezza|badi gadi/i.test(clean);
-  const isHatchback = /hatchback|swift|i20|wagonr|baleno|alto|tiago|chhoti gadi/i.test(clean);
-  const isSedan = /sedan|dzire|city|verna|etios|amaze|car|gadi|gaadi/i.test(clean);
-
-  // 3. Days extraction
-  let days = 1;
-  const daysMatch = clean.match(/(\d+)\s*(?:day|days|din|raat|night|nights)\b/i);
-  if (daysMatch) {
-    days = Math.min(30, Math.max(1, parseInt(daysMatch[1], 10)));
-  }
-
-  // 4. BHK extraction
-  let bhk = null;
-  const bhkMatch = clean.match(/(\d+)\s*(?:bhk|bedroom|bed room|room|kamra)\b/i);
-  if (bhkMatch) {
-    bhk = Math.min(6, Math.max(1, parseInt(bhkMatch[1], 10)));
-  }
-
-  // 5. Guest extraction
-  let guests = null;
-  const guestMatch = clean.match(/(\d+)\s*(?:guest|guests|people|person|persons|log|vyakti|jana)\b/i);
-  if (guestMatch) {
-    guests = Math.min(200, Math.max(1, parseInt(guestMatch[1], 10)));
-  }
-
-  const isNight = /night|raat|late night|overnight|der raat/i.test(clean);
-
-  const isTravel = isPickDrop ||
-                   /travel|driver|commute|chauffeur|cab|taxi|rental|outstation|self.?drive/i.test(category) ||
-                   /driver|chauffeur|travel|outstation|car rental/i.test(serviceName) ||
-                   /driver|gadi chalane|gaadi driver|outstation|travel|self.?drive/i.test(clean) ||
-                   (km && (isLuxury || isTempo || isPremiumSuv || isCompactSuv || isHatchback || isSedan || /gadi|gaadi|car|drive/i.test(clean)));
-
-  const isRelocation = /relocat|packer|mover|shifting/i.test(category) ||
-                       /relocat|packer|mover|shifting/i.test(serviceName) ||
-                       /shift|pack|relocat|samaan shifting|room shift|house shift/i.test(clean);
-
-  const isFood = /food|kitchen|cook|catering/i.test(category) ||
-                 /cook|chef|catering|tiffin/i.test(serviceName) ||
-                 /khana|rasoi|cook|chef/i.test(clean);
-
-  const isCleaning = /clean|hygiene/i.test(category) || /cleaning/i.test(serviceName);
-
-  if (isPickDrop) {
-    const dist = km || 18;
-    const basePickup = isAirport ? 199 : (isRailway || isBus) ? 129 : 99;
-    const hubLabel = isAirport ? 'Airport Transfer' : isRailway ? 'Railway Station Pick & Drop' : isBus ? 'Bus Terminal Pick & Drop' : 'Point-to-Point Pick & Drop';
-    const distCharge = Math.round(dist * 18);
-    const subtotal = basePickup + distCharge;
-    const nightFee = isNight ? Math.round(subtotal * 0.25) : 0;
-    price = subtotal + nightFee;
-    breakdown = `${hubLabel} (Standard AC Cab • ${dist} km @ ₹18/km = ₹${distCharge.toLocaleString('en-IN')} + ₹${basePickup} pickup base${nightFee ? ` + ₹${nightFee} night surcharge` : ''})`;
-    isDynamic = true;
-  } else if (isTravel) {
-    let perKm = isSelfDrive ? 12 : 14;
-    let dailyFee = isSelfDrive ? 1200 : 500;
-    let tierTitle = 'Sedan (Dzire / Honda City)';
-    let effectiveSelfDrive = isSelfDrive;
-
-    if (isTempo) {
-      perKm = 28;
-      dailyFee = 900;
-      tierTitle = 'Tempo Traveller (12-Seater, With Driver)';
-      effectiveSelfDrive = false;
-    } else if (isLuxury) {
-      perKm = isSelfDrive ? 34 : 38;
-      dailyFee = isSelfDrive ? 3500 : 1200;
-      tierTitle = 'Luxury Fleet (Mercedes / BMW / Audi)';
-    } else if (isPremiumSuv) {
-      perKm = isSelfDrive ? 19 : 22;
-      dailyFee = isSelfDrive ? 2100 : 700;
-      tierTitle = 'Premium SUV (Innova Crysta / Hycross)';
-    } else if (isCompactSuv) {
-      perKm = isSelfDrive ? 15 : 17;
-      dailyFee = isSelfDrive ? 1600 : 600;
-      tierTitle = 'Compact SUV (Ertiga / Creta)';
-    } else if (isHatchback) {
-      perKm = isSelfDrive ? 10 : 11;
-      dailyFee = isSelfDrive ? 900 : 400;
-      tierTitle = 'Hatchback (Swift / i20)';
-    }
-
-    const modeLabel = effectiveSelfDrive ? 'Self Drive (No Driver)' : 'With Driver';
-
-    if (km) {
-      const billedKm = isRoundTrip ? km * 2 : km;
-      const transitFare = Math.round(billedKm * perKm);
-      const durationFare = dailyFee * days;
-      price = transitFare + durationFare;
-      breakdown = `${tierTitle} [${modeLabel}] • ${billedKm} km${isRoundTrip ? ' (Round Trip)' : ''} @ ₹${perKm}/km (₹${transitFare.toLocaleString('en-IN')}) + ${days}d ${effectiveSelfDrive ? 'self-drive rental' : 'driver allowance'} (₹${durationFare.toLocaleString('en-IN')})`;
-      isDynamic = true;
-    } else {
-      price = dailyFee * days;
-      breakdown = `${tierTitle} [${modeLabel}] (${days} day @ ₹${dailyFee.toLocaleString('en-IN')}/day + ₹${perKm}/km by distance)`;
-      isDynamic = true;
-    }
-  } else if (isRelocation) {
-    const bhkTable = { 1: 3500, 2: 6500, 3: 10500, 4: 15500, 5: 21000 };
-    const bhkCount = bhk || 2;
-    const baseMoving = bhkTable[bhkCount] || 6500;
-    const dist = km || 25;
-    const transitFee = Math.round(dist * 16);
-    price = baseMoving + transitFee;
-    breakdown = `${bhkCount}BHK loading & packing (₹${baseMoving.toLocaleString('en-IN')}) + ${dist} km transit truck fare @ ₹16/km (₹${transitFee.toLocaleString('en-IN')})`;
-    isDynamic = true;
-  } else if (isFood && guests && guests > 4) {
-    const extra = guests - 4;
-    price = 599 + (extra * 110);
-    breakdown = `Home Chef base (up to 4 guests: ₹599) + ${extra} additional guests @ ₹110/guest`;
-    isDynamic = true;
-  } else if (isCleaning && bhk) {
-    const cleanTable = { 1: 999, 2: 1499, 3: 1999, 4: 2799 };
-    price = cleanTable[bhk] || 1499;
-    breakdown = `Full Deep Cleaning for ${bhk}BHK home`;
-    isDynamic = true;
-  }
-
-  if (!price) {
-    if (aiEstimatedPrice && typeof aiEstimatedPrice === 'number' && aiEstimatedPrice > 0 && aiEstimatedPrice !== 350 && aiEstimatedPrice !== 599 && aiEstimatedPrice !== 2000) {
-      price = aiEstimatedPrice;
-      breakdown = 'Custom verified estimate for your request';
-      isDynamic = true;
-    } else {
-      price = basePrice;
-    }
-  }
-
-  return { price, explanation: breakdown, isDynamic };
-}
 
 router.post(
   '/chat',
@@ -910,6 +901,7 @@ router.post(
 
       let aiResponse = null;
       try {
+        // Run high-intelligence chat via active provider (Groq Qwen 3.8 27B)
         aiResponse = await AIProviderManager.chatWithCustomer({
           text,
           image,
@@ -1071,13 +1063,6 @@ router.post(
         }
       }
 
-      if (showRecommendation && dynamicPricing.isDynamic && dynamicPricing.explanation) {
-        const fareNote = `\n\n📌 **Fair Fare Breakdown**: ${dynamicPricing.explanation} = **₹${servicePrice.toLocaleString('en-IN')}**. Instant booking available below.`;
-        if (!replyMessage.includes(`₹${servicePrice}`)) {
-          replyMessage += fareNote;
-        }
-      }
-
       const payload = {
         status: 'success',
         intent: responseIntent,
@@ -1097,7 +1082,7 @@ router.post(
                 problemType: serviceName,
                 urgency: aiResponse?.urgency || 'Standard',
                 recommendedActions: aiResponse?.safetyPrecautions || [],
-                followUpQuestions: sanitizedFollowUps,
+                followUpQuestions: aiResponse?.followUpQuestions || [],
               },
             },
             serviceResolution: {
@@ -1117,7 +1102,6 @@ router.post(
                 serviceId,
                 category: serviceCategory,
                 estimatedPrice: servicePrice,
-                priceRangeInr: { min: servicePrice },
                 requiredSkill: { primary: serviceSkill },
                 safetyPrecautions: aiResponse?.safetyPrecautions || [],
               },
@@ -1222,21 +1206,21 @@ router.post(
 
       let dbService = null;
       const resolvedName = aiResponse.serviceName || 'Home Service';
-      if (mongoose.connection.readyState === 1) {
-        try {
-          dbService = await Service.findOne({
-            name: { $regex: new RegExp(resolvedName.trim(), 'i') },
+      try {
+        dbService = await prisma.service.findFirst({
+          where: {
+            name: { contains: resolvedName.trim(), mode: 'insensitive' },
             isActive: true,
-          }).lean().catch(() => null);
-        } catch {
-          dbService = null;
-        }
+          },
+        });
+      } catch {
+        dbService = null;
       }
 
       const serviceName = dbService ? dbService.name : resolvedName;
       const serviceCategory = dbService ? dbService.category : (aiResponse.category || 'Home Repairs');
       const servicePrice = dbService ? (dbService.basePrice || dbService.price || 350) : (aiResponse.estimatedPrice || 350);
-      const serviceId = dbService ? dbService._id.toString() : '';
+      const serviceId = dbService ? dbService.id : '';
       const confidencePct = '96%';
 
       const safetyList = Array.isArray(aiResponse.safetyPrecautions) && aiResponse.safetyPrecautions.length > 0
@@ -1303,7 +1287,6 @@ router.post(
                 name: serviceName,
                 category: serviceCategory,
                 estimatedPrice: servicePrice,
-                priceRangeInr: { min: servicePrice },
                 requiredSkill: { primary: aiResponse.requiredWorkerSkill || 'Technician' },
                 safetyPrecautions: safetyList,
               },
@@ -1329,5 +1312,6 @@ router.post(
     }
   })
 );
+
 
 export default router;
