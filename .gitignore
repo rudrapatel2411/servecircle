@@ -21,7 +21,6 @@ server/_r_register.json
 .cursor/
 .devin/
 **/.agents/
-/.agent
 **/.claude/
 **/.cursor/
 **/.devin/

@@ -9,6 +9,8 @@ import {
 import { mockWorkersForService } from './WorkerComparison';
 import { getSession, requestApi } from '../../utils/authSession.js';
 import { servicesRegistry } from '../../data/servicesRegistry';
+import { socket } from '../../socket';
+import { broadcastNotificationToTabs } from '../../utils/notificationSync';
 import servicesCatalog from '../../data/servicesCatalog.json';
 import '../Dashboard.css';
 import './CustomerPages.css';

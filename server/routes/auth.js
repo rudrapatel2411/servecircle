@@ -192,7 +192,18 @@ router.post(
 
     const userId = user.id || user._id;
     const userRole = String(user.role || '').toLowerCase();
-    const token = jwt.sign({ id: userId, role: userRole }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      {
+        id: userId,
+        role: userRole,
+        email: user.email,
+        name: user.name,
+        serviceCategory: user.serviceCategory || '',
+        workerStatus: user.workerStatus || 'approved_senior',
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     try {
       logEvent({ eventType: EVENT_TYPES.USER_LOGGED_IN, entityType: ENTITY_TYPES.USER, entityId: userId, actorId: userId, actorRole: userRole, metadata: { email: user.email }, ...req.reqCtx });

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 /// ServeCircle Neomorphism v2.0 Shadow & Elevation System.
 ///
 /// Provides crisp, layered ambient directional lighting tokens instead of blurry shadows.
+///
+/// Source of Truth: `PROJECT_BRAIN/brain.md (repository map); this source file owns its implementation`
 class AppShadows {
   AppShadows._();
 

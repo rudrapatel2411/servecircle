@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ServeCircle Business Plan v2.0</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      background-color: #f1f5f9;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    /* A4 page wrapper */
+    .page {
+      width: 210mm;
+      height: 297mm;
+      padding: 20mm 18mm 18mm 18mm;
+      background-color: white;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin: 10px auto; /* Visible in browser, removed in print */
+    }
+    
+    @media print {
+      body {
+        background-color: white;
+      }
+      .page {
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+    
+    /* Cover Page Styles */
+    .cover {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30mm 18mm 25mm 18mm;
+      text-align: center;
+    }
+    
+    .cover-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+    
+    .cover-subtitle {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #93c5fd;
+      margin: 5mm 0 0 0;
+    }
+    
+    .cover-bullets {
+      display: flex;
+      justify-content: center;
+      gap: 3mm;
+      margin-top: 8mm;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fcd34d;
+    }
+    
+    .cover-meta {
+      margin-top: 15mm;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 8mm;
+      width: 100%;
+    }
+    
+    .cover-meta h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      margin: 0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+    
+    .cover-meta p {
+      font-size: 0.95rem;
+      color: #bfdbfe;
+      margin: 2mm 0 0 0;
+    }
+    
+    .cover-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3mm;
+      width: 100%;
+      margin-top: 12mm;
+    }
+    
+    .cover-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      padding: 4mm 2mm;
+    }
+    
+    .cover-card-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: #bfdbfe;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .cover-card-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: white;
+      margin-top: 1.5mm;
+    }
+    
+    .cover-tagline {
+      background-color: #f59e0b;
+      color: #0f172a;
+      width: 100%;
+      padding: 4mm;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border-radius: 6px;
+      margin-top: 10mm;
+      text-transform: uppercase;
+    }
+    
+    /* Header Banners */
+    .header-banner {
+      color: white;
+      padding: 5mm 8mm;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      border-radius: 6px;
+      margin-bottom: 8mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .banner-red { background-color: #ef4444; }
+    .banner-green { background-color: #10b981; }
+    .banner-purple { background-color: #8b5cf6; }
+    .banner-orange { background-color: #f59e0b; }
+    .banner-blue { background-color: #3b82f6; }
+    
+    /* Headings */
+    h2.page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.95rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin: 0 0 4mm 0;
+      letter-spacing: -0.5px;
+    }
+    
+    p.intro-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #475569;
+      margin: 0 0 6mm 0;
+    }
+    
+    /* Card Elements */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5mm;
+      flex: 1;
+    }
+    
+    .info-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid #2563eb;
+      border-radius: 6px;
+      padding: 5mm 6mm;
+    }
+    
+    .info-card.red-border { border-left-color: #ef4444; }
+    .info-card.green-border { border-left-color: #10b981; }
+    .info-card.purple-border { border-left-color: #8b5cf6; }
+    .info-card.orange-border { border-left-color: #f59e0b; }
+    .info-card.blue-border { border-left-color: #3b82f6; }
+    
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 2mm 0;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+    
+    .card-content {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #334155;
+      margin: 0;
+    }
+    
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2mm;
+      margin-bottom: 4mm;
+      font-size: 0.85rem;
+    }
+    
+    table.data-table th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      padding: 3mm 4mm;
+      text-align: left;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    
+    table.data-table td {
+      padding: 3.2mm 4mm;
+      border-bottom: 1px solid #e2e8f0;
+      color: #334155;
+      line-height: 1.4;
+    }
+    
+    table.data-table tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+    
+    table.data-table .highlight-cell {
+      font-weight: 800;
+      color: #0f172a;
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    /* Grid layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+    }
+    
+    /* Double Column Lists */
+    .benefits-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 5mm;
+      margin-top: auto;
+    }
+    
+    .benefit-column h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0 0 3mm 0;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+    
+    .benefit-column ul {
+      margin: 0;
+      padding-left: 5mm;
+    }
+    
+    .benefit-column li {
+      font-size: 0.82rem;
+      color: #475569;
+      margin-bottom: 1.8mm;
+      line-height: 1.4;
+    }
+    
+    /* Footer */
+    .footer {
+      position: absolute;
+      bottom: 8mm;
+      left: 18mm;
+      right: 18mm;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 4mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    /* Table of Contents Styles */
+    .toc-title {
+      background-color: #2563eb;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 4mm;
+      text-align: center;
+      border-radius: 6px;
+      margin-top: 8mm;
+      letter-spacing: 1px;
+    }
+    
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2mm;
+      margin-top: 5mm;
+    }
+    
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2.2mm 4mm;
+      border-bottom: 1px dashed #e2e8f0;
+      font-size: 0.88rem;
+    }
+    
+    .toc-item-left {
+      display: flex;
+      gap: 4mm;
+    }
+    
+    .toc-number {
+      font-weight: 800;
+      color: #2563eb;
+      font-family: 'Outfit', sans-serif;
+      width: 6mm;
+    }
+    
+    .toc-name {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    .toc-desc {
+      color: #64748b;
+    }
+    
+    .toc-page {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: #334155;
+    }
+    
+    /* Subscription grids */
+    .subs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3mm;
+      margin-top: 2mm;
+    }
+    
+    .sub-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 5mm 3.5mm;
+      text-align: center;
+      background-color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sub-card.popular {
+      border: 2px solid #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+      position: relative;
+    }
+    
+    .popular-badge {
+      background-color: #f59e0b;
+      color: #0f172a;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 1mm 2mm;
+      border-radius: 4px;
+      position: absolute;
+      top: -3.5mm;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    .sub-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    
+    .sub-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #2563eb;
+      margin: 2.5mm 0;
+    }
+    
+    .sub-price-num {
+      color: #2563eb;
+    }
+    
+    .sub-features {
+      margin: 3mm 0 0 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+      font-size: 0.76rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2mm;
+      flex: 1;
+    }
+    
+    .sub-features li {
+      color: #475569;
+      line-height: 1.3;
+      padding-left: 4.5mm;
+      position: relative;
+    }
+    
+    .sub-features li::before {
+      content: "✓";
+      color: #10b981;
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+    }
+    
+    .sub-features li.excluded {
+      color: #94a3b8;
+      text-decoration: line-through;
+    }
+    
+    .sub-features li.excluded::before {
+      content: "✗";
+      color: #ef4444;
+    }
+    
+    /* Step milestones */
+    .steps-timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3mm;
+      margin-top: 4mm;
+      position: relative;
+    }
+    
+    .step-node {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 5mm 3mm;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+    
+    .step-number {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      background-color: #8b5cf6;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 3mm;
+    }
+    
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 2mm;
+    }
+    
+    .step-desc {
+      font-size: 0.74rem;
+      color: #64748b;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1: COVER & TOC ==================== -->
+  <div class="page cover">
+    <div>
+      <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; color: #bfdbfe; font-weight: 800;">
+        🇮🇳 India's Complete Service Ecosystem
+      </div>
+      <h1 class="cover-title" style="margin-top: 6mm;">ServeCircle</h1>
+      <div class="cover-subtitle">Every Service, One Circle</div>
+      <div class="cover-bullets">
+        <span>Home Services</span> • <span>Events</span> • <span>Employment</span> • <span>Community</span> • <span>Health</span> • <span>Relocation</span>
+      </div>
+    </div>
+    
+    <div class="cover-tagline">
+      "Har Kaam, Har Seva, Ek Circle Mein - One Platform for Every Need"
+    </div>
+
+    <div class="cover-grid">
+      <div class="cover-card">
+        <div class="cover-card-title">Services</div>
+        <div class="cover-card-value">100+ Types</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-card-title">Menus</div>
+        <div class="cover-card-value">16 Verticals</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-card-title">Job Types</div>
+        <div class="cover-card-value">30+ Roles</div>
+      </div>
+      <div class="cover-card">
+        <div class="cover-card-title">App Roles</div>
+        <div class="cover-card-value">Dual Funnel</div>
+      </div>
+    </div>
+
+    <div class="cover-meta">
+      <h3>BUSINESS PLAN & PLATFORM OVERVIEW</h3>
+      <p>The Unified Mega-Ecosystem Strategy • Version 2.0 - 2026</p>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 1B: TABLE OF CONTENTS ==================== -->
+  <div class="page">
+    <div class="toc-title">Table of Contents</div>
+    <div class="toc-grid">
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">01</span>
+          <span class="toc-name">Problem Statement</span>
+          <span class="toc-desc">— What challenges does ServeCircle solve?</span>
+        </div>
+        <span class="toc-page">3</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">02</span>
+          <span class="toc-name">Our Solution</span>
+          <span class="toc-desc">— The expanded full-funnel digital ecosystem</span>
+        </div>
+        <span class="toc-page">4</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">03</span>
+          <span class="toc-name">Platform Overview & Architecture</span>
+          <span class="toc-desc">— Roles, deliverables, and metrics</span>
+        </div>
+        <span class="toc-page">5</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">04</span>
+          <span class="toc-name">16 Main Menus Complete Structure</span>
+          <span class="toc-desc">— Core services outline</span>
+        </div>
+        <span class="toc-page">6</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">05</span>
+          <span class="toc-name">Advanced Technical Features</span>
+          <span class="toc-desc">— AI diagnosis, tracking, secure chat, and SOS</span>
+        </div>
+        <span class="toc-page">7</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">06</span>
+          <span class="toc-name">Home Repairs & Automotives</span>
+          <span class="toc-desc">— Electrical, plumbing, locks, and car/bike repair</span>
+        </div>
+        <span class="toc-page">8</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">07</span>
+          <span class="toc-name">Cleaning, Hygiene & Decor</span>
+          <span class="toc-desc">— Deep clean, pest control, assembly, and interior</span>
+        </div>
+        <span class="toc-page">9</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">08</span>
+          <span class="toc-name">Events, Celebrations & Food/Kitchen</span>
+          <span class="toc-desc">— Theme decor, catering, home chef, and baking</span>
+        </div>
+        <span class="toc-page">10</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">09</span>
+          <span class="toc-name">Outdoor, Relocation & Management</span>
+          <span class="toc-desc">— Garden, packers/movers, storage, RWA cleanups</span>
+        </div>
+        <span class="toc-page">11</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">10</span>
+          <span class="toc-name">Health, Care & Pet Services</span>
+          <span class="toc-desc">— Doctor visit, physio, nursing, babysitting, pet spa</span>
+        </div>
+        <span class="toc-page">12</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">11</span>
+          <span class="toc-name">Emergency & Commute Services</span>
+          <span class="toc-desc">— 24/7 priority dispatches and on-demand driver</span>
+        </div>
+        <span class="toc-page">13</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">12</span>
+          <span class="toc-name">Employment & Worker Growth</span>
+          <span class="toc-desc">— The Rozgar Kranti Framework & deployment streams</span>
+        </div>
+        <span class="toc-page">14</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">13</span>
+          <span class="toc-name">Worker Growth Milestones</span>
+          <span class="toc-desc">— Training, Pro badges, and commission incentives</span>
+        </div>
+        <span class="toc-page">15</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">14</span>
+          <span class="toc-name">Subscription Plans</span>
+          <span class="toc-desc">— Tiered customer packages (Gold & Platinum prices)</span>
+        </div>
+        <span class="toc-page">16</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">15</span>
+          <span class="toc-name">Revenue Model</span>
+          <span class="toc-desc">— Sustainable fee cuts, featured list, and B2B plans</span>
+        </div>
+        <span class="toc-page">17</span>
+      </div>
+      <div class="toc-item">
+        <div class="toc-item-left">
+          <span class="toc-number">16</span>
+          <span class="toc-name">Social Impact</span>
+          <span class="toc-desc">— Grass-roots empowerments and govt integrations</span>
+        </div>
+        <span class="toc-page">18</span>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 2 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2: PROBLEM STATEMENT ==================== -->
+  <div class="page">
+    <div class="header-banner banner-red">
+      <span>01 | Problem Statement</span>
+      <span>Challenge</span>
+    </div>
+    <h2 class="page-title">What Problems Exist Today?</h2>
+    <p class="intro-text">
+      India mein aaj bhi ghar ki service, health assistance, ya relocation arrange karna ek bahut bada jhanjhat hai. Customers ko multiple apps/contacts dhundhne padte hain, koi ek centralized reliable platform nahi hai. Saath hi, lakho skilled log unemployed hain kyunki unhe kaam dhundhne ka proper platform nahi mila.
+    </p>
+    
+    <div class="card-list">
+      <div class="info-card red-border">
+        <div class="card-title">Fragmentation & Overload</div>
+        <div class="card-content">
+          Alag-alag services (repair, cleaning, packers-movers, healthcare) ke liye alag apps install karne padte hain, jisse mobile device overload aur coordination failure hota hai.
+        </div>
+      </div>
+      <div class="info-card red-border">
+        <div class="card-title">Trust & Transparency Deficit</div>
+        <div class="card-content">
+          Koi standardized price transparency nahi hai. Worker reliable hai ya nahi, background aur credentials kya hain, unka digital checkup kaisa hai, kuch pata nahi chalta.
+        </div>
+      </div>
+      <div class="info-card red-border">
+        <div class="card-title">Event Management Chaos</div>
+        <div class="card-content">
+          Anniversary ya birthday arrange karne ke liye decorator, caterer, custom cake builder, photographer, aur home chef sab alag-alag unorganized channels se manage karne padte hain.
+        </div>
+      </div>
+      <div class="info-card red-border">
+        <div class="card-title">Medical & Elderly Emergencies</div>
+        <div class="card-content">
+          Raat ke samay routine physician consultations, clinical physiotherapy, active nurse setups, ya lab sample collecting monitors ke liye koi quick digital on-demand home visits system nahi hai.
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 3 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3: OUR SOLUTION ==================== -->
+  <div class="page">
+    <div class="header-banner banner-green">
+      <span>02 | Our Solution</span>
+      <span>Ecosystem</span>
+    </div>
+    <h2 class="page-title">ServeCircle — Ek Platform, Sab Kuch</h2>
+    <p class="intro-text">
+      ServeCircle ek comprehensive, all-in-one digital platform hai jo customers, workers, healthcare staff, aur unemployed logon ko ek single ecosystem dashboard par connect karta hai. Ghar ki choti wiring check se lekar structural home shifting tak, regular meal plans se health diagnostics tak, sab kuch ek circle mein.
+    </p>
+    
+    <div class="card-list">
+      <div class="info-card green-border">
+        <div class="card-title">Customer Ke Liye</div>
+        <div class="card-content">
+          <strong>Single App Advantage:</strong> Ghar baithe 100+ services book karein with real-time GPS tracking, verified credentials, clear price tier choices, dynamic bill estimator calculations, and quality signature safeguards. Access **"My Home"** structural metrics checks dashboard.
+        </div>
+      </div>
+      <div class="info-card green-border">
+        <div class="card-title">Worker Ke Liye</div>
+        <div class="card-content">
+          <strong>Regular Incoming Jobs & Milestones:</strong> Register as a pro, undergo vocational upskilling tutorials, receive official certifications alignment, track daily digital payouts directly inside wallet ledger, and earn bonuses based on stars reviews profiles.
+        </div>
+      </div>
+      <div class="info-card green-border">
+        <div class="card-title">Unemployed & Freshers Ke Liye</div>
+        <div class="card-content">
+          <strong>Rozgar Revolution Path:</strong> Complete beginner path with zero platform commission fee on first 5 successfully completed assignments. Free video training systems with direct partner alignment with PMKVY.
+        </div>
+      </div>
+      <div class="info-card green-border">
+        <div class="card-title">Society & Communities Ke Liye</div>
+        <div class="card-content">
+          <strong>Socio-Economic Safety Boost:</strong> Empower grass-roots workers, promote local safety, and support local NGOs to uplift underprivileged families. RWA bulk discount sharing options are embedded.
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 4 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4: PLATFORM OVERVIEW ==================== -->
+  <div class="page">
+    <div class="header-banner banner-purple">
+      <span>03 | Platform Overview</span>
+      <span>Architecture</span>
+    </div>
+    <h2 class="page-title">Platform Roles & Core Structure</h2>
+    <p class="intro-text">
+      The platform connects diverse user segments with highly optimized funnels, verified checkpoints, and transparent transactional pipelines:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Who Segment</th>
+          <th>Platform Role & Action</th>
+          <th>Direct Primary Benefits</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Customers</td>
+          <td>Browse standard/bespoke services, book dispatches</td>
+          <td>Transparent pricing, vetted professionals, SOS, tracking</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Workers</td>
+          <td>Accept local nearby jobs, maintain schedule roster</td>
+          <td>Dignified labor, regular high income, instant wallet pay</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Unemployed / Freshers</td>
+          <td>Enroll in training programs, launch initial jobs</td>
+          <td>0% commission start, hands-on tutoring, experience certificates</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Event Hosts</td>
+          <td>Coordinate custom bakers, DJs, caterers, chefs</td>
+          <td>One-stop modular cost estimation, automated cleanup sync</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Corporate B2B</td>
+          <td>Setup bulk AMC cleanups, electrical maintenance contracts</td>
+          <td>Discounted corporate rates, dedicated business manager</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Platform Owner</td>
+          <td>Manage fees configurations, dynamic matching rates</td>
+          <td>Sustainable, highly profitable recurring subscription model</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cover-grid" style="margin-top: 8mm; grid-template-columns: repeat(4, 1fr);">
+      <div class="cover-card" style="background-color: #f1f5f9; border-color: #cbd5e1; text-align: center;">
+        <div class="cover-card-title" style="color: #64748b;">16 Menu Verticals</div>
+        <div class="cover-card-value" style="color: #0f172a; font-size: 1.4rem;">Structured</div>
+      </div>
+      <div class="cover-card" style="background-color: #f1f5f9; border-color: #cbd5e1; text-align: center;">
+        <div class="cover-card-title" style="color: #64748b;">100+ Services</div>
+        <div class="cover-card-value" style="color: #0f172a; font-size: 1.4rem;">Predefined</div>
+      </div>
+      <div class="cover-card" style="background-color: #f1f5f9; border-color: #cbd5e1; text-align: center;">
+        <div class="cover-card-title" style="color: #64748b;">30+ Job Roles</div>
+        <div class="cover-card-value" style="color: #0f172a; font-size: 1.4rem;">Verified</div>
+      </div>
+      <div class="cover-card" style="background-color: #f1f5f9; border-color: #cbd5e1; text-align: center;">
+        <div class="cover-card-title" style="color: #64748b;">24/7 SOS</div>
+        <div class="cover-card-value" style="color: #0f172a; font-size: 1.4rem;">Immediate</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 5 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5: 16 MENU VERTICALS ==================== -->
+  <div class="page">
+    <div class="header-banner banner-blue">
+      <span>04 | 16 Menu Categories</span>
+      <span>The Complete Directory</span>
+    </div>
+    <h2 class="page-title">Ecosystem Menu Directory</h2>
+    
+    <table class="data-table" style="font-size: 0.8rem;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Menu Vertical</th>
+          <th>Expanded Core Service Deliverables Descriptions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">01</td>
+          <td class="highlight-cell">Home Repairs</td>
+          <td>Electrician switchboard fix, leak plumbing, carpenters locks repair, AC geyser setup</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">02</td>
+          <td class="highlight-cell">Vehicle Services</td>
+          <td>Doorstep car/bike full servicing, premium detail polishing, flat tire aid, jumpstart</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">03</td>
+          <td class="highlight-cell">Cleaning & Hygiene</td>
+          <td>Full deep home sanitization, advanced pest termite spray, sofa wash, overhead water tank vacuum</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">04</td>
+          <td class="highlight-cell">Events & Celebrations</td>
+          <td>LED birthdays decor arches, catering counters, live acoustic DJs, cinematographers</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">05</td>
+          <td class="highlight-cell">Furniture & Decor</td>
+          <td>Flat-pack assembly alignments, royal teak wood polishing, wallpaper installation</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">06</td>
+          <td class="highlight-cell">Garden & Outdoor</td>
+          <td>Automatic drip irrigation, вертикаль balcony designs, gates welding, waterproofing coatings</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">07</td>
+          <td class="highlight-cell">Emergency Services</td>
+          <td>24/7 instant leakage arrest, short circuit isolation, urgent lockouts, vehicle tow recovery</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">08</td>
+          <td class="highlight-cell">Packers & Movers</td>
+          <td>Bubble wrap home shifting, single heavy treadmills transit, climate-controlled Storage Vaults</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">09</td>
+          <td class="highlight-cell">Health & Wellness</td>
+          <td>GP doctor visit, orthopedic clinical physiotherapy, home blood draw phlebotomy collection</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">10</td>
+          <td class="highlight-cell">Kids & Elderly Care</td>
+          <td>Hourly babysitters play support, elderly walking companion caretakers, special nursing</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">11</td>
+          <td class="highlight-cell">Pet Services</td>
+          <td>Dog tick spa grooming, overnight pet sitting, veterinarians deworming checkup, walkies</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">12</td>
+          <td class="highlight-cell">Food & Kitchen</td>
+          <td>Gourmet chef meal cooking, daily healthy tiffin plan boxes, custom fondant themed cakes</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">13</td>
+          <td class="highlight-cell">Travel & Commute</td>
+          <td>Chauffeur outstation multi-day drives, zero-cancellation airport drop sedan, luxury commute</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">14</td>
+          <td class="highlight-cell">Education & Help</td>
+          <td>1-on-1 Math academic home tutor, seniors smartphone apps banking coaching, ATS resumes writing</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">15</td>
+          <td class="highlight-cell">Society Management</td>
+          <td>RWA corridors path cleaning, basements mosquito fogging, smart RFID gates sync</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">16</td>
+          <td class="highlight-cell">My Account</td>
+          <td>Unified booking dashboard logs, wallet transaction ledgers, reviews, subscriptions</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 6 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6: ADVANCED TECHNICAL FEATURES ==================== -->
+  <div class="page">
+    <div class="header-banner banner-purple">
+      <span>05 | Advanced Technical Features</span>
+      <span>Unique Technology</span>
+    </div>
+    <h2 class="page-title">Technology That Makes ServeCircle Unique</h2>
+    
+    <div class="grid-2">
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">AI Smart Diagnosis</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Customer uploads images or short videos of structural faults. AI analyzes and instantly proposes appropriate services and pricing.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">Live Worker Tracking</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Real-time Uber-like geolocation map overlays. Customers can check active transit status and live ETA down to the minute.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">ServeCircle Chat & Calling</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          In-app end-to-end messaging with proxy-masked phone numbers. Allows secure communication, photo sharing, and active phone overlay.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">Worker Comparison Grid</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Side-by-side matrices comparing 2-3 matched professionals. Displays prices, years of experience, PMKVY badges, and review scores.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">HomeFixr Health Score</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          AI-driven house safety index tracking appliance status, wiring age, water dampness, and upcoming preventive checkups.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">SOS Safety Button</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Instant geo-targeted alert dispatch systems connecting directly with emergency contacts, nearby police, and dedicated platform security.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">Smart Warranty Tracker</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Automated database mapping registered appliances. Reminds users of AMC renewal, filter replacement, or standard service intervals.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 3.5mm 5mm;">
+        <div class="card-title" style="font-size: 0.95rem;">ServeCircle Pay (BNPL)</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Seamless in-wallet billing with 0% interest Book Now, Pay Later installments split (3/6/9 months split) and ServePoints reward ledgers.
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 7 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 7: REPAIRS & AUTOMOTIVE ==================== -->
+  <div class="page">
+    <div class="header-banner banner-blue">
+      <span>06 | Repairs & Automotives</span>
+      <span>Maintenance</span>
+    </div>
+    <h2 class="page-title">Home Repairs & Automotive Services</h2>
+    <p class="intro-text">
+      Standardized domestic support matching certified technical expertise with transparent pricing frameworks:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service Area</th>
+          <th>Core Scope Deliverables</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Electrical Work</td>
+          <td>Short circuit isolation, switch replacement, geyser wiring</td>
+          <td>Certified Electrician</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Plumbing Fix</td>
+          <td>Burst pipes sealant, high-pressure tap descaling, bathroom setup</td>
+          <td>Vetted Plumber</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Carpentry Works</td>
+          <td>Hinge replacement, soft-close alignment, door deadbolts</td>
+          <td>Skill Carpenter</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">AC & Appliances</td>
+          <td>Gas refills, cooling diagnostics, washing machine calibrating</td>
+          <td>Level-2 Appliance Tech</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Car/Bike Tune-ups</td>
+          <td>Mobile synthetic oil changes, engine filter cleaning, brake check</td>
+          <td>Automotive Mechanic</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Mobile Puncture</td>
+          <td>Roadside tubeless puncture repair, nitrogen air, valve changes</td>
+          <td>Mobile Tire Specialist</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>Standardized diagnostic estimates</li>
+          <li>30-day post-service warranty</li>
+          <li>IP67 original OEM replacement parts</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>Steady stream of local coordinates job</li>
+          <li>Detailed transparent digital earnings</li>
+          <li>Weekly vocational upskilling tutorials</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 8 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 8: CLEANING, HYGIENE & DECOR ==================== -->
+  <div class="page">
+    <div class="header-banner banner-blue">
+      <span>07 | Cleaning, Hygiene & Decor</span>
+      <span>Aesthetics</span>
+    </div>
+    <h2 class="page-title">Property Upkeep & Styling Services</h2>
+    <p class="intro-text">
+      Highly professional hygiene sweeps and architectural decor enhancements for both residential and corporate spaces:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service Area</th>
+          <th>Core Scope Deliverables</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Home Deep Cleaning</td>
+          <td>Tile descaling, greasy kitchen chimney scrubbing, vacuum sanitizing</td>
+          <td>4-Member Deep Clean Crew</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Pest Control</td>
+          <td>WHO-approved cockroach bait gel, anti-termite drill treatments</td>
+          <td>Certified Pest Controller</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Water Tank Cleaning</td>
+          <td>Submersible sludge pump vac, wall scrub, UV sterilization</td>
+          <td>Water Hygiene Expert</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Flat-pack Assembly</td>
+          <td>Modular wardrobe fittings, IKEA-style table assembly leveling</td>
+          <td>Precision Carpenter</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Wood Polishing</td>
+          <td>Deep scratch wood fillers, lacquer coat, matte/gloss polishing</td>
+          <td>Restoration Specialist</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Wallpaper & Interior</td>
+          <td>Bubble-free wallpaper roll, space color palette consult</td>
+          <td>Decor Designer</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>Before/After photo verification gallery</li>
+          <li>100% eco-friendly non-toxic agents</li>
+          <li>Comprehensive damage protection guarantees</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>High ticket value team assignments</li>
+          <li>Steady B2B corporate contracts opportunities</li>
+          <li>Free professional cleaning training kits</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 9 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 9: EVENTS & FOOD ==================== -->
+  <div class="page">
+    <div class="header-banner banner-orange">
+      <span>08 | Events & Celebrations</span>
+      <span>Catering & Planning</span>
+    </div>
+    <h2 class="page-title">Events, Celebrations & Culinary Services</h2>
+    <p class="intro-text">
+      From birthdays to anniversaries, coordinate themed decoration structures, professional catering buffers, and boutique home baking:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service Area</th>
+          <th>Core Scope Deliverables</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Event Packages</td>
+          <td>Custom themed balloon arch setups, stage LED structures</td>
+          <td>Events Styling Team</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Culinary Home Chef</td>
+          <td>Live kitchen Mughlai/Continental multi-course home cooking</td>
+          <td>Gourmet Culinary Chef</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Tiffin Subscription</td>
+          <td>Healthy low-oil home tiffins delivered right to desks</td>
+          <td>Dedicated Kitchen Vendor</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Custom Themed Cakes</td>
+          <td>Fondant chocolate truffle multi-tier bespoke cake orders</td>
+          <td>Boutique Home Baker</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Audio & DJ Setup</td>
+          <td>1000W audio speakers setups, programmable staging lighting</td>
+          <td>Sound Engineer / DJ</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Cinematography</td>
+          <td>4K portrait lenses, color-graded memories, custom reels links</td>
+          <td>Pro Photographer</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>Integrated package budget estimators</li>
+          <li>Zero-worry post-party deep cleanup sync</li>
+          <li>Chilled vehicle custom delivery boxes</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>3x premium freelance event wage tiers</li>
+          <li>Direct digital cake designs uploading</li>
+          <li>Regular weekend group assignments</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 10 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 10: OUTDOOR & RELOCATION ==================== -->
+  <div class="page">
+    <div class="header-banner banner-green">
+      <span>09 | Shifting & Infrastructure</span>
+      <span>Logistics</span>
+    </div>
+    <h2 class="page-title">Outdoor, Shifting & Society Infrastructure</h2>
+    <p class="intro-text">
+      Full-funnel logistics coordination, premium warehousing storage, structural landscaping, and cooperative RWA management:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service Area</th>
+          <th>Core Scope Deliverables</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Packers & Movers</td>
+          <td>corrugated 5-ply box wrapping, transit insurance, unloading</td>
+          <td>3-Member Shifting Crew</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Single Item Transit</td>
+          <td>bulky double-beds, heavy fitness treadmills transit straps</td>
+          <td>Mini-Truck Dispatcher</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Storage Vaults</td>
+          <td>Climate-controlled moisture seal secure locked crates</td>
+          <td>Warehouse Custodian</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Garden Pruning</td>
+          <td>Balcony вертикаль setup, automatic drip timers install</td>
+          <td>Landscape Gardener</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Outdoor Welding</td>
+          <td>Sagging main gate alignment, rust-primer grill welds</td>
+          <td>High-Volt Welder</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Society RFID Sync</td>
+          <td>RFID windshield tags sync, gates RFID barrier mounting</td>
+          <td>RWA Tech Installer</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>RWA collective group booking discount pools</li>
+          <li>Tamper-proof package tracking controls</li>
+          <li>Detailed item transit insurance protection</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>Large multi-trip relocation scale wages</li>
+          <li>Recurring apartment AMC society contracts</li>
+          <li>Corporate office transitions priority bookings</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 11 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 11: HEALTH, CARE & PETS ==================== -->
+  <div class="page">
+    <div class="header-banner banner-red">
+      <span>10 | Domestic Well-being</span>
+      <span>Wellness</span>
+    </div>
+    <h2 class="page-title">Health, Care & Pet Services</h2>
+    <p class="intro-text">
+      Clinical diagnostics home visits, elderly health companionship monitoring, newborn caretakers nannies, and veterinary care:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Service Area</th>
+          <th>Core Scope Deliverables</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Doctor Home Visit</td>
+          <td>MBBS/MD physician consultations, digital prescriptions load</td>
+          <td>Physician Doctor</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Home Nursing care</td>
+          <td>Catheter shifts, complex wound dressings, ICU log trackers</td>
+          <td>Registered Nurse</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Physiotherapy</td>
+          <td>Post-surgery movements, orthopedic joint mobilizations</td>
+          <td>Certified Physiotherapist</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Elderly Companion</td>
+          <td>BP sugar medicine logs, walking support, mind games</td>
+          <td>Elder Care Attendant</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Kids Nanny care</td>
+          <td>Bathing cycles, infant food sanitizing, sleep schedules</td>
+          <td>Verified Babysitter</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Pet Grooming</td>
+          <td>PH-neutral bubble ticks spa wash, veterinarians immunization</td>
+          <td>Pet Groomer / Vet</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>100% verified clinical credentials</li>
+          <li>Emergency hotline synchronizations</li>
+          <li>Private, HIPAA-compliant patient dashboard</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>Flexible private clinical practice hours</li>
+          <li>Enhanced medical consulting payout tiers</li>
+          <li>Full support clinical diagnostics kits</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 12 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 12: EMERGENCY & COMMUTE ==================== -->
+  <div class="page">
+    <div class="header-banner banner-blue">
+      <span>11 | Emergency & Commute</span>
+      <span>24/7 Priority Operations</span>
+    </div>
+    <h2 class="page-title">Emergency 24/7 Dispatch Ecosystem</h2>
+    <p class="intro-text">
+      <strong>Guaranteed 30-Minute Average Response Dispatch</strong> — 24/7 technical safety checks, locking emergencies, roadside mechanics, and chauffeurs:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Emergency Type</th>
+          <th>Core Incident Response Scope</th>
+          <th>Specialist Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Water/Gas Leak</td>
+          <td>Burst pipeline sealing, LPG gas pipe leakage audits</td>
+          <td>Emergency Plumber</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Electrical Short</td>
+          <td>Sparking board isolations, complete darkout restoration</td>
+          <td>Emergency Electrician</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Lockout Assistance</td>
+          <td>Non-destructive door unlocks, deadbolts replacements</td>
+          <td>Emergency Locksmith</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Roadside Breakdown</td>
+          <td>Tow carrier booking, flat battery jumps, starter check</td>
+          <td>Roadside Mechanic</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Driver-on-Demand</td>
+          <td>Safe city night drives, round-trip outstation chauffeur</td>
+          <td>Elite Chauffeur</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Medical First Aid</td>
+          <td>Paramedic home stabilizing, ambulance coordination</td>
+          <td>First-Aid Paramedic</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="benefits-box">
+      <div class="benefit-column">
+        <h4>■ Customer Benefits</h4>
+        <ul>
+          <li>One-click in-app SOS panic dispatcher</li>
+          <li>Immediate nearby active worker matching</li>
+          <li>Tamper-proof safety monitoring locks</li>
+        </ul>
+      </div>
+      <div class="benefit-column">
+        <h4>■ Worker Benefits</h4>
+        <ul>
+          <li>2x Night-shift compensation payouts</li>
+          <li>Immediate priority support responses</li>
+          <li>Insurance coverage on night transits</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 13 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 13: EMPLOYMENT & OPPORTUNITIES ==================== -->
+  <div class="page">
+    <div class="header-banner banner-green">
+      <span>12 | Employment & Opportunities</span>
+      <span>Rozgar Kranti Framework</span>
+    </div>
+    <h2 class="page-title">Rozgar Kranti Deployment Streams</h2>
+    <p class="intro-text">
+      ServeCircle is not just an application — it is a digital workforce revolution targeting four distinct grass-root streams to maximize community wealth:
+    </p>
+    
+    <div class="card-list" style="margin-top: 1mm;">
+      <div class="info-card green-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5mm;">1. Skilled Professionals (ITI/Diploma Holders)</div>
+        <div class="card-content" style="font-size: 0.82rem;">
+          Deploying experienced professionals in electrical engineering, HVAC technicians, clinical nurses, BPT therapists, and locksmiths. Connects them with high-ticket standard and premium home calls.
+        </div>
+      </div>
+      <div class="info-card green-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5mm;">2. Women Empowerment Focus (Safe At-Home Setups)</div>
+        <div class="card-content" style="font-size: 0.82rem;">
+          Targeted safe onboarding for women freelance specialists. Opportunities include boutique tailoring, aesthetic home salons, tiffin boxes prep, and online academic coaching from their home desk.
+        </div>
+      </div>
+      <div class="info-card green-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5mm;">3. Graduates & Students (Flexible Gig Support)</div>
+        <div class="card-content" style="font-size: 0.82rem;">
+          Micro-tasks for local college students. Flexible options include smart home CCTV cabling, laptop software debugs, event cinematography, spoken English accent training, and B2B RWA data syncs.
+        </div>
+      </div>
+      <div class="info-card green-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem; margin-bottom: 1.5mm;">4. Daily Wage & Rural Workers (Structured Labor)</div>
+        <div class="card-content" style="font-size: 0.82rem;">
+          Dignifying physical labor. Organizes shifting loaders, agricultural gardeners, RWA corridor deep cleaning crews, and delivery runners to prevent exploitation.
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 14 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 14: WORKER GROWTH PATH ==================== -->
+  <div class="page">
+    <div class="header-banner banner-purple">
+      <span>13 | Worker Growth Path</span>
+      <span>Milestones</span>
+    </div>
+    <h2 class="page-title">The 5-Step Professional Milestones</h2>
+    <p class="intro-text">
+      The ecosystem ensures an upward economic growth vector for every registered provider, transitioning them from beginners to high-earning premium partners:
+    </p>
+    
+    <div class="steps-timeline">
+      <div class="step-node">
+        <div class="step-number">1</div>
+        <div class="step-title">Free Training</div>
+        <div class="step-desc">Access to interactive upskilling video modules aligned with PMKVY.</div>
+      </div>
+      <div class="step-node">
+        <div class="step-number">2</div>
+        <div class="step-title">Activation</div>
+        <div class="step-desc">First 5 successful home calls completed at 0% platform take-rate.</div>
+      </div>
+      <div class="step-node">
+        <div class="step-number">3</div>
+        <div class="step-title">Reputation</div>
+        <div class="step-desc">Review rating metrics dashboard aggregation built with user stats.</div>
+      </div>
+      <div class="step-node">
+        <div class="step-number">4</div>
+        <div class="step-title">Pro Badge</div>
+        <div class="step-desc">Earn official 'ServeCircle Verified Pro' status after 50 high-star jobs.</div>
+      </div>
+      <div class="step-node">
+        <div class="step-number">5</div>
+        <div class="step-title">Priority Listing</div>
+        <div class="step-desc">Automated matching engine gives maximum dispatch priority and B2B gigs.</div>
+      </div>
+    </div>
+
+    <div class="info-card purple-border" style="margin-top: 10mm;">
+      <div class="card-title">Professional Identity & Growth Support</div>
+      <div class="card-content" style="font-size: 0.82rem; line-height: 1.6;">
+        Every pro worker gets their own digital storefront layout page containing their specialty, certification badges, PMKVY marks, verified customer reviews, before-and-after completed photo slots, and live wallet balances with transparent weekly direct bank settlement options. 
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 15 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 15: SUBSCRIPTION PLANS ==================== -->
+  <div class="page">
+    <div class="header-banner banner-orange">
+      <span>14 | Subscription Plans</span>
+      <span>Tiered Value Packaging</span>
+    </div>
+    <h2 class="page-title">Customer Subscriptions Ecosystem</h2>
+    <p class="intro-text">
+      Tailored subscription levels built to optimize customer booking convenience, maximize recurring loyalty savings, and provide priority dispatches:
+    </p>
+    
+    <div class="subs-grid">
+      <div class="sub-card">
+        <div class="sub-name">Basic</div>
+        <div class="sub-price">FREE</div>
+        <ul class="sub-features">
+          <li>Standard booking access</li>
+          <li>Baseline pricing index</li>
+          <li>Basic customer support</li>
+          <li class="excluded">Flat service discounts</li>
+          <li class="excluded">Dedicated Manager</li>
+          <li class="excluded">SOS VIP dispatches</li>
+        </ul>
+      </div>
+      
+      <div class="sub-card">
+        <div class="sub-name">Silver</div>
+        <div class="sub-price">₹199<span style="font-size: 0.7rem; font-weight: 500; color: #64748b;">/mo</span></div>
+        <ul class="sub-features">
+          <li>10% flat service discount</li>
+          <li>Priority booking queue</li>
+          <li>Monthly 1 free consult</li>
+          <li class="excluded">Dedicated Manager</li>
+          <li class="excluded">30-min VIP dispatches</li>
+        </ul>
+      </div>
+      
+      <div class="sub-card popular">
+        <div class="popular-badge">Most Popular</div>
+        <div class="sub-name" style="color: #f59e0b;">Gold</div>
+        <div class="sub-price">₹1499<span style="font-size: 0.7rem; font-weight: 500; color: #64748b;">/mo</span></div>
+        <ul class="sub-features">
+          <li>20% flat service discount</li>
+          <li>Quarterly appliance checks</li>
+          <li>VIP emergency (30-min response)</li>
+          <li>2 free video consultations</li>
+          <li class="excluded">Dedicated Manager</li>
+        </ul>
+      </div>
+      
+      <div class="sub-card" style="border-color: #8b5cf6;">
+        <div class="sub-name" style="color: #8b5cf6;">Platinum</div>
+        <div class="sub-price">₹1999<span style="font-size: 0.7rem; font-weight: 500; color: #64748b;">/mo</span></div>
+        <ul class="sub-features">
+          <li>30% flat service discount</li>
+          <li>Dedicated Personal Manager</li>
+          <li>Unlimited video consults</li>
+          <li>Free annual home health audit</li>
+          <li>VIP emergency (15-min response)</li>
+          <li>Direct B2B rates access</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 16 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 16: REVENUE MODEL ==================== -->
+  <div class="page">
+    <div class="header-banner banner-blue">
+      <span>15 | Revenue Model</span>
+      <span>Financial Architecture</span>
+    </div>
+    <h2 class="page-title">Sustainable Multi-Channel Income</h2>
+    <p class="intro-text">
+      The platform operates on diverse revenue streams to achieve high unit economics, balance cash flows, and fund continuous scaling:
+    </p>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Revenue Channel</th>
+          <th>Operational & Technical Mechanics</th>
+          <th>Est. Revenue %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight-cell">Booking Commission</td>
+          <td>15% to 25% take-rate fee cut on basic customer transactions</td>
+          <td class="highlight-cell" style="color: #2563eb;">35%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Subscription Plans</td>
+          <td>Monthly recurring fees from Silver, Gold, and Platinum tier packages</td>
+          <td class="highlight-cell" style="color: #2563eb;">25%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Featured Placements</td>
+          <td>Service providers pay standard bids to appear higher in comparisons</td>
+          <td class="highlight-cell" style="color: #2563eb;">12%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Emergency Premium</td>
+          <td>Night-shift operations fees matching guaranteed SOS 30-min dispatches</td>
+          <td class="highlight-cell" style="color: #2563eb;">10%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Specialized Flat Gigs</td>
+          <td>Flat package quotes on event catering themes and inter-city packers</td>
+          <td class="highlight-cell" style="color: #2563eb;">8%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">Corporate B2B AMC</td>
+          <td>Annual building maintenance contracts and RFID gate setups</td>
+          <td class="highlight-cell" style="color: #2563eb;">6%</td>
+        </tr>
+        <tr>
+          <td class="highlight-cell">In-app Hardware Ads</td>
+          <td>Appliance brands, pet feeds, and clinic ads target slots</td>
+          <td class="highlight-cell" style="color: #2563eb;">4%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-card blue-border" style="margin-top: auto;">
+      <div class="card-title">Sustainable Operational Leverage</div>
+      <div class="card-content" style="font-size: 0.8rem; line-height: 1.4;">
+        By distributing revenues across commissions, ads, subscriptions, and corporate accounts, ServeCircle protects itself from seasonal transactional drops, creating a highly resilient business model.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 17 of 18</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 17: SOCIAL IMPACT ==================== -->
+  <div class="page">
+    <div class="header-banner banner-purple">
+      <span>16 | Social Impact</span>
+      <span>Profit with Purpose</span>
+    </div>
+    <h2 class="page-title">ServeCircle — Ek Social Revolution</h2>
+    <p class="intro-text">
+      We believe in double-bottom-line performance: delivering strong investor yields while transforming grass-roots livelihood opportunities across Indian cities:
+    </p>
+    
+    <div class="grid-2">
+      <div class="info-card purple-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem;">Local Hero Recognition</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Monthly cash bonuses and media features for highest-rated local service pros, restoring dignity to domestic labor.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem;">First Job Initiative</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Onboard absolute beginners and waive commission fees for their first 5 assignments, building confidence and online reputation.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem;">Govt Scheme Integration</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Direct API mapping with PM Kaushal Vikas Yojana and Startup India, supplying verified digital technical certifications.
+        </div>
+      </div>
+      <div class="info-card purple-border" style="padding: 4mm 5mm;">
+        <div class="card-title" style="font-size: 1rem;">Economic Scale Vector</div>
+        <div class="card-content" style="font-size: 0.8rem;">
+          Onboarding 1,000 active providers per town lifts 1,000 grass-root families into a stable financial middle-class layer.
+        </div>
+      </div>
+    </div>
+
+    <div class="toc-title" style="background-color: #8b5cf6; font-size: 1.05rem; padding: 4mm; margin-top: 10mm;">
+      ServeCircle = Customer Ki Convenience + Worker Ki Dignity + Society Ki Prosperity
+    </div>
+    
+    <div class="footer">
+      <span>ServeCircle Business Plan v2.0</span>
+      <span>Page 18 of 18</span>
+    </div>
+  </div>
+
+</body>
+</html>
