@@ -950,6 +950,8 @@ router.post(
       const responseIntent = String(aiResponse?.intent || 'CLARIFY').toUpperCase();
       const intentCanRecommend = !isPureGeneral && (responseIntent === 'SERVICE_REQUEST' || responseIntent === 'FOLLOW_UP');
 
+      // Resolve only an exact catalog ID or exact service name selected by the
+      // model. Text keyword matches are not sufficient to create a booking card.
       if (rawAiServiceId) {
         matchedCanonical = availableServices.find((service) => service.serviceId === rawAiServiceId) || null;
       }
@@ -1018,31 +1020,12 @@ router.post(
         'Society Management': 'Security Specialist',
       };
 
-      const baseCandidatePrice = dbService
+      const servicePrice = dbService
         ? (dbService.basePrice || dbService.price || 350)
         : (matchedCanonical?.basePrice || matchedCanonical?.price || catalogMatch?.basePrice || aiResponse?.estimatedPrice || 350);
-
-      const hasKmInCurrent = /\d+\s*(?:km|kms|kilometer|kilometres)\b/i.test(text || '');
-      const pricingText = hasKmInCurrent ? text : `${text || ''} ${userHistoryText} ${aiResponse?.reply || ''}`;
-      const dynamicPricing = computeDynamicChatPrice({
-        text: pricingText,
-        serviceName,
-        category: serviceCategory,
-        basePrice: baseCandidatePrice,
-        aiEstimatedPrice: aiResponse?.estimatedPrice,
-      });
-
-      const servicePrice = dynamicPricing.price;
       const serviceSkill = matchedCanonical?.skill || CATEGORY_DEFAULT_SKILLS[serviceCategory] || aiResponse?.requiredWorkerSkill || 'Technician';
       const targetHubRoute = matchedCanonical?.targetHubRoute || CATEGORY_HUB_ROUTES[serviceCategory] || null;
       const serviceId = dbService ? dbService._id.toString() : (catalogMatch?.serviceId || matchedCanonical?.serviceId || '');
-
-      const rawFollowUps = Array.isArray(aiResponse?.followUpQuestions) ? aiResponse.followUpQuestions : [];
-      const sanitizedFollowUps = (serviceCategory === 'Travel & Commute' || hasTravelIntent)
-        ? (rawFollowUps.some((q) => /pest|party|decoration|cleaning|chef|catering|leakage|plumb/i.test(q)) || rawFollowUps.length === 0
-            ? ['With Driver vs Self Drive rate', 'Railway Station / Bus Stand Pick & Drop', 'Sedan / Luxury / Tempo rates']
-            : rawFollowUps)
-        : rawFollowUps;
 
       const language = detectLanguage(text);
       let replyMessage = aiResponse?.reply;
@@ -1068,11 +1051,9 @@ router.post(
         intent: responseIntent,
         message: replyMessage,
         showServiceRecommendation: showRecommendation,
-        followUpQuestions: sanitizedFollowUps.length > 0
-          ? sanitizedFollowUps
-          : (Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
-              ? aiResponse.followUpQuestions
-              : (showRecommendation ? [] : [])),
+        followUpQuestions: Array.isArray(aiResponse?.followUpQuestions) && aiResponse.followUpQuestions.length > 0
+          ? aiResponse.followUpQuestions
+          : (showRecommendation ? [] : []),  // Only suggest service prompts if we actually matched a service
         analysis: showRecommendation ? {
           multimodal: {
             problemAnalysis: {

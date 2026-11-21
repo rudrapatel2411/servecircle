@@ -18,7 +18,6 @@ import complaintRoutes from './routes/complaints.js';
 import contractRoutes from './routes/contracts.js';
 import invoiceRoutes from './routes/invoices.js';
 import notificationRoutes from './routes/notifications.js';
-import callRequestRoutes from './routes/callRequests.js';
 import partnerRoutes from './routes/partners.js';
 import analyticsRoutes from './routes/analytics.js';
 import exportRoutes from './routes/export.js';
@@ -30,8 +29,6 @@ import verificationRoutes from './routes/verification.js';
 import aiProviderRoutes from './routes/aiProvider.js';
 import customerAiRoutes from './routes/customerAi.js';
 import { AIProviderManager } from './ai/providers/AIProviderManager.js';
-import { ensureDemoUsersInDB } from './utils/demoAuthStore.js';
-import { notifyAdmin, broadcastCallRequest, notifyCallAccepted } from './services/notificationService.js';
 import { prisma } from './config/prisma.js';
 import { syncAndLoadServiceVectors } from './ai/services/ragService.js';
 
@@ -40,112 +37,23 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  },
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
 });
 
 const PORT = process.env.PORT || 5000;
 
-// ─── Socket.io Connection & Room Handling ───────────────────────────────────
+// Socket.io connection handling
 io.on('connection', (socket) => {
-  // Room joins
   socket.on('join_admin', () => {
     socket.join('admin_room');
   });
-
   socket.on('join_worker', (workerId) => {
-    if (workerId) {
-      socket.join(`worker_${workerId}`);
-      socket.join('workers_broadcast'); // receive call requests + new job alerts
-    }
+    if (workerId) socket.join(`worker_${workerId}`);
   });
-
-  socket.on('join_worker_category', (category) => {
-    if (category) {
-      socket.join(`workers_category_${category}`);
-      socket.join(`workers_category_${category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`);
-    }
-  });
-
   socket.on('join_customer', (customerId) => {
     if (customerId) socket.join(`customer_${customerId}`);
   });
-
-  socket.on('join_b2b', (userId) => {
-    if (userId) socket.join(`b2b_${userId}`);
-  });
-
-  // Client-side booking created event
-  socket.on('new_booking_created', (payload) => {
-    const now = new Date();
-    const dateStr = now.toLocaleString('en-IN');
-    const bookingId = payload.bookingId || payload.id || `SC-${Date.now()}`;
-    const category = payload.category || 'General';
-
-    // 1. Notify admin panel
-    notifyAdmin(
-      io,
-      '📋 New Booking Received',
-      `Booking ${bookingId} | "${payload.service}" | Category: ${category} | ₹${payload.amount} | Worker: ${payload.workerName || 'Unassigned'}`,
-      'alert',
-      {
-        bookingId,
-        category,
-        service: payload.service,
-        amount: payload.amount,
-        city: payload.city,
-      }
-    );
-
-    // 2. Notify workers targeted by Category & Broadcast fallback
-    const workerJobPayload = {
-      id: `notif_worker_${Date.now()}`,
-      title: `🆕 New Job: ${payload.service}`,
-      message: `New booking ${bookingId} in "${category}" — ₹${payload.amount}. Review & accept job in your panel.`,
-      type: 'broadcast',
-      date: dateStr,
-      timestamp: now.toISOString(),
-      bookingId,
-      category,
-      service: payload.service,
-      amount: payload.amount,
-      city: payload.city,
-    };
-
-    if (payload.category) {
-      io.to(`workers_category_${payload.category}`).emit('worker_notification', workerJobPayload);
-      io.to(`workers_category_${payload.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerJobPayload);
-    }
-    io.to('workers_broadcast').emit('worker_notification', workerJobPayload);
-
-    // 3. Booking confirmation back to customer
-    if (payload.customerId) {
-      io.to(`customer_${payload.customerId}`).emit('customer_notification', {
-        id: `notif_cust_${Date.now()}`,
-        title: '✅ Booking Confirmed',
-        message: `Your booking ${bookingId} for ${payload.service} has been placed!`,
-        type: 'system',
-        date: dateStr,
-        timestamp: now.toISOString(),
-        bookingId,
-      });
-    }
-  });
-
-  // Customer Call Request Event (from CallMeBackWidget)
-  socket.on('customer_call_request', (payload) => {
-    broadcastCallRequest(io, payload);
-  });
-
-  socket.on('call_request_direct', (payload) => {
-    broadcastCallRequest(io, payload);
-  });
-
-  // Worker Accepts Call Request
-  socket.on('worker_accepted_call', (payload) => {
-    notifyCallAccepted(io, payload);
-  });
-
   socket.on('disconnect', () => {});
 });
 
@@ -163,8 +71,7 @@ app.use((req, res, next) => {
   try {
     await prisma.$connect();
     console.log('✅ PostgreSQL (Prisma ORM) Connected Successfully');
-    await ensureDemoUsersInDB(prisma);
-    // Pre-cache catalog services into Vector RAG memory
+    // Pre-cache 110 catalog services into Vector RAG memory
     await syncAndLoadServiceVectors(false);
   } catch (err) {
     console.error('❌ PostgreSQL / RAG Connection Error:', err.message);
@@ -198,7 +105,6 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/notifications', notificationRoutes);
-app.use('/api/call-requests', callRequestRoutes);
 app.use('/api/partners', partnerRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin/export', exportRoutes);

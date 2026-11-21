@@ -6,8 +6,6 @@ import 'app_colors.dart';
 ///
 /// Headings, body copy, and CTAs use **Plus Jakarta Sans**.
 /// High-density financial numerals and currency figures use **Outfit**.
-///
-/// Source of Truth: `PROJECT_BRAIN/brain.md (repository map); this source file owns its implementation`
 class AppTypography {
   AppTypography._();
 

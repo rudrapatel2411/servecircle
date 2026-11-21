@@ -1,17 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
-  HiOutlineStar, HiOutlinePencilSquare, HiOutlineTrash, HiOutlineCheckCircle
+  HiOutlineStar, HiOutlinePencilSquare, HiOutlineTrash
 } from 'react-icons/hi2';
-import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
-const DEFAULT_REVIEWS = [
-  { id: 'rev-1', service: 'AC Servicing (Deep Clean)', worker: 'Ramesh Kumar (Verified Pro)', workerAvatar: 'RK', date: 'Yesterday', rating: 5, comment: 'Outstanding service! The technician arrived exactly on time and resolved the indoor unit drip. Highly recommended.', bookingId: 'SC-2841' },
-  { id: 'rev-2', service: 'Plumbing Fix', worker: 'Ajay Patel', workerAvatar: 'AP', date: '3 days ago', rating: 4, comment: 'Good job, fixed the kitchen faucet leak quickly and tested pressure properly.', bookingId: 'SC-2839' },
-  { id: 'rev-3', service: 'Car Washing', worker: 'Deepak Singh', workerAvatar: 'DS', date: '12 May 2026', rating: 4, comment: 'Car looks brand new. Interior cleaning was thorough.', bookingId: 'SC-2836' },
+const mockReviews = [
+  { id: 1, service: 'AC Servicing', worker: 'Ramesh Kumar', workerAvatar: 'RK', date: '14 May 2026', rating: 5, comment: 'Excellent work! AC is running perfectly now. Very professional and on-time.', bookingId: '#SC-2841' },
+  { id: 2, service: 'Plumbing Fix', worker: 'Ajay Patel', workerAvatar: 'AP', date: '10 May 2026', rating: 4, comment: 'Good job, fixed the leak quickly. Could have cleaned up a bit better.', bookingId: '#SC-2839' },
+  { id: 3, service: 'Car Washing', worker: 'Deepak Singh', workerAvatar: 'DS', date: '12 May 2026', rating: 4, comment: 'Car looks brand new. Interior cleaning was thorough.', bookingId: '#SC-2836' },
+  { id: 4, service: 'Pest Control', worker: 'Sunita Mehra', workerAvatar: 'SM', date: '8 May 2026', rating: 5, comment: 'Very thorough pest control. No bugs since the treatment! Highly recommended.', bookingId: '#SC-2837' },
 ];
 
 const StarRating = ({ rating, interactive = false, onChange }) => (
@@ -28,55 +27,11 @@ const StarRating = ({ rating, interactive = false, onChange }) => (
 
 const CustomerReviews = () => {
   const { t } = useTranslation();
-  const session = getSession();
-  const token = session?.token;
-
-  const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
-  const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editComment, setEditComment] = useState('');
   const [editRating, setEditRating] = useState(0);
-  const [toastMessage, setToastMessage] = useState('');
 
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
-  };
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadReviews = async () => {
-      if (!token) return;
-      setLoading(true);
-      try {
-        const data = await requestApi('/reviews/my', { token });
-        if (isMounted && Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((r) => ({
-            id: r.id || r._id,
-            service: r.service || 'Home Service',
-            worker: r.worker?.name || 'Verified Technician',
-            workerAvatar: (r.worker?.name || 'Pro').slice(0, 2).toUpperCase(),
-            date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : 'Recent',
-            rating: r.rating || 5,
-            comment: r.comment || '',
-            bookingId: r.booking?.bookingId || 'SC-Booking',
-          }));
-          setReviews(mapped);
-        }
-      } catch (err) {
-        console.warn('Live reviews fallback:', err);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    loadReviews();
-    return () => { isMounted = false; };
-  }, [token]);
-
-  const avgRating = reviews.length > 0
-    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
-    : '5.0';
+  const avgRating = (mockReviews.reduce((s, r) => s + r.rating, 0) / mockReviews.length).toFixed(1);
 
   const startEdit = (review) => {
     setEditingId(review.id);
@@ -90,80 +45,44 @@ const CustomerReviews = () => {
     setEditRating(0);
   };
 
-  const handleSaveEdit = async (id) => {
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, comment: editComment, rating: editRating } : r))
-    );
-    setEditingId(null);
-    showToast('Review updated successfully! ⭐');
-  };
-
-  const handleDelete = (id) => {
-    setReviews((prev) => prev.filter((r) => r.id !== id));
-    showToast('Review removed from public profile.');
-  };
-
   return (
-    <div className="page-content" style={{ paddingBottom: '90px' }}>
-      
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="sc-toast success">
-          <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: '#22c55e' }} />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="page-content">
+      <div className="page-header">
         <div>
           <h1 className="page-title">{t('customer.reviews')} ⭐</h1>
-          <p className="page-subtitle">Your verified ratings and feedback for completed doorstep service visits.</p>
+          <p className="page-subtitle">Your reviews and ratings for completed services</p>
         </div>
-        <Link to="/customer/bookings" className="btn btn-primary" style={{ fontSize: '0.85rem' }}>
-          Rate Recent Bookings
-        </Link>
       </div>
 
       {/* Stats */}
       <div className="reviews-stats">
         <div className="review-stat-card">
           <div className="review-stat-big">{avgRating}</div>
-          <StarRating rating={Math.round(Number(avgRating))} />
-          <span className="review-stat-label">Your Average Rating Given</span>
+          <StarRating rating={Math.round(avgRating)} />
+          <span className="review-stat-label">Average Rating</span>
         </div>
         <div className="review-stat-card">
-          <div className="review-stat-big">{reviews.length}</div>
-          <span className="review-stat-label">Total Verified Reviews</span>
+          <div className="review-stat-big">{mockReviews.length}</div>
+          <span className="review-stat-label">Total Reviews</span>
         </div>
         <div className="review-stat-card">
-          <div className="review-stat-big">{reviews.filter((r) => r.rating === 5).length}</div>
-          <span className="review-stat-label">5-Star Praises</span>
+          <div className="review-stat-big">{mockReviews.filter(r => r.rating === 5).length}</div>
+          <span className="review-stat-label">5-Star Reviews</span>
         </div>
       </div>
 
       {/* Reviews List */}
       <div className="dash-section">
-        <h3 className="dash-section-title">Your Service Experience History</h3>
-        
-        {loading && <div className="chart-placeholder">Loading your reviews...</div>}
-
-        {!loading && reviews.length === 0 && (
-          <div className="card" style={{ padding: '32px', textAlign: 'center', color: '#64748b' }}>
-            You haven't reviewed any services yet. After your technician completes a job, your rating and reviews will appear here.
-          </div>
-        )}
-
+        <h3 className="dash-section-title">Your Reviews</h3>
         <div className="reviews-list">
-          {reviews.map((review) => (
-            <div key={review.id} className="review-card" style={{ borderRadius: '16px', border: '1px solid #e2e8f0', padding: '20px' }}>
+          {mockReviews.map((review) => (
+            <div key={review.id} className="review-card">
               <div className="review-card-top">
                 <div className="review-worker">
-                  <div className="worker-avatar" style={{ background: '#2563eb', color: 'white', fontWeight: 800 }}>{review.workerAvatar}</div>
+                  <div className="worker-avatar">{review.workerAvatar}</div>
                   <div>
-                    <h4 className="review-service-name" style={{ fontSize: '1.05rem', fontWeight: 800 }}>{review.service}</h4>
-                    <span className="review-worker-name" style={{ color: '#64748b', fontSize: '0.82rem' }}>
-                      {review.worker} • <strong>#{review.bookingId}</strong>
-                    </span>
+                    <h4 className="review-service-name">{review.service}</h4>
+                    <span className="review-worker-name">{review.worker} • {review.bookingId}</span>
                   </div>
                 </div>
                 <div className="review-meta">
@@ -172,37 +91,34 @@ const CustomerReviews = () => {
                     interactive={editingId === review.id}
                     onChange={setEditRating}
                   />
-                  <span className="review-date" style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{review.date}</span>
+                  <span className="review-date">{review.date}</span>
                 </div>
               </div>
 
               {editingId === review.id ? (
-                <div className="review-edit" style={{ marginTop: '14px' }}>
+                <div className="review-edit">
                   <textarea
                     className="input-field"
                     rows={3}
                     value={editComment}
                     onChange={(e) => setEditComment(e.target.value)}
-                    style={{ width: '100%', boxSizing: 'border-box' }}
                   />
-                  <div className="review-edit-actions" style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                    <button className="btn btn-sm btn-primary" onClick={() => handleSaveEdit(review.id)}>Save Changes</button>
+                  <div className="review-edit-actions">
+                    <button className="btn btn-sm btn-primary">Save</button>
                     <button className="btn btn-sm btn-outline" onClick={cancelEdit}>Cancel</button>
                   </div>
                 </div>
               ) : (
-                <p className="review-comment" style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, margin: '14px 0 10px 0' }}>
-                  "{review.comment}"
-                </p>
+                <p className="review-comment">{review.comment}</p>
               )}
 
               {editingId !== review.id && (
-                <div className="review-actions" style={{ display: 'flex', gap: '12px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                <div className="review-actions">
                   <button className="review-action-btn" onClick={() => startEdit(review)}>
-                    <HiOutlinePencilSquare /> Edit Feedback
+                    <HiOutlinePencilSquare /> Edit
                   </button>
-                  <button className="review-action-btn delete" onClick={() => handleDelete(review.id)}>
-                    <HiOutlineTrash /> Remove
+                  <button className="review-action-btn delete">
+                    <HiOutlineTrash /> Delete
                   </button>
                 </div>
               )}

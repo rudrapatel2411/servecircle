@@ -22,7 +22,6 @@ import {
   HiOutlineMagnifyingGlass,
   HiOutlineCalendarDays,
   HiOutlineChatBubbleLeftRight,
-  HiOutlineSparkles,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
 import './Sidebar.css';
@@ -104,34 +103,7 @@ const GeneralServicesSidebar = () => {
       </div>
 
       <nav className="sidebar-nav">
-        <div className="category-nav-label">Smart Essentials</div>
-        <NavLink
-          to="/customer/my-home"
-          end
-          className={({ isActive: navActive }) =>
-            `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
-          }
-        >
-          <span className="category-sidebar-link-icon" style={{ color: '#2563eb' }}>
-            <HiOutlineHome size={18} />
-          </span>
-          <span className="category-sidebar-link-text">My Home Cockpit</span>
-          <span className="category-coming-soon-badge" style={{ background: '#e0f2fe', color: '#0369a1' }}>Hub</span>
-        </NavLink>
-        <NavLink
-          to="/customer/ordered-services"
-          end
-          className={({ isActive: navActive }) =>
-            `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
-          }
-        >
-          <span className="category-sidebar-link-icon" style={{ color: '#d97706' }}>
-            <HiOutlineSparkles size={18} />
-          </span>
-          <span className="category-sidebar-link-text">Ordered Services (Live)</span>
-        </NavLink>
-
-        <div className="category-nav-label" style={{ marginTop: '14px' }}>Categories</div>
+        <div className="category-nav-label">Categories</div>
         {generalServicesCategories.map((cat) => {
           if (cat.comingSoon) {
             return (

@@ -5,8 +5,6 @@ import 'app_typography.dart';
 /// ServeCircle Application Theme Configuration.
 ///
 /// Implements the Neomorphism v2.0 design system as the authoritative Flutter [ThemeData].
-///
-/// Source of Truth: `PROJECT_BRAIN/brain.md (repository map); this source file owns its implementation`
 class AppTheme {
   AppTheme._();
 

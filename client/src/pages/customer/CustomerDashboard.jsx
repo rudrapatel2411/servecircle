@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   HiOutlineCalendarDays, HiOutlineWallet, HiOutlineClipboardDocumentCheck,
   HiOutlineStar, HiOutlineWrench, HiOutlineSparkles, HiOutlineTruck, HiOutlineBolt,
-  HiOutlineClock, HiOutlineArrowRight, HiOutlineArrowUpRight, HiOutlineMapPin, HiOutlineInbox,
-  HiOutlineHome
+  HiOutlineClock, HiOutlineArrowRight, HiOutlineArrowUpRight, HiOutlineMapPin, HiOutlineInbox
 } from 'react-icons/hi2';
 import { getSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
@@ -114,46 +113,6 @@ const CustomerDashboard = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Smart Home Cockpit Feature Banner */}
-      <div className="card animate-fade-in-up" style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        border: '1px solid #334155',
-        borderRadius: '16px',
-        padding: '20px 24px',
-        color: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '16px',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
-        margin: '0'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.2)', border: '2px solid #3b82f6', color: '#60a5fa', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
-            <HiOutlineHome />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-              <span style={{ background: '#2563eb', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>SMART FEATURE</span>
-              <span style={{ color: '#4ade80', fontSize: '0.8rem', fontWeight: 700 }}>● Home Health Score: 85/100 Protected</span>
-            </div>
-            <h4 style={{ color: 'white', margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>My Home Cockpit & Digital Warranty Vault</h4>
-            <p style={{ color: '#94a3b8', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
-              Track 5 appliances, AI-scan invoices, routine maintenance timeline & Prime AMC coverage.
-            </p>
-          </div>
-        </div>
-
-        <Link
-          to="/customer/my-home"
-          className="btn btn-primary"
-          style={{ background: '#2563eb', color: 'white', padding: '10px 22px', borderRadius: '10px', fontSize: '0.875rem', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(37,99,235,0.4)' }}
-        >
-          Open My Home <HiOutlineArrowRight />
-        </Link>
       </div>
 
       {/* 2. Express Booking Carousel */}

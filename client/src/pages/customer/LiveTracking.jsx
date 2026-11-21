@@ -56,9 +56,6 @@ const LiveTracking = () => {
 
   const [bookingData, setBookingData] = useState(null);
   const [displayedStartOtp, setDisplayedStartOtp] = useState('');
-  const [displayedEndOtp, setDisplayedEndOtp] = useState('');
-  const [endOtpError, setEndOtpError] = useState('');
-  const [proofs, setProofs] = useState([]);
   const [otpError, setOtpError] = useState('');
   const serviceName = bookingData?.service || requestedService;
   const workerName = bookingData?.worker?.name || 'Awaiting assignment';
@@ -92,31 +89,6 @@ const LiveTracking = () => {
       setDisplayedStartOtp(result.code);
     } catch (error) {
       setOtpError(error.message || 'Could not get the start code. Please try again.');
-    }
-  };
-
-  const requestEndOtp = async () => {
-    setEndOtpError('');
-    try {
-      const targetId = bookingData?._id || bookingData?.id || bookingId;
-      const result = await requestApi(`/bookings/${targetId}/end-otp/regenerate`, {
-        method: 'POST', token,
-      });
-      setDisplayedEndOtp(result.code);
-    } catch (error) {
-      // Graceful fallback for demo/simulation
-      setDisplayedEndOtp('9182');
-    }
-  };
-
-  const fetchProofs = async () => {
-    const targetId = bookingData?._id || bookingData?.id || bookingId;
-    if (!targetId || !token) return;
-    try {
-      const res = await requestApi(`/bookings/${targetId}/proofs`, { token });
-      if (Array.isArray(res)) setProofs(res);
-    } catch {
-      // ignore
     }
   };
 
@@ -202,7 +174,6 @@ const LiveTracking = () => {
     };
 
     fetchBookingDetails();
-    fetchProofs();
     return () => { isMounted = false; };
   }, [bookingId, token]);
 
@@ -216,21 +187,12 @@ const LiveTracking = () => {
         setCurrentStatusText(mapping.text);
         setEta(mapping.eta);
         setOtpVisible(mapping.otp);
-        if (['in_progress', 'started'].includes(data.currentStatus)) {
-          requestEndOtp();
-        }
       }
     };
 
-    const handleProofUploaded = () => {
-      fetchProofs();
-    };
-
     socket.on('booking_status_changed', handleStatusUpdate);
-    socket.on('proof:uploaded', handleProofUploaded);
     return () => {
       socket.off('booking_status_changed', handleStatusUpdate);
-      socket.off('proof:uploaded', handleProofUploaded);
     };
   }, [bookingId, bookingData]);
 
@@ -562,83 +524,6 @@ const LiveTracking = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* ===== GAP 1 RESOLUTION: END OTP HANDOVER PROTOCOL (CUSTOMER SIDE) ===== */}
-            <AnimatePresence>
-              {activeStep === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{
-                    marginTop: '16px',
-                    padding: '16px',
-                    background: '#f0fdf4',
-                    border: '2px solid #22c55e',
-                    borderRadius: '12px',
-                    textAlign: 'center',
-                    boxShadow: '0 4px 14px rgba(34, 197, 94, 0.12)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: '#15803d', fontWeight: 800, fontSize: '0.85rem' }}>
-                    <span>🔐 Handover End OTP (Job Completion)</span>
-                  </div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#166534', letterSpacing: '8px', margin: '8px 0' }}>
-                    {displayedEndOtp || '9182'}
-                  </div>
-                  <p style={{ fontSize: '0.78rem', color: '#14532d', margin: '0 0 10px 0', lineHeight: 1.4 }}>
-                    ⚠️ <strong>Security Rule:</strong> Share this 4-digit End OTP with the technician only after you have inspected the repaired appliance and are satisfied.
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={requestEndOtp}
-                    style={{ fontSize: '0.75rem', padding: '4px 12px', background: 'white' }}
-                  >
-                    🔄 Refresh End Code
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* ===== GAP 2 RESOLUTION: BEFORE & AFTER PHOTO EVIDENCE (PROOF OF WORK) ===== */}
-            {(activeStep >= 2 || (proofs && proofs.length > 0)) && (
-              <div style={{ marginTop: '16px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <strong style={{ fontSize: '0.85rem', color: '#1e293b' }}>📸 Verified Proof of Work (Audit Photos)</strong>
-                  <span style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 700, background: '#dcfce7', padding: '2px 8px', borderRadius: '10px' }}>
-                    Tamper Proof Watermark
-                  </span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: 'white' }}>
-                    <div style={{ height: '90px', background: '#e2e8f0', overflow: 'hidden' }}>
-                      <img
-                        src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800"
-                        alt="Before work"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>📷 Before Work</span>
-                      <span style={{ color: '#16a34a' }}>✓ Logged</span>
-                    </div>
-                  </div>
-                  <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: 'white' }}>
-                    <div style={{ height: '90px', background: '#e2e8f0', overflow: 'hidden' }}>
-                      <img
-                        src={activeStep >= 3 ? "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800" : "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800"}
-                        alt="After work"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>✨ After Work</span>
-                      <span style={{ color: activeStep >= 3 ? '#16a34a' : '#ca8a04' }}>{activeStep >= 3 ? '✓ Complete' : 'In Progress'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
 
 

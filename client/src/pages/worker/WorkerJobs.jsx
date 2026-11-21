@@ -131,71 +131,36 @@ const WorkerJobs = () => {
   const [showSosModal, setShowSosModal] = useState(false);
   const [uploadingProof, setUploadingProof] = useState({});
 
-  // In-App Toast & Evidence Modals (Replacing native prompt/alert/confirm)
-  const [toastMessage, setToastMessage] = useState('');
-  const [proofModal, setProofModal] = useState({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
-  const [codModal, setCodModal] = useState({ open: false, jobId: null, amount: 0 });
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4500);
-  };
-
-  const openProofModal = (jobId, type) => {
+  const handleUploadProof = async (jobId, type) => {
     const defaultImg = type === 'BEFORE_WORK'
       ? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800'
       : 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800';
-    setProofModal({
-      open: true,
-      jobId,
-      type,
-      previewUrl: defaultImg,
-      notes: type === 'BEFORE_WORK' ? 'Inspected pre-existing wear and setup' : 'Repairs verified and tested with customer',
-    });
-  };
-
-  const confirmUploadProof = async () => {
-    const { jobId, type, previewUrl, notes } = proofModal;
-    if (!previewUrl || !jobId) return;
+    const imageUrl = prompt(`Enter ${type === 'BEFORE_WORK' ? 'before-work' : 'after-work'} photo URL or camera proof link:`, defaultImg);
+    if (!imageUrl) return;
     setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: true }));
     try {
-      await uploadBookingProof(token, jobId, { type, imageUrl: previewUrl, notes });
-      showToast(`📸 ${type === 'BEFORE_WORK' ? 'Before-Work' : 'After-Work'} proof photo uploaded successfully!`);
-      setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
+      await uploadBookingProof(token, jobId, { type, imageUrl, notes: 'Uploaded from worker app' });
+      alert(`${type === 'BEFORE_WORK' ? 'Before' : 'After'} proof uploaded successfully!`);
       await loadJobs(activeTab);
     } catch (err) {
-      showToast(err.message || 'Proof upload failed');
+      alert(err.message || 'Proof upload failed');
     } finally {
       setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: false }));
     }
   };
 
-  const openCodModal = (jobId, amount) => {
-    setCodModal({ open: true, jobId, amount });
-  };
-
-  const confirmCollectCod = async () => {
-    const { jobId, amount } = codModal;
-    if (!jobId) return;
+  const handleCollectCod = async (jobId, amount) => {
+    if (!confirm(`Confirm cash collection of ₹${amount} from customer?`)) return;
     setActionLoading(`${jobId}-cod`);
     try {
       await collectCodPayment(token, jobId, amount);
-      showToast(`💵 ₹${amount} Cash Collection Confirmed! Commission adjusted.`);
-      setCodModal({ open: false, jobId: null, amount: 0 });
+      alert(`₹${amount} Cash Collection Confirmed! Payment updated.`);
       await loadJobs(activeTab);
     } catch (err) {
-      showToast(err.message || 'COD collection failed');
+      alert(err.message || 'COD collection failed');
     } finally {
       setActionLoading('');
     }
-  };
-
-  const handleUploadProof = (jobId, type) => {
-    openProofModal(jobId, type);
-  };
-
-  const handleCollectCod = (jobId, amount) => {
-    openCodModal(jobId, amount);
   };
 
   const loadJobs = async (status = activeTab) => {
@@ -766,185 +731,6 @@ const WorkerJobs = () => {
         token={token}
         bookingId={jobs.find((j) => ['en-route', 'arrived', 'started'].includes(j.status))?._id || jobs[0]?._id}
       />
-
-      {/* Floating In-App Toast */}
-      {toastMessage && (
-        <div className="sc-toast success">
-          <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: '#22c55e' }} />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* In-App Photo Evidence Upload Modal */}
-      <AnimatePresence>
-        {proofModal.open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100,
-              padding: '20px',
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              style={{
-                background: 'white', borderRadius: '18px',
-                padding: '28px', maxWidth: '480px', width: '100%',
-                boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
-              }}
-            >
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <HiOutlineCamera style={{ color: '#2563eb' }} />
-                {proofModal.type === 'BEFORE_WORK' ? '📷 Before-Work Photo Proof' : '✨ After-Work Photo Proof'}
-              </h3>
-              <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 16px 0' }}>
-                Capture or select verification evidence. Photos are stamped with date, time, and GPS watermark.
-              </p>
-
-              {/* Photo Preview */}
-              <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '180px', background: '#f1f5f9', marginBottom: '14px', border: '1px solid #e2e8f0' }}>
-                <img
-                  src={proofModal.previewUrl}
-                  alt="Proof preview"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                <div style={{
-                  position: 'absolute', bottom: '8px', left: '8px', right: '8px',
-                  background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(4px)',
-                  color: 'white', padding: '4px 10px', borderRadius: '6px', fontSize: '0.7rem',
-                  display: 'flex', justifyContent: 'space-between',
-                }}>
-                  <span>📍 GPS Verified • Doorstep</span>
-                  <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-              </div>
-
-              {/* Quick Preset Buttons */}
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => setProofModal((prev) => ({ ...prev, previewUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800' }))}
-                  style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                >
-                  AC/Appliance
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => setProofModal((prev) => ({ ...prev, previewUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800' }))}
-                  style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                >
-                  Plumbing Pipe
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() => setProofModal((prev) => ({ ...prev, previewUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800' }))}
-                  style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                >
-                  Electrical Wiring
-                </button>
-              </div>
-
-              {/* Custom Image URL or Notes */}
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: '4px' }}>
-                  Photo Evidence URL:
-                </label>
-                <input
-                  type="text"
-                  value={proofModal.previewUrl}
-                  onChange={(e) => setProofModal((prev) => ({ ...prev, previewUrl: e.target.value }))}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.82rem', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  style={{ flex: 1 }}
-                  onClick={() => setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' })}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  style={{ flex: 1.5, background: '#16a34a' }}
-                  onClick={confirmUploadProof}
-                  disabled={uploadingProof[`${proofModal.jobId}-${proofModal.type}`]}
-                >
-                  {uploadingProof[`${proofModal.jobId}-${proofModal.type}`] ? 'Uploading...' : 'Confirm Upload'}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* In-App COD Confirmation Modal */}
-      <AnimatePresence>
-        {codModal.open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100,
-              padding: '20px',
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              style={{
-                background: 'white', borderRadius: '18px',
-                padding: '28px', maxWidth: '420px', width: '100%',
-                boxShadow: '0 25px 60px rgba(0,0,0,0.3)', textAlign: 'center',
-              }}
-            >
-              <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.8rem' }}>
-                <HiOutlineCurrencyRupee />
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                Confirm Cash Collection
-              </h3>
-              <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: '16px' }}>
-                Have you physically received <strong>₹{codModal.amount}</strong> in cash from the customer?
-              </p>
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem', color: '#64748b', marginBottom: '20px', textAlign: 'left' }}>
-                ℹ️ Platform commission (10–20%) will be automatically reconciled with your wallet ledger.
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  style={{ flex: 1 }}
-                  onClick={() => setCodModal({ open: false, jobId: null, amount: 0 })}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  style={{ flex: 1.5, background: '#059669' }}
-                  onClick={confirmCollectCod}
-                  disabled={actionLoading === `${codModal.jobId}-cod`}
-                >
-                  {actionLoading === `${codModal.jobId}-cod` ? 'Updating...' : 'Yes, Cash Received'}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

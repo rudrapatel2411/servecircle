@@ -1,301 +1,65 @@
 /**
- * notificationService.js — Multi-layer Socket.io + Database Persistence
+ * notificationService.js — Phase 1 Final Batch
  *
- * Centralises all Socket.io emission logic and notification records.
- *
- * Rooms:
+ * Centralises all Socket.io emission logic.
+ * Implements proper room architecture:
  *   admin_room         — all admin notifications
  *   worker_<workerId>  — per-worker notifications
  *   customer_<id>      — per-customer notifications
- *   b2b_<userId>       — per-b2b-user notifications
- *   workers_broadcast  — all workers (for call requests / open job alerts)
+ *
+ * Routes must never call req.io directly.
+ * Dependency chain: no upstream service imports (leaf node).
  */
 
-import { prisma } from '../config/prisma.js';
-import { DEMO_NOTIFICATIONS } from '../utils/demoDataStore.js';
-
-function mapTypeToPrisma(type) {
-  const upper = String(type || '').toUpperCase();
-  if (upper === 'ALERT' || upper === 'DANGER') return 'ALERT';
-  if (upper === 'BOOKING_UPDATE') return 'BOOKING_UPDATE';
-  if (upper === 'PROMOTION') return 'PROMOTION';
-  if (upper === 'SYSTEM' || upper === 'CALL_REQUEST') return 'SYSTEM';
-  return 'BROADCAST';
-}
-
-function mapAudienceToPrisma(audience) {
-  const upper = String(audience || '').toUpperCase();
-  if (upper === 'CUSTOMERS' || upper === 'CUSTOMER') return 'CUSTOMERS';
-  if (upper === 'WORKERS' || upper === 'WORKER') return 'WORKERS';
-  if (upper === 'B2B') return 'B2B';
-  if (upper === 'SPECIFIC') return 'SPECIFIC';
-  return 'ALL';
-}
-
-function buildPayload(title, message, type = 'broadcast', extra = {}) {
+// ─────────────────────────────────────────────────────────────────────────────
+// INTERNAL HELPER
+// ─────────────────────────────────────────────────────────────────────────────
+function buildPayload(title, message, type = 'broadcast') {
   return {
-    id: `notif_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    id: Date.now(),
     title,
     message,
-    type, // 'alert' | 'broadcast' | 'system' | 'danger' | 'call_request'
-    date: new Date().toLocaleString('en-IN'),
-    timestamp: new Date().toISOString(),
+    type, // 'alert' | 'broadcast' | 'system' | 'danger'
+    date: new Date().toLocaleString(),
     reads: 0,
-    ...extra,
   };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // notifyAdmin
-// Emit to admin_room AND persist so Admin sees it in notifications list / bell.
+// Emit an event to the admin_room Socket.io room.
 // ─────────────────────────────────────────────────────────────────────────────
-export function notifyAdmin(io, title, message, type = 'broadcast', extra = {}) {
-  const payload = buildPayload(title, message, type, extra);
-
-  // 1. Socket live emission
-  if (io) {
-    io.to('admin_room').emit('admin_notification', payload);
-    io.emit('admin_notification', payload); // Broadcast fallback
-  }
-
-  // 2. In-memory demo store persistence (instant availability)
-  const record = {
-    _id: payload.id,
-    id: payload.id,
-    title,
-    message,
-    type: type === 'call_request' ? 'call_request' : (type || 'alert'),
-    targetAudience: 'admin',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(),
-    ...extra,
-  };
-  DEMO_NOTIFICATIONS.unshift(record);
-
-  // 3. Database persistence with Prisma
-  try {
-    prisma.notification.create({
-      data: {
-        title,
-        message,
-        type: mapTypeToPrisma(type),
-        targetAudience: 'ALL',
-        isActive: true,
-      },
-    }).catch(() => {});
-  } catch {}
+export function notifyAdmin(io, title, message, type = 'broadcast') {
+  if (!io) return;
+  io.to('admin_room').emit('admin_notification', buildPayload(title, message, type));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // notifyWorker
-// Emit a direct event to the worker_<workerId> room + persist.
+// Emit a direct event to the worker_<workerId> room.
+// Workers join this room on connect via the 'join_worker' socket event.
 // ─────────────────────────────────────────────────────────────────────────────
-export function notifyWorker(io, workerId, title, message, extra = {}) {
-  if (!workerId) return;
-  const payload = {
-    ...buildPayload(title, message, 'system', extra),
-    targetWorkerId: workerId.toString(),
-  };
-
+export function notifyWorker(io, workerId, title, message) {
+  if (!io || !workerId) return;
   const room = `worker_${workerId}`;
-  if (io) {
-    io.to(room).emit('worker_notification', payload);
-    io.to('workers_broadcast').emit('worker_notification', payload);
-  }
-
-  DEMO_NOTIFICATIONS.unshift({
-    _id: payload.id,
-    id: payload.id,
-    title,
-    message,
-    type: 'system',
-    targetAudience: 'workers',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(),
+  io.to(room).emit('worker_notification', {
+    ...buildPayload(title, message, 'system'),
     targetWorkerId: workerId.toString(),
-    ...extra,
   });
-
-  try {
-    prisma.notification.create({
-      data: {
-        title,
-        message,
-        type: 'SYSTEM',
-        targetAudience: 'WORKERS',
-        targetUsers: [String(workerId)],
-        isActive: true,
-      },
-    }).catch(() => {});
-  } catch {}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // notifyCustomer
-// Emit a direct event to the customer_<customerId> room + persist.
+// Emit a direct event to the customer_<customerId> room.
+// Customers join this room on connect via the 'join_customer' socket event.
 // ─────────────────────────────────────────────────────────────────────────────
-export function notifyCustomer(io, customerId, title, message, extra = {}) {
-  if (!customerId) return;
-  const payload = {
-    ...buildPayload(title, message, 'system', extra),
-    targetCustomerId: customerId.toString(),
-  };
-
+export function notifyCustomer(io, customerId, title, message) {
+  if (!io || !customerId) return;
   const room = `customer_${customerId}`;
-  if (io) {
-    io.to(room).emit('customer_notification', payload);
-  }
-
-  DEMO_NOTIFICATIONS.unshift({
-    _id: payload.id,
-    id: payload.id,
-    title,
-    message,
-    type: 'system',
-    targetAudience: 'customers',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(),
+  io.to(room).emit('customer_notification', {
+    ...buildPayload(title, message, 'system'),
     targetCustomerId: customerId.toString(),
-    ...extra,
   });
-
-  try {
-    prisma.notification.create({
-      data: {
-        title,
-        message,
-        type: 'SYSTEM',
-        targetAudience: 'CUSTOMERS',
-        targetUsers: [String(customerId)],
-        isActive: true,
-      },
-    }).catch(() => {});
-  } catch {}
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// notifyB2B
-// Emit a direct event to the b2b_<userId> room + persist.
-// ─────────────────────────────────────────────────────────────────────────────
-export function notifyB2B(io, userId, title, message, extra = {}) {
-  if (!userId) return;
-  const room = `b2b_${userId}`;
-  const payload = {
-    ...buildPayload(title, message, 'system', extra),
-    targetUserId: userId.toString(),
-  };
-
-  if (io) {
-    io.to(room).emit('b2b_notification', payload);
-  }
-
-  DEMO_NOTIFICATIONS.unshift({
-    _id: payload.id,
-    id: payload.id,
-    title,
-    message,
-    type: 'system',
-    targetAudience: 'b2b',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(),
-    ...extra,
-  });
-
-  try {
-    prisma.notification.create({
-      data: {
-        title,
-        message,
-        type: 'SYSTEM',
-        targetAudience: 'B2B',
-        targetUsers: [String(userId)],
-        isActive: true,
-      },
-    }).catch(() => {});
-  } catch {}
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// broadcastCallRequest
-// Emit a call request to ALL workers in a service category AND notify admin.
-// ─────────────────────────────────────────────────────────────────────────────
-export function broadcastCallRequest(io, requestData) {
-  const payload = buildPayload(
-    `📞 New Call Request: ${requestData.serviceType || 'General Help'}`,
-    `${requestData.customerName || 'A customer'} needs help with ${requestData.serviceType || 'a service'}. Phone: ${requestData.phone}`,
-    'call_request',
-    {
-      requestId: requestData.requestId,
-      phone: requestData.phone,
-      customerName: requestData.customerName,
-      serviceType: requestData.serviceType,
-      category: requestData.category,
-      customerId: requestData.customerId,
-      canAccept: true,
-    }
-  );
-
-  // 1. Broadcast to all online workers
-  if (io) {
-    if (requestData.category) {
-      io.to(`workers_category_${requestData.category}`).emit('call_request', payload);
-      io.to(`workers_category_${requestData.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('call_request', payload);
-    }
-    io.to('workers_broadcast').emit('call_request', payload);
-  }
-
-  // 2. Also notify admin (live + persistent storage)
-  notifyAdmin(
-    io,
-    `📞 Call Request: ${requestData.serviceType || 'General Help'}`,
-    `${requestData.customerName || 'Customer'} (${requestData.phone}) requested a callback for ${requestData.serviceType || 'a service'}.`,
-    'call_request',
-    {
-      requestId: requestData.requestId,
-      phone: requestData.phone,
-      serviceType: requestData.serviceType,
-      customerName: requestData.customerName,
-    }
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// notifyCallAccepted
-// When a worker accepts a call request, notify customer and admin.
-// ─────────────────────────────────────────────────────────────────────────────
-export function notifyCallAccepted(io, { requestId, workerId, workerName, customerId, phone }) {
-  // Notify customer that their request was accepted
-  if (customerId) {
-    notifyCustomer(
-      io,
-      customerId,
-      '✅ Worker Found!',
-      `${workerName || 'A worker'} has accepted your call request and will contact you at ${phone} shortly.`,
-      { requestId, workerId: workerId?.toString(), type: 'call_accepted' }
-    );
-  }
-
-  // Notify admin
-  notifyAdmin(
-    io,
-    '✅ Call Request Accepted',
-    `Worker ${workerName || workerId} accepted call request ${requestId}. Will call ${phone}.`,
-    'system',
-    { requestId, workerName, phone }
-  );
-
-  // Dismiss call_request from all other workers
-  if (io) {
-    io.to('workers_broadcast').emit('call_request_taken', {
-      requestId,
-      acceptedByWorkerId: workerId?.toString(),
-      acceptedByWorkerName: workerName,
-    });
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -315,12 +79,11 @@ export function emitBookingStatus(io, booking, prevStatus) {
   };
 
   io.to('admin_room').emit('booking_status_changed', payload);
-  io.emit('booking_status_changed', payload); // Fallback
 
   if (booking.worker) {
-    io.to(`worker_${booking.worker._id || booking.worker.id || booking.worker}`).emit('booking_status_changed', payload);
+    io.to(`worker_${booking.worker._id || booking.worker}`).emit('booking_status_changed', payload);
   }
   if (booking.customer) {
-    io.to(`customer_${booking.customer._id || booking.customer.id || booking.customer}`).emit('booking_status_changed', payload);
+    io.to(`customer_${booking.customer._id || booking.customer}`).emit('booking_status_changed', payload);
   }
 }

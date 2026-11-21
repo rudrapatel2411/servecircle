@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 /// ServeCircle Neomorphism v2.0 Brand Color Palette.
-///
-/// Source of Truth: `PROJECT_BRAIN/brain.md (repository map); this source file owns its implementation`
 class AppColors {
   AppColors._();
 

@@ -9,11 +9,9 @@
     "dev:client": "npm --prefix client run dev"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "prisma": "^6.19.3"
+    "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
     "@vitalets/google-translate-api": "^9.2.1",
     "leaflet": "^1.9.4"
   }

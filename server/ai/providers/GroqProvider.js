@@ -400,8 +400,7 @@ Return one JSON object. intent must be SERVICE_REQUEST for a clear task, FOLLOW_
 CURRENT ACTIVE SERVECIRCLE CATALOG (canonical platform services, respecting admin status):
 ${activeCatalogPrompt || 'No active catalog entries could be confirmed.'}
 
-JSON fields: intent, reply, showServiceRecommendation, serviceId, serviceName, category, problemType, urgency, requiredWorkerSkill, estimatedPrice, safetyPrecautions, followUpQuestions.
-Note: Always keep 'serviceName', 'category', and 'followUpQuestions' strictly relevant to the active conversation topic.`;
+JSON fields: intent, reply, showServiceRecommendation, serviceId, serviceName, category, problemType, urgency, requiredWorkerSkill, estimatedPrice, safetyPrecautions, followUpQuestions.`;
 
     // Build chat history
     const messages = [{ role: 'system', content: systemPrompt }];
