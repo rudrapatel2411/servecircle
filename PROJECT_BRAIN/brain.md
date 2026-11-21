@@ -15,6 +15,34 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Restore Notification System & Fix Backend Startup Regression (done, verified 2026-11-21)
+
+**User outcome:** Operator reported: "last github pushh ke badse kafi chije work karni stop ho gai hai notification and others things jo chali gai ho usko vapas lake working banao. jo jarurat ho vahi process karo ho sake utna jaldi karna".
+Restored all regression breaks caused by collaborator commit `9c4ecb66`, fixed backend startup crash so port 5000 is cleanly listening, restored full notification drawer in frontend with sound/badges/tabs/actions, and re-connected all real-time cross-panel sockets and call requests.
+
+**Tasks & Verification:**
+- [x] Fixed `server/server.js`:
+  - Removed residual MongoDB `connectDB()` and `mongoose` keep-alive interval (which caused `ReferenceError: mongoose is not defined` crash).
+  - Restored `callRequestRoutes` (`/api/call-requests`).
+  - Restored Socket.io room joins (`join_worker_category`, `join_b2b`) and real-time events (`new_booking_created`, `customer_call_request`, `worker_accepted_call`).
+- [x] Enhanced `server/services/notificationService.js`:
+  - Restored `notifyAdmin`, `notifyWorker`, `notifyCustomer`, `notifyB2B`, `broadcastCallRequest`, `notifyCallAccepted`, and `emitBookingStatus` with support for payloads and DB/memory fallback.
+- [x] Updated `server/routes/notifications.js`:
+  - Re-added `PUT /notifications/read-all` and `DELETE /notifications/:id`.
+- [x] Synchronized database schema (`WorkerProfile.dutyStatus` added to PostgreSQL via `prisma db push`) and generated Prisma client.
+- [x] Started and verified backend server on port 5000 (`/api/health` 200 OK).
+- [x] Restored full rich Notification Drawer in `client/src/components/DashboardNavbar.jsx`:
+  - Notification bell with unread badge counter.
+  - Interactive dropdown drawer with unread count, "Mark all read" button, dismiss action, and direct call/accept actions.
+  - Multi-tab synchronization via `notificationSync.js` and action toasts.
+  - Maintained the Worker Duty Status pill (🟢 Duty ON / 🔴 Duty OFF).
+- [x] Restored `client/src/components/CallMeBackWidget.jsx` and `client/src/components/WorkerCallWidget.jsx` callbacks and consultation console.
+- [x] Restored `client/src/pages/admin/AdminNotifications.jsx` real-time broadcasting and active call requests dashboard.
+- [x] Verified full test suite & client production build:
+  - Client production build (`npx vite build`): PASSED with 0 errors in 6.02s.
+  - All test suites (`verify-worker-ops-suite.mjs`, `verify-m0-workflow.mjs`, `verify-m0-http-journey.mjs`, `verify-m1-duty-and-availability.mjs`): 76/76 checks PASSED.
+- [x] Ready to commit and push to GitHub.
+
 ## Working plan — Worker Panel UI Overhaul & Full Cross-Panel End-to-End Connectivity (done, verified 2026-11-21)
 
 **User outcome:** Operator instructed to complete all remaining gaps from the audit, ensure 100% working buttons/workflows, establish full bidirectional connectivity between Customer and Worker panels, and completely overhaul the Worker Panel UI to fix overlapping/crammed elements across all worker pages.
