@@ -365,7 +365,7 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
     const prisma = prismaOrModel;
     for (const demo of DEMO_USERS) {
       try {
-        const existing = await prisma.user.findFirst({
+        let existing = await prisma.user.findFirst({
           where: { email: { equals: demo.email, mode: 'insensitive' } },
         });
 
@@ -374,7 +374,7 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
           const roleUpper = (demo.role || 'customer').toUpperCase();
           const validRole = ['CUSTOMER', 'WORKER', 'ADMIN', 'B2B'].includes(roleUpper) ? roleUpper : 'CUSTOMER';
 
-          await prisma.user.create({
+          existing = await prisma.user.create({
             data: {
               name: demo.name,
               email: demo.email.toLowerCase(),
@@ -385,12 +385,34 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
               walletBalance: demo.walletBalance || 0,
               skills: demo.skills || [],
               serviceCategory: demo.serviceCategory || '',
-              workerStatus: demo.role === 'worker' ? 'APPROVED' : undefined,
+              workerStatus: demo.role === 'worker' ? 'APPROVED_SENIOR' : undefined,
               isVerified: demo.isVerified !== undefined ? demo.isVerified : true,
               companyName: demo.companyName || undefined,
             },
           });
           console.log(`[DemoSeeder] Created ${demo.role} user in PostgreSQL: ${demo.email}`);
+        }
+
+        if (existing && (existing.role === 'WORKER' || demo.role === 'worker')) {
+          const existingProfile = await prisma.workerProfile.findUnique({
+            where: { userId: existing.id },
+          });
+          if (!existingProfile) {
+            await prisma.workerProfile.create({
+              data: {
+                userId: existing.id,
+                serviceCategory: demo.serviceCategory || existing.serviceCategory || 'Home Repairs',
+                skills: demo.skills || existing.skills || [],
+                workerStatus: 'APPROVED_SENIOR',
+                isVerified: true,
+                isAvailable: true,
+                dutyStatus: 'ONLINE',
+                rating: 4.9,
+                completedJobs: 24,
+                workerIdCode: `WK-${Math.floor(1000 + Math.random() * 9000)}`,
+              },
+            });
+          }
         }
       } catch (err) {
         // Silently skip if unique constraint or schema mismatch

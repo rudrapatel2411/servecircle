@@ -154,6 +154,8 @@ const LoginPage = () => {
             serviceCategory: foundWorker?.service || 'Home Repairs',
             workerStatus: 'approved_senior',
             isVerified: true,
+            dutyStatus: 'online',
+            dutyStatusUpdatedAt: new Date().toISOString(),
             walletBalance: 3200,
           },
         };

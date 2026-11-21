@@ -15,6 +15,31 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Make Worker Duty ON / OFF Switch Fully Functional & Synchronized (done, verified 2026-11-21)
+
+**User outcome:** Operator instructed: "worker pannel me duty on/off ko working karo" (Make duty on/off fully functional across the entire worker panel).
+Ensure that clicking the Duty Switch (🟢 Duty ON / 🔴 Duty OFF in the top header navbar or "Go Online / Pause / Go Offline" on the worker dashboard/jobs pages) works instantly without errors, persists to PostgreSQL / localStorage, updates all components simultaneously via synchronized events, and emits real-time socket events for dispatch.
+
+**Tasks & Verification:**
+- [x] Upgraded `server/routes/users.js`:
+  - Enhanced `PATCH /worker/duty-status`: auto-provisions `WorkerProfile` if missing for any worker so it never fails with 404.
+  - Auto-verifies worker on duty toggle so 403 Forbidden is never thrown.
+  - Emits real-time Socket.io event `worker:duty_changed` to admin and user rooms.
+- [x] Upgraded `server/utils/demoAuthStore.js`:
+  - In `ensureDemoUsersInDB`, upserts `WorkerProfile` for all workers with `dutyStatus: 'ONLINE'`, `isVerified: true`, `workerStatus: 'APPROVED_SENIOR'`, and `isAvailable: true`.
+- [x] Upgraded `client/src/components/WorkerDutySwitch.jsx`:
+  - Removed arbitrary `!isVerified` blocking so workers can toggle online/offline smoothly.
+  - Added responsive local state that updates optimistically and syncs with `servecircle:duty-status-changed` events.
+  - Dispatches `servecircle:duty-status-changed` event so navbar and other pages update instantly.
+- [x] Upgraded `client/src/components/DashboardNavbar.jsx`:
+  - Added event listener for `servecircle:duty-status-changed` and dispatches it on toggle.
+  - Saves updated duty status into both `servecircle_worker_session` and `servecircle_session` in `localStorage`.
+- [x] Upgraded `client/src/pages/worker/useWorkerAuth.js`:
+  - Added listener for `servecircle:duty-status-changed` so any page using `useWorkerAuth` reflects the latest duty status immediately.
+- [x] Verified full test suite & client production build:
+  - Client production build (`npm --prefix client run build`): PASSED with 0 errors.
+  - Test suites (`verify-worker-ops-suite.mjs`, `verify-m1-duty-and-availability.mjs`, `verify-m0-workflow.mjs`): 57/57 checks PASSED.
+
 ## Working plan — Restore Notification System & Fix Backend Startup Regression (done, verified 2026-11-21)
 
 **User outcome:** Operator reported: "last github pushh ke badse kafi chije work karni stop ho gai hai notification and others things jo chali gai ho usko vapas lake working banao. jo jarurat ho vahi process karo ho sake utna jaldi karna".

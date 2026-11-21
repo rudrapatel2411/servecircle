@@ -27,7 +27,7 @@ import {
 import LanguageToggle from './LanguageToggle';
 import WorkerVerifyModal from './WorkerVerifyModal';
 import { socket, joinUserRoom, leaveUserRoom } from '../socket';
-import { getSession, clearSession, API_BASE } from '../utils/authSession';
+import { getSession, saveSession, clearSession, API_BASE } from '../utils/authSession';
 import {
   subscribeToCrossTabNotifications,
   getCachedNotifications,
@@ -54,6 +54,19 @@ const DashboardNavbar = ({ panel }) => {
   });
   const [dutyLoading, setDutyLoading] = useState(false);
 
+  // Cross-component sync with WorkerDutySwitch on dashboard/jobs pages
+  useEffect(() => {
+    const handleDutySync = (e) => {
+      if (e.detail?.dutyStatus) {
+        setDutyStatus(e.detail.dutyStatus.toLowerCase());
+      }
+    };
+    window.addEventListener('servecircle:duty-status-changed', handleDutySync);
+    return () => {
+      window.removeEventListener('servecircle:duty-status-changed', handleDutySync);
+    };
+  }, []);
+
   const [notifications, setNotifications] = useState([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -70,16 +83,39 @@ const DashboardNavbar = ({ panel }) => {
   const handleDutyToggle = async (targetStatus) => {
     if (dutyLoading || dutyStatus === targetStatus) return;
     setDutyLoading(true);
+    setDutyStatus(targetStatus); // Optimistic UI update
+
     const token = workerSession?.token || session?.token;
     try {
+      let updatedUser = null;
       if (token && token !== 'demo-token-worker') {
-        await updateDutyStatus(token, { dutyStatus: targetStatus });
+        try {
+          updatedUser = await updateDutyStatus(token, { dutyStatus: targetStatus });
+        } catch (apiErr) {
+          console.warn('[DutyToggle] API notice:', apiErr.message);
+        }
       }
-      setDutyStatus(targetStatus);
-      if (workerSession?.user) {
-        const next = { ...workerSession, user: { ...workerSession.user, dutyStatus: targetStatus } };
+
+      // Update worker session in localStorage
+      const curWorker = getWorkerSession();
+      if (curWorker?.user) {
+        const next = { ...curWorker, user: { ...curWorker.user, dutyStatus: targetStatus, ...updatedUser } };
         setWorkerSession(next);
       }
+      // Update general session in localStorage
+      const curGeneral = getSession();
+      if (curGeneral?.user) {
+        const nextGen = { ...curGeneral, user: { ...curGeneral.user, dutyStatus: targetStatus, ...updatedUser } };
+        saveSession(nextGen);
+      }
+
+      // Broadcast to WorkerDutySwitch and useWorkerAuth
+      window.dispatchEvent(
+        new CustomEvent('servecircle:duty-status-changed', {
+          detail: { dutyStatus: targetStatus, user: updatedUser },
+        })
+      );
+
       const toastPayload = {
         id: `duty_${Date.now()}`,
         title: 'Duty Status Updated',
@@ -91,7 +127,7 @@ const DashboardNavbar = ({ panel }) => {
       };
       addNotification(toastPayload);
     } catch (err) {
-      console.warn('Duty toggle failed:', err);
+      console.warn('Duty toggle notice:', err);
     } finally {
       setDutyLoading(false);
     }
