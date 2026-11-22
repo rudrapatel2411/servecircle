@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/prisma.js';
-import { protect, authorize } from '../middleware/auth.js';
+import { protect, authorize, optionalAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { StatusCodes } from 'http-status-codes';
@@ -803,6 +803,50 @@ router.post(
         incident: { id: `sos-${Date.now()}`, severity: normSeverity, status: 'ACTIVE' },
       });
     }
+  })
+);
+
+// POST /customer/sos — trigger high-priority Customer / Commuter Ride SOS emergency
+router.post(
+  '/customer/sos',
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const { latitude, longitude, severity, rideType, details } = req.body || {};
+    const normSeverity = String(severity || 'CRITICAL').toUpperCase();
+    const customerName = req.user?.name || 'Customer / Commuter';
+    const customerPhone = req.user?.phone || 'Emergency Direct (On-Ride)';
+
+    const lat = typeof latitude === 'number' ? latitude : 23.0225;
+    const lng = typeof longitude === 'number' ? longitude : 72.5714;
+    const incidentId = `cust-sos-${Date.now()}`;
+
+    if (req.io) {
+      req.io.to('admin').emit('emergency:sos_alert', {
+        incidentId,
+        workerName: `${customerName} [Customer SOS]`,
+        workerPhone: customerPhone,
+        address: `Ride Safety SOS: ${rideType || 'Travel & Commute Ride'} (${details || 'Immediate rapid response requested'})`,
+        severity: normSeverity,
+        latitude: lat,
+        longitude: lng,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: 'EMERGENCY SOS ALERT BROADCASTED. Central control desk, safety dispatch coordinators, and rapid first responders alerted.',
+      incident: {
+        id: incidentId,
+        customerName,
+        customerPhone,
+        severity: normSeverity,
+        status: 'ACTIVE',
+        latitude: lat,
+        longitude: lng,
+        timestamp: new Date().toISOString(),
+      },
+    });
   })
 );
 

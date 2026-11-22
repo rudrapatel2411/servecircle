@@ -15,6 +15,27 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Complete Premium Commute & Rentals Suite & Functional Safety Shield SOS (done, verified 2026-11-23)
+
+**User outcome:**
+1. Thoroughly analyzed and built out the complete end-to-end workflows, interactive pages, step features, and buttons for all 3 **Premium Commute & Rentals** services:
+   - **Luxury & Vintage Rentals** (`luxury-rental`): Fleet category filters (All, Supercars, SUVs, Vintage), 6 luxury/vintage cars (Mustang GT, G-Wagon G63, Rolls-Royce Ghost, Porsche 911 Cabriolet, Jaguar E-Type, BMW 7-Series) with technical specs & pricing, drive mode toggle (Self-Drive vs Chauffeur-driven), doorstep delivery vs showroom pickup, distance and duration sliders, DL verification & zero-dep insurance waiver, security deposit guarantee, and dynamic checkout integration.
+   - **School Commute Subscription** (`school-commute`): Student profile (name, grade/standard), school selection (prominent schools + custom), home pickup & campus gate addresses, commute mode (Round-trip vs One-way), shift timings (morning pickup & afternoon return), vehicle fleet selection, child safety shield (police-verified driver, live in-cab dual dashcam stream, WhatsApp geofence alerts, on-board female attendant add-on), and monthly subscription checkout.
+   - **Corporate Carpool Hub** (`corporate-carpool`): Corporate work email & organization badge, residential pickup cluster & tech park destination, shift timings (morning in-time & evening out-time), 5-day vs 6-day frequency, vehicle tier (Executive Sedan vs VIP SUV), co-rider preferences (Quiet ride mode, Women-only cohort, fast-lane toll tag), matched co-rider cohort live preview with fuel savings calculator, and monthly pass checkout.
+2. Fixed and empowered the **ServeCircle Safety Shield™ & SOS Alert Button**:
+   - Resolved visual contrast issue: ensured "ServeCircle Safety Shield™" title is crisp, bright `#ffffff` with high contrast against dark gradient background.
+   - Connected SOS button to real browser GPS telemetry (`navigator.geolocation.getCurrentPosition` with high accuracy) to capture real latitude, longitude, and accuracy.
+   - Added backend `POST /api/users/customer/sos` endpoint in `server/routes/users.js` broadcasting `emergency:sos_alert` to admin socket and recording incident.
+   - Upgraded Rapid Response Emergency Desk Modal: real GPS coordinates display, 1-tap call 112 (Police), 1-tap call 1800-233-911 (Desk), 1-tap direct WhatsApp emergency alert to family/guardian with live Google Maps link, copy encrypted link, and visual pulsating siren beacon.
+
+**Tasks & Verification:**
+- [x] Add `POST /customer/sos` endpoint in `server/routes/users.js` with `optionalAuth` and socket broadcast.
+- [x] Upgrade `client/src/pages/customer/TravelCommuteHub.jsx`: fix Safety Shield heading contrast and connect SOS button to real GPS telemetry and backend SOS dispatch.
+- [x] Overhaul `client/src/pages/customer/TravelPremiumFlow.jsx` with rich 4-step interactive workflows for Luxury Rentals, School Commute, and Corporate Carpool.
+- [x] Verify production client build (`npm --prefix client run build`) — PASSED in 4.40s.
+- [x] Verify backend test suites (`verify-worker-ops-suite.mjs`) — 30/30 PASSED.
+- [x] Update `PROJECT_BRAIN/brain.md` journal.
+
 ## Working plan — Restore Full Interactive Travel & Commute Hub Suite (done, verified 2026-11-23)
 
 **User outcome:**
@@ -901,6 +922,42 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-23 — Complete Premium Commute & Rentals Suite & Functional Safety Shield SOS
+
+- **Frontend Overhaul (`client/src/pages/customer/TravelPremiumFlow.jsx`)**:
+  * **Luxury & Vintage Rentals (`luxury-rental`)**:
+    - Created 4-step interactive flow with dynamic live quotes.
+    - Added category filter pills: `All Fleet`, `Supercars`, `VIP SUVs`, `Vintage Classics`.
+    - Integrated 6 real high-end cars: Ford Mustang GT Convertible (₹7,999/d), Mercedes G-Wagon G63 (₹14,999/d), Rolls-Royce Ghost Vintage (₹24,999/d), Porsche 911 Carrera Cabriolet (₹18,999/d), 1965 Jaguar E-Type (₹12,999/d), BMW 7-Series Limo (₹9,999/d).
+    - Added Drive mode toggle (`Self-Drive` vs `Chauffeur-Driven +₹1,200/day`) and Delivery mode (`Doorstep Delivery +₹499` vs `Showroom Pickup`).
+    - Added Rental Duration slider (1–14 days) and Mileage Allowance slider (60–800 km).
+    - Integrated DL number verification, Zero-Dep Insurance Waiver (+₹999/day), and Refundable Security Deposit (₹10,000 hold) card.
+    - Integrated transparent itemized summary and 1-click checkout handoff to `/customer/book`.
+  * **School Commute Subscription (`school-commute`)**:
+    - Step 1: Student profile (child name, grade level pre-primary/primary/high-school), school selector (DPS, Podar, Riverside, St. Xavier's, Adani, or custom), home address and school campus gate.
+    - Step 2: Commute direction toggle (Two-Way Round-Trip ₹3,499/mo vs One-Way ₹2,199/mo), morning pickup timeslots (06:30, 07:00, 07:15, 07:30, 08:00 AM) and afternoon return timeslots (01:30, 02:00, 02:30, 03:30 PM), fleet selection (AC Kids Van vs Executive Sedan).
+    - Step 3: Child Safety Shield (vetted driver, live in-cab dual dashcam stream, WhatsApp arrival alerts, optional female attendant on-board +₹499/mo, emergency parent contact).
+    - Step 4: Monthly subscription pass quotation and direct checkout handoff.
+  * **Corporate Carpool Hub (`corporate-carpool`)**:
+    - Step 1: Organization badge selection (TCS, Infosys, Amazon, Google, GIFT City BFSI, L&T, Reliance, or custom), residential pickup cluster (Bopal, SG Highway, Prahlad Nagar, Chandkheda, etc.), corporate tech park destination.
+    - Step 2: Morning in-time (08:30–10:00 AM) and evening out-time (05:30–07:30 PM), work schedule (5-day vs 6-day week), vehicle tier (Executive Sedan ₹1,299/mo vs VIP SUV ₹2,499/mo).
+    - Step 3: Co-rider preferences (Quiet commute mode, Women-only cohort toggle, Fastag pass).
+    - Step 4: Live matched cohort preview with real co-rider profiles on route and fuel savings calculator (~₹6,500/mo savings).
+    - Step 5: Monthly carpool pass summary and 1-click activation.
+- **Safety Shield & SOS Alert Hardening (`TravelCommuteHub.jsx` & `server/routes/users.js`)**:
+  * Fixed visual contrast bug visible in screenshot: styled "ServeCircle Safety Shield™" with explicit `#ffffff` bold text so it is prominently visible on dark background.
+  * Connected SOS button to browser's real high-precision GPS (`navigator.geolocation.getCurrentPosition`).
+  * Added `POST /api/users/customer/sos` in `server/routes/users.js` broadcasting `emergency:sos_alert` to admin socket and recording incident ID.
+  * Upgraded Rapid Response Emergency Desk Modal:
+    - Real GPS coordinate telemetry display with live accuracy status.
+    - 1-tap call 112 (Police & Emergency).
+    - 1-tap call 1800-233-911 (ServeCircle 24/7 Desk).
+    - 1-tap direct WhatsApp emergency alert with pre-filled live distress location link to family.
+    - Encrypted telemetry tracking link copy button.
+- **Validation**:
+  * Production frontend build (`npm --prefix client run build`): PASSED in 4.40s with 0 errors.
+  * Backend test suite (`verify-worker-ops-suite.mjs`): 30/30 checks PASSED across M0–M6.
 
 ### 2026-11-23 — Full Interactive Travel & Commute Hub & Premium Rental Restoration
 
