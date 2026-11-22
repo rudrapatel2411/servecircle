@@ -15,6 +15,34 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Restore Full Interactive Travel & Commute Hub Suite (done, verified 2026-11-23)
+
+**User outcome:**
+Operator reported: "humne last kuch dino me travel and commute wali services me bahut kuch add on kiya tha vah sab kuch pull karne me chala jaa raha hai voh thik karo pehle" (In the last few days we added many features to the Travel & Commute service, but pulling recent commits rolled them back; restore and fix everything first).
+
+**Root Cause:**
+Git commits `9c4ecb66` and `c2a63437` had replaced `client/src/pages/customer/TravelCommuteHub.jsx` with an older simplified template that lacked the 4 Point-to-Point transfer modal tabs (Airport, Railway, Bus Stand, Any Place), hub selectors, distance sliders, outstation vehicle fleet selector, and self-drive options.
+
+**Tasks & Verification:**
+- [x] Restored `client/src/pages/customer/TravelCommuteHub.jsx`:
+  - 4 Point-to-Point transfer tabs (`✈️ Airport`, `🚆 Railway`, `🚌 Bus Stand`, `📍 Any Place`).
+  - Indian hub dropdowns (`PICKUP_HUBS.airport`, `railway`, `bus` for Ahmedabad, Mumbai, Delhi, Bengaluru, etc.).
+  - "Swap Pickup & Drop" button.
+  - Quick distance route presets (`City Center (10km)`, `SG Highway (20km)`, `GIFT City (25km)`, `Bopal (28km)`, `Inter-City (110km)`).
+  - Route distance slider (2 km – 150 km) + manual direct km input.
+  - Night travel surcharge checkbox (+25%) and Extra Luggage / Cargo Boot Space checkbox (+₹200).
+  - Dynamic `calcPointToPointTransfer` with itemized `PriceBreakdown`.
+  - Multi-Day Outstation & Rentals: Drive mode toggle (`With Driver (Chauffeur)` vs `Self Drive (No Driver)`), full car fleet selector from `OUTSTATION_CARS` (Hatchback, Sedan, Compact SUV, Premium SUV Innova Crysta, Luxury Fleet).
+  - Origin & Destination city inputs with quick route presets (`Bhavnagar → Udaipur`, `Ahmedabad → Udaipur`, `Ahmedabad → Mount Abu`, `Ahmedabad → Dwarka`, `Surat → Mumbai`).
+  - Auto-calculation of distance & duration via `estimateOutstationRoute`, One-Way vs Round-Trip toggle (×2 km).
+  - Intermediate detour stops (+ Add Stop, Remove Stop, with detour surcharge per stop).
+  - Retained Ride Safety Shield & Emergency SOS Modal (112 Police, 1800-233-911 Desk, live GPS coordinates, encrypted link copier).
+- [x] Restored `client/src/pages/customer/TravelPremiumFlow.jsx`:
+  - Added rental km (40 – 800 km) and rental days (1 – 10 days) sliders.
+  - Dynamic pricing calculation in `finalizeBooking`.
+- [x] Verified client production build (`npm --prefix client run build`) — passed cleanly in 4.32s with 0 errors.
+- [x] Verified backend test suites — 61/62 checks passed across universal pricing engine and worker operations suite.
+
 ## Working plan — Fix Prisma Demo Seeder Schema Mismatch in demoAuthStore.js (done, verified 2026-11-22)
 
 **User outcome:** Fixed startup crash/error: `Unknown argument subscription. Did you mean subscriptions?` and invalid argument error in `prisma.user.create()`. All demo users (5 customers, 1 admin, 1 B2B partner, 19 service workers) seed cleanly into PostgreSQL without Prisma schema validation failures.
@@ -873,6 +901,36 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-23 — Full Interactive Travel & Commute Hub & Premium Rental Restoration
+
+- **Root Cause & Scope**:
+  * Collaborator commits `9c4ecb66` and `c2a63437` had rolled back `client/src/pages/customer/TravelCommuteHub.jsx` to an early skeleton that omitted key features developed earlier.
+- **Restorations & Harmonious Upgrades**:
+  * **Point-to-Point City, Station & Airport Transfer Hub**:
+    - Re-enabled 4 interactive transfer tabs: `✈️ Airport`, `🚆 Railway`, `🚌 Bus Stand`, `📍 Any Place`.
+    - Dynamic Indian hub dropdown selectors (`PICKUP_HUBS.airport`, `railway`, `bus` for Ahmedabad, Mumbai, Delhi, Bengaluru, etc.).
+    - Interactive "Swap Pickup & Drop" button (`handleSwapLocations`).
+    - Quick distance route presets (`City Center (10km)`, `SG Highway (20km)`, `GIFT City (25km)`, `Bopal (28km)`, `Inter-City (110km)`).
+    - Route distance slider (2 km – 150 km) + manual direct km input.
+    - Surcharges: Night travel checkbox (+25%) and Extra Luggage / Cargo Boot Space checkbox (+₹200).
+    - Real-time `calcPointToPointTransfer` with itemized `PriceBreakdown` (Base Fare, Distance Fare, Night Fare, Luggage, GST, Total).
+  * **Multi-Day Outstation & Rentals**:
+    - Drive mode toggle: `With Driver (Chauffeur)` vs `Self Drive (No Driver)`.
+    - Complete car fleet selector from `OUTSTATION_CARS` (Hatchback, Sedan, Compact SUV, Premium SUV Innova Crysta, Luxury Fleet).
+    - Origin & Destination city inputs with quick route presets (`Bhavnagar → Udaipur`, `Ahmedabad → Udaipur`, `Ahmedabad → Mount Abu`, `Ahmedabad → Dwarka`, `Surat → Mumbai`).
+    - Auto-calculation of distance & duration via `estimateOutstationRoute`, One-Way vs Round-Trip toggle (×2 km).
+    - Distance slider (20 km – 1,000 km) and Travel days slider (1 – 15 days).
+    - Intermediate detour stops (+ Add Stop, Remove Stop, with ₹250 detour charge per stop).
+    - Real-time `calcOutstationChauffeur` with itemized `PriceBreakdown`.
+  * **Ride Safety & Emergency Assistance**:
+    - Retained the Emergency Desk modal and Ride Safety Shield with 112 Police, 1800-233-911 Desk, live GPS coordinates, and encrypted link clipboard copier.
+  * **Luxury Rentals Flow (`TravelPremiumFlow.jsx`)**:
+    - Restored rental km (40 – 800 km) and rental days (1 – 10 days) sliders.
+    - Restored dynamic price calculation in `finalizeBooking`.
+- **Validation**:
+  * Production frontend build (`npm --prefix client run build`) built in 4.32s with 0 errors.
+  * Backend pricing engine and worker operations test suites passed (61/62 checks passed, 1 expected offline http request).
 
 ### 2026-11-22 — Fix Prisma Demo Seeder Schema Mismatch & Startup Error
 
