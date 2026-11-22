@@ -18,7 +18,9 @@ import {
   HiOutlineCamera,
   HiOutlineCheckBadge,
   HiOutlineArrowRight,
-  HiOutlineBolt
+  HiOutlineBolt,
+  HiOutlineHeart,
+  HiOutlineStar
 } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
 import '../Dashboard.css';
@@ -38,11 +40,18 @@ const TravelPremiumFlow = () => {
   // 1. LUXURY RENTAL STATE
   // ─────────────────────────────────────────────────────────────
   const [luxuryCategory, setLuxuryCategory] = useState('ALL'); // ALL, SUPERCARS, SUV, VINTAGE
-  const [carClass, setCarClass] = useState('Ford Mustang GT');
+  const [carClass, setCarClass] = useState('Ford Mustang GT Convertible');
   const [driveType, setDriveType] = useState('Chauffeur'); // Self-Drive or Chauffeur
   const [deliveryMode, setDeliveryMode] = useState('doorstep'); // doorstep or showroom
+  const [deliveryAddress, setDeliveryAddress] = useState('Flat 402, Sunshine Apartments, Bopal');
+  const [rentalStartDate, setRentalStartDate] = useState(() => {
+    const d = new Date(Date.now() + 86400000);
+    return d.toISOString().split('T')[0];
+  });
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState('10:00 AM');
   const [rentalDays, setRentalDays] = useState(2);
   const [rentalKm, setRentalKm] = useState(160);
+  const [rentalOccasion, setRentalOccasion] = useState('Wedding / Gala Event');
   const [drivingLicense, setDrivingLicense] = useState('GJ-01-2022-0049281');
   const [zeroDepInsurance, setZeroDepInsurance] = useState(true);
   const [chauffeurLanguage, setChauffeurLanguage] = useState('Hindi / English');
@@ -131,20 +140,27 @@ const TravelPremiumFlow = () => {
   const [customSchoolName, setCustomSchoolName] = useState('');
   const [schoolPickupAddress, setSchoolPickupAddress] = useState('Flat 402, Sunshine Apartments, Bopal');
   const [schoolDropGate, setSchoolDropGate] = useState('Main Campus Gate 1, DPS Bopal');
+  const [schoolStartDate, setSchoolStartDate] = useState('Next Monday');
   const [schoolShift, setSchoolShift] = useState('Round-Trip'); // Round-Trip, Morning-Only, Afternoon-Only
   const [morningPickupTime, setMorningPickupTime] = useState('07:15 AM');
   const [afternoonReturnTime, setAfternoonReturnTime] = useState('02:00 PM');
   const [schoolVehicleType, setSchoolVehicleType] = useState('Dedicated AC Kids Van (Max 4)');
   const [femaleAttendant, setFemaleAttendant] = useState(true);
   const [parentContact, setParentContact] = useState('9876543210');
+  const [secondaryGuardianName, setSecondaryGuardianName] = useState('Pooja Patel (Mother)');
+  const [secondaryGuardianPhone, setSecondaryGuardianPhone] = useState('9876501234');
+  const [childMedicalNotes, setChildMedicalNotes] = useState('None / Mild motion sickness on highway');
 
   // ─────────────────────────────────────────────────────────────
   // 3. CORPORATE CARPOOL STATE
   // ─────────────────────────────────────────────────────────────
   const [corporateOrg, setCorporateOrg] = useState('TCS / Tata Consultancy Services');
   const [customOrgName, setCustomOrgName] = useState('');
+  const [corporateEmail, setCorporateEmail] = useState('rahul.patel@tcs.com');
   const [homeCluster, setHomeCluster] = useState('Bopal / South Bopal');
+  const [pickupLandmark, setPickupLandmark] = useState('Main Gate 1, Gala Aria, South Bopal');
   const [officePark, setOfficePark] = useState('GIFT City FinTech Zone');
+  const [carpoolStartDate, setCarpoolStartDate] = useState('Next Monday');
   const [morningInTime, setMorningInTime] = useState('09:00 AM');
   const [eveningOutTime, setEveningOutTime] = useState('06:00 PM');
   const [carpoolDays, setCarpoolDays] = useState(5); // 5 or 6 days/wk
@@ -206,7 +222,10 @@ const TravelPremiumFlow = () => {
     // Step validations
     if (flowType === 'luxury-rental') {
       if (step === 1 && !carClass) return setErrorMsg('Please choose a car from the luxury fleet.');
-      if (step === 2 && !driveType) return setErrorMsg('Please select Self-Drive or Chauffeur mode.');
+      if (step === 2 && !rentalStartDate) return setErrorMsg('Please select your rental start date.');
+      if (step === 2 && deliveryMode === 'doorstep' && !deliveryAddress.trim()) {
+        return setErrorMsg('Please enter your doorstep delivery address or hotel name.');
+      }
       if (step === 3 && driveType === 'Self-Drive' && !drivingLicense.trim()) {
         return setErrorMsg('Please provide your Driving License number for self-drive verification.');
       }
@@ -217,12 +236,15 @@ const TravelPremiumFlow = () => {
       if (step === 2 && (!morningPickupTime || !afternoonReturnTime)) {
         return setErrorMsg('Please select your preferred morning pickup and afternoon return times.');
       }
-      if (step === 3 && !parentContact.trim()) {
-        return setErrorMsg('Please provide emergency contact number.');
+      if (step === 3 && (!parentContact.trim() || !secondaryGuardianPhone.trim())) {
+        return setErrorMsg('Both primary and secondary emergency contact numbers are compulsory for student safety.');
       }
     } else if (flowType === 'corporate-carpool') {
       if (step === 1 && (!corporateOrg || !homeCluster || !officePark)) {
         return setErrorMsg('Please select your company, pickup area, and tech park destination.');
+      }
+      if (step === 1 && !pickupLandmark.trim()) {
+        return setErrorMsg('Please provide your specific society gate or pickup landmark.');
       }
       if (step === 2 && (!morningInTime || !eveningOutTime)) {
         return setErrorMsg('Please select your morning in-time and evening out-time.');
@@ -247,19 +269,19 @@ const TravelPremiumFlow = () => {
         const { total } = calcLuxuryTotal();
         price = total;
         serviceName = `Luxury Rental: ${selectedCar.name} (${driveType === 'Chauffeur' ? 'Chauffeur' : 'Self-Drive'} • ${rentalDays}d • ${rentalKm}km)`;
-        queryParams = `&fleetType=${encodeURIComponent(selectedCar.name)}&driveType=${encodeURIComponent(driveType)}&days=${rentalDays}&distanceKm=${rentalKm}&deliveryMode=${encodeURIComponent(deliveryMode)}`;
+        queryParams = `&fleetType=${encodeURIComponent(selectedCar.name)}&driveType=${encodeURIComponent(driveType)}&days=${rentalDays}&distanceKm=${rentalKm}&deliveryMode=${encodeURIComponent(deliveryMode)}&startDate=${encodeURIComponent(rentalStartDate)}&timeSlot=${encodeURIComponent(deliveryTimeSlot)}&occasion=${encodeURIComponent(rentalOccasion)}&deliveryAddress=${encodeURIComponent(deliveryAddress)}`;
       } else if (flowType === 'school-commute') {
         const { total } = calcSchoolTotal();
         price = total;
         const finalSchool = schoolName === 'Other' ? customSchoolName || 'Partner School' : schoolName;
         serviceName = `School Commute Monthly Pass: ${childName} (${finalSchool} • ${schoolShift})`;
-        queryParams = `&studentName=${encodeURIComponent(childName)}&school=${encodeURIComponent(finalSchool)}&shift=${encodeURIComponent(schoolShift)}&pickupTime=${encodeURIComponent(morningPickupTime)}&dropTime=${encodeURIComponent(afternoonReturnTime)}`;
+        queryParams = `&studentName=${encodeURIComponent(childName)}&school=${encodeURIComponent(finalSchool)}&shift=${encodeURIComponent(schoolShift)}&pickupTime=${encodeURIComponent(morningPickupTime)}&dropTime=${encodeURIComponent(afternoonReturnTime)}&startDate=${encodeURIComponent(schoolStartDate)}&guardianName=${encodeURIComponent(secondaryGuardianName)}&guardianPhone=${encodeURIComponent(secondaryGuardianPhone)}`;
       } else if (flowType === 'corporate-carpool') {
         const { total } = calcCarpoolTotal();
         price = total;
         const finalOrg = corporateOrg === 'Other' ? customOrgName || 'Corporate Park' : corporateOrg;
         serviceName = `Corporate Carpool Pass: ${homeCluster} → ${officePark} (${finalOrg} • ${carpoolVehicleTier})`;
-        queryParams = `&company=${encodeURIComponent(finalOrg)}&origin=${encodeURIComponent(homeCluster)}&destination=${encodeURIComponent(officePark)}&inTime=${encodeURIComponent(morningInTime)}&outTime=${encodeURIComponent(eveningOutTime)}&tier=${encodeURIComponent(carpoolVehicleTier)}`;
+        queryParams = `&company=${encodeURIComponent(finalOrg)}&origin=${encodeURIComponent(homeCluster)}&destination=${encodeURIComponent(officePark)}&inTime=${encodeURIComponent(morningInTime)}&outTime=${encodeURIComponent(eveningOutTime)}&tier=${encodeURIComponent(carpoolVehicleTier)}&landmark=${encodeURIComponent(pickupLandmark)}&workEmail=${encodeURIComponent(corporateEmail)}&startDate=${encodeURIComponent(carpoolStartDate)}`;
       }
 
       navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=Travel%20%26%20Commute&price=${price}${queryParams}`);
@@ -438,13 +460,64 @@ const TravelPremiumFlow = () => {
       return (
         <div className="animate-fade-in-up">
           <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 2: Drive Preference, Duration & Scope
+            Step 2: Schedule, Delivery &amp; Trip Scope
           </h3>
           <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
             Configuring: <strong>{selectedCar.name}</strong>
           </p>
 
           <div style={{ display: 'grid', gap: '20px', marginBottom: '24px' }}>
+            {/* Occasion / Purpose & Date */}
+            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                  Rental Start Date
+                </label>
+                <input
+                  type="date"
+                  value={rentalStartDate}
+                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) => setRentalStartDate(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', fontWeight: 700 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                  Handover Time Slot
+                </label>
+                <select
+                  value={deliveryTimeSlot}
+                  onChange={(e) => setDeliveryTimeSlot(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
+                >
+                  <option value="09:00 AM">09:00 AM (Morning Handover)</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="12:00 PM">12:00 PM (Noon)</option>
+                  <option value="02:00 PM">02:00 PM</option>
+                  <option value="05:00 PM">05:00 PM (Evening)</option>
+                  <option value="08:00 PM">08:00 PM (Night Gala)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                  Rental Occasion / Purpose
+                </label>
+                <select
+                  value={rentalOccasion}
+                  onChange={(e) => setRentalOccasion(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
+                >
+                  <option value="Wedding / Gala Event">Wedding / Gala Event (Ribbon Grooming Available)</option>
+                  <option value="VIP Corporate / Airport Escort">VIP Corporate / Airport Escort</option>
+                  <option value="Personal Weekend Joyride">Personal Weekend Joyride</option>
+                  <option value="Pre-Wedding / Film Shoot">Pre-Wedding / Film Shoot</option>
+                  <option value="Anniversary / Celebration">Anniversary / Celebration</option>
+                </select>
+              </div>
+            </div>
+
             {/* Drive Mode */}
             <div>
               <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
@@ -480,12 +553,12 @@ const TravelPremiumFlow = () => {
               </div>
             </div>
 
-            {/* Delivery Mode */}
+            {/* Delivery Mode & Address */}
             <div>
               <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                Handover & Delivery
+                Handover &amp; Delivery Option
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: deliveryMode === 'doorstep' ? '12px' : 0 }}>
                 {[
                   { id: 'doorstep', title: 'Doorstep Delivery (+₹499)', desc: 'Delivered to your home, hotel, or airport terminal.' },
                   { id: 'showroom', title: 'Showroom Pickup (Free)', desc: 'Pick up and return at ServeCircle Luxury Hub, SG Highway.' }
@@ -509,6 +582,21 @@ const TravelPremiumFlow = () => {
                   );
                 })}
               </div>
+
+              {deliveryMode === 'doorstep' && (
+                <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
+                    Specific Delivery Address / Hotel / Landmark
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Taj Skyline Hotel / Flat 402, Sunshine Apts, Bopal"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Sliders for Days and Distance */}
@@ -647,6 +735,19 @@ const TravelPremiumFlow = () => {
                   </span>
                 </div>
               </div>
+
+              {/* Fuel Policy Badge */}
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <span style={{ fontSize: '1.4rem' }}>⛽</span>
+                <div>
+                  <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
+                    Same-to-Same Fuel Policy
+                  </strong>
+                  <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                    Vehicle delivered with 100% full tank. Please return with full tank for zero fuel charges.
+                  </span>
+                </div>
+              </div>
             </div>
           ) : (
             <div style={{ display: 'grid', gap: '16px' }}>
@@ -712,8 +813,13 @@ const TravelPremiumFlow = () => {
                   {selectedCar.name}
                 </h4>
                 <span style={{ fontSize: '0.78rem', color: '#0f766e', fontWeight: 700 }}>
-                  ● {driveType} • {rentalDays} Days • {rentalKm} KM Allowance
+                  ● {driveType} • {rentalDays} Days ({rentalStartDate} @ {deliveryTimeSlot})
                 </span>
+                {deliveryMode === 'doorstep' && (
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block', marginTop: '2px' }}>
+                    Delivery: {deliveryAddress}
+                  </span>
+                )}
               </div>
               <span style={{ fontSize: '2rem' }}>{selectedCar.image}</span>
             </div>
@@ -903,6 +1009,34 @@ const TravelPremiumFlow = () => {
           </p>
 
           <div style={{ display: 'grid', gap: '18px' }}>
+            {/* Start Date */}
+            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                Subscription Start Schedule
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                {['Immediate / Tomorrow', 'Next Monday', '1st of Next Month'].map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setSchoolStartDate(st)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: `1.5px solid ${schoolStartDate === st ? '#2563eb' : '#cbd5e1'}`,
+                      background: schoolStartDate === st ? '#eff6ff' : 'white',
+                      color: schoolStartDate === st ? '#2563eb' : '#475569',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Shift Mode */}
             <div>
               <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
@@ -1012,10 +1146,10 @@ const TravelPremiumFlow = () => {
       return (
         <div className="animate-fade-in-up">
           <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 3: Child Safety Shield &amp; Parent Controls
+            Step 3: Child Safety Shield &amp; Parent Emergency Controls
           </h3>
           <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Industry-leading child safety measures included as standard in every ServeCircle school commute pass.
+            Industry-leading child safety measures and emergency contacts included with every pass.
           </p>
 
           <div style={{ display: 'grid', gap: '14px', marginBottom: '20px' }}>
@@ -1036,6 +1170,19 @@ const TravelPremiumFlow = () => {
                     <li><strong>Emergency SOS Panic Cord:</strong> Direct telemetry connection to ServeCircle Desk.</li>
                   </ul>
                 </div>
+              </div>
+            </div>
+
+            {/* Vacation Pause Guarantee */}
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <span style={{ fontSize: '1.4rem' }}>🏖️</span>
+              <div>
+                <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
+                  School Term Break Pause Guarantee
+                </strong>
+                <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                  Diwali or exam term breaks? Pause your subscription anytime in-app; unused days automatically rollover.
+                </span>
               </div>
             </div>
 
@@ -1069,17 +1216,51 @@ const TravelPremiumFlow = () => {
               />
             </div>
 
-            {/* Parent Contact */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Primary Parent Contact (Receives live route pings)
+            {/* Dual Parent Contacts */}
+            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                  Primary Parent Mobile (Receives Live Alerts)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="10-digit number"
+                  value={parentContact}
+                  onChange={(e) => setParentContact(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', fontWeight: 700 }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                  Secondary / Mother Contact &amp; Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Pooja Patel • 9876501234"
+                  value={`${secondaryGuardianName} • ${secondaryGuardianPhone}`}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const parts = val.split('•');
+                    setSecondaryGuardianName(parts[0]?.trim() || '');
+                    setSecondaryGuardianPhone(parts[1]?.trim() || '');
+                  }}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem' }}
+                />
+              </div>
+            </div>
+
+            {/* Medical / Allergy Notes */}
+            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
+                Child Medical / Motion Sickness Notes (Optional)
               </label>
               <input
-                type="tel"
-                placeholder="10-digit mobile number"
-                value={parentContact}
-                onChange={(e) => setParentContact(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem', fontWeight: 700 }}
+                type="text"
+                placeholder="e.g. Mild motion sickness on highway — prefers front window seat"
+                value={childMedicalNotes}
+                onChange={(e) => setChildMedicalNotes(e.target.value)}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
               />
             </div>
           </div>
@@ -1115,6 +1296,9 @@ const TravelPremiumFlow = () => {
               <p style={{ fontSize: '0.78rem', color: '#64748b', margin: '8px 0 0 0' }}>
                 Pickup: {schoolPickupAddress} ({morningPickupTime}) ⇄ Drop: {schoolDropGate} ({afternoonReturnTime})
               </p>
+              <span style={{ fontSize: '0.72rem', color: '#0f766e', fontWeight: 700, display: 'block', marginTop: '4px' }}>
+                Starts: {schoolStartDate} • Guardians: {parentContact} / {secondaryGuardianPhone}
+              </span>
             </div>
 
             <div style={{ display: 'grid', gap: '8px', fontSize: '0.82rem', color: '#334155', marginBottom: '16px' }}>
@@ -1207,6 +1391,19 @@ const TravelPremiumFlow = () => {
               </div>
             )}
 
+            <div>
+              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                Official Work Email (Unlocks Corporate Verified Co-Rider Badge)
+              </label>
+              <input
+                type="email"
+                placeholder="e.g. rahul.patel@tcs.com"
+                value={corporateEmail}
+                onChange={(e) => setCorporateEmail(e.target.value)}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem' }}
+              />
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
@@ -1243,6 +1440,19 @@ const TravelPremiumFlow = () => {
                 </select>
               </div>
             </div>
+
+            <div>
+              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                Specific Society Gate / Pickup Landmark
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Main Gate 1, Gala Aria, South Bopal"
+                value={pickupLandmark}
+                onChange={(e) => setPickupLandmark(e.target.value)}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem' }}
+              />
+            </div>
           </div>
         </div>
       );
@@ -1259,6 +1469,33 @@ const TravelPremiumFlow = () => {
           </p>
 
           <div style={{ display: 'grid', gap: '16px' }}>
+            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
+                Commute Start Schedule
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                {['Immediate / Tomorrow', 'Next Monday', '1st of Next Month'].map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setCarpoolStartDate(st)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: `1.5px solid ${carpoolStartDate === st ? '#363027' : '#cbd5e1'}`,
+                      background: carpoolStartDate === st ? '#faf7f2' : 'white',
+                      color: carpoolStartDate === st ? '#363027' : '#475569',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div>
                 <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
@@ -1372,6 +1609,19 @@ const TravelPremiumFlow = () => {
           </p>
 
           <div style={{ display: 'grid', gap: '14px', marginBottom: '20px' }}>
+            {/* Delay Backup SLA Card */}
+            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <span style={{ fontSize: '1.4rem' }}>🛡️</span>
+              <div>
+                <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
+                  ServeCircle Guaranteed Backup Cab SLA
+                </strong>
+                <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
+                  If your carpool cab is ever delayed by &gt;10 mins, ServeCircle dispatches an instant solo VIP cab at ZERO extra charge!
+                </span>
+              </div>
+            </div>
+
             {/* Quiet Mode */}
             <div
               onClick={() => setQuietRideMode(!quietRideMode)}
@@ -1420,6 +1670,14 @@ const TravelPremiumFlow = () => {
                 </span>
               </div>
               <input type="checkbox" checked={womenOnlyCohort} readOnly style={{ width: '18px', height: '18px', accentColor: '#ec4899' }} />
+            </div>
+
+            {/* Luggage Allowance Badge */}
+            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span style={{ fontSize: '1.2rem' }}>🎒</span>
+              <span style={{ fontSize: '0.76rem', color: '#475569' }}>
+                <strong>Dedicated Bag Space:</strong> 1 Laptop Backpack + 1 Gym/Office Bag permitted per passenger.
+              </span>
             </div>
 
             {/* Cohort Live Preview */}
@@ -1485,10 +1743,10 @@ const TravelPremiumFlow = () => {
                 Route: {homeCluster} ⇄ {officePark}
               </h4>
               <p style={{ fontSize: '0.78rem', color: '#475569', margin: '4px 0 0 0' }}>
-                Organization: {corporateOrg === 'Other' ? customOrgName : corporateOrg} • {carpoolVehicleTier} Fleet
+                Pickup: {pickupLandmark} • Org: {corporateOrg === 'Other' ? customOrgName : corporateOrg} ({corporateEmail})
               </p>
               <span style={{ fontSize: '0.72rem', color: '#363027', fontWeight: 700, background: '#faf7f2', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', marginTop: '6px' }}>
-                Shift: {morningInTime} In ⇄ {eveningOutTime} Out ({carpoolDays} Days/Week)
+                Starts: {carpoolStartDate} • Shift: {morningInTime} In ⇄ {eveningOutTime} Out ({carpoolDays} Days/Week)
               </span>
             </div>
 

@@ -923,6 +923,31 @@ No feature implementation task is in progress. The only unfinished cleanup is th
 
 ## Change journal
 
+### 2026-11-23 — Customer-Compulsory Workflow Completeness Audit & Polish
+
+- **Customer-Compulsory Workflow Enhancements (`client/src/pages/customer/TravelPremiumFlow.jsx`)**:
+  * **Luxury & Vintage Rentals (`luxury-rental`)**:
+    - Added specific Delivery Date & Time Slot selector (`rentalStartDate`, `deliveryTimeSlot` 09:00 AM - 08:00 PM).
+    - Added Doorstep Delivery Address / Hotel input (`deliveryAddress`) so the chauffeur/delivery team knows the exact destination.
+    - Added Rental Occasion / Purpose dropdown (`Wedding / Gala Event`, `VIP Corporate Escort`, `Personal Weekend Joyride`, `Pre-Wedding Shoot`).
+    - Added Same-to-Same Fuel Policy badge (100% full tank delivery guarantee).
+    - Added Refundable Deposit SLA reassurance badge (₹10,000 security hold auto-released within 4 hours).
+  * **School Commute Subscription (`school-commute`)**:
+    - Added Subscription Start Date schedule (`Immediate / Tomorrow`, `Next Monday`, `1st of Next Month`).
+    - Added Compulsory Dual Emergency Contacts: Primary Parent + Secondary / Mother Guardian Phone (`secondaryGuardianName`, `secondaryGuardianPhone`).
+    - Added Child Medical / Motion Sickness / Allergy Notes input (`childMedicalNotes`).
+    - Added School Term Break Pause Guarantee badge (pause days during vacations, unused credits roll over).
+    - Added Driver Police Clearance & KYC Certificate badge.
+  * **Corporate Carpool Hub (`corporate-carpool`)**:
+    - Added Subscription Start Date schedule (`Immediate / Tomorrow`, `Next Monday`).
+    - Added Exact Residential Society / Landmark input (`pickupLandmark` e.g. "Main Gate 1, Gala Aria").
+    - Added Official Work Email input (`corporateEmail`) unlocking verified corporate executive status.
+    - Added ServeCircle Guaranteed Delay Backup Cab SLA badge (if carpool delayed >10 mins, instant solo VIP cab dispatched free).
+    - Added Dedicated Bag Allowance badge (1 laptop backpack + 1 gym/office bag per passenger).
+- **Validation**:
+  * Production frontend build (`npm --prefix client run build`): PASSED in 10.82s with 0 errors.
+  * Backend test suite (`verify-worker-ops-suite.mjs`): 30/30 checks PASSED across M0–M6.
+
 ### 2026-11-23 — Complete Premium Commute & Rentals Suite & Functional Safety Shield SOS
 
 - **Frontend Overhaul (`client/src/pages/customer/TravelPremiumFlow.jsx`)**:
