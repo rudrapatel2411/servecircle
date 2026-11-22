@@ -15,6 +15,44 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Customer Dashboard Real-Time Tracking Demo & Single Upcoming Booking (done, verified 2026-11-22)
+
+**User outcome:**
+1. In Customer Dashboard (`/customer`), modify the "Track your service in real-time" card: remove "Track Now" clickable button so it functions purely as a visual demo card and does not open the live tracking map or any route.
+2. In "Upcoming Bookings": show only a single booking (1 item maximum) if active bookings exist, and if none exist, display a clean "No upcoming bookings" empty state instead of the hardcoded dummy booking. Also remove artificial `|| 2` fallback from stat counters.
+
+**Tasks & Verification:**
+- [x] Update `CustomerDashboard.jsx` to remove "Track Now" link and render non-interactive demo status in the real-time tracking banner.
+- [x] Update `CustomerDashboard.jsx` to limit upcoming bookings to 1 item and show a graceful "No upcoming bookings" empty state when 0.
+- [x] Verify client production build (`npm --prefix client run build`) — passed in 4.15s.
+- [x] Verify visually via browser screenshot (`customer_dashboard_check.png`).
+
+## Working plan — 7 Core UX & Service Operations Fixes (done, verified 2026-11-22)
+
+**User outcome:**
+Resolve 7 specific bugs/features requested by user across landing page, browse services, repair services, navigation, payment simulator, and live tracking:
+1. **Landing Page Register Button:** Add a prominent "Create Account" (`/register`) button right beside "Login" in public `Navbar.jsx` with responsive luxury styling.
+2. **Browse Services Card Polish:** Fix text turning dark on hover, remove blur/heavy dark overlay from category images, remove grayscale filter, ensure smooth scale up on hover (`transform: translateY(-4px) scale(1.02)`), and fix icon badge positioning to prevent overlapping category title/text.
+3. **General Services Repair Photos:** Eliminate grayscale filter (`filter: grayscale(...)`) on `HomeRepairsHub.jsx` and across repair services, restoring vibrant full-color photography.
+4. **Smart Essentials Back Navigation:** Add clean, accessible back buttons (`← Back to Previous`) in both `MyHomeDashboard.jsx` (`/customer/my-home`) and `OrderedServices.jsx` (`/customer/ordered-services`).
+5. **UPI Payment Simulator Viewport Centering & Auto-Scroll:** Resolve simulator opening off-screen by mounting via React Portal (`createPortal(..., document.body)`), scrolling to top automatically, and preventing ancestor CSS `transform` trapping.
+6. **Eliminate Post-Payment White Screen:** Fix crashes on booking completion by safeguarding all string methods (`getInitials`, `bookingData.description.includes`), validating booking response ID fallbacks, protecting Leaflet initialization against missing/duplicate DOM elements, and wrapping root routes with `ErrorBoundary`.
+7. **Real Customer Geolocation & Worker Acceptance Simulation:**
+   - Detect real customer GPS location via browser permission (`navigator.geolocation.getCurrentPosition` with high accuracy) instead of hardcoded Bangalore fake coordinates.
+   - Implement realistic worker acceptance lifecycle: Search/matching state -> Worker Acceptance check -> If worker available, worker accepts and THEN starts moving along the map route towards customer with smooth animation and dynamic ETA. If unavailable, clearly display "Worker not available in your area".
+
+**Tasks & Verification:**
+- [x] Update `client/src/components/Navbar.jsx` and `Navbar.css` to add "Create Account" button next to "Login".
+- [x] Update `client/src/pages/customer/BrowseServices.jsx` and `client/src/pages/customer/CustomerPages.css` to fix text contrast on hover, remove grayscale/blur overlays, add hover scale, and fix icon badge overlap.
+- [x] Update `client/src/pages/customer/HomeRepairsHub.jsx` to remove grayscale filter and restore full color photos.
+- [x] Update `client/src/pages/customer/MyHomeDashboard.jsx` and `OrderedServices.jsx` with back navigation.
+- [x] Update `client/src/pages/customer/BookingFlow.jsx` to render payment simulator via `createPortal` centered in viewport with auto-scroll and resilient parameter parsing.
+- [x] Update `client/src/App.jsx` to wrap routes with `<ErrorBoundary>`.
+- [x] Update `client/src/pages/customer/LiveTracking.jsx` with real customer geolocation, robust error handling, worker acceptance stage, animated worker route progress, and worker unavailable handling.
+- [x] Verify production client build (`npm --prefix client run build`) — passed cleanly in 4.20s with 0 errors.
+- [x] Verify backend test suites — 80/80 checks passed across services hubs, pricing engine, and worker operations.
+- [x] Run headless browser visual verification — all 5 routes inspected and verified cleanly.
+
 ## Working plan — Medium-Smoothness Animations, Sliding Top Nav Squircle, Route Loading & Robust Error Boundary (done, verified 2026-11-22)
 
 **User outcome:**
@@ -814,6 +852,55 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-22 — Customer Dashboard Real-Time Tracking Demo & Single Upcoming Booking
+
+- **Real-Time Tracking Card Set to Pure Demo (`CustomerDashboard.jsx`)**:
+  * Removed the clickable `Track Now →` `<Link>` from `.track-realtime-card`.
+  * Replaced with a non-interactive pill badge: `● Live GPS Simulation (Demo)` with `pointerEvents: 'none'` and `userSelect: 'none'`.
+  * Ensures the card remains strictly a visual demo graphic and does not open any map, modal, or route.
+- **Single Upcoming Booking & Empty State (`CustomerDashboard.jsx`)**:
+  * Limited Upcoming Bookings to show only a single booking (`activeBookings.slice(0, 1)`).
+  * Removed the hardcoded dummy "AC Repair & Servicing" fallback when bookings are 0, replacing it with a clean and friendly empty state: `"No upcoming bookings — You have no active bookings right now. Explore services to schedule your next visit."`.
+  * Cleaned up stat counter `String(activeBookings.length)` removing the artificial `|| 2` fallback.
+- **Verification**:
+  * Client production build passed: `npm --prefix client run build` built in 4.15s with 0 errors.
+  * Headless browser visual screenshot verified: "Track Now" link removed, non-clickable demo pill displayed, and single upcoming booking rendered cleanly.
+
+### 2026-11-22 — 7 Core UX & Service Operations Fixes: Register Button, Browse Cards Polish, Colorful Photos, Back Navigation, Payment Simulator Centering, White Screen Elimination & Live Geolocation Tracking
+
+- **Landing Page Create Account Button (`Navbar.jsx`, `Navbar.css`)**:
+  * Added a prominent "Create Account" button linking to `/register` right beside the "Login" button.
+  * Styled with `.navbar-create-btn` using warm organic luxury aesthetics (coffee brown text `#363027`, subtle border `rgba(54, 48, 39, 0.22)`, smooth hover lift).
+- **Browse Services Card Polish (`BrowseServices.jsx`, `CustomerPages.css`)**:
+  * Restructured `.category-directory-card` into a 2-tier card: 155px upper photo area and clean white lower body.
+  * Fixed text turning dark on hover: forced `#29271F` charcoal color with high contrast.
+  * Removed blurry/dark overlays and grayscale filter (`filter: none !important`), restoring full vibrant photography.
+  * Ensured hover effect smoothly scales the card up (`transform: translateY(-4px) scale(1.025) !important`) without darkening text.
+  * Repositioned `.category-directory-icon-badge` neatly inside the photo banner at top-left, completely eliminating collision/overlap with category title and description text.
+- **General Services Repair Photos Restored to Full Color (`HomeRepairsHub.jsx`)**:
+  * Removed `filter: 'grayscale(100%) contrast(1.1)'` from `<ServiceImage />` across all repair service cards (AC Repair, Electrical, Plumbing, Carpentry), restoring vibrant, professional full-color photography.
+- **Smart Essentials Back Navigation (`MyHomeDashboard.jsx`, `OrderedServices.jsx`)**:
+  * Added accessible "← Back to Previous" buttons (`.back-btn`) to both My Home CockpitHub (`/customer/my-home`) and Ordered Services Live (`/customer/ordered-services`).
+- **UPI Payment Simulator Viewport Centering & Auto-Scroll (`BookingFlow.jsx`, `DashboardLayout.css`)**:
+  * Fixed simulator opening off-screen or trapped behind ancestor CSS transforms by mounting the modal via React Portal (`createPortal(..., document.body)`).
+  * Auto-scrolls window smoothly to top upon opening (`window.scrollTo({ top: 0, behavior: 'smooth' })`).
+  * Updated `@keyframes pageSmoothFadeSlide` to terminate at `transform: none`, preventing ancestor transform containment traps.
+- **Post-Payment White Screen Elimination (`App.jsx`, `BookingFlow.jsx`, `LiveTracking.jsx`)**:
+  * Safeguarded all parsing and string operations: safe JSON parsing for multi-stop parameters (`safeParsedStops`), safe `bookingId` fallback extraction, safe worker name string extraction, and defensive `getInitials`.
+  * Added safe checks for `bookingData.description?.includes` preventing crashes on non-string inputs.
+  * Wrapped root routes with `<ErrorBoundary>` ensuring graceful recovery if any runtime exception occurs.
+- **Real Customer Geolocation & Worker Acceptance Live Tracking Flow (`LiveTracking.jsx`)**:
+  * Replaced hardcoded Bangalore coordinates with real browser GPS detection (`navigator.geolocation.getCurrentPosition` with high accuracy).
+  * Added GPS permission banner with "Detect My GPS Location" action and live location status badge.
+  * Implemented realistic worker acceptance lifecycle: matching stage -> worker acceptance confirmation banner -> en-route transition.
+  * Added "Worker Not Available" UI card with direct customer helpline support (`1800-233-911`) and service navigation when workers are unavailable.
+  * Created smooth demo movement animation of technician advancing along waypoints towards customer doorstep with dynamic ETA updates.
+  * Protected Leaflet map lifecycle against duplicate container IDs and unmounted DOM references.
+- **Verification**:
+  * Client production build passed: `npm --prefix client run build` built in 4.20s with 0 errors.
+  * Backend test suites passed: 80/80 checks across services hubs, pricing engine, and worker operations.
+  * Headless browser visual verification confirmed zero white-screens, proper button layout, full color photos, clean card typography, and live tracking UI.
 
 ### 2026-11-22 — Universal Medium-Smoothness Polish, Top Nav Sliding Indicator, Synchronized Page Transitions & Error Boundary
 

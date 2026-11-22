@@ -58,7 +58,7 @@ const CustomerDashboard = () => {
    const stats = [
     { 
       icon: <HiOutlineCalendarDays />, 
-      value: String(activeBookings.length || 2), 
+      value: String(activeBookings.length), 
       label: 'Upcoming',
       iconBg: '#dcfce7',
       iconColor: '#15803d'
@@ -142,25 +142,26 @@ const CustomerDashboard = () => {
       <p style={{ color: '#C5BFB5', fontSize: '0.88rem', margin: '0 0 18px 0', lineHeight: 1.45, maxWidth: '380px' }}>
         Know exactly where your worker is and get updates instantly.
       </p>
-      <Link
-        to="/customer/live-tracking"
+      <div
         style={{
           display: 'inline-flex',
           alignItems: 'center',
           gap: '8px',
-          padding: '9px 22px',
-          background: '#F7F3EC',
-          color: '#29271F',
+          padding: '8px 18px',
+          background: 'rgba(247, 243, 236, 0.12)',
+          color: '#E8E0D2',
           borderRadius: '100px',
-          fontWeight: 800,
-          fontSize: '0.86rem',
-          textDecoration: 'none',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-          transition: 'all 0.2s ease',
+          fontWeight: 700,
+          fontSize: '0.84rem',
+          border: '1px solid rgba(232, 224, 210, 0.22)',
+          letterSpacing: '0.02em',
+          userSelect: 'none',
+          pointerEvents: 'none',
         }}
       >
-        Track Now →
-      </Link>
+        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#86efac', display: 'inline-block' }} />
+        Live GPS Simulation (Demo)
+      </div>
     </div>
 
     {/* Mini Map Graphic (Reference Artboard Match) */}
@@ -222,57 +223,47 @@ const CustomerDashboard = () => {
  View All →
  </Link>
  </div>
- <div className="card" style={{ padding: '16px 20px', borderRadius: 'var(--radius-lg, 18px)', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- {activeBookings.length > 0 ? (
- activeBookings.slice(0, 2).map((b) => (
- <div key={b.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid var(--sc-bg-primary, #F7F3EC)' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
- <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--sc-surface-secondary, #E8E0D2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-primary-accent, #536D57)' }}>
- <HiOutlineWrench size={22} />
- </div>
- <div>
- <strong style={{ fontSize: '0.95rem', color: 'var(--sc-dark-accent, #29271F)', display: 'block' }}>{b.service}</strong>
- <span style={{ fontSize: '0.78rem', color: 'var(--sc-text-secondary, #6B665C)' }}>Tomorrow • 10:30 AM • {b.worker}</span>
- </div>
- </div>
- <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
- <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: 'rgba(83, 109, 87, 0.12)', color: 'var(--sc-primary-accent, #536D57)' }}>
- Confirmed
- </span>
- <Link
- to={`/customer/live-tracking?bookingId=${encodeURIComponent(b.rawId || b.id.replace('#', ''))}&service=${encodeURIComponent(b.service)}&worker=${encodeURIComponent(b.worker)}`}
- style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-dark-accent, #29271F)' }}
- >
- <HiOutlineArrowRight size={14} />
- </Link>
- </div>
- </div>
- ))
- ) : (
- <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
- <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--sc-surface-secondary, #E8E0D2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-primary-accent, #536D57)' }}>
- <HiOutlineWrench size={22} />
- </div>
- <div>
- <strong style={{ fontSize: '0.95rem', color: 'var(--sc-dark-accent, #29271F)', display: 'block' }}>AC Repair & Servicing</strong>
- <span style={{ fontSize: '0.78rem', color: 'var(--sc-text-secondary, #6B665C)' }}>Tomorrow • 10:30 AM</span>
- </div>
- </div>
- <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
- <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: 'rgba(83, 109, 87, 0.12)', color: 'var(--sc-primary-accent, #536D57)' }}>
- Confirmed
- </span>
- <Link
- to="/customer/live-tracking"
- style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-dark-accent, #29271F)' }}
- >
- <HiOutlineArrowRight size={14} />
- </Link>
- </div>
- </div>
- )}
- </div>
+  <div className="card" style={{ padding: '16px 20px', borderRadius: 'var(--radius-lg, 18px)', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
+  {activeBookings.length > 0 ? (
+  activeBookings.slice(0, 1).map((b) => (
+  <div key={b.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--sc-surface-secondary, #E8E0D2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-primary-accent, #536D57)' }}>
+  <HiOutlineWrench size={22} />
+  </div>
+  <div>
+  <strong style={{ fontSize: '0.95rem', color: 'var(--sc-dark-accent, #29271F)', display: 'block' }}>{b.service}</strong>
+  <span style={{ fontSize: '0.78rem', color: 'var(--sc-text-secondary, #6B665C)' }}>Tomorrow • 10:30 AM • {b.worker}</span>
+  </div>
+  </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', background: 'rgba(83, 109, 87, 0.12)', color: 'var(--sc-primary-accent, #536D57)' }}>
+  Confirmed
+  </span>
+  <Link
+  to="/customer/bookings"
+  title="View Booking Details"
+  style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-dark-accent, #29271F)', textDecoration: 'none' }}
+  >
+  <HiOutlineArrowRight size={14} />
+  </Link>
+  </div>
+  </div>
+  ))
+  ) : (
+  <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--sc-text-secondary, #6B665C)' }}>
+  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-text-secondary, #6B665C)', marginBottom: '8px' }}>
+  <HiOutlineCalendarDays size={22} />
+  </div>
+  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--sc-dark-accent, #29271F)', marginBottom: '4px' }}>
+  No upcoming bookings
+  </div>
+  <div style={{ fontSize: '0.8rem' }}>
+  You have no active bookings right now. Explore services to schedule your next visit.
+  </div>
+  </div>
+  )}
+  </div>
  </div>
 
  {/* Smart Home Cockpit Feature Banner */}

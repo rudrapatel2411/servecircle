@@ -100,6 +100,13 @@
   min-width: 0;
 }
 
+.navbar-create-btn:hover {
+  background: rgba(232, 224, 210, 0.45) !important;
+  border-color: #363027 !important;
+  color: #363027 !important;
+  transform: translateY(-1px) !important;
+}
+
 .navbar-toggle {
   display: none;
   background: #ffffff;

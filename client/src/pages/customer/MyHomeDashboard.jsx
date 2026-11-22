@@ -5,7 +5,7 @@ import {
  HiOutlineHome, HiOutlineShieldCheck, HiOutlineSparkles,
  HiOutlinePlusCircle, HiOutlineClock, HiOutlineTrash,
  HiOutlineCheckCircle, HiOutlineWrench, HiOutlineCalendarDays,
- HiOutlineArrowRight, HiOutlineArrowUpOnSquare, HiOutlineArrowPath,
+ HiOutlineArrowRight, HiOutlineArrowLeft, HiOutlineArrowUpOnSquare, HiOutlineArrowPath,
  HiOutlineTruck, HiOutlineMapPin, HiOutlineBolt, HiOutlineChartBar,
  HiOutlineCloud, HiOutlineDocumentText, HiOutlineCamera,
  HiOutlineMagnifyingGlass, HiOutlineXMark, HiOutlineTv,
@@ -866,6 +866,31 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </button>
  </div>
  )}
+
+ {/* Back to General Services Navigation */}
+ <div style={{ marginBottom: '14px' }}>
+ <button 
+ type="button" 
+ onClick={() => navigate(-1)} 
+ className="back-btn" 
+ style={{ 
+ display: 'inline-flex', 
+ alignItems: 'center', 
+ gap: '8px', 
+ color: 'var(--sc-dark-accent, #29271F)', 
+ fontWeight: 700, 
+ fontSize: '0.85rem', 
+ background: 'rgba(232, 224, 210, 0.45)', 
+ border: '1px solid var(--sc-surface-secondary, #E8E0D2)', 
+ borderRadius: '20px', 
+ padding: '6px 14px', 
+ cursor: 'pointer', 
+ transition: 'all 0.2s ease'
+ }}
+ >
+ <HiOutlineArrowLeft /> Back to Previous
+ </button>
+ </div>
 
  {/* Page Title & Action Bar */}
  <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>

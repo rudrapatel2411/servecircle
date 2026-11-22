@@ -34,6 +34,23 @@ const Navbar = () => {
         <div className="navbar-actions">
           <LanguageToggle />
           <Link
+            to="/register"
+            className="btn btn-outline btn-sm navbar-create-btn"
+            style={{
+              borderRadius: '24px',
+              padding: '8px 18px',
+              fontWeight: 700,
+              fontSize: '0.875rem',
+              color: 'var(--sc-dark-accent, #29271F)',
+              borderColor: 'var(--sc-surface-secondary, #E8E0D2)',
+              background: 'transparent',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Create Account
+          </Link>
+          <Link
             to="/login"
             className="btn btn-primary btn-sm"
             style={{
@@ -44,6 +61,7 @@ const Navbar = () => {
               background: 'var(--sc-dark-accent, #29271F)',
               color: '#ffffff',
               boxShadow: '0 2px 8px rgba(41, 39, 31, 0.16)',
+              textDecoration: 'none',
             }}
           >
             Login

@@ -330,14 +330,10 @@ const BrowseServices = () => {
  <Link
  key={cat.id}
  to={cat.isBespoke ? cat.bespokePath : `/customer/services/${cat.id}`}
- className="category-directory-card"
+ className={`category-directory-card ${hasQuery && cat.isMatch ? 'category-directory-card--matched' : ''}`}
  style={{
- opacity: hasQuery ? (cat.isMatch ? 1 : 0.35) : 1,
- transform: hasQuery && cat.isMatch ? 'scale(1.025)' : 'none',
- borderColor: hasQuery && cat.isMatch ? cat.color : 'var(--gray-200)',
- boxShadow: hasQuery && cat.isMatch ? `0 12px 24px -6px ${cat.color}33` : 'var(--shadow-sm)',
- transition: 'all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)',
- borderWidth: hasQuery && cat.isMatch ? '2px' : '1px'
+ opacity: hasQuery ? (cat.isMatch ? 1 : 0.45) : 1,
+ borderColor: hasQuery && cat.isMatch ? cat.color : undefined,
  }}
  >
  <div className="category-directory-img-wrapper">
@@ -350,12 +346,16 @@ const BrowseServices = () => {
  <div 
  className="category-directory-icon-badge"
  style={{ 
- background: cat.bg || 'rgba(255, 255, 255, 0.9)', 
- color: cat.color || 'var(--primary-600)' 
+ background: cat.bg || 'rgba(255, 255, 255, 0.95)', 
+ color: cat.color || 'var(--sc-dark-accent, #29271F)' 
  }}
  >
  {cat.icon}
  </div>
+ <span className="category-directory-live-pill">
+ <span className="category-directory-live-dot" />
+ Live
+ </span>
  </div>
  <div className="category-directory-content">
  <div>

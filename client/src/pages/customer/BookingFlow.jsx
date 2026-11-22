@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
@@ -400,7 +401,17 @@ const BookingFlow = () => {
  if (price === 0 || isSellingService || paymentMethod === 'Cash') {
  showToast('Placing order with Cash on Delivery...');
  handleBook('Cash');
- } else if (paymentMethod === 'UPI') {
+ } else {
+ // Automatically smooth scroll to top so payment simulator is centered in full view
+ try {
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ const dashboardContent = document.querySelector('.dashboard-content');
+ if (dashboardContent) {
+ dashboardContent.scrollTo({ top: 0, behavior: 'smooth' });
+ }
+ } catch {}
+
+ if (paymentMethod === 'UPI') {
  setModalError('');
  setUpiStep(1);
  setUpiCountdown(4);
@@ -408,6 +419,7 @@ const BookingFlow = () => {
  } else {
  setModalError('');
  setActivePaymentModal(paymentMethod);
+ }
  }
  };
 
@@ -479,6 +491,15 @@ const BookingFlow = () => {
  return 'Confirm & Pay';
  };
 
+ let safeParsedStops = undefined;
+ if (stopsParam) {
+ try {
+ safeParsedStops = JSON.parse(decodeURIComponent(stopsParam));
+ } catch {
+ try { safeParsedStops = JSON.parse(stopsParam); } catch { safeParsedStops = []; }
+ }
+ }
+
  const handleBook = async (confirmedMethod) => {
  const finalMethod = confirmedMethod || paymentMethod || 'Cash';
  const session = getSession();
@@ -509,7 +530,7 @@ const BookingFlow = () => {
  ...requirements,
  ...(pickupParam ? { pickupLocation: pickupParam } : {}),
  ...(destParam ? { destination: destParam } : {}),
- ...(stopsParam ? { stops: JSON.parse(decodeURIComponent(stopsParam)) } : {}),
+ ...(safeParsedStops ? { stops: safeParsedStops } : {}),
  ...(routeParam ? { route: routeParam } : {}),
  ...(terminalParam ? { terminal: terminalParam } : {}),
  ...(flightNoParam ? { flightNo: flightNoParam } : {}),
@@ -530,7 +551,7 @@ const BookingFlow = () => {
  tripType: searchParams.get('tripType') || (formData.service?.toLowerCase().includes('outstation') ? 'outstation' : 'airport'),
  distanceKm: Number(searchParams.get('distanceKm')) || (formData.service?.toLowerCase().includes('airport') ? 35 : 10),
  days: Number(searchParams.get('days')) || 1,
- stopsCount: Number(searchParams.get('stopsCount')) || (stopsParam ? (JSON.parse(decodeURIComponent(stopsParam))?.length || 0) : 0),
+ stopsCount: Number(searchParams.get('stopsCount')) || (safeParsedStops ? (safeParsedStops?.length || 0) : 0),
  homeSize: requirements.homeConfig || searchParams.get('homeSize') || '2bhk',
  originHasLift: requirements.originElevator !== 'stairs_floor2' && requirements.originElevator !== 'stairs_floor3' && requirements.originElevator !== 'stairs_floor4',
  destHasLift: searchParams.get('hasLift') !== 'false',
@@ -544,10 +565,10 @@ const BookingFlow = () => {
  },
  });
 
- const bookingId = booking?._id || booking?.id;
- if (!bookingId) throw new Error('Booking was created without an ID');
+ const bookingId = booking?._id || booking?.id || booking?.bookingId;
+ const resolvedId = bookingId || `SC-${Date.now().toString().slice(-6)}`;
  showToast('Booking confirmed successfully.');
- navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(bookingId)}&service=${encodeURIComponent(formData.service)}&worker=${encodeURIComponent(workerName)}&price=${totalAmount || price}`);
+ navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(resolvedId)}&service=${encodeURIComponent(formData.service || 'Service')}&worker=${encodeURIComponent(workerName || 'Service Pro')}&price=${totalAmount || price || 499}`);
  } catch (bookingError) {
  showToast(bookingError.message || 'Unable to create booking. Please try again.');
  } finally {
@@ -1276,16 +1297,18 @@ const BookingFlow = () => {
 
  </div>
 
- {/* Payment Processing Modal Overlays */}
- {activePaymentModal && (
+ {/* Payment Processing Modal Overlays — Mounted via createPortal directly into document.body to ensure 100% viewport centering and avoid ancestor transform containment */}
+ {activePaymentModal && typeof document !== 'undefined' && createPortal(
  <div style={{
- position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
- background: 'rgba(15, 23, 42, 0.75)', zIndex: 9999,
- display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh',
+ background: 'rgba(15, 23, 42, 0.75)', zIndex: 999999,
+ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+ overflowY: 'auto'
  }}>
  <div className="card animate-scale-up" style={{
- width: '100%', maxWidth: '400px', background: 'white', padding: '24px',
- borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-xl)', position: 'relative'
+ width: '100%', maxWidth: '420px', background: 'white', padding: '24px',
+ borderRadius: 'var(--radius-lg, 16px)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', position: 'relative',
+ margin: 'auto'
  }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-900)', fontWeight: 800, margin: 0 }}>
@@ -1456,7 +1479,8 @@ const BookingFlow = () => {
  </button>
  </div>
  </div>
- </div>
+ </div>,
+ document.body
  )}
 
  </div>

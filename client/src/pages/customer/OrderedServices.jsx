@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSession, requestApi } from '../../utils/authSession';
 import {
@@ -11,6 +11,7 @@ import {
  HiOutlineCheckCircle,
  HiOutlineExclamationTriangle,
  HiOutlineArrowTopRightOnSquare,
+ HiOutlineArrowLeft,
  HiOutlineStar,
  HiOutlineAcademicCap,
  HiOutlineQrCode,
@@ -109,6 +110,7 @@ const steps = ['Searching', 'Confirmed', 'En Route', 'Active', 'Completed'];
 const stepKeys = ['pending', 'confirmed', 'en-route', 'active', 'completed'];
 
 const OrderedServices = () => {
+ const navigate = useNavigate();
  const [searchParams] = useSearchParams();
  const [activeTab, setActiveTab] = useState('active');
  const [expandedId, setExpandedId] = useState('#SC-2841');
@@ -192,6 +194,31 @@ const OrderedServices = () => {
  }
  }}
  />
+
+ {/* Back Navigation */}
+ <div style={{ marginBottom: '14px' }}>
+ <button 
+ type="button" 
+ onClick={() => navigate(-1)} 
+ className="back-btn" 
+ style={{ 
+ display: 'inline-flex', 
+ alignItems: 'center', 
+ gap: '8px', 
+ color: 'var(--sc-dark-accent, #29271F)', 
+ fontWeight: 700, 
+ fontSize: '0.85rem', 
+ background: 'rgba(232, 224, 210, 0.45)', 
+ border: '1px solid var(--sc-surface-secondary, #E8E0D2)', 
+ borderRadius: '20px', 
+ padding: '6px 14px', 
+ cursor: 'pointer', 
+ transition: 'all 0.2s ease'
+ }}
+ >
+ <HiOutlineArrowLeft /> Back to Previous
+ </button>
+ </div>
 
  <div className="page-header">
  <div>

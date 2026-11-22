@@ -109,7 +109,8 @@ function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ScrollToTop />
-      <Routes>
+      <ErrorBoundary>
+        <Routes>
         <Route path="/" element={<><Navbar /><LandingPage /></>} />
         <Route path="/about/:id" element={<><Navbar /><ImpactDetail /></>} />
         <Route path="/login" element={<LoginPage />} />
@@ -220,6 +221,7 @@ function App() {
         <Route path="/verify-worker" element={<SecureWorkerVerification />} />
         <Route path="/verify/worker/:workerIdCode" element={<SecureWorkerVerification />} />
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
