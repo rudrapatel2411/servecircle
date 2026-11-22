@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   HiOutlineShieldCheck, HiOutlineCheckCircle, HiOutlineLockClosed,
@@ -184,7 +185,8 @@ const TrustSafety = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-              <div
+              <Link
+                to="/customer/ai-chat"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -192,18 +194,19 @@ const TrustSafety = () => {
                   padding: '12px',
                   border: '1.5px solid var(--gray-200)',
                   borderRadius: 'var(--radius-md)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  textDecoration: 'none'
                 }}
-                onClick={() => alert('Opening live chat with Trust Officer...')}
               >
                 <HiOutlineChatBubbleLeftRight style={{ color: 'var(--primary-600)', fontSize: '1.25rem' }} />
                 <div>
                   <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)' }}>Live Trust Chat</h4>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '2px' }}>Average response: 2 mins</p>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '2px' }}>Instant response with Trust AI Assistant</p>
                 </div>
-              </div>
+              </Link>
 
-              <div
+              <a
+                href="tel:18002477233"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -211,16 +214,16 @@ const TrustSafety = () => {
                   padding: '12px',
                   border: '1.5px solid var(--gray-200)',
                   borderRadius: 'var(--radius-md)',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  textDecoration: 'none'
                 }}
-                onClick={() => alert('Dialing safety hotline +91 1800 247 7233...')}
               >
                 <HiOutlinePhone style={{ color: 'var(--primary-600)', fontSize: '1.25rem' }} />
                 <div>
                   <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--navy-800)' }}>Safety Toll-Free Line</h4>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '2px' }}>Dial: 1800-247-SAFE</p>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '2px' }}>Click to call: 1800-247-SAFE (1800-247-7233)</p>
                 </div>
-              </div>
+              </a>
 
             </div>
           </div>

@@ -15,21 +15,9 @@ import '../Dashboard.css';
 import './CustomerPages.css';
 import { generalServicesData as categories } from '../../data/generalServicesData';
 
-
-
-const stats = [
-  { value: '500+', label: 'Verified Pros', icon: '🏅' },
-  { value: '4.8★', label: 'Average Rating', icon: '⭐' },
-  { value: '15 min', label: 'Avg Response', icon: '⚡' },
-  { value: '50K+', label: 'Happy Customers', icon: '😊' },
-];
-
 const GeneralServicesPage = () => {
   return (
     <div className="page-content gs-page" style={{ minHeight: '92vh' }}>
-
-
-
       {/* ===== CATEGORY GRID ===== */}
       <div className="gs-categories-section">
         <div className="gs-section-header">
@@ -41,8 +29,9 @@ const GeneralServicesPage = () => {
           {categories.map((cat) => (
             cat.comingSoon ? (
               <div key={cat.id} className="gs-category-card gs-category-card--coming-soon">
-                <div className="gs-category-card-top" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <div className="gs-category-emoji">{cat.emoji}</div>
+                <div className="gs-category-card-top">
+                  <img src={cat.image} alt={cat.label} className="gs-category-card-img" />
+                  <div className="gs-category-card-overlay" />
                   <span className="gs-coming-soon-pill">
                     <HiOutlineClock />
                     Coming Soon
@@ -63,8 +52,9 @@ const GeneralServicesPage = () => {
               </div>
             ) : (
               <Link key={cat.id} to={cat.path} className="gs-category-card">
-                <div className="gs-category-card-top" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <div className="gs-category-emoji">{cat.emoji}</div>
+                <div className="gs-category-card-top">
+                  <img src={cat.image} alt={cat.label} className="gs-category-card-img" />
+                  <div className="gs-category-card-overlay" />
                   <span className="gs-live-pill">
                     <span className="gs-live-dot" />
                     Live
@@ -100,7 +90,6 @@ const GeneralServicesPage = () => {
           Try AI Concierge Search
         </Link>
       </div>
-
     </div>
   );
 };

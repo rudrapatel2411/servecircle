@@ -43,32 +43,7 @@ export const useWorkerAuth = () => {
     const nextSession = { ...session, user: nextUser };
     setSession(nextSession);
     setWorkerSession(nextSession);
-    window.dispatchEvent(
-      new CustomEvent('servecircle:duty-status-changed', {
-        detail: { dutyStatus: nextUser.dutyStatus, user: nextUser },
-      })
-    );
   };
-
-  // Sync with global duty status events (e.g. from DashboardNavbar or other components)
-  useEffect(() => {
-    const handleDutySync = (e) => {
-      if (e.detail?.dutyStatus && session) {
-        const nextUser = {
-          ...session.user,
-          dutyStatus: e.detail.dutyStatus.toLowerCase(),
-          ...(e.detail.user || {}),
-        };
-        const nextSession = { ...session, user: nextUser };
-        setSession(nextSession);
-        setWorkerSession(nextSession);
-      }
-    };
-    window.addEventListener('servecircle:duty-status-changed', handleDutySync);
-    return () => {
-      window.removeEventListener('servecircle:duty-status-changed', handleDutySync);
-    };
-  }, [session]);
 
   // Derived tier info for use in UI
   const workerTier = useMemo(() => {
@@ -125,6 +100,17 @@ export const useWorkerAuth = () => {
     refreshProfile().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Listen to cross-component duty status changes (e.g. from DashboardNavbar or WorkerDutySwitch)
+  useEffect(() => {
+    const handleDutyChange = (e) => {
+      if (e.detail?.dutyStatus) {
+        updateDuty(e.detail.user || e.detail.dutyStatus);
+      }
+    };
+    window.addEventListener('servecircle:duty-changed', handleDutyChange);
+    return () => window.removeEventListener('servecircle:duty-changed', handleDutyChange);
+  }, [session]);
 
   return {
     token,

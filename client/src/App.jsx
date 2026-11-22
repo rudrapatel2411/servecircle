@@ -14,6 +14,8 @@ Number.prototype.toLocaleString = function (locales, options) {
 /* Layouts */
 import Navbar from './components/Navbar';
 import DashboardLayout from './components/DashboardLayout';
+import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
 
 /* Public */
 import LandingPage from './pages/LandingPage';
@@ -106,12 +108,13 @@ import B2BClientSupport from './pages/b2b/B2BClientSupport';
 function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<><Navbar /><LandingPage /></>} />
         <Route path="/about/:id" element={<><Navbar /><ImpactDetail /></>} />
-        <Route path="/login" element={<><Navbar /><LoginPage /></>} />
-        <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
-        <Route path="/worker-register" element={<><Navbar /><WorkerRegister /></>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/worker-register" element={<WorkerRegister />} />
         <Route path="/ai-chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/chat" element={<Navigate to="/customer/ai-chat" replace />} />
         <Route path="/ai-diagnosis" element={<Navigate to="/customer/ai-diagnosis" replace />} />

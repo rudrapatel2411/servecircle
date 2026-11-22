@@ -6,6 +6,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
+import Pagination from '../../components/Pagination';
 
 const mockCoupons = [
   { id: 1, code: 'WELCOME50', desc: 'New user welcome discount', type: 'percentage', value: 50, maxDiscount: 200, minOrder: 0, used: 142, limit: 500, validFrom: '2026-01-01', validUntil: '2026-12-31', active: true },
@@ -18,6 +19,8 @@ const mockCoupons = [
 const AdminCoupons = () => {
   const { t } = useTranslation();
   const [coupons, setCoupons] = useState(mockCoupons);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ code: '', desc: '', type: 'percentage', value: '', maxDiscount: '', minOrder: '', limit: '', validFrom: '', validUntil: '' });
 
@@ -65,7 +68,9 @@ const AdminCoupons = () => {
       )}
 
       <div className="coupons-grid">
-        {coupons.map((c) => (
+        {coupons
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((c) => (
           <div key={c.id} className={`coupon-card ${!c.active ? 'inactive' : ''}`}>
             <div className="coupon-top">
               <div className="coupon-code">{c.code}</div>
@@ -91,6 +96,21 @@ const AdminCoupons = () => {
           </div>
         ))}
       </div>
+
+      {coupons.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={coupons.length}
+          pageSize={pageSize}
+          pageSizeOptions={[6, 12, 24]}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="coupons"
+        />
+      )}
     </div>
   );
 };

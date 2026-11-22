@@ -55,11 +55,17 @@ export function toWorkerStatusEnum(value) {
 }
 
 /**
- * Helper: Parse time string ("10:30", "10:30 AM", "14:00") into minutes from midnight
+ * Helper: Parse time string ("10:30", "10:30 AM", "14:00", "09:00 AM - 11:00 AM") into minutes from midnight
  */
 export function parseTimeToMinutes(timeStr) {
   if (!timeStr) return null;
-  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  const raw = String(timeStr).trim();
+  if (raw.toLowerCase().includes('flexible') || raw.toLowerCase().includes('anytime')) {
+    return null;
+  }
+  // If timeStr is a slot range like "09:00 AM - 11:00 AM", use the start time
+  const target = raw.includes('-') ? raw.split('-')[0].trim() : raw;
+  const match = target.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
   if (!match) return null;
   let hours = parseInt(match[1], 10);
   const minutes = parseInt(match[2], 10);
@@ -101,6 +107,7 @@ export function isWorkerAvailableForSlot(worker, scheduledDate, scheduledTime) {
       const isOnLeave = worker.leaves.some((leave) => {
         const start = new Date(leave.startDate);
         const end = new Date(leave.endDate);
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) return false;
         return bookingDate >= start && bookingDate <= end;
       });
       if (isOnLeave) return false;
@@ -116,17 +123,26 @@ export function isWorkerAvailableForSlot(worker, scheduledDate, scheduledTime) {
   const dateObj = new Date(scheduledDate);
   if (isNaN(dateObj.getTime())) return true;
 
-  const dayIndex = dateObj.getUTCDay(); // 0 = Sunday, 1 = Monday, ...
+  // Resolve day of week accurately (local day of week)
+  let dayIndex;
+  if (typeof scheduledDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(scheduledDate.trim())) {
+    const [y, m, d] = scheduledDate.trim().split('-').map(Number);
+    dayIndex = new Date(y, m - 1, d).getDay();
+  } else {
+    // Offset by IST (+5.5 hours) for proper local day determination in India
+    const istTime = new Date(dateObj.getTime() + (dateObj.getTimezoneOffset() + 330) * 60000);
+    dayIndex = istTime.getDay();
+  }
   const dayName = DAYS[dayIndex];
 
   const daySlot = slots.find((a) => {
     if (a.dayOfWeek !== undefined && a.dayOfWeek !== null) {
-      return a.dayOfWeek === dayIndex;
+      return Number(a.dayOfWeek) === dayIndex;
     }
     return a.day && a.day.toLowerCase() === dayName.toLowerCase();
   });
 
-  if (!daySlot) return false;
+  if (!daySlot || daySlot.isActive === false) return false;
   if (!scheduledTime) return true;
 
   const bookingMins = parseTimeToMinutes(scheduledTime);

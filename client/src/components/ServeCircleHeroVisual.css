@@ -1,0 +1,459 @@
+/* ==========================================================================
+   ServeCircle Interactive Hero Ecosystem Visual — Luxury Redesign
+   Warm Organic Palette: Cream #F7F3EC, Beige #E8E0D2, Sage #536D57, Charcoal #29271F
+   ========================================================================== */
+
+.sc-hero-visual-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  height: 490px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  user-select: none;
+}
+
+/* Ambient Disc */
+.sc-ambient-disc {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(83, 109, 87, 0.18) 0%, rgba(232, 224, 210, 0.45) 55%, transparent 75%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grand Circle Canvas */
+.sc-grand-circle {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  box-shadow: 
+    0 24px 60px -12px rgba(41, 39, 31, 0.12),
+    0 8px 20px -4px rgba(41, 39, 31, 0.05),
+    inset 0 2px 6px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 14px rgba(41, 39, 31, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* SVG Canvas & Orbit Rings */
+.sc-svg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sc-ring-spin {
+  transform-origin: 200px 200px;
+  animation: scRingRotate 70s linear infinite;
+}
+
+@keyframes scRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.sc-particle {
+  filter: drop-shadow(0 0 5px rgba(83, 109, 87, 0.8));
+  animation: scPulseParticle 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes scPulseParticle {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.25); opacity: 1; }
+}
+
+/* ==========================================================================
+   3 Orbiting Pillar Nodes (Homes • Societies • Workers)
+   Positioned along the orbit ring with generous space
+   ========================================================================== */
+
+.sc-orbit-pillar-node {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1.5px solid var(--sc-surface-secondary, #E8E0D2);
+  border-radius: 100px;
+  padding: 4px 10px 4px 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 16px -2px rgba(41, 39, 31, 0.12);
+  cursor: pointer;
+  z-index: 6;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sc-orbit-pillar-node:hover,
+.sc-orbit-pillar-node.is-active {
+  transform: scale(1.08);
+  border-color: var(--sc-primary-accent, #536D57);
+  box-shadow: 0 10px 24px -4px rgba(41, 39, 31, 0.2);
+  background: #FFFFFF;
+}
+
+.pillar-top {
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.pillar-top:hover,
+.pillar-top.is-active {
+  transform: translateX(-50%) scale(1.08);
+}
+
+.pillar-right {
+  bottom: 28px;
+  right: 28px;
+}
+
+.pillar-left {
+  bottom: 28px;
+  left: 28px;
+}
+
+.sc-pillar-icon-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.icon-homes {
+  background: var(--sc-primary-accent, #536D57);
+}
+
+.icon-societies {
+  background: #966B32;
+}
+
+.icon-workers {
+  background: var(--sc-dark-accent, #29271F);
+}
+
+.sc-pillar-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--sc-dark-accent, #29271F);
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Central Core Medallion (The Heart of ServeCircle)
+   ========================================================================== */
+
+.sc-core-hub {
+  position: relative;
+  width: 226px;
+  height: 226px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #36342B 0%, #25231B 70%, #1A1914 100%);
+  color: #FFFFFF;
+  border: 3.5px solid #FFFFFF;
+  box-shadow: 
+    0 20px 48px -10px rgba(41, 39, 31, 0.42),
+    0 0 0 1px rgba(220, 216, 209, 0.9),
+    inset 0 2px 6px rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  text-align: center;
+  z-index: 8;
+  transition: transform 0.3s ease;
+}
+
+.sc-core-hub:hover {
+  transform: scale(1.02);
+}
+
+.sc-hub-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--sc-primary-accent, #536D57);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  box-shadow: 0 4px 10px rgba(83, 109, 87, 0.4);
+}
+
+.sc-hub-brand {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.sc-hub-tagline {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: #DCD8D1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* Dynamic Pillar Card inside Core */
+.sc-hub-dynamic-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin-bottom: 6px;
+  max-width: 185px;
+}
+
+.sc-hub-active-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #F7F3EC;
+  line-height: 1.2;
+}
+
+.sc-hub-active-desc {
+  font-size: 0.62rem;
+  color: #DCD8D1;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Live Status Badge */
+.sc-hub-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #E8E0D2;
+}
+
+.sc-hub-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 5px #4ade80;
+  animation: scPulseGreen 2s infinite ease-in-out;
+}
+
+@keyframes scPulseGreen {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.8); opacity: 0.5; }
+}
+
+/* ==========================================================================
+   4 Artboard-Matching Floating Service Badges
+   Staggered & Positioned to NEVER Overlap
+   ========================================================================== */
+
+.sc-art-badge {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border-radius: 16px;
+  padding: 7px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 
+    0 10px 24px -4px rgba(41, 39, 31, 0.08),
+    0 4px 10px -2px rgba(41, 39, 31, 0.04);
+  text-decoration: none;
+  color: inherit;
+  z-index: 10;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.sc-art-badge:hover,
+.sc-art-badge.is-hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: var(--sc-primary-accent, #536D57);
+  box-shadow: 
+    0 14px 30px -4px rgba(41, 39, 31, 0.14),
+    0 6px 12px -2px rgba(41, 39, 31, 0.08);
+}
+
+/* Flanking Coordinates — Providing Generous Breathing Room Around the Circle */
+.art-top-left {
+  top: 16px;
+  left: -16px;
+}
+
+.art-top-right {
+  top: 16px;
+  right: -16px;
+}
+
+.art-mid-left {
+  top: 106px;
+  left: -32px;
+}
+
+.art-mid-right {
+  top: 106px;
+  right: -32px;
+}
+
+.sc-art-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.sc-art-badge:hover .sc-art-icon-circle {
+  transform: scale(1.1);
+}
+
+.art-icon-wrench {
+  background: #EBF2EC;
+  color: var(--sc-primary-accent, #536D57);
+}
+
+.art-icon-chef {
+  background: #F7EFE4;
+  color: #966B32;
+}
+
+.art-icon-cab {
+  background: #EAE8E3;
+  color: var(--sc-dark-accent, #29271F);
+}
+
+.art-icon-pet {
+  background: #F8EBEB;
+  color: #A63B34;
+}
+
+.sc-art-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.sc-art-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--sc-dark-accent, #29271F);
+  line-height: 1.2;
+}
+
+.sc-art-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--sc-text-secondary, #6B665C);
+  line-height: 1.2;
+}
+
+/* Bottom Floating Pill */
+.sc-art-bottom-pill {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border-radius: 100px;
+  box-shadow: 0 4px 16px -2px rgba(41, 39, 31, 0.06);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--sc-text-secondary, #6B665C);
+  white-space: nowrap;
+  z-index: 12;
+}
+
+.sc-pill-badge-icon {
+  color: var(--sc-primary-accent, #536D57);
+  font-size: 1.05rem;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .sc-hero-visual-wrapper {
+    max-width: 480px;
+    height: 460px;
+  }
+  .sc-grand-circle {
+    width: 340px;
+    height: 340px;
+  }
+  .sc-core-hub {
+    width: 200px;
+    height: 200px;
+  }
+  .art-top-left { left: 4px; top: 10px; }
+  .art-top-right { right: 4px; top: 10px; }
+  .art-mid-left { left: -8px; top: 88px; }
+  .art-mid-right { right: -8px; top: 88px; }
+}
+
+@media (max-width: 640px) {
+  .sc-hero-visual-wrapper {
+    max-width: 330px;
+    height: auto;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sc-grand-circle {
+    width: 300px;
+    height: 300px;
+  }
+  .sc-core-hub {
+    width: 180px;
+    height: 180px;
+  }
+  .sc-art-badge {
+    position: static;
+    width: 100%;
+    max-width: 290px;
+  }
+  .sc-art-bottom-pill {
+    position: static;
+    transform: none;
+    margin-top: 8px;
+  }
+}

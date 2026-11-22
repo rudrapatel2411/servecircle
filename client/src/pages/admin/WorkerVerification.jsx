@@ -10,6 +10,7 @@ import {
   HiOutlineEye, HiOutlineArrowPath, HiXMark,
 } from 'react-icons/hi2';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
+import Pagination from '../../components/Pagination';
 import { getSession } from '../../utils/authSession';
 import '../Dashboard.css';
 import './AdminPages.css';
@@ -85,6 +86,8 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const WorkerVerification = () => {
   const { t } = useTranslation();
   const [tab, setTab] = useState('pending_interview');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -300,7 +303,11 @@ const WorkerVerification = () => {
           <button
             key={t.key}
             className={`tab-btn ${tab === t.key ? 'active' : ''}`}
-            onClick={() => setTab(t.key)}
+            onClick={() => {
+              setTab(t.key);
+              setCurrentPage(1);
+              setExpandedId(null);
+            }}
           >
             {t.label}
             {tabCounts[t.key] > 0 && (
@@ -311,8 +318,10 @@ const WorkerVerification = () => {
       </div>
 
       <div className="verification-grid">
-        {filtered.map((worker) => {
-          const statusConf = STATUS_CONFIG[worker.workerStatus];
+        {filtered
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((worker) => {
+          const statusConf = STATUS_CONFIG[worker.workerStatus] || { label: worker.workerStatus, color: '#4b5563', bg: '#f3f4f6' };
           const isExpanded = expandedId === worker.id;
 
           return (
@@ -324,16 +333,32 @@ const WorkerVerification = () => {
               style={{ border: `1.5px solid ${isExpanded ? '#3b82f6' : '#e2e8f0'}` }}
             >
               <div className="vc-header" style={{ cursor: 'pointer' }} onClick={() => setExpandedId(isExpanded ? null : worker.id)}>
-                <div className="vc-avatar">{worker.name.split(' ').map((n) => n[0]).join('')}</div>
-                <div style={{ flex: 1 }}>
-                  <h4 className="vc-name">{worker.name}</h4>
-                  <div className="vc-contact">
-                    <span><HiOutlinePhone /> {worker.phone}</span>
-                    <span><HiOutlineEnvelope /> {worker.email}</span>
+                <div className="vc-profile-wrap">
+                  <div className="vc-avatar">{worker.name.split(' ').map((n) => n[0]).join('')}</div>
+                  <div className="vc-name-wrap">
+                    <h4 className="vc-name" title={worker.name}>{worker.name}</h4>
+                    <div className="vc-contact">
+                      <span><HiOutlinePhone /> {worker.phone}</span>
+                      <span title={worker.email}><HiOutlineEnvelope /> {worker.email}</span>
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
-                  <div style={{ background: statusConf.bg, color: statusConf.color, fontSize: '0.72rem', fontWeight: 800, padding: '3px 10px', borderRadius: '100px' }}>
+
+                <div className="vc-badge-stack">
+                  <div
+                    style={{
+                      background: statusConf.bg,
+                      color: statusConf.color,
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      padding: '3px 10px',
+                      borderRadius: '100px',
+                      whiteSpace: 'nowrap',
+                      maxWidth: '100%',
+                      boxSizing: 'border-box',
+                      textAlign: 'center',
+                    }}
+                  >
                     {statusConf.icon} {statusConf.label}
                   </div>
                   <span
@@ -345,6 +370,7 @@ const WorkerVerification = () => {
                       padding: '2px 8px',
                       borderRadius: '100px',
                       textTransform: 'uppercase',
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     ● {worker.dutyStatus || 'offline'}
@@ -490,6 +516,24 @@ const WorkerVerification = () => {
           </div>
         )}
       </div>
+
+      {filtered.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[6, 12, 24]}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            setExpandedId(null);
+          }}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="workers"
+        />
+      )}
 
       {/* Approval Confirmation Modal */}
       <AnimatePresence>

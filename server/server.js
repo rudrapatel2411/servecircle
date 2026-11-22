@@ -141,8 +141,12 @@ io.on('connection', (socket) => {
     broadcastCallRequest(io, payload);
   });
 
-  // Worker Accepts Call Request
+  // Worker Accepts Call Request (support both event names)
   socket.on('worker_accepted_call', (payload) => {
+    notifyCallAccepted(io, payload);
+  });
+
+  socket.on('worker_accepted_job', (payload) => {
     notifyCallAccepted(io, payload);
   });
 
