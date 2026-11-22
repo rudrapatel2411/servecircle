@@ -507,101 +507,171 @@ const FoodKitchenHub = () => {
  </div>
  </div>
 
- <div style={{ marginTop: '40px', marginBottom: '40px' }}>
- <h2 style={{ fontSize: '1.6rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '20px', paddingLeft: '8px', borderLeft: '4px solid #ea580c' }}>
- Premium Culinary Experiences
- </h2>
- <div style={{
- display: 'grid',
- gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
- gap: '24px'
- }}>
- {/* BBQ & Grill Setup */}
- <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
- padding: '28px',
- boxShadow: 'var(--shadow-sm)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- Backyard BBQ Setup 
- </h3>
- <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
- We bring the grill, coal, and marinated meats. Enjoy a live BBQ experience in your backyard.
- </p>
- </div>
- <Link
- to="/customer/food-flow?type=bbq"
- className="btn btn-primary btn-sm"
- style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
- >
- Configure BBQ Menu
- </Link>
- </div>
+		<div style={{ marginTop: '40px', marginBottom: '40px' }}>
+			<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+				<div>
+					<h2 style={{ fontSize: '1.6rem', color: 'var(--navy-900)', fontWeight: 900, margin: 0, paddingLeft: '12px', borderLeft: '4px solid #ea580c' }}>
+						Premium Culinary Experiences
+					</h2>
+					<p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', margin: '4px 0 0 12px' }}>
+						Curated private dining, live backyard barbecues, hands-on masterclasses, and certified kitchen hygiene.
+					</p>
+				</div>
+				<span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c2410c', background: '#ffedd5', padding: '6px 14px', borderRadius: '30px', border: '1px solid #fed7aa' }}>
+					⭐ 5-Star Hotel Trained Chefs & Certified Hygiene
+				</span>
+			</div>
+			<div style={{
+				display: 'grid',
+				gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+				gap: '24px'
+			}}>
+				{/* BBQ & Grill Setup */}
+				<div style={{
+					background: 'white',
+					border: '1px solid var(--gray-200)',
+					borderRadius: 'var(--radius-xl)',
+					padding: '28px',
+					boxShadow: 'var(--shadow-sm)',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					transition: 'transform 0.2s, box-shadow 0.2s'
+				}}>
+					<div>
+						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+							<span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#c2410c', background: '#ffedd5', padding: '4px 10px', borderRadius: '20px', letterSpacing: '0.5px' }}>
+								🔥 LIVE CHARCOAL GRILL
+							</span>
+							<span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#16a34a' }}>
+								From ₹3,499
+							</span>
+						</div>
+						<h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+							Backyard BBQ Setup
+						</h3>
+						<p style={{ fontSize: '0.82rem', color: 'var(--gray-600)', marginBottom: '16px', lineHeight: 1.5 }}>
+							We bring the portable grill, organic lump coal, skewers, and chef marinades. Enjoy a live sizzle experience in your lawn, terrace, or balcony.
+						</p>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '22px' }}>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#ea580c' }}>✓</span> <span>Pure Veg (Jain options) & Non-Veg live grill stations</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#ea580c' }}>✓</span> <span>Cast-iron grill, skewers & eco palm-leaf tableware included</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#ea580c' }}>✓</span> <span>100% Zero-Mess post-party grill cleaning & ash disposal</span>
+							</div>
+						</div>
+					</div>
+					<Link
+						to="/customer/food-flow?type=bbq"
+						className="btn btn-primary"
+						style={{ padding: '13px 18px', background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center', borderRadius: '14px', boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)' }}
+					>
+						Configure BBQ Menu →
+					</Link>
+				</div>
 
- {/* Baking Masterclass */}
- <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
- padding: '28px',
- boxShadow: 'var(--shadow-sm)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- In-Home Baking Class 
- </h3>
- <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
- Book a pastry chef for a 2-hour hands-on baking masterclass in your kitchen.
- </p>
- </div>
- <Link
- to="/customer/food-flow?type=baking"
- className="btn btn-primary btn-sm"
- style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
- >
- Book Masterclass
- </Link>
- </div>
+				{/* Baking Masterclass */}
+				<div style={{
+					background: 'white',
+					border: '1px solid var(--gray-200)',
+					borderRadius: 'var(--radius-xl)',
+					padding: '28px',
+					boxShadow: 'var(--shadow-sm)',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					transition: 'transform 0.2s, box-shadow 0.2s'
+				}}>
+					<div>
+						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+							<span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#be185d', background: '#fce7f3', padding: '4px 10px', borderRadius: '20px', letterSpacing: '0.5px' }}>
+								🧁 5-STAR PASTRY CHEF
+							</span>
+							<span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#16a34a' }}>
+								From ₹2,499
+							</span>
+						</div>
+						<h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+							In-Home Baking Class
+						</h3>
+						<p style={{ fontSize: '0.82rem', color: 'var(--gray-600)', marginBottom: '16px', lineHeight: 1.5 }}>
+							Book an elite pastry chef for hands-on sourdough, French macaron, celebration layer cake, or kids cookie masterclasses right in your kitchen.
+						</p>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '22px' }}>
+							<div style={{ display: 'center', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#db2777' }}>✓</span> <span>Solo private coaching, couple date-nights & kids workshops</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#db2777' }}>✓</span> <span>Chef brings Callebaut chocolate, French butter & all tools</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#db2777' }}>✓</span> <span>Masterclass recipe handbook & signed certificate included</span>
+							</div>
+						</div>
+					</div>
+					<Link
+						to="/customer/food-flow?type=baking"
+						className="btn btn-primary"
+						style={{ padding: '13px 18px', background: 'linear-gradient(135deg, #db2777 0%, #be185d 100%)', borderColor: '#db2777', fontWeight: 800, textAlign: 'center', borderRadius: '14px', boxShadow: '0 4px 14px rgba(219, 39, 119, 0.25)' }}
+					>
+						Book Masterclass →
+					</Link>
+				</div>
 
- {/* Kitchen Deep Clean & Pantry */}
- <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
- padding: '28px',
- boxShadow: 'var(--shadow-sm)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- Kitchen & Pantry Clean 
- </h3>
- <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
- Deep cleaning of appliances and aesthetic organization of your pantry shelves.
- </p>
- </div>
- <Link
- to="/customer/food-flow?type=kitchen-clean"
- className="btn btn-primary btn-sm"
- style={{ padding: '12px 16px', background: '#ea580c', borderColor: '#ea580c', fontWeight: 800, textAlign: 'center' }}
- >
- Customize Cleaning
- </Link>
- </div>
+				{/* Kitchen Deep Clean & Pantry */}
+				<div style={{
+					background: 'white',
+					border: '1px solid var(--gray-200)',
+					borderRadius: 'var(--radius-xl)',
+					padding: '28px',
+					boxShadow: 'var(--shadow-sm)',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'space-between',
+					transition: 'transform 0.2s, box-shadow 0.2s'
+				}}>
+					<div>
+						<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+							<span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0369a1', background: '#e0f2fe', padding: '4px 10px', borderRadius: '20px', letterSpacing: '0.5px' }}>
+								✨ 140°C STEAM SANITIZE
+							</span>
+							<span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#16a34a' }}>
+								From ₹1,999
+							</span>
+						</div>
+						<h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+							Kitchen & Pantry Clean
+						</h3>
+						<p style={{ fontSize: '0.82rem', color: 'var(--gray-600)', marginBottom: '16px', lineHeight: 1.5 }}>
+							Heavy oil & grease dissolution with high-pressure steam, food-safe bio-enzymatic agents, chimney degreasing, and aesthetic pantry decanting.
+						</p>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '22px' }}>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#0ea5e9' }}>✓</span> <span>100% Food-grade non-toxic chemicals (zero acid fumes)</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#0ea5e9' }}>✓</span> <span>Appliance degreasing: Chimney, Refrigerator, Microwave</span>
+							</div>
+							<div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--navy-700)' }}>
+								<span style={{ color: '#0ea5e9' }}>✓</span> <span>Pantry makeover with minimalist jar labels & 48h re-clean guarantee</span>
+							</div>
+						</div>
+					</div>
+					<Link
+						to="/customer/food-flow?type=kitchen-clean"
+						className="btn btn-primary"
+						style={{ padding: '13px 18px', background: 'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)', borderColor: '#0ea5e9', fontWeight: 800, textAlign: 'center', borderRadius: '14px', boxShadow: '0 4px 14px rgba(14, 165, 233, 0.25)' }}
+					>
+						Customize Cleaning →
+					</Link>
+				</div>
 
- </div>
- </div>
+			</div>
+		</div>
  </div>
  );
 };
