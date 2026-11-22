@@ -34,7 +34,7 @@ const HomeRepairsHub = () => {
         {categoryServices.map((service) => (
           <Link key={service.id} to={`/customer/services/home-repairs/${service.id}`} className="service-card hover-lift" style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', background: 'white', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px dashed var(--gray-300)' }}>
             <div style={{ height: '220px', width: '100%', position: 'relative' }}>
-              <ServiceImage serviceId={service.id} alt={t(service.nameKey)} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%) contrast(1.1)' }} />
+              <ServiceImage serviceId={service.id} alt={t(service.nameKey)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', padding: '6px 10px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-900)', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid var(--gray-200)' }}>
                 <HiOutlineStar /> {service.rating}
               </div>
