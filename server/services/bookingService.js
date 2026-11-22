@@ -53,6 +53,7 @@ import {
   generateFeatureRecord,
 } from './featureService.js';
 import { prisma } from '../config/prisma.js';
+import { validateAndEnforcePricing } from './pricingEngineService.js';
 
 /** Prisma stores booking status as an uppercase enum ("EN_ROUTE") */
 function toDbStatus(status) {
@@ -231,7 +232,32 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
       });
     }
 
-    const amount = Number(data.amount) || 0;
+    const evaluatedPricing = validateAndEnforcePricing({
+      amount: data.amount,
+      service: data.service || (matchedService ? matchedService.name : 'General Service'),
+      serviceId: matchedService ? matchedService.id : data.serviceId,
+      category: (matchedService ? matchedService.category : null) || data.category || 'Home Repairs',
+      isEmergency: data.isEmergency,
+      pricingParams: data.pricingParams || data.pricingBreakdown?.metadata || {},
+      requirements: data.requirements || null,
+    });
+
+    const finalAmount = evaluatedPricing.amount;
+    const finalCommission = evaluatedPricing.platformCommission;
+    const finalEarnings = evaluatedPricing.workerEarnings;
+    const pricingBreakdown = evaluatedPricing.pricingBreakdown;
+
+    let formattedDescription = data.description || '';
+    if (data.requirements && typeof data.requirements === 'object' && Object.keys(data.requirements).length > 0) {
+      const reqTags = Object.entries(data.requirements)
+        .filter(([k, v]) => v !== undefined && v !== '' && v !== false)
+        .map(([k, v]) => `${k.replace(/([A-Z])/g, ' $1')}: ${v}`)
+        .join(', ');
+      if (reqTags) {
+        formattedDescription = formattedDescription ? `${formattedDescription} • Specs: [${reqTags}]` : `Specs: [${reqTags}]`;
+      }
+    }
+
     let created = null;
 
     for (let attempt = 0; attempt < 5 && !created; attempt += 1) {
@@ -247,14 +273,15 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
             serviceId: matchedService ? matchedService.id : undefined,
             serviceName: data.service || (matchedService ? matchedService.name : 'General Service'),
             category: (matchedService ? matchedService.category : null) || data.category || 'Home Repairs',
-            description: data.description || '',
+            description: formattedDescription,
             scheduledDate: data.scheduledDate ? new Date(data.scheduledDate) : new Date(),
             scheduledTime: data.scheduledTime || '10:00 AM',
             address: data.address || '',
             city: data.city || 'Mumbai',
-            amount,
-            platformCommission: Math.round(amount * 0.1 * 100) / 100,
-            workerEarnings: Math.round(amount * 0.9 * 100) / 100,
+            amount: finalAmount,
+            platformCommission: finalCommission,
+            workerEarnings: finalEarnings,
+            pricingBreakdown,
             status: 'PENDING',
           },
           include: {

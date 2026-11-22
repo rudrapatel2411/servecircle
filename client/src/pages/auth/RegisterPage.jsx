@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineArrowRight, HiOutlineUserPlus, HiOutlineShieldCheck, HiOutlineUserGroup, HiOutlineClock } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
 import { requestAuth, roleHome, saveSession } from '../../utils/authSession.js';
+import LanguageToggle from '../../components/LanguageToggle';
 import './AuthPages.css';
 
 const RegisterPage = () => {
@@ -43,6 +44,28 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-page">
+      {/* ── Dedicated Standalone Header (Distinct from Landing Navbar) ── */}
+      <header className="auth-top-bar">
+        <div className="container auth-top-bar-inner">
+          <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
+            <div className="navbar-logo-icon" style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--sc-dark-accent, #29271F)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v10" />
+                <path d="M8 12h8" />
+              </svg>
+            </div>
+            <span className="logo-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)' }}>ServeCircle</span>
+          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <LanguageToggle />
+            <Link to="/" className="btn btn-outline btn-sm" style={{ borderRadius: '20px', padding: '6px 16px', fontWeight: 600, fontSize: '0.82rem' }}>
+              ← Back to Home
+            </Link>
+          </div>
+        </div>
+      </header>
+
       <div className="container auth-grid">
         <section className="auth-panel">
           <span className="auth-kicker">{t('auth.join', 'Join ServeCircle')}</span>

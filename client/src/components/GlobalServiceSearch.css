@@ -26,9 +26,9 @@
   position: relative;
   z-index: 860;
   width: 100%;
-  max-width: 640px;
-  margin: 20px auto 0;
-  padding: 0 16px;
+  max-width: 680px;
+  margin: 0 auto 28px auto;
+  padding: 0;
 }
 
 /* Search input container — Clean classic input pill */
@@ -98,8 +98,8 @@
 .global-search-dropdown {
   position: absolute;
   top: calc(100% + 8px);
-  left: 16px;
-  right: 16px;
+  left: 0;
+  right: 0;
   background: #ffffff;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);

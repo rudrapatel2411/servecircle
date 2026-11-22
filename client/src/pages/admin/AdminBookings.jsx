@@ -6,6 +6,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
+import Pagination from '../../components/Pagination';
 import { getSession, requestApi } from '../../utils/authSession.js';
 
 const statusConfig = {
@@ -23,6 +24,8 @@ const AdminBookings = () => {
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [expandedId, setExpandedId] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,11 +65,27 @@ const AdminBookings = () => {
       <div className="admin-toolbar">
         <div className="search-input-wrap">
           <HiOutlineMagnifyingGlass className="search-icon" />
-          <input type="text" className="search-input" placeholder="Search by ID, service, customer..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by ID, service, customer..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
         </div>
         <div className="filter-group">
           <HiOutlineFunnel />
-          <select className="filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <select
+            className="filter-select"
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="assigned">Assigned</option>
@@ -91,7 +110,9 @@ const AdminBookings = () => {
             </tr>
           </thead>
           <tbody>
-            {!isLoading && filtered.map((b) => {
+            {!isLoading && filtered
+              .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+              .map((b) => {
               const bookingId = b.bookingId || b._id;
               const cfg = statusConfig[b.status] || { label: b.status, color: 'warning' };
               return (
@@ -113,6 +134,24 @@ const AdminBookings = () => {
           </tbody>
         </table>
       </div>
+
+      {filtered.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[10, 20, 50]}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            setExpandedId(null);
+          }}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="bookings"
+        />
+      )}
 
       {filtered.length === 0 && <div className="empty-state"><p>No bookings found</p></div>}
     </div>

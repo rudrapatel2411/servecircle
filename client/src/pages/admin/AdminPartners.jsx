@@ -6,6 +6,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
+import Pagination from '../../components/Pagination';
 
 const mockPartners = [
   { id: 1, name: 'PM Kaushal Vikas Yojana', type: 'government', contact: 'District Officer', email: 'pmkvy@gov.in', phone: '1800-123-4567', desc: 'Skill development training for underprivileged youth.', partnership: 'training', status: 'active', city: 'Pan India', since: 'Jan 2025' },
@@ -20,6 +21,8 @@ const typeColors = { government: '#3b82f6', ngo: '#3b7dc1', corporate: '#8b5cf6'
 const AdminPartners = () => {
   const { t } = useTranslation();
   const [showForm, setShowForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [form, setForm] = useState({ name: '', type: 'ngo', contact: '', email: '', phone: '', desc: '', partnership: 'service_provider', city: '' });
   const [partners, setPartners] = useState(mockPartners);
 
@@ -61,7 +64,9 @@ const AdminPartners = () => {
       )}
 
       <div className="partners-grid">
-        {partners.map((p) => (
+        {partners
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((p) => (
           <div key={p.id} className="partner-card">
             <div className="partner-header">
               <div className="partner-type-badge" style={{ background: `${typeColors[p.type]}15`, color: typeColors[p.type] }}>{p.type}</div>
@@ -79,6 +84,21 @@ const AdminPartners = () => {
           </div>
         ))}
       </div>
+
+      {partners.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={partners.length}
+          pageSize={pageSize}
+          pageSizeOptions={[6, 12, 24]}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="partners"
+        />
+      )}
     </div>
   );
 };

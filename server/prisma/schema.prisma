@@ -430,6 +430,7 @@ model Booking {
   amount                    Float
   platformCommission        Float         @default(0.0)
   workerEarnings            Float         @default(0.0)
+  pricingBreakdown          Json?
 
   paymentStatus             PaymentStatus @default(PENDING)
   paymentMethod             String?

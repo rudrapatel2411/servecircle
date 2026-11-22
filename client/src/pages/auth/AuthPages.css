@@ -1,12 +1,27 @@
 /* ==========================================================================
-   Auth Pages — Classic & Professional
+   Auth Pages — Standalone & Warm Luxury
    ========================================================================== */
 
 .auth-page {
-  min-height: calc(100vh - var(--navbar-height));
-  padding-top: calc(var(--navbar-height) + 32px);
+  min-height: 100vh;
+  padding-top: 0;
   padding-bottom: 48px;
-  background-color: #f8fafc;
+  background-color: var(--sc-bg-primary, #F7F3EC);
+}
+
+.auth-top-bar {
+  background: rgba(247, 243, 236, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  margin-bottom: 32px;
+}
+
+.auth-top-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
 }
 
 .auth-grid {
@@ -15,12 +30,12 @@
   gap: 24px;
 }
 
-/* Classic clean panel */
+/* Warm organic panel */
 .auth-panel {
   background: #ffffff;
-  border: 1px solid var(--navy-200);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(41, 39, 31, 0.05);
   padding: 36px;
 }
 
@@ -94,8 +109,8 @@
 
 /* Clean role card */
 .auth-role-card {
-  border: 1px solid var(--navy-200);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border-radius: 16px;
   padding: 16px;
   background: #ffffff;
   text-decoration: none;
@@ -104,8 +119,8 @@
 }
 
 .auth-role-card:hover {
-  border-color: var(--primary-300);
-  background: var(--navy-50);
+  border-color: var(--sc-surface-tertiary, #DCD8D1);
+  background: var(--sc-bg-primary, #F7F3EC);
 }
 
 .auth-role-head {
@@ -154,7 +169,7 @@
 
 @media (max-width: 640px) {
   .auth-page {
-    padding-top: calc(var(--navbar-height) + 16px);
+    padding-top: 0;
   }
 
   .auth-panel {

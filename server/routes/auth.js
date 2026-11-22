@@ -22,10 +22,9 @@ const PUBLIC_ROLES = ['customer', 'worker', 'b2b'];
 
 function formatAuthResponse(user) {
   const roleLower = String(user.role || '').toLowerCase();
-  const isWorker = roleLower === 'worker';
   return {
-    id: user.id || user._id,
-    _id: user.id || user._id,
+    id: user.id,
+    _id: user.id,
     name: user.name,
     email: user.email,
     phone: user.phone || '',
@@ -35,20 +34,16 @@ function formatAuthResponse(user) {
     avatar: user.avatar || '',
     workerStatus: user.workerProfile?.workerStatus
       ? String(user.workerProfile.workerStatus).toLowerCase()
-      : user.workerStatus || (isWorker ? 'approved_senior' : null),
+      : null,
     dutyStatus: user.workerProfile?.dutyStatus
       ? String(user.workerProfile.dutyStatus).toLowerCase()
-      : user.dutyStatus || (isWorker ? 'online' : 'offline'),
-    dutyStatusUpdatedAt: user.workerProfile?.dutyStatusUpdatedAt || user.dutyStatusUpdatedAt || null,
-    skills: user.workerProfile?.skills || user.skills || [],
-    serviceCategory: user.workerProfile?.serviceCategory || user.serviceCategory || '',
-    rating: user.workerProfile?.rating ?? user.rating ?? 5.0,
-    isVerified: user.workerProfile?.isVerified !== undefined
-      ? Boolean(user.workerProfile.isVerified)
-      : user.isVerified !== undefined
-      ? Boolean(user.isVerified)
-      : (isWorker ? true : false),
-    workerIdCode: user.workerProfile?.workerIdCode || user.workerIdCode || '',
+      : 'offline',
+    dutyStatusUpdatedAt: user.workerProfile?.dutyStatusUpdatedAt || null,
+    skills: user.workerProfile?.skills || [],
+    serviceCategory: user.workerProfile?.serviceCategory || '',
+    rating: user.workerProfile?.rating ?? 5.0,
+    isVerified: user.workerProfile?.isVerified ?? false,
+    workerIdCode: user.workerProfile?.workerIdCode || '',
   };
 }
 

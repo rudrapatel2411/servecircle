@@ -1,9 +1,11 @@
+import { useEffect, useRef } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import DashboardNavbar from './DashboardNavbar';
 import CallMeBackWidget from './CallMeBackWidget';
 import WorkerCallWidget from './WorkerCallWidget';
 import GlobalServiceSearch from './GlobalServiceSearch';
+import ErrorBoundary from './ErrorBoundary';
 import { getSession, roleHome } from '../utils/authSession.js';
 import './DashboardLayout.css';
 
@@ -21,6 +23,19 @@ const GENERAL_SERVICES_ROUTES = [
 const DashboardLayout = ({ panel }) => {
   const location = useLocation();
   const session = getSession();
+  const contentRef = useRef(null);
+
+  // Automatically reset scroll to the very top on every route change
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
 
   if (!session) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
@@ -47,20 +62,23 @@ const DashboardLayout = ({ panel }) => {
       <div className={`dashboard-main${showStandardSidebar ? ' dashboard-main--offset' : ''}`}>
         <DashboardNavbar panel={panel} />
 
-        {/* Global Search overlays if on General Services pages */}
-        {isGeneralServicesRoute && <GlobalServiceSearch />}
-
         {/* Content row: optional category sidebar + page outlet */}
         <div className={`dashboard-content-row${isGeneralServicesRoute ? ' dashboard-content-row--with-category' : ''}`}>
           {isGeneralServicesRoute && <Sidebar panel="customer" />}
 
-          <main className={`dashboard-content${isGeneralServicesRoute ? ' dashboard-content--with-category' : ''}`}>
-            <Outlet />
+          <main ref={contentRef} className={`dashboard-content${isGeneralServicesRoute ? ' dashboard-content--with-category' : ''}`}>
+            {/* Global Search overlays if on General Services pages */}
+            {isGeneralServicesRoute && <GlobalServiceSearch />}
+            <ErrorBoundary inline>
+              <div key={location.pathname} className="page-transition-wrapper">
+                <Outlet />
+              </div>
+            </ErrorBoundary>
           </main>
         </div>
       </div>
 
-      {panel === 'customer' && <CallMeBackWidget />}
+      {panel === 'customer' && <CallMeBackWidget hasSidebar={isGeneralServicesRoute} />}
       {panel === 'worker' && <WorkerCallWidget />}
     </div>
   );

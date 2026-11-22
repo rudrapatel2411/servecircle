@@ -26,6 +26,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { logEvent, EVENT_TYPES, ENTITY_TYPES } from '../services/eventService.js';
 import { captureSnapshot } from '../services/historyService.js';
+import { calculateDynamicQuote } from '../services/pricingEngineService.js';
 
 
 const router = express.Router();
@@ -59,6 +60,18 @@ router.get(
   asyncHandler(async (req, res) => {
     const services = await getServicesByCategory(req.params.category);
     res.json(services);
+  })
+);
+
+// POST /services/calculate-quote — Dynamic Schema-Driven Quote Calculation
+router.post(
+  '/calculate-quote',
+  asyncHandler(async (req, res) => {
+    const quote = calculateDynamicQuote(req.body);
+    res.json({
+      success: true,
+      data: quote,
+    });
   })
 );
 

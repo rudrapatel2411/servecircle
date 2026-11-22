@@ -53,7 +53,7 @@ export function notifyAdmin(io, title, message, type = 'broadcast', extra = {}) 
   const payload = buildPayload(title, message, type, extra);
 
   // 1. Socket live emission
-  if (io) {
+  if (io && typeof io.to === 'function') {
     io.to('admin_room').emit('admin_notification', payload);
     io.emit('admin_notification', payload); // Broadcast fallback
   }
@@ -99,7 +99,7 @@ export function notifyWorker(io, workerId, title, message, extra = {}) {
   };
 
   const room = `worker_${workerId}`;
-  if (io) {
+  if (io && typeof io.to === 'function') {
     io.to(room).emit('worker_notification', payload);
     io.to('workers_broadcast').emit('worker_notification', payload);
   }
@@ -144,7 +144,7 @@ export function notifyCustomer(io, customerId, title, message, extra = {}) {
   };
 
   const room = `customer_${customerId}`;
-  if (io) {
+  if (io && typeof io.to === 'function') {
     io.to(room).emit('customer_notification', payload);
   }
 

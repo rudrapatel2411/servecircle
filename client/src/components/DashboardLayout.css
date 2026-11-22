@@ -5,7 +5,7 @@
 .dashboard-layout {
   display: flex;
   height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--sc-bg-primary, #F7F3EC);
   width: 100%;
   max-width: 100vw;
   overflow: hidden;
@@ -19,7 +19,7 @@
   height: 100vh;
   overflow: hidden;
   min-width: 0;
-  background-color: #f8fafc;
+  background-color: var(--sc-bg-primary, #F7F3EC);
 }
 
 .dashboard-main--offset {
@@ -32,6 +32,7 @@
   display: flex;
   overflow: hidden;
   min-height: 0;
+  height: calc(100vh - var(--navbar-height, 64px));
 }
 
 /* Page Content Area */
@@ -42,11 +43,11 @@
   overflow-x: hidden;
   min-width: 0;
   height: 100%;
-  background-color: #f8fafc;
+  background-color: var(--sc-bg-primary, #F7F3EC);
 }
 
 .dashboard-content--with-category {
-  padding: 24px 28px;
+  padding: 24px 32px;
 }
 
 /* Responsive */
@@ -72,5 +73,25 @@
 
   .dashboard-content-row--with-category {
     flex-direction: column;
+  }
+}
+
+/* Smooth Page & Content Transition */
+.page-transition-wrapper {
+  animation: pageSmoothFadeSlide 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes pageSmoothFadeSlide {
+  0% {
+    opacity: 0.65;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

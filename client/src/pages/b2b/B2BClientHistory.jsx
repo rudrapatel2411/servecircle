@@ -9,6 +9,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
+import Pagination from '../../components/Pagination';
 
 const MOCK_HISTORY = [
   // Upcoming
@@ -30,6 +31,8 @@ const B2BClientHistory = () => {
   const navigate = useNavigate();
   const [history, setHistory] = useState(MOCK_HISTORY);
   const [tab, setTab] = useState('upcoming');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [selectedJob, setSelectedJob] = useState(null);
 
   const filteredHistory = useMemo(() => {
@@ -53,16 +56,30 @@ const B2BClientHistory = () => {
       </div>
 
       <div className="tabs-bar">
-        <button className={`tab-btn ${tab === 'upcoming' ? 'tab-btn-active' : ''}`} onClick={() => setTab('upcoming')}>
+        <button
+          className={`tab-btn ${tab === 'upcoming' ? 'tab-btn-active' : ''}`}
+          onClick={() => {
+            setTab('upcoming');
+            setCurrentPage(1);
+          }}
+        >
           {t('b2bClient.history.upcomingSchedule')} ({history.filter(j => ['confirmed', 'pending'].includes(j.status)).length})
         </button>
-        <button className={`tab-btn ${tab === 'past' ? 'tab-btn-active' : ''}`} onClick={() => setTab('past')}>
+        <button
+          className={`tab-btn ${tab === 'past' ? 'tab-btn-active' : ''}`}
+          onClick={() => {
+            setTab('past');
+            setCurrentPage(1);
+          }}
+        >
           {t('b2bClient.history.pastServices')}
         </button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '16px', marginTop: '20px' }}>
-        {filteredHistory.map((job) => (
+        {filteredHistory
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((job) => (
           <div
             key={job.id}
             className="b2b-card hover-lift"
@@ -118,6 +135,21 @@ const B2BClientHistory = () => {
           </div>
         ))}
       </div>
+
+      {filteredHistory.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredHistory.length}
+          pageSize={pageSize}
+          pageSizeOptions={[6, 12, 24]}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="services"
+        />
+      )}
 
       {filteredHistory.length === 0 && (
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--gray-500)' }}>

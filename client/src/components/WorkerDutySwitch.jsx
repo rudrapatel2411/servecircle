@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   HiOutlineBolt,
   HiOutlinePauseCircle,
@@ -6,8 +6,7 @@ import {
   HiOutlineMapPin,
   HiOutlineExclamationCircle,
 } from 'react-icons/hi2';
-import { updateDutyStatus, getWorkerSession, setWorkerSession } from '../pages/worker/workerApi';
-import { getSession, saveSession } from '../utils/authSession';
+import { updateDutyStatus } from '../pages/worker/workerApi';
 
 export default function WorkerDutySwitch({
   token,
@@ -17,48 +16,43 @@ export default function WorkerDutySwitch({
   workerStatus,
   onStatusChange,
 }) {
-  const [localStatus, setLocalStatus] = useState(() => (currentStatus || 'offline').toLowerCase());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [locationNote, setLocationNote] = useState('');
 
-  // Keep in sync with parent prop
-  useEffect(() => {
-    if (currentStatus) {
-      setLocalStatus(currentStatus.toLowerCase());
-    }
-  }, [currentStatus]);
+  const status = (currentStatus || 'offline').toLowerCase();
 
-  // Listen to cross-component duty switch events (e.g. from top header navbar)
-  useEffect(() => {
-    const handleDutySync = (e) => {
-      if (e.detail?.dutyStatus) {
-        setLocalStatus(e.detail.dutyStatus.toLowerCase());
+  // Synchronize if duty changed from top Navbar or another component
+  React.useEffect(() => {
+    const handleSync = (e) => {
+      if (e.detail?.dutyStatus && e.detail.dutyStatus.toLowerCase() !== status) {
+        if (onStatusChange) {
+          onStatusChange(e.detail.dutyStatus.toLowerCase(), e.detail.user);
+        }
       }
     };
-    window.addEventListener('servecircle:duty-status-changed', handleDutySync);
-    return () => {
-      window.removeEventListener('servecircle:duty-status-changed', handleDutySync);
-    };
-  }, []);
-
-  const status = localStatus;
+    window.addEventListener('servecircle:duty-changed', handleSync);
+    return () => window.removeEventListener('servecircle:duty-changed', handleSync);
+  }, [status, onStatusChange]);
 
   const handleToggle = async (targetStatus) => {
     if (loading || status === targetStatus) return;
     setError('');
     setLocationNote('');
-    setLoading(true);
 
-    // Optimistic UI update
-    setLocalStatus(targetStatus);
+    if (targetStatus === 'online' && !isVerified) {
+      setError('Your worker profile is pending verification. Only approved pros can go online.');
+      return;
+    }
+
+    setLoading(true);
 
     let coords = {};
     if (targetStatus === 'online' && typeof navigator !== 'undefined' && navigator.geolocation) {
       try {
         const pos = await new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
-            timeout: 4000,
+            timeout: 5000,
             maximumAge: 60000,
           });
         });
@@ -68,50 +62,26 @@ export default function WorkerDutySwitch({
         };
         setLocationNote('GPS location updated for dispatch.');
       } catch (geoErr) {
-        setLocationNote('Location optional. Dispatch will use registered service area.');
+        // As per spec: permission denial does not block manual online status
+        setLocationNote('Location optional. Dispatch will use registered service city.');
       }
     }
 
-    const activeToken = token || getWorkerSession()?.token || getSession()?.token;
-
     try {
-      let updatedUser = null;
-      if (activeToken && activeToken !== 'demo-token-worker') {
-        try {
-          updatedUser = await updateDutyStatus(activeToken, {
-            dutyStatus: targetStatus,
-            ...coords,
-          });
-        } catch (apiErr) {
-          console.warn('[DutySwitch] API notice:', apiErr.message);
-        }
-      }
-
-      // Sync local storage sessions
-      const curWorker = getWorkerSession();
-      if (curWorker?.user) {
-        const next = { ...curWorker, user: { ...curWorker.user, dutyStatus: targetStatus, ...updatedUser } };
-        setWorkerSession(next);
-      }
-      const curGeneral = getSession();
-      if (curGeneral?.user && curGeneral.user.role === 'worker') {
-        const nextGen = { ...curGeneral, user: { ...curGeneral.user, dutyStatus: targetStatus, ...updatedUser } };
-        saveSession(nextGen);
-      }
-
-      // Broadcast to top navbar & other listening components
-      window.dispatchEvent(
-        new CustomEvent('servecircle:duty-status-changed', {
-          detail: { dutyStatus: targetStatus, user: updatedUser },
-        })
-      );
-
+      const updatedUser = await updateDutyStatus(token, {
+        dutyStatus: targetStatus,
+        ...coords,
+      });
       if (onStatusChange) {
         onStatusChange(targetStatus, updatedUser);
       }
+      window.dispatchEvent(
+        new CustomEvent('servecircle:duty-changed', {
+          detail: { dutyStatus: targetStatus, user: updatedUser },
+        })
+      );
     } catch (err) {
       setError(err.message || 'Could not update duty status');
-      setLocalStatus(currentStatus.toLowerCase()); // revert on error
     } finally {
       setLoading(false);
     }
@@ -120,24 +90,24 @@ export default function WorkerDutySwitch({
   const statusConfig = {
     online: {
       label: 'Online & Available',
-      desc: 'You are eligible to receive live customer booking dispatches.',
-      color: '#16a34a',
-      bg: '#dcfce7',
-      border: '#86efac',
+      desc: 'You are eligible to receive customer booking dispatches.',
+      color: '#536D57',
+      bg: 'rgba(83, 109, 87, 0.12)',
+      border: '#C7D7CA',
     },
     paused: {
       label: 'On Break / Paused',
       desc: 'Temporarily paused. You will not receive new jobs until resumed.',
-      color: '#d97706',
-      bg: '#fef3c7',
-      border: '#fde68a',
+      color: '#B87B2E',
+      bg: '#FEF3C7',
+      border: '#FDE68A',
     },
     offline: {
       label: 'Off Duty',
-      desc: 'You are offline. Toggle online when you are ready to receive jobs.',
-      color: '#475569',
-      bg: '#f1f5f9',
-      border: '#cbd5e1',
+      desc: 'You are offline. Toggle online when you are ready to work.',
+      color: '#29271F',
+      bg: '#E8E0D2',
+      border: '#DCD8D1',
     },
   };
 
@@ -149,10 +119,10 @@ export default function WorkerDutySwitch({
       style={{
         background: '#ffffff',
         border: `1.5px solid ${currentCfg.border}`,
-        borderRadius: '14px',
+        borderRadius: 'var(--radius-lg, 18px)',
         padding: '16px 20px',
         marginBottom: '20px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+        boxShadow: '0 2px 10px rgba(41,39,31,0.04)',
       }}
     >
       <div
@@ -172,31 +142,29 @@ export default function WorkerDutySwitch({
               borderRadius: '50%',
               backgroundColor: currentCfg.color,
               boxShadow: status === 'online' ? `0 0 0 4px ${currentCfg.bg}` : 'none',
-              transition: 'all 0.3s ease',
             }}
           />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontWeight: '700', fontSize: '1.05rem', color: '#1e293b' }}>
+              <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--sc-dark-accent, #29271F)' }}>
                 Duty Status:
               </span>
               <span
                 style={{
-                  fontWeight: '700',
-                  fontSize: '0.85rem',
-                  padding: '3px 10px',
+                  fontWeight: '800',
+                  fontSize: '0.82rem',
+                  padding: '3px 12px',
                   borderRadius: '20px',
                   backgroundColor: currentCfg.bg,
                   color: currentCfg.color,
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
-                  transition: 'all 0.3s ease',
                 }}
               >
                 {status}
               </span>
             </div>
-            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#64748b' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
               {currentCfg.desc}
             </p>
           </div>
@@ -212,16 +180,15 @@ export default function WorkerDutySwitch({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '8px',
+              padding: '8px 16px',
+              borderRadius: '20px',
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'online' || loading ? 'default' : 'pointer',
-              border: status === 'online' ? '1.5px solid #16a34a' : '1px solid #e2e8f0',
-              backgroundColor: status === 'online' ? '#16a34a' : '#ffffff',
-              color: status === 'online' ? '#ffffff' : '#334155',
+              border: status === 'online' ? '1.5px solid #536D57' : '1px solid #DCD8D1',
+              backgroundColor: status === 'online' ? '#536D57' : '#ffffff',
+              color: status === 'online' ? '#ffffff' : '#29271F',
               transition: 'all 0.2s ease',
-              boxShadow: status === 'online' ? '0 2px 6px rgba(22, 163, 74, 0.25)' : 'none',
             }}
           >
             <HiOutlineBolt /> Go Online
@@ -235,16 +202,15 @@ export default function WorkerDutySwitch({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '8px',
+              padding: '8px 16px',
+              borderRadius: '20px',
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'paused' || loading ? 'default' : 'pointer',
-              border: status === 'paused' ? '1.5px solid #d97706' : '1px solid #e2e8f0',
-              backgroundColor: status === 'paused' ? '#d97706' : '#ffffff',
-              color: status === 'paused' ? '#ffffff' : '#334155',
+              border: status === 'paused' ? '1.5px solid #B87B2E' : '1px solid #DCD8D1',
+              backgroundColor: status === 'paused' ? '#B87B2E' : '#ffffff',
+              color: status === 'paused' ? '#ffffff' : '#29271F',
               transition: 'all 0.2s ease',
-              boxShadow: status === 'paused' ? '0 2px 6px rgba(217, 119, 6, 0.25)' : 'none',
             }}
           >
             <HiOutlinePauseCircle /> Pause
@@ -258,16 +224,15 @@ export default function WorkerDutySwitch({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '8px',
+              padding: '8px 16px',
+              borderRadius: '20px',
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'offline' || loading ? 'default' : 'pointer',
-              border: status === 'offline' ? '1.5px solid #64748b' : '1px solid #e2e8f0',
-              backgroundColor: status === 'offline' ? '#64748b' : '#ffffff',
-              color: status === 'offline' ? '#ffffff' : '#334155',
+              border: status === 'offline' ? '1.5px solid #29271F' : '1px solid #DCD8D1',
+              backgroundColor: status === 'offline' ? '#29271F' : '#ffffff',
+              color: status === 'offline' ? '#ffffff' : '#29271F',
               transition: 'all 0.2s ease',
-              boxShadow: status === 'offline' ? '0 2px 6px rgba(100, 116, 139, 0.2)' : 'none',
             }}
           >
             <HiOutlinePower /> Go Offline

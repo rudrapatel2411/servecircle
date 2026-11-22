@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import '../Dashboard.css';
 import './CustomerPages.css';
+import Pagination from '../../components/Pagination';
 import { getSession, requestApi } from '../../utils/authSession.js';
 
 const statusConfig = {
@@ -37,6 +38,8 @@ const normalizeBooking = (booking) => ({
 const BookingHistory = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [expandedId, setExpandedId] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +84,11 @@ const BookingHistory = () => {
           <button
             key={tab.key}
             className={`tab-btn ${activeTab === tab.key ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => {
+              setActiveTab(tab.key);
+              setCurrentPage(1);
+              setExpandedId(null);
+            }}
           >
             {tab.label}
             <span className="tab-count">
@@ -100,7 +107,9 @@ const BookingHistory = () => {
 
       {/* Booking Cards */}
       <div className="bookings-list">
-        {!isLoading && filtered.map((booking) => {
+        {!isLoading && filtered
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((booking) => {
           const config = statusConfig[booking.status] || { label: booking.status, color: 'warning' };
           const isExpanded = expandedId === booking.id;
           return (
@@ -178,6 +187,24 @@ const BookingHistory = () => {
           </div>
         )}
       </div>
+
+      {filtered.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[6, 12, 24]}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            setExpandedId(null);
+          }}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="bookings"
+        />
+      )}
     </div>
   );
 };

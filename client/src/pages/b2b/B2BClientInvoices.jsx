@@ -10,6 +10,7 @@ import '../Dashboard.css';
 import './B2BPages.css';
 import PaymentModal from '../../components/PaymentModal';
 import PdfViewerModal from '../../components/PdfViewerModal';
+import Pagination from '../../components/Pagination';
 
 const defaultInvoices = [
   { id: 'INV-7001', month: 'Jul 2026', contract: 'AMC-3001', service: 'Lobby & Staircase Cleaning', vendor: 'CleanMax Services', amount: 8000, status: 'sent', dueDate: '31 Jul 2026' },
@@ -27,6 +28,8 @@ const defaultInvoices = [
 const B2BClientInvoices = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
   const [invoices, setInvoices] = useState(() => {
     let rows = [...defaultInvoices];
     // Generate invoices for any client contracts that don't have default invoices
@@ -145,7 +148,10 @@ const B2BClientInvoices = () => {
           <button
             key={tab.key}
             className={`tab-btn ${statusFilter === tab.key ? 'tab-btn-active' : ''}`}
-            onClick={() => setStatusFilter(tab.key)}
+            onClick={() => {
+              setStatusFilter(tab.key);
+              setCurrentPage(1);
+            }}
           >
             {tab.label}
           </button>
@@ -168,7 +174,9 @@ const B2BClientInvoices = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRows.map((row) => (
+            {filteredRows
+              .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+              .map((row) => (
               <tr key={row.id}>
                 <td style={{ fontWeight: 600 }}>{row.id}</td>
                 <td>{row.service}</td>
@@ -207,6 +215,21 @@ const B2BClientInvoices = () => {
           </tbody>
         </table>
       </div>
+
+      {filteredRows.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filteredRows.length}
+          pageSize={pageSize}
+          pageSizeOptions={[8, 16, 32]}
+          onPageChange={(page) => setCurrentPage(page)}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="invoices"
+        />
+      )}
 
       {filteredRows.length === 0 && (
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--gray-500)' }}>

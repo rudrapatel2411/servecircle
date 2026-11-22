@@ -6,6 +6,7 @@ import {
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './AdminPages.css';
+import Pagination from '../../components/Pagination';
 
 const mockComplaints = [
   { id: 'CMP-1001', subject: 'AC making noise after servicing', desc: 'After the AC servicing was done, the AC is making a buzzing noise.', category: 'service_quality', priority: 'medium', status: 'open', filedBy: 'Rudra Shah', against: 'Ramesh Kumar', booking: '#SC-2841', date: '13 May 2026' },
@@ -22,6 +23,8 @@ const AdminComplaints = () => {
   const { t } = useTranslation();
   const [complaints, setComplaints] = useState(mockComplaints);
   const [filter, setFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [expandedId, setExpandedId] = useState(null);
 
   const filtered = filter === 'all' ? complaints : complaints.filter((c) => c.status === filter);
@@ -41,14 +44,24 @@ const AdminComplaints = () => {
 
       <div className="tabs-bar">
         {[{ key: 'all', label: 'All' }, { key: 'open', label: 'Open' }, { key: 'in_progress', label: 'In Progress' }, { key: 'escalated', label: 'Escalated' }, { key: 'resolved', label: 'Resolved' }].map((tab) => (
-          <button key={tab.key} className={`tab-btn ${filter === tab.key ? 'active' : ''}`} onClick={() => setFilter(tab.key)}>
+          <button
+            key={tab.key}
+            className={`tab-btn ${filter === tab.key ? 'active' : ''}`}
+            onClick={() => {
+              setFilter(tab.key);
+              setCurrentPage(1);
+              setExpandedId(null);
+            }}
+          >
             {tab.label}<span className="tab-count">{tab.key === 'all' ? complaints.length : complaints.filter((c) => c.status === tab.key).length}</span>
           </button>
         ))}
       </div>
 
       <div className="complaints-list">
-        {filtered.map((c) => {
+        {filtered
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((c) => {
           const pCfg = priorityConfig[c.priority];
           const sCfg = statusConfig[c.status];
           const isExpanded = expandedId === c.id;
@@ -88,6 +101,24 @@ const AdminComplaints = () => {
         })}
         {filtered.length === 0 && <div className="empty-state"><p>No complaints found</p></div>}
       </div>
+
+      {filtered.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[5, 10, 20]}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            setExpandedId(null);
+          }}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          itemName="complaints"
+        />
+      )}
     </div>
   );
 };
