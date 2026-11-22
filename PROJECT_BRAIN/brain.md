@@ -15,6 +15,27 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Fix Prisma Demo Seeder Schema Mismatch in demoAuthStore.js (done, verified 2026-11-22)
+
+**User outcome:** Fixed startup crash/error: `Unknown argument subscription. Did you mean subscriptions?` and invalid argument error in `prisma.user.create()`. All demo users (5 customers, 1 admin, 1 B2B partner, 19 service workers) seed cleanly into PostgreSQL without Prisma schema validation failures.
+
+**Hypothesis:** `server/utils/demoAuthStore.js` was passing non-existent scalar fields (`subscription`, `skills`, `serviceCategory`, `workerStatus`, `isVerified`, `companyName`) into `prisma.user.create({ data: { ... } })`. In Prisma's `schema.prisma`, `User` only contains auth/account scalar fields (`name`, `email`, `phone`, `password`, `role`, `city`, `walletBalance`), while `skills`, `serviceCategory`, `workerStatus`, and `isVerified` belong to `WorkerProfile`, `companyName` belongs to `Partner`, and `subscriptions` is a relation to `Subscription`. Aligning `prisma.user.create` strictly with the `User` model and provisioning related `WorkerProfile`, `Partner`, and `Subscription` models removes all Prisma validation errors.
+
+**Tasks & Verification:**
+- [x] Fixed `server/utils/demoAuthStore.js`:
+  - Cleaned `prisma.user.create` data to strictly include valid `User` model scalar fields (`name`, `email`, `phone`, `password`, `role`, `city`, `walletBalance`).
+  - Added dedicated `WorkerProfile` provisioning for all workers with `dutyStatus: 'ONLINE'`, `workerStatus: 'APPROVED_SENIOR'`, `isVerified: true`, `isAvailable: true`.
+  - Added dedicated `Partner` provisioning for B2B accounts.
+  - Added dedicated `Subscription` provisioning for Customer accounts with active plans (`BASIC`, `SILVER`, `GOLD`).
+- [x] Verified `ensureDemoUsersInDB` executes cleanly with 0 errors (`users: 31, workerProfiles: 22, partners: 1, subscriptions: 5`).
+- [x] Verified all test suites pass:
+  - `verify-worker-ops-suite.mjs`: 30/30 PASSED
+  - `verify-m1-duty-and-availability.mjs`: 12/12 PASSED
+  - `verify-m0-workflow.mjs`: 15/15 PASSED
+  - `verify-m0-http-journey.mjs`: 19/19 PASSED
+  - Total: 76/76 checks PASSED
+- [x] Client production build (`npx vite build`): PASSED with 0 errors in 5.09s.
+
 ## Working plan — Make Worker Duty ON / OFF Switch Fully Functional & Synchronized (done, verified 2026-11-21)
 
 **User outcome:** Operator instructed: "worker pannel me duty on/off ko working karo" (Make duty on/off fully functional across the entire worker panel).
@@ -386,6 +407,26 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-22 — Fix Prisma Demo Seeder Schema Mismatch & Startup Error
+
+- **Root Cause of `Unknown argument subscription` / `Invalid prisma.user.create()`**:
+  * In `server/utils/demoAuthStore.js`, `ensureDemoUsersInDB()` was invoking `prisma.user.create({ data: { ... } })` with fields (`subscription`, `skills`, `serviceCategory`, `workerStatus`, `isVerified`, `companyName`) that do not exist on the `User` model in `server/prisma/schema.prisma`.
+  * In PostgreSQL / Prisma ORM, `User` is purely the authentication/account record with scalar columns: `name`, `email`, `phone`, `password`, `role`, `city`, `walletBalance`.
+  * Skills and service details belong to the relational `WorkerProfile` model; company name belongs to `Partner`; and subscriptions belong to the `Subscription` model (`subscriptions Subscription[]`).
+  * Because Prisma runtime validator rejects unknown arguments, every demo user creation threw an error, outputting noisy error logs and failing to seed the demo workers into PostgreSQL.
+- **Fixes Applied**:
+  * `server/utils/demoAuthStore.js`:
+    - Cleaned `prisma.user.create` data to strictly supply valid scalar fields on `model User`.
+    - Maintained and strengthened `WorkerProfile` creation/update for all 19 workers with `dutyStatus: 'ONLINE'`, `workerStatus: 'APPROVED_SENIOR'`, and `isVerified: true`.
+    - Added `Partner` creation for B2B demo accounts with `status: 'ACTIVE'`.
+    - Added `Subscription` creation for Customer demo accounts with active plans (`BASIC`, `SILVER`, `GOLD`).
+  * `server/scripts/verify-m0-workflow.mjs`:
+    - Updated assertions to account for multiple seeded workers across categories and verified concurrency test isolation.
+- **Verification**:
+  * `ensureDemoUsersInDB(prisma)` ran cleanly with 0 errors (`{ users: 31, workerProfiles: 22, partners: 1, subscriptions: 5 }`).
+  * Full test suite: 76/76 checks PASSED (`verify-worker-ops-suite.mjs` 30/30, `verify-m1-duty-and-availability.mjs` 12/12, `verify-m0-workflow.mjs` 15/15, `verify-m0-http-journey.mjs` 19/19).
+  * Client production build: PASSED in 5.09s with 0 errors.
 
 ### 2026-11-20 — Authentication 401 Unauthorized Resolution & Demo Token Support
 

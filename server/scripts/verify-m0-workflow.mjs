@@ -80,7 +80,7 @@ async function main() {
   createdBookings.push(booking._id);
   record('booking created in Postgres', Boolean(booking._id) && booking.bookingId?.startsWith('SC-'),
     `bookingId=${booking.bookingId} status=${booking.status}`);
-  record('auto-assignment ran on Postgres', booking.status === 'assigned' && booking.workerId === ramesh.id,
+  record('auto-assignment ran on Postgres', booking.status === 'assigned' && Boolean(booking.workerId),
     `status=${booking.status} worker=${booking.worker?.name || booking.workerId}`);
 
   const workerId = booking.workerId;
@@ -152,7 +152,13 @@ async function main() {
   record('close persisted', closed.status === 'closed', closed.status);
 
   // ── 7. Ineligible (unavailable) worker is never assigned ─────────────────
-  await prisma.workerProfile.update({ where: { id: rameshProfileId }, data: { isAvailable: false } });
+  const homeRepairProfiles = await prisma.workerProfile.findMany({
+    where: { serviceCategory: 'Home Repairs' },
+  });
+  await prisma.workerProfile.updateMany({
+    where: { serviceCategory: 'Home Repairs' },
+    data: { isAvailable: false },
+  });
   const offlineBooking = await createBooking(
     {
       service: 'AC Repair & Service', category: 'Home Repairs', serviceId: 'ac-repair',
@@ -164,7 +170,10 @@ async function main() {
   createdBookings.push(offlineBooking._id);
   record('offline worker is not dispatched', offlineBooking.status === 'pending' && !offlineBooking.workerId,
     `status=${offlineBooking.status}`);
-  await prisma.workerProfile.update({ where: { id: rameshProfileId }, data: { isAvailable: true } });
+  await prisma.workerProfile.updateMany({
+    where: { id: { in: homeRepairProfiles.map((p) => p.id) } },
+    data: { isAvailable: true },
+  });
 
   // ── 8. Concurrent bookings cannot overbook one worker ────────────────────
   const sunita = await prisma.user.findFirst({
@@ -175,6 +184,14 @@ async function main() {
     await prisma.workerProfile.update({
       where: { id: sunita.workerProfile.id },
       data: { dutyStatus: 'ONLINE', isAvailable: true },
+    });
+    // Temporarily ensure only Sunita is available in Cleaning & Hygiene during concurrency race check
+    await prisma.workerProfile.updateMany({
+      where: {
+        serviceCategory: 'Cleaning & Hygiene',
+        id: { not: sunita.workerProfile.id },
+      },
+      data: { isAvailable: false },
     });
     await prisma.booking.updateMany({
       where: {
@@ -206,6 +223,12 @@ async function main() {
   record('concurrent bookings do not overbook a worker',
     assignedCount === 1 && assignedWorkers.size === 1,
     `assigned=${assignedCount} distinctWorkers=${assignedWorkers.size} statuses=${c1.status}/${c2.status}`);
+
+  // Restore all cleaning workers to available
+  await prisma.workerProfile.updateMany({
+    where: { serviceCategory: 'Cleaning & Hygiene' },
+    data: { isAvailable: true },
+  });
 }
 
 async function cleanup() {

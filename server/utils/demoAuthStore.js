@@ -378,21 +378,17 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
             data: {
               name: demo.name,
               email: demo.email.toLowerCase(),
-              phone: demo.phone,
+              phone: demo.phone || null,
               password: hashedPassword,
               role: validRole,
-              subscription: (demo.subscription || 'basic').toUpperCase(),
-              walletBalance: demo.walletBalance || 0,
-              skills: demo.skills || [],
-              serviceCategory: demo.serviceCategory || '',
-              workerStatus: demo.role === 'worker' ? 'APPROVED_SENIOR' : undefined,
-              isVerified: demo.isVerified !== undefined ? demo.isVerified : true,
-              companyName: demo.companyName || undefined,
+              walletBalance: Number(demo.walletBalance) || 0,
+              city: demo.city || 'Ahmedabad',
             },
           });
           console.log(`[DemoSeeder] Created ${demo.role} user in PostgreSQL: ${demo.email}`);
         }
 
+        // 1. Worker Profile Provisioning
         if (existing && (existing.role === 'WORKER' || demo.role === 'worker')) {
           const existingProfile = await prisma.workerProfile.findUnique({
             where: { userId: existing.id },
@@ -401,8 +397,8 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
             await prisma.workerProfile.create({
               data: {
                 userId: existing.id,
-                serviceCategory: demo.serviceCategory || existing.serviceCategory || 'Home Repairs',
-                skills: demo.skills || existing.skills || [],
+                serviceCategory: demo.serviceCategory || 'Home Repairs',
+                skills: Array.isArray(demo.skills) ? demo.skills : [],
                 workerStatus: 'APPROVED_SENIOR',
                 isVerified: true,
                 isAvailable: true,
@@ -412,10 +408,62 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
                 workerIdCode: `WK-${Math.floor(1000 + Math.random() * 9000)}`,
               },
             });
+          } else {
+            // Ensure worker profile has approved senior status, verified flag, and online duty
+            if (!existingProfile.isVerified || existingProfile.workerStatus !== 'APPROVED_SENIOR' || existingProfile.dutyStatus !== 'ONLINE') {
+              await prisma.workerProfile.update({
+                where: { id: existingProfile.id },
+                data: {
+                  workerStatus: 'APPROVED_SENIOR',
+                  isVerified: true,
+                  isAvailable: true,
+                  dutyStatus: 'ONLINE',
+                },
+              });
+            }
+          }
+        }
+
+        // 2. B2B Partner Record Provisioning
+        if (existing && (existing.role === 'B2B' || demo.role === 'b2b')) {
+          const existingPartner = await prisma.partner.findFirst({
+            where: { linkedUserId: existing.id },
+          });
+          if (!existingPartner) {
+            await prisma.partner.create({
+              data: {
+                name: demo.companyName || 'Green Valley Society',
+                contactPerson: demo.name,
+                email: demo.email.toLowerCase(),
+                phone: demo.phone || '9876600001',
+                linkedUserId: existing.id,
+                status: 'ACTIVE',
+              },
+            });
+          }
+        }
+
+        // 3. Customer Subscription Provisioning
+        if (existing && (existing.role === 'CUSTOMER' || demo.role === 'customer') && demo.subscription) {
+          const planUpper = String(demo.subscription).toUpperCase();
+          const validPlan = ['BASIC', 'SILVER', 'GOLD', 'PLATINUM'].includes(planUpper) ? planUpper : 'BASIC';
+          const existingSub = await prisma.subscription.findFirst({
+            where: { userId: existing.id },
+          });
+          if (!existingSub) {
+            await prisma.subscription.create({
+              data: {
+                userId: existing.id,
+                plan: validPlan,
+                price: validPlan === 'GOLD' ? 999.0 : validPlan === 'SILVER' ? 499.0 : 0.0,
+                endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+                status: 'ACTIVE',
+              },
+            });
           }
         }
       } catch (err) {
-        // Silently skip if unique constraint or schema mismatch
+        console.error(`[DemoSeeder] Error syncing ${demo.email}:`, err.message);
       }
     }
     return;
