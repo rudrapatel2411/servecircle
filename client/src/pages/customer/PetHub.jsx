@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineArrowLeft, HiOutlineShieldCheck, HiOutlineHeart, HiOutlineVideoCamera, HiOutlineMapPin, HiOutlineSparkles, HiOutlineClipboardDocumentList, HiOutlineShoppingBag, HiOutlineDocumentArrowUp } from 'react-icons/hi2';
+import { HiOutlineArrowLeft, HiOutlineShieldCheck, HiOutlineHeart, HiOutlineVideoCamera, HiOutlineMapPin, HiOutlineSparkles, HiOutlineClipboardDocumentList, HiOutlineShoppingBag, HiOutlineDocumentArrowUp, HiOutlineTrash } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -144,10 +144,10 @@ const PetHub = () => {
  position: 'relative',
  overflow: 'hidden'
  }}>
- <div style={{ position: 'absolute', right: '-10px', top: '-10px', fontSize: '5rem', opacity: 0.15 }}></div>
+ <div style={{ position: 'absolute', right: '-10px', top: '-10px', fontSize: '5rem', opacity: 0.15 }}>🐾</div>
  <h4 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#be185d', margin: '0 0 10px 0' }}>{petProfile.name} </h4>
  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', color: '#9d174d' }}>
- <span> <strong>{t('petHub.typeBreed')}:</strong> {t('petHub.' + petProfile.type.toLowerCase(), petProfile.type)} ({petProfile.breed})</span>
+ <span> <strong>{t('petHub.typeBreed')}:</strong> {t('petHub.' + (petProfile?.type || 'Dog').toLowerCase(), petProfile.type)} ({petProfile.breed})</span>
  <span> <strong>{t('petHub.age')}:</strong> {petProfile.age}</span>
  <span> <strong>{t('petHub.specialNeeds')}:</strong> {petProfile.specialNeeds || t('petHub.none', 'None')}</span>
  </div>
@@ -275,7 +275,8 @@ const PetHub = () => {
  {/* Grooming */}
  <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
  <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Premium Grooming</h4>
+ <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>✂️</div>
+				<h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Premium Grooming</h4>
  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0d9488', marginBottom: '12px' }}>₹599</span>
  <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>{t('petHub.groomingDesc')}</p>
  <Link 
@@ -305,7 +306,8 @@ const PetHub = () => {
  {/* Dog Walking */}
  <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
  <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Daily Dog Walking</h4>
+ <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🦮</div>
+				<h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Daily Dog Walking</h4>
  <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#3b82f6', marginBottom: '12px' }}>₹199</span>
  <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>45-min guided walk for {petProfile.name} with live GPS tracking.</p>
  <div style={{ display: 'flex', gap: '8px' }}>
@@ -411,7 +413,7 @@ const PetHub = () => {
 						</div>
 						<h3 style={{ fontSize: '1.4rem', color: 'var(--navy-900)', fontWeight: 900, margin: '0 0 8px 0' }}>Custom Box for {petProfile.name} 📦</h3>
 						<p style={{ fontSize: '0.9rem', color: '#166534', margin: '0 0 12px 0', lineHeight: 1.5 }}>
-							Premium {petProfile.type.toLowerCase()} food, healthy treats, and grooming supplies delivered to your door on the 1st of every month. Tailored for {petProfile.breed}s.
+							Premium {(petProfile?.type || 'Dog').toLowerCase()} food, healthy treats, and grooming supplies delivered to your door on the 1st of every month. Tailored for {petProfile.breed}s.
 						</p>
 						<div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
 							<span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.7)', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>• Tailored Nutrition</span>

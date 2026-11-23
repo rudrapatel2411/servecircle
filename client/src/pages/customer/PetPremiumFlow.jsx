@@ -532,8 +532,8 @@ const PetPremiumFlow = () => {
   };
 
   return (
-    <div className="dashboard-layout" style={{ background: '#faf9f6', minHeight: '100vh', padding: '24px 16px 80px' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="page-content" style={{ minHeight: '92vh', padding: '20px 16px 120px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#faf9f6' }}>
+      <div style={{ width: '100%', maxWidth: '960px', marginTop: '12px' }}>
         
         {/* TOP BAR / BACK NAVIGATION */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
