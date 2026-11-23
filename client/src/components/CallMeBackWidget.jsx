@@ -193,24 +193,32 @@ const CallMeBackWidget = ({ hasSidebar }) => {
 
   return (
     <>
-      {/* Floating Call Button — Positioned between Sidebar and Main Content without hiding menus */}
+      {/* Floating Call Button — Strictly Bottom-Right corner without element obstruction */}
       <div
         onClick={() => setIsOpen(true)}
-        className={`call-me-back-float ${withSidebar ? 'call-me-back-float--with-sidebar' : ''}`}
+        className="call-me-back-float"
         style={{
           background: 'linear-gradient(135deg, #2D5A3C 0%, #1E3D29 100%)',
           color: '#F7F3EC',
-          width: '52px',
-          height: '52px',
+          width: '50px',
+          height: '50px',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(45, 90, 60, 0.38), 0 2px 6px rgba(0,0,0,0.15)',
+          boxShadow: '0 8px 24px rgba(45, 90, 60, 0.4), 0 2px 6px rgba(0,0,0,0.2)',
           cursor: 'pointer',
           userSelect: 'none',
-          border: '1.5px solid rgba(232, 224, 210, 0.45)',
-          transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          border: '1.5px solid rgba(232, 224, 210, 0.5)',
+          transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.06)';
+          e.currentTarget.style.boxShadow = '0 12px 28px rgba(45, 90, 60, 0.48), 0 3px 8px rgba(0,0,0,0.24)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'none';
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(45, 90, 60, 0.4), 0 2px 6px rgba(0,0,0,0.2)';
         }}
         title="Need Help? Request Instant Call Back"
         role="button"
@@ -226,7 +234,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
             pointerEvents: 'none',
           }}
         />
-        <HiOutlinePhone size={24} style={{ color: '#F7F3EC' }} />
+        <HiOutlinePhone size={22} style={{ color: '#F7F3EC' }} />
       </div>
 
       {/* Modal Popup */}

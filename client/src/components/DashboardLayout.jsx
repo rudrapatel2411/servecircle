@@ -78,7 +78,7 @@ const DashboardLayout = ({ panel }) => {
         </div>
       </div>
 
-      {panel === 'customer' && <CallMeBackWidget hasSidebar={isGeneralServicesRoute} />}
+      {panel === 'customer' && <CallMeBackWidget />}
       {panel === 'worker' && <WorkerCallWidget />}
     </div>
   );

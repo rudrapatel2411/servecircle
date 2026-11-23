@@ -15,6 +15,23 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Reposition Customer Floating Call Button to Bottom-Right without Element Obstruction (done, verified 2026-11-23)
+
+**User outcome:**
+Repositioned the customer callback / call button (`CallMeBackWidget`) strictly to the bottom-right corner (`right: 24px`, `bottom: 24px` on desktop; above bottom navigation bar on mobile) so it never floats in the middle-left of the page or covers any cards, menus, action buttons, or interactive elements.
+1. Removed `.call-me-back-float--with-sidebar` rule that forced `left: 290px` over content on category sidebar pages.
+2. Ensured strict bottom-right anchoring (`right: 24px; left: auto; transform: none`) across both desktop and mobile views.
+3. Added sufficient bottom scrolling padding (`padding-bottom: 100px` on desktop, `calc(var(--bottom-nav-height) + 90px)` on mobile) to `.dashboard-content` so scrolled page content ends well above the floating button.
+4. Added compact, modern styling with subtle hover tooltip and non-blocking click areas.
+
+**Tasks & Verification:**
+- [x] Update `client/src/index.css` and `client/src/styles/ui-improvements.css` to fix `.call-me-back-float` to the bottom-right without `left: 290px` override.
+- [x] Update `client/src/components/DashboardLayout.css` with 100px bottom clearance in `.dashboard-content`.
+- [x] Update `client/src/components/CallMeBackWidget.jsx` and `DashboardLayout.jsx` for clean, un-obstructive rendering.
+- [x] Verify client production build (`npm --prefix client run build`) — PASSED in 6.75s with 0 errors.
+- [x] Verify test suites (`verify-worker-ops-suite.mjs`) — 30/30 PASSED.
+- [x] Update `PROJECT_BRAIN/brain.md` journal. (Kept strictly local; NO git push performed).
+
 ## Working plan — Comprehensive Premium Culinary Experiences Suite (Backyard BBQ, In-Home Baking, Kitchen & Pantry Clean) (done, verified 2026-11-23)
 
 **User outcome:**
@@ -1479,6 +1496,24 @@ No feature implementation task is in progress. The only unfinished cleanup is th
 - **Validation**:
   * Automated suites passed (76/76): `verify-m0-workflow.mjs` (15/15), `verify-m0-http-journey.mjs` (19/19), `verify-m1-duty-and-availability.mjs` (12/12), `verify-worker-ops-suite.mjs` (30/30).
   * Production frontend build (`npx vite build`) passed with 0 errors.
+
+### 2026-11-23 — Customer Floating Call Button Repositioning to Bottom-Right
+
+- **User outcome:** Fixed floating callback button (`CallMeBackWidget`) in customer panel so it is anchored strictly at the bottom-right corner (`right: 24px`, `bottom: 24px` on desktop; above bottom navigation on mobile) and never obstructs page content, cards, action buttons, or menus.
+- **Files modified:**
+  - `client/src/index.css` & `client/src/styles/ui-improvements.css`:
+    * Removed `.call-me-back-float--with-sidebar { left: 290px !important; }` rule that was forcing the call button into the middle-left of the page over category content.
+    * Ensured strict bottom-right anchoring (`right: 24px; bottom: calc(24px + var(--safe-bottom, 0px)); left: auto; transform: none`).
+    * On mobile (<768px), positioned above mobile bottom nav (`bottom: calc(var(--bottom-nav-height, 64px) + var(--safe-bottom, 0px) + 16px); right: 16px;`).
+  - `client/src/components/DashboardLayout.css`:
+    * Increased `.dashboard-content` bottom padding to `100px` (and on mobile to `calc(var(--bottom-nav-height) + var(--safe-bottom) + 90px)`). This guarantees that when the user scrolls to the bottom of ANY customer page, the page content ends cleanly above the floating button.
+  - `client/src/components/CallMeBackWidget.jsx` & `client/src/components/DashboardLayout.jsx`:
+    * Cleaned up widget class and removed sidebar offset dependency.
+    * Refined button styling (50px diameter, subtle scale transition, non-blocking pulse ring).
+- **Validation:**
+  * Client production build (`npm --prefix client run build`) passed cleanly in 6.75s with 0 errors.
+  * Backend operations suite (`verify-worker-ops-suite.mjs`) passed 30/30 checks.
+  * Changes kept strictly local (NO git push executed).
 
 ### 2026-11-23 — Comprehensive Premium Culinary Experiences Suite (Backyard BBQ, In-Home Baking, Kitchen & Pantry Clean)
 

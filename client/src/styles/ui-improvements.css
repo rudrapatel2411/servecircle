@@ -450,16 +450,17 @@ input[type="radio"] {
 /* ===== CALL ME BACK FLOAT ===== */
 .call-me-back-float {
   position: fixed !important;
-  bottom: calc(24px + var(--safe-bottom)) !important;
-  right: 28px !important;
+  bottom: calc(24px + var(--safe-bottom, 0px)) !important;
+  right: 24px !important;
   left: auto !important;
+  transform: none !important;
   z-index: 1000 !important;
 }
 
 .call-me-back-float--with-sidebar {
-  left: 290px !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
+  right: 24px !important;
+  left: auto !important;
+  transform: none !important;
 }
 
 @media (max-width: 768px) {
@@ -469,7 +470,7 @@ input[type="radio"] {
 
   .call-me-back-float,
   .call-me-back-float--with-sidebar {
-    bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 24px) !important;
+    bottom: calc(var(--bottom-nav-height, 64px) + var(--safe-bottom, 0px) + 16px) !important;
     right: 16px !important;
     left: auto !important;
     transform: none !important;
