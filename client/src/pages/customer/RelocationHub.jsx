@@ -749,79 +749,87 @@ const RelocationHub = () => {
       </div>
 
       {/* Specialized Moving Services Section */}
-      <div style={{ marginTop: '48px' }}>
-        <div style={{ marginBottom: '22px' }}>
-          <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 4px 0' }}>
-            Specialized Relocation Solutions
+      <div style={{ marginTop: '48px', marginBottom: '32px' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>Specialized Relocation Solutions</span>
           </h3>
-          <p style={{ fontSize: '0.85rem', color: '#6B665C', margin: 0 }}>
-            Dedicated transport services calibrated for vehicles, pets, and scrap removal.
+          <p style={{ fontSize: '0.88rem', color: '#64748b', margin: 0 }}>
+            Dedicated transport services calibrated for vehicles, pets, and scrap removal with verified safety standards.
           </p>
         </div>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '24px',
           }}
         >
           {/* 1. Vehicle Relocation */}
           <div
+            className="service-card-hover"
             style={{
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
+              borderRadius: '20px',
+              padding: '28px 24px',
+              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
           >
             <div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  background: 'rgba(83, 109, 87, 0.12)',
-                  color: '#2D5A3C',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  marginBottom: '12px',
-                }}
-              >
-                Safe Car &amp; Bike Carrier
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>🚗</span>
+                <span
+                  style={{
+                    background: '#eff6ff',
+                    color: '#1d4ed8',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid #bfdbfe',
+                  }}
+                >
+                  Safe Car & Bike Carrier
+                </span>
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
                 {t('relocationExt.vehicleRelocation', 'Vehicle Relocation')}
               </h4>
-              <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
-                Enclosed container trucks with wheel stoppers &amp; ramp loading for your car or two-wheeler.
+              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+                Enclosed container trucks with wheel stoppers, hydraulic ramp loading, and zero-dep insurance for your car or two-wheeler.
               </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Starting from:</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e40af' }}>
+                  ₹4,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Bike & Car Carrier)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
+                  ✓ Hydraulic Ramp Loading • Live GPS Container Track
+                </div>
+              </div>
             </div>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
-                <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Starting from:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹4,999</span>
-              </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(
-                  'Intercity Vehicle Transport (Car / Bike)'
-                )}&serviceId=vehicle-relocation&category=relocation&price=4999`}
+                to="/customer/relocation-flow?type=vehicle-relocation"
+                className="btn"
                 style={{
                   width: '100%',
-                  padding: '11px',
-                  fontSize: '0.88rem',
+                  padding: '13px',
+                  fontSize: '0.92rem',
                   color: '#FFFFFF',
                   background: '#1E40AF',
                   textAlign: 'center',
-                  borderRadius: '10px',
+                  borderRadius: '12px',
                   textDecoration: 'none',
                   fontWeight: 800,
                   display: 'block',
-                  boxShadow: '0 2px 8px rgba(30, 64, 175, 0.2)',
+                  boxShadow: '0 4px 12px rgba(30, 64, 175, 0.25)',
+                  boxSizing: 'border-box'
                 }}
               >
                 Book VIP Vehicle Transport
@@ -831,60 +839,68 @@ const RelocationHub = () => {
 
           {/* 2. Pet Relocation */}
           <div
+            className="service-card-hover"
             style={{
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
+              borderRadius: '20px',
+              padding: '28px 24px',
+              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
           >
             <div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  background: 'rgba(83, 109, 87, 0.12)',
-                  color: '#2D5A3C',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  marginBottom: '12px',
-                }}
-              >
-                Climate-Controlled Travel
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>🐾</span>
+                <span
+                  style={{
+                    background: '#fdf4ff',
+                    color: '#a21caf',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid #f0abfc',
+                  }}
+                >
+                  Climate-Controlled Travel
+                </span>
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
                 {t('relocationExt.petRelocation', 'Pet Relocation & Cab')}
               </h4>
-              <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
-                AC sanitized cab, certified handler, hydration breaks, and stress-free transit for your furry friends.
+              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+                Dedicated AC sanitized cab, certified pet handler, scheduled hydration stops, and stress-free transit for your furry friends.
               </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Starting from:</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#a21caf' }}>
+                  ₹2,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Dedicated Pet Cab / Flight)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
+                  ✓ Certified Pet Handler • Regular Hydration Breaks
+                </div>
+              </div>
             </div>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
-                <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Starting from:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹2,999</span>
-              </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(
-                  'AC Pet Relocation Cab & Handler'
-                )}&serviceId=pet-relocation&category=relocation&price=2999`}
+                to="/customer/relocation-flow?type=pet-relocation"
+                className="btn"
                 style={{
                   width: '100%',
-                  padding: '11px',
-                  fontSize: '0.88rem',
+                  padding: '13px',
+                  fontSize: '0.92rem',
                   color: '#FFFFFF',
-                  background: '#1E40AF',
+                  background: '#a21caf',
                   textAlign: 'center',
-                  borderRadius: '10px',
+                  borderRadius: '12px',
                   textDecoration: 'none',
                   fontWeight: 800,
                   display: 'block',
-                  boxShadow: '0 2px 8px rgba(30, 64, 175, 0.2)',
+                  boxShadow: '0 4px 12px rgba(162, 28, 175, 0.25)',
+                  boxSizing: 'border-box'
                 }}
               >
                 Book VIP Pet Travel
@@ -894,64 +910,71 @@ const RelocationHub = () => {
 
           {/* 3. Junk & Scrap Removal */}
           <div
+            className="service-card-hover"
             style={{
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
-              borderRadius: '16px',
-              padding: '24px',
-              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
+              borderRadius: '20px',
+              padding: '28px 24px',
+              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
           >
             <div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  background: 'rgba(83, 109, 87, 0.12)',
-                  color: '#2D5A3C',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  marginBottom: '12px',
-                }}
-              >
-                Pre-Move Declutter
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>♻️</span>
+                <span
+                  style={{
+                    background: '#f0fdf4',
+                    color: '#16a34a',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid #bbf7d0',
+                  }}
+                >
+                  Pre-Move Declutter
+                </span>
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
                 {t('relocationExt.scrapRemoval', 'Scrap & Junk Removal')}
               </h4>
-              <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
-                Declutter old mattresses, scrap metal, and broken furniture. Evaluation fee with salvage value credited back.
+              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+                Declutter old mattresses, scrap metal, broken furniture & e-waste. Evaluation fee with salvage cash/UPI credited back.
               </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Evaluation Fee:</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#16a34a' }}>
+                  ₹499 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Salvage cash credited back)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
+                  ✓ Heavy Furniture Dismantling • Broom-Clean Promise
+                </div>
+              </div>
             </div>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
-                <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Evaluation Fee:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹499</span>
-              </div>
               <Link
-                to={`/customer/book?service=${encodeURIComponent(
-                  'Scrap & Junk Removal Pickup'
-                )}&serviceId=junk-removal&category=relocation&price=499`}
+                to="/customer/relocation-flow?type=scrap-removal"
+                className="btn"
                 style={{
                   width: '100%',
-                  padding: '11px',
-                  fontSize: '0.88rem',
-                  color: '#0F172A',
-                  background: '#FAF9F6',
-                  border: '1.5px solid #E2E8F0',
+                  padding: '13px',
+                  fontSize: '0.92rem',
+                  color: '#FFFFFF',
+                  background: '#16a34a',
                   textAlign: 'center',
-                  borderRadius: '10px',
+                  borderRadius: '12px',
                   textDecoration: 'none',
                   fontWeight: 800,
                   display: 'block',
-                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+                  boxSizing: 'border-box'
                 }}
               >
-                Schedule Pickup (₹499)
+                Schedule Declutter Pickup (₹499)
               </Link>
             </div>
           </div>

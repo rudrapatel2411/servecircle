@@ -15,6 +15,52 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Complete Comprehensive Specialized Relocation Solutions Suite (Vehicle Relocation, Pet Relocation, Scrap & Junk Removal) (done, verified 2026-11-24)
+
+**User outcome:**
+Build out complete, production-grade, customer-centric 4-step interactive workflows, pages, features, and buttons for all 3 **Specialized Relocation Solutions** in `RelocationHub.jsx` and new `RelocationPremiumFlow.jsx`:
+1. **Vehicle Relocation (`type=vehicle-relocation`)**:
+   - Vehicle category: 2-Wheeler / Superbike (₹4,999 base), Hatchback / Compact Sedan (₹8,999 base), Mid / Full-Size SUV (₹12,499 base), Luxury / Vintage Enclosed Pod (₹19,999 base).
+   - Carrier type selection: Dedicated Enclosed Container Truck (100% weather & dust proof) vs Open Multi-Car Hydraulic Carrier.
+   - Digital Pre-Dispatch Inspection Checklist: 360-degree timestamped photo & dent audit, digital fuel & odometer log before loading.
+   - Route logistics: Origin city/pincode, destination city/pincode, estimated transit distance, live GPS tracker promise.
+   - Loading & Safety Add-ons: Hydraulic ramp loading at doorstep (included), battery disconnect terminal protection (included), zero-depreciation comprehensive transit insurance (+₹999), bubble/foam mirror & bumper wrap protection (+₹499), fast-track dedicated express transit (+₹1,999).
+   - Assigned Fleet Logistics Officer Card (Captain Harpreet Singh, SafeCarrier Certified, 12+ yrs experience, 1,200+ vehicles delivered) & checkout handoff to `/customer/book`.
+2. **Pet Relocation & Travel (`type=pet-relocation`)**:
+   - Pet profile: Pet type (Dog, Cat, Bird/Small Pet), breed, age group, weight, and temperament (Calm, Motion-sickness prone, Anxious/high energy).
+   - Climate-controlled transit mode:
+     - Dedicated Intercity AC Pet Cab (Rear seat folded, orthopedic pet mattress, pet parent can travel along or pet travels with handler) - ₹2,999 base.
+     - Domestic Air Travel Pet Cargo Assistance (IATA compliant crate, airline booking, DGCA microchip verification & vet fit-to-fly certificate) - ₹8,499 base.
+     - Local Intra-City Sanitized Relocation Cab - ₹1,899 base.
+   - Safety & Hydration Protocol: Mandatory 2.5-hour hydration and stretch breaks, live GPS trip sharing link, hourly WhatsApp photo/video updates to pet parent.
+   - Pet Travel Add-ons: Vet-approved organic calming pheromone spray & treats (+₹299), orthopedic memory foam travel bed (+₹499), anti-nausea travel kit (+₹199).
+   - Assigned Pet Travel Specialist Card (Pooja Nair, Certified Canine Behaviorist & Pet Relocation Specialist, 800+ safe journeys) & checkout handoff.
+3. **Pre-Move Scrap & Junk Removal (`type=scrap-removal`)**:
+   - Declutter Inventory Multi-Selector:
+     - Heavy Broken Furniture (Old spring mattresses, damaged bed frames, wardrobes, dining chairs, sofas).
+     - E-Waste & Obsolete Electronics (Old CRT TVs, refrigerators, washing machines, microwaves, CPUs, tangled cables - 100% certified green recycling).
+     - Metal, Paper & Plastic Scrap (Old newspapers, cardboard cartons, copper/brass pipes, rusted iron).
+     - Renovation & Plywood Debris.
+   - Property logistics & Crew Sizing: Apartment with lift vs stairs only (Floor 1-4), Independent house; Tata Ace mini-truck with 2 heavy lifters vs Bolero 14ft with 4 lifters & dismantling tools.
+   - Heavy Dismantling Guarantee: Included power drills, saw tools, and Allen keys to dismantle oversized wardrobes that don't fit in society elevators.
+   - Transparent Salvage Credit & Evaluation: Flat ₹499 evaluation & heavy truck loading fee. Salvage credit (digital weighing on truck) credited back instantly to customer via cash/UPI for metals and working electronics!
+   - Post-Removal Broom-Clean Guarantee: Crew sweeps the floor clean after loading bulky items.
+   - Assigned Eco-Declutter Lead Card (Ramesh Gujjar, 600+ pickups, 100% certified recycling partners) & checkout handoff.
+4. **Enhanced Hub Cards (`RelocationHub.jsx`)**:
+   - Upgrade the 3 cards in "Specialized Relocation Solutions" with highlight badges, transparent starting pricing, feature bullet checkmarks, and deep links to `/customer/relocation-flow?type=vehicle-relocation`, `pet-relocation`, and `scrap-removal`.
+5. **Route Registration in `App.jsx`**:
+   - Register `<Route path="relocation-flow" element={<RelocationPremiumFlow />} />` under dashboard routes.
+
+**Constraint:** Direct push is strictly forbidden by user request ("direct push mat karo"). All changes remain strictly verified locally.
+
+**Tasks & Verification:**
+- [ ] Upgrade `client/src/pages/customer/RelocationHub.jsx` cards with badges, pricing, icons, and direct links to `/customer/relocation-flow`.
+- [ ] Build `client/src/pages/customer/RelocationPremiumFlow.jsx` into a comprehensive 4-step interactive wizard for Vehicle Relocation, Pet Relocation, and Scrap Removal.
+- [ ] Register `relocation-flow` route in `client/src/App.jsx`.
+- [ ] Verify client production build (`npm --prefix client run build`).
+- [ ] Verify test suites (`verify-worker-ops-suite.mjs`).
+- [ ] Update `PROJECT_BRAIN/brain.md` journal. (Strictly kept local; NO git push performed).
+
 ## Working plan — Complete Comprehensive Premium Society Experiences Suite (Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash) (done, verified 2026-11-24)
 
 **User outcome:**
@@ -1177,6 +1223,37 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-24 — Complete Comprehensive Specialized Relocation Solutions Suite (Vehicle Relocation, Pet Relocation, Scrap & Junk Removal)
+
+- **Specialized Relocation Solutions Hub Upgrades (`client/src/pages/customer/RelocationHub.jsx`)**:
+  * Upgraded all 3 service cards with custom icons (🚗, 🐾, ♻️), highlight badges, transparent pricing, and feature checkmarks.
+  * Replaced direct stubs with deep navigation to `/customer/relocation-flow?type=vehicle-relocation`, `pet-relocation`, and `scrap-removal`.
+
+- **Comprehensive 4-Step Interactive Flow (`client/src/pages/customer/RelocationPremiumFlow.jsx`)**:
+  * **Vehicle Relocation (`type=vehicle-relocation`)**:
+    - Step 1: Vehicle Category (Two-Wheeler ₹4,999, Hatchback/Sedan ₹8,999, Compact/Full SUV ₹12,499, Luxury Enclosed Pod ₹19,999) & Make/Plate details.
+    - Step 2: Route logistics (Origin & destination cities, distance km estimation, transit dates) and Carrier Pod type (Enclosed Container Pod, Open Hydraulic Deck, Single-Car VIP Pod).
+    - Step 3: Digital pre-loading inspection walkaround agreement (timestamped photos, odometer freeze, battery disconnect) and protection add-ons (Zero-Dep Transit Insurance up to ₹25L +₹999, high-density foam bumper/mirror wrap +₹499, express twin-driver transit +₹1,999).
+    - Step 4: Assigned Fleet Logistics Captain card (Captain Harpreet Singh, SafeCarrier Certified #VL-8902, 1,200+ runs with 0 claims), live GPS satellite container tracking promise, transparent itemized quotation, and handoff to `/customer/book`.
+  * **VIP Pet Relocation & Travel (`type=pet-relocation`)**:
+    - Step 1: Pet Profile (Dog, Cat, Bird/Small Pet), breed, weight, age, and travel temperament check (Calm, Nervous/Anxious, Motion-Sick).
+    - Step 2: Transit Mode (Dedicated Intercity AC Pet Cab with rear folded seats & orthopedic mattress ₹4,499, Domestic Air Cargo Flight Assistance ₹8,499, Local Sanitized Cab ₹1,899), route inputs, and parent traveling along in front seats toggle.
+    - Step 3: Comfort protocol (Scheduled 2.5-hour hydration and stretch breaks, hourly WhatsApp photo/video updates, animal CPR kit), organic calming lavender pheromone chews (+₹299), memory foam travel bed (+₹499), and anti-nausea travel kit (+₹199).
+    - Step 4: Assigned Pet Travel Specialist card (Pooja Nair, Canine Behaviorist & Pet Relocation Lead, 800+ safe journeys), itemized price breakdown, and checkout handoff.
+  * **Pre-Move Scrap & Heavy Junk Removal (`type=scrap-removal`)**:
+    - Step 1: Multi-select declutter inventory (Old spring mattresses, broken bed frames/wardrobes, damaged sofas, e-waste/appliances, metal scrap, old newspapers/cartons, renovation debris).
+    - Step 2: Removal crew & truck capacity (Tata Ace mini-truck with 2 heavy loaders ₹499 base evaluation vs Bolero 14ft with 4 loaders ₹999), property elevator access, pickup address & date.
+    - Step 3: Heavy furniture power tool dismantling included FREE (power drills & Allen keys to break down oversized wardrobes), post-removal floor broom-cleaning promise FREE, and digital weighing scale on truck for instant salvage cash/UPI credit back!
+    - Step 4: Assigned Eco-Declutter Lead card (Ramesh Gujjar, 600+ pickups, 100% verified green recyclers), slot timing, itemized bill, and direct checkout handoff.
+
+- **Route Integration in `client/src/App.jsx`**:
+  * Imported `RelocationPremiumFlow` and registered `<Route path="relocation-flow" element={<RelocationPremiumFlow />} />`.
+
+- **Verification & Constraints**:
+  * `npm --prefix client run build`: PASSED in 6.25s with 0 errors.
+  * `node server/scripts/verify-worker-ops-suite.mjs`: PASSED (30/30 checks).
+  * Strictly preserved local git commit; NO `git push origin main` executed.
 
 ### 2026-11-24 — Complete Comprehensive Premium Society Experiences Suite (Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash)
 

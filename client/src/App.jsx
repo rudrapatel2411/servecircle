@@ -68,6 +68,7 @@ import PetPremiumFlow from './pages/customer/PetPremiumFlow';
 import FoodPremiumFlow from './pages/customer/FoodPremiumFlow';
 import TravelPremiumFlow from './pages/customer/TravelPremiumFlow';
 import SocietyPremiumFlow from './pages/customer/SocietyPremiumFlow';
+import RelocationPremiumFlow from './pages/customer/RelocationPremiumFlow';
 
 /* Worker */
 import WorkerDashboard from './pages/worker/WorkerDashboard';
@@ -178,6 +179,7 @@ function App() {
           <Route path="food-flow" element={<FoodPremiumFlow />} />
           <Route path="travel-flow" element={<TravelPremiumFlow />} />
           <Route path="society-flow" element={<SocietyPremiumFlow />} />
+          <Route path="relocation-flow" element={<RelocationPremiumFlow />} />
         </Route>
 
         <Route path="/worker" element={<DashboardLayout panel="worker" />}>
