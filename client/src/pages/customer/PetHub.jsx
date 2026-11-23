@@ -332,99 +332,134 @@ const PetHub = () => {
  marginBottom: '40px'
  }}>
  {/* Boarding */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Pet Boarding & Sitting</h4>
- <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ef4444', marginBottom: '12px' }}>₹899<span style={{fontSize: '0.75rem'}}>/night</span></span>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>Verified homestays for {petProfile.name} while you travel.</p>
- <Link to="/customer/pet-flow?type=boarding" className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#ef4444', borderColor: '#ef4444', fontWeight: 700 }}>Book Boarding</Link>
- </div>
+				<div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
+					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+						<div style={{ fontSize: '2.5rem' }}>🏡</div>
+						<span style={{ background: '#fee2e2', color: '#b91c1c', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Cage-Free Verified</span>
+					</div>
+					<h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>Pet Boarding & Sitting</h4>
+					<span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ef4444', marginBottom: '8px' }}>₹899<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}>/night</span></span>
+					<p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>
+						Verified homestays for {petProfile.name} while you travel. Includes 3x daily WhatsApp video updates, fenced lawns & 24/7 vet on call.
+					</p>
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ 3x Daily Videos</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Police Checked</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Custom Diet</span>
+					</div>
+					<Link to={`/customer/pet-flow?type=boarding&petName=${encodeURIComponent(petProfile.name)}&petType=${encodeURIComponent(petProfile.type)}&petBreed=${encodeURIComponent(petProfile.breed)}`} className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#ef4444', borderColor: '#ef4444', fontWeight: 700, padding: '10px 16px', borderRadius: '10px' }}>Book Boarding</Link>
+				</div>
 
- {/* Training */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Certified Training</h4>
- <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f59e0b', marginBottom: '12px' }}>₹1299<span style={{fontSize: '0.75rem'}}>/session</span></span>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>In-home obedience and behavioral training.</p>
- <Link to="/customer/pet-flow?type=training" className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#f59e0b', borderColor: '#f59e0b', fontWeight: 700 }}>Book Trainer</Link>
- </div>
+				{/* Training */}
+				<div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
+					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+						<div style={{ fontSize: '2.5rem' }}>🎓</div>
+						<span style={{ background: '#fef3c7', color: '#92400e', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>100% Force-Free</span>
+					</div>
+					<h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>Certified Training</h4>
+					<span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#f59e0b', marginBottom: '8px' }}>₹1299<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}>/session</span></span>
+					<p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>
+						In-home obedience, leash-pulling, and behavioral mastery with KCI-certified positive reinforcement trainers.
+					</p>
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ LIMA Certified</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Zero Shock Collars</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Trial Available</span>
+					</div>
+					<Link to={`/customer/pet-flow?type=training&petName=${encodeURIComponent(petProfile.name)}&petType=${encodeURIComponent(petProfile.type)}&petBreed=${encodeURIComponent(petProfile.breed)}`} className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#f59e0b', borderColor: '#f59e0b', fontWeight: 700, padding: '10px 16px', borderRadius: '10px' }}>Book Trainer</Link>
+				</div>
 
- {/* Photography */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>Pet Photography</h4>
- <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#c026d3', marginBottom: '12px' }}>₹2499</span>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>Professional photoshoot for your pet. Includes album.</p>
- <Link to="/customer/pet-flow?type=photography" className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#c026d3', borderColor: '#c026d3', fontWeight: 700 }}>Book Photoshoot</Link>
- </div>
- </div>
+				{/* Photography */}
+				<div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
+					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+						<div style={{ fontSize: '2.5rem' }}>📸</div>
+						<span style={{ background: '#fae8ff', color: '#86198f', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Studio & Park</span>
+					</div>
+					<h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>Pet Photography</h4>
+					<span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#c026d3', marginBottom: '8px' }}>₹2499<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> onwards</span></span>
+					<p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>
+						Professional photoshoot with patient animal handlers, squeaker toys, organic treats, and framed keepsake album.
+					</p>
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ 15+ Retouched Photos</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Framed Print</span>
+						<span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Calming Pacing</span>
+					</div>
+					<Link to={`/customer/pet-flow?type=photography&petName=${encodeURIComponent(petProfile.name)}&petType=${encodeURIComponent(petProfile.type)}&petBreed=${encodeURIComponent(petProfile.breed)}`} className="btn btn-primary" style={{ width: '100%', textAlign: 'center', background: '#c026d3', borderColor: '#c026d3', fontWeight: 700, padding: '10px 16px', borderRadius: '10px' }}>Book Photoshoot</Link>
+				</div>
+			</div>
 
- {/* BOTTOM SECTION */}
- <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
- 
- {/* Custom Pet Supplies Subscription */}
- <div className="card" style={{
- background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
- border: '1px solid #bbf7d0',
- borderRadius: 'var(--radius-xl)',
- padding: '28px',
- boxShadow: 'var(--shadow-sm)',
- display: 'flex',
- flexWrap: 'wrap',
- gap: '24px',
- alignItems: 'center',
- justifyContent: 'space-between'
- }}>
- <div style={{ flex: '1 1 300px' }}>
- <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'white', color: '#166534', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, marginBottom: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
- <HiOutlineShoppingBag size={16} /> Monthly Delivery
- </div>
- <h3 style={{ fontSize: '1.4rem', color: 'var(--navy-900)', fontWeight: 900, margin: '0 0 8px 0' }}>Custom Box for {petProfile.name} </h3>
- <p style={{ fontSize: '0.9rem', color: '#166534', margin: 0, lineHeight: 1.5 }}>
- Premium {petProfile.type.toLowerCase()} food, healthy treats, and grooming supplies delivered to your door on the 1st of every month. Tailored for {petProfile.breed}s.
- </p>
- </div>
- <div>
- <Link to="/customer/pet-flow?type=subscription" className="btn" style={{ background: '#16a34a', color: 'white', fontWeight: 800, padding: '12px 24px', borderRadius: '12px', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 6px rgba(22, 163, 74, 0.3)' }}>
- Configure Subscription
- </Link>
- </div>
- </div>
- 
- {/* Emergency Vet Video Consult CTA */}
- <div className="card" style={{
- background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
- color: 'white',
- padding: '30px',
- borderRadius: 'var(--radius-xl)',
- display: 'flex',
- flexWrap: 'wrap',
- gap: '16px',
- justifyContent: 'space-between',
- alignItems: 'center',
- boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.4)'
- }}>
- <div>
- <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
- <span style={{ background: 'white', color: '#ef4444', padding: '6px', borderRadius: '50%', display: 'flex' }}>
- <HiOutlineVideoCamera size={24} />
- </span>
- Emergency Vet Consult 24/7
- </h3>
- <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: '#fee2e2' }}>
- Connect with a certified veterinarian via video call instantly. First 5 mins are free.
- </p>
- </div>
- <Link 
- to={`/customer/video-consultation?specialty=vet&petName=${encodeURIComponent(petProfile.name)}&breed=${encodeURIComponent(petProfile.breed)}`}
- className="btn" 
- style={{ background: 'white', color: '#b91c1c', fontWeight: 900, border: 'none', padding: '12px 24px', borderRadius: '30px', fontSize: '0.9rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textDecoration: 'none', display: 'inline-block' }}
- >
- Connect Live Now
- </Link>
- </div>
+			{/* BOTTOM SECTION */}
+			<div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+				
+				{/* Custom Pet Supplies Subscription */}
+				<div className="card" style={{
+					background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+					border: '1px solid #bbf7d0',
+					borderRadius: 'var(--radius-xl)',
+					padding: '28px',
+					boxShadow: 'var(--shadow-sm)',
+					display: 'flex',
+					flexWrap: 'wrap',
+					gap: '24px',
+					alignItems: 'center',
+					justifyContent: 'space-between'
+				}}>
+					<div style={{ flex: '1 1 300px' }}>
+						<div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'white', color: '#166534', padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, marginBottom: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+							<HiOutlineShoppingBag size={16} /> Monthly Delivery • Zero Lock-In
+						</div>
+						<h3 style={{ fontSize: '1.4rem', color: 'var(--navy-900)', fontWeight: 900, margin: '0 0 8px 0' }}>Custom Box for {petProfile.name} 📦</h3>
+						<p style={{ fontSize: '0.9rem', color: '#166534', margin: '0 0 12px 0', lineHeight: 1.5 }}>
+							Premium {petProfile.type.toLowerCase()} food, healthy treats, and grooming supplies delivered to your door on the 1st of every month. Tailored for {petProfile.breed}s.
+						</p>
+						<div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+							<span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.7)', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>• Tailored Nutrition</span>
+							<span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.7)', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>• Free Express Delivery</span>
+							<span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.7)', color: '#166534', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>• 1-Click Pause/Skip</span>
+						</div>
+					</div>
+				<div>
+					<Link to={`/customer/pet-flow?type=subscription&petName=${encodeURIComponent(petProfile.name)}&petType=${encodeURIComponent(petProfile.type)}&petBreed=${encodeURIComponent(petProfile.breed)}`} className="btn" style={{ background: '#16a34a', color: 'white', fontWeight: 800, padding: '12px 24px', borderRadius: '12px', textDecoration: 'none', display: 'inline-block', boxShadow: '0 4px 6px rgba(22, 163, 74, 0.3)' }}>
+						Configure Subscription
+					</Link>
+				</div>
+			</div>
+			
+			{/* Emergency Vet Video Consult CTA */}
+			<div className="card" style={{
+				background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+				color: 'white',
+				padding: '30px',
+				borderRadius: 'var(--radius-xl)',
+				display: 'flex',
+				flexWrap: 'wrap',
+				gap: '16px',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+				boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.4)'
+			}}>
+				<div>
+					<h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
+						<span style={{ background: 'white', color: '#ef4444', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+							<HiOutlineVideoCamera size={24} />
+						</span>
+						Emergency Vet Consult 24/7
+					</h3>
+					<p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: '#fee2e2' }}>
+						Connect with a certified veterinarian via video call instantly. First 5 mins are free.
+					</p>
+				</div>
+				<Link 
+					to={`/customer/video-consultation?specialty=vet&petName=${encodeURIComponent(petProfile.name)}&breed=${encodeURIComponent(petProfile.breed)}&instant=true`}
+					className="btn" 
+					style={{ background: 'white', color: '#b91c1c', fontWeight: 900, border: 'none', padding: '12px 24px', borderRadius: '30px', fontSize: '0.9rem', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textDecoration: 'none', display: 'inline-block' }}
+				>
+					Connect Live Now
+				</Link>
+			</div>
 
- {/* Live Dog Walk Tracker Widget */}
+			{/* Live Dog Walk Tracker Widget */}
  {showWalkTracker && (
  <div className="card animate-fade-in-up" style={{
  background: 'white',

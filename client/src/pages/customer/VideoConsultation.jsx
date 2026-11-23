@@ -103,22 +103,40 @@ const VideoConsultation = () => {
  ]);
 
  useEffect(() => {
- if (specialtyParam === 'vet') {
- const vetConsultant = consultants.find(c => c.category === 'vet') || consultants[0];
- setSelectedConsultant(vetConsultant);
- if (petNameParam) {
- setChatMessages([
- { sender: 'expert', text: `Hello! I am Dr. Rohit Sen. I see this emergency call is regarding ${petNameParam}. Please describe your pet's current symptoms so I can advise immediate care.` }
- ]);
- }
- } else if (specialtyParam === 'doctor') {
- const docConsultant = consultants.find(c => c.category === 'doctor') || consultants[0];
- setSelectedConsultant(docConsultant);
- setChatMessages([
- { sender: 'expert', text: 'Namaste! Dr. Meera Iyer here. Please upload or describe your medical symptoms or prescription queries for immediate clinical guidance.' }
- ]);
- }
- }, [specialtyParam, petNameParam]);
+		if (specialtyParam === 'vet') {
+			const vetConsultant = consultants.find(c => c.category === 'vet') || consultants[0];
+			setSelectedConsultant(vetConsultant);
+			if (searchParams.get('instant') === 'true') {
+				setActiveCall(vetConsultant);
+				setInCall(true);
+				setMicActive(true);
+				setCamActive(true);
+				setChatMessages([
+					{ sender: 'expert', text: `🚨 Live Emergency Vet: Dr. Rohit Sen (BVSc & AH) connected for ${petNameParam || 'your pet'}. I'm here right now. Please tell me what symptoms or distress you are observing.` }
+				]);
+			} else if (petNameParam) {
+				setChatMessages([
+					{ sender: 'expert', text: `Hello! I am Dr. Rohit Sen (BVSc & AH). I see this emergency call is regarding ${petNameParam}. Please describe your pet's current symptoms so I can advise immediate care.` }
+				]);
+			}
+		} else if (specialtyParam === 'doctor') {
+			const docConsultant = consultants.find(c => c.category === 'doctor') || consultants[0];
+			setSelectedConsultant(docConsultant);
+			if (searchParams.get('instant') === 'true') {
+				setActiveCall(docConsultant);
+				setInCall(true);
+				setMicActive(true);
+				setCamActive(true);
+				setChatMessages([
+					{ sender: 'expert', text: '🩺 Clinical Emergency Video: Dr. Meera Iyer connected. Please share your symptoms or urgent query.' }
+				]);
+			} else {
+				setChatMessages([
+					{ sender: 'expert', text: 'Namaste! Dr. Meera Iyer here. Please upload or describe your medical symptoms or prescription queries for immediate clinical guidance.' }
+				]);
+			}
+		}
+	}, [specialtyParam, petNameParam, searchParams]);
 
  useEffect(() => {
  if (chatEndRef.current) {

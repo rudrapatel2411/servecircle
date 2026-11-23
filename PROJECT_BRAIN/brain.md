@@ -15,6 +15,54 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Complete Comprehensive Pet Services Suite (Boarding, Training, Photography, Custom Box, 24/7 Emergency Vet) (done, verified 2026-11-24)
+
+**User outcome:**
+Overhaul and build out complete, production-grade, customer-centric 4-step interactive workflows, pages, features, and buttons for all 5 Pet Services in `PetHub.jsx` and `PetPremiumFlow.jsx`:
+1. **Pet Boarding & Sitting (`type=boarding`)**:
+   - Check-in & Check-out date pickers with dynamic nights calculation.
+   - 3 Boarding Tiers: Verified Family Homestay (₹899/night), Luxury Pet Resort with Pool (₹1,499/night), and In-Home Daily Sitter (₹1,199/night).
+   - Pet details: Name, Breed, Weight, Temperament with other pets (friendly vs private suite).
+   - Diet & feeding preferences (home food chicken/rice vs kibble, feeding frequency, walking routine).
+   - Pet Parent Reassurance: 3x daily WhatsApp photo/video updates, 24/7 emergency vet backup, verified police-checked hosts.
+   - Add-ons: AC Pet Taxi Pickup & Drop (+₹499), Pre-return Bubble Bath & De-shedding (+₹699), Tick & Flea treatment (+₹399).
+   - Dynamic itemized pricing calculation & direct handoff to `/customer/book`.
+2. **Certified Pet Training (`type=training`)**:
+   - 4 Specialized Training Modules: Puppy Foundation & Potty Mastery, Leash Manners & Anti-Pulling, Behavioral Reactivity & Aggression Correction, Advanced Obedience & Agility Tricks.
+   - Force-Free / Positive Reinforcement Guarantee (100% LIMA certified, zero harsh punishment, reward-based clicker method).
+   - Package selection: 1 Trial Assessment Session (₹1,299), 6-Session Foundation Bootcamp (₹6,999), 12-Session Complete Transformation (₹12,999).
+   - Preferred schedule (Weekends vs Alternate Weekdays, Morning vs Evening slots), home address.
+   - Add-on: Professional Training Gear Kit (Clicker, treat pouch, 15ft long line) (+₹899).
+   - Dynamic price breakdown & booking handoff.
+3. **Professional Pet Photography (`type=photography`)**:
+   - 3 Shooting Settings: Cozy In-Home Session (₹2,499), Outdoor Dog Park / Beach Action (₹3,499), Creative Studio Session with Themed Props (₹4,499).
+   - Photoshoot Packages: Classic Pawrait (15 edited photos + 1 framed print), Royal Pet Portfolio (35 edited photos + Hardcover velvet album), Family & Pet Legacy (Full family shoot + 4K video reel).
+   - Patient pet-handling photographer guarantee with squeaker noise toys and organic treats.
+   - Date, time slot (Golden hour morning vs evening), address and direct booking handoff.
+4. **Custom Pet Supplies Subscription Box (`type=subscription`)**:
+   - 2 Tiers: Standard Essentials Box (₹1,999/mo) vs Deluxe Pamper Box (₹2,999/mo).
+   - Customized formulation for pet breed, age, and weight.
+   - Specialized dietary choices: Grain-Free, High-Protein Active, Weight Management Gentle, Hypoallergenic Single-Protein.
+   - Monthly 1st delivery guarantee, 1-click pause/skip/cancel, free express delivery.
+   - Add-ons: Monthly Tick & Flea Pipette (+₹449), 30-Day Dental Chews (+₹399).
+   - Subscription checkout handoff.
+5. **Instant 24/7 Emergency Vet Video Consultation**:
+   - Connect "Connect Live Now" in `PetHub.jsx` with `instant=true` parameter.
+   - In `VideoConsultation.jsx`, auto-start emergency video call immediately when `instant=true` is present, connecting Dr. Rohit Sen (Emergency Veterinary Surgeon) with live camera, mic controls, and emergency guidance.
+6. **Enhanced Hub & Profile Customization (`PetHub.jsx`)**:
+   - Add interactive Pet Profile switcher/editor in PetHub so customers can update pet name, breed, and vaccination status.
+   - Add rich badges and pricing across all cards.
+
+**Constraint:** Direct push is forbidden by user request ("direct push mat karo"). All changes remain strictly verified locally.
+
+**Tasks & Verification:**
+- [ ] Overhaul `client/src/pages/customer/PetPremiumFlow.jsx` with full 4-step interactive wizards, itemized pricing, dietary/behavior selectors, safety promises, and checkout handoff for boarding, training, photography, and subscription.
+- [ ] Connect `VideoConsultation.jsx` with instant auto-join for emergency vet calls.
+- [ ] Upgrade `client/src/pages/customer/PetHub.jsx` with dynamic pet profile data, rich badges, and seamless links.
+- [ ] Verify client production build (`npm --prefix client run build`).
+- [ ] Verify test suites.
+- [ ] Update `PROJECT_BRAIN/brain.md` journal.
+
 ## Working plan — Hyper-Realistic 3D Cybernetic AI Avatar with Dynamic Cursor Tracking (done, verified 2026-11-23)
 
 **User outcome:**
