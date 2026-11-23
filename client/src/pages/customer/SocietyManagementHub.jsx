@@ -213,108 +213,150 @@ const SocietyManagementHub = () => {
  </div>
 
  {/* Premium Society Experiences */}
- <div style={{ marginTop: '60px', marginBottom: '20px' }}>
- <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #3b7dc1' }}>
- {t('societyManagement.premiumExperiences', 'Premium Society Experiences')}
- </h2>
- <div style={{
- display: 'grid',
- gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
- gap: '24px'
- }}>
- 
- {/* Community Yoga & Zumba */}
- <div className="service-card-hover" style={{
- background: 'white',
- border: '1px solid var(--gray-100)',
- borderRadius: '20px',
- padding: '32px 24px',
- boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between',
- cursor: 'pointer'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- {t('societyManagement.yoga', 'Community Yoga & Zumba')} 
- </h3>
- <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
- {t('societyManagement.yogaDesc', 'Hire a professional fitness instructor to come to your society park. Split costs with neighbors.')}
- </p>
- </div>
- <Link
- to="/customer/society-flow?type=community-fitness"
- className="btn"
- style={{ padding: '12px 16px', background: '#0f172a', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none' }}
- >
- {t('societyManagement.bookInstructor', 'Book Instructor')}
- </Link>
- </div>
+      <div style={{ marginTop: '60px', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '1.5rem', color: 'var(--navy-900)', fontWeight: 900, marginBottom: '24px', paddingLeft: '12px', borderLeft: '4px solid #3b7dc1' }}>
+          {t('societyManagement.premiumExperiences', 'Premium Society Experiences')}
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '24px'
+        }}>
+          
+          {/* Community Yoga & Zumba */}
+          <div className="service-card-hover" style={{
+            background: 'white',
+            border: '1px solid var(--gray-200)',
+            borderRadius: '20px',
+            padding: '28px 24px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>🧘‍♀️</span>
+                <span style={{ background: '#f5f3ff', color: '#7c3aed', fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', border: '1px solid #ddd6fe' }}>
+                  👥 Split with Neighbors
+                </span>
+              </div>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+                {t('societyManagement.yoga', 'Community Yoga & Zumba')}
+              </h3>
+              <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
+                {t('societyManagement.yogaDesc', 'Hire a professional fitness instructor to come to your society park. Split costs with neighbors.')}
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Pricing & Formats</div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#7c3aed' }}>
+                  From ₹299/person <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(or ₹1,499 private)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  ✓ Certified 500-HR Instructor • Sound System Included
+                </div>
+              </div>
+            </div>
+            <Link
+              to="/customer/society-flow?type=community-fitness"
+              className="btn"
+              style={{ padding: '14px 16px', background: '#7c3aed', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)', transition: 'transform 0.15s ease' }}
+            >
+              {t('societyManagement.bookInstructor', 'Book Instructor')}
+            </Link>
+          </div>
 
- {/* EV Charger Installation */}
- <div className="service-card-hover" style={{
- background: 'white',
- border: '1px solid var(--gray-100)',
- borderRadius: '20px',
- padding: '32px 24px',
- boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between',
- cursor: 'pointer'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- {t('societyManagement.evCharger', 'EV Charger Installation')} 
- </h3>
- <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
- {t('societyManagement.evChargerDesc', 'Hassle-free Electric Vehicle charger setup at your personal parking spot with RWA NOC included.')}
- </p>
- </div>
- <Link
- to="/customer/society-flow?type=ev-charger"
- className="btn"
- style={{ padding: '12px 16px', background: '#0f172a', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none' }}
- >
- {t('societyManagement.reqInstall', 'Request Installation')}
- </Link>
- </div>
+          {/* EV Charger Installation */}
+          <div className="service-card-hover" style={{
+            background: 'white',
+            border: '1px solid var(--gray-200)',
+            borderRadius: '20px',
+            padding: '28px 24px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>⚡</span>
+                <span style={{ background: '#eff6ff', color: '#1d4ed8', fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', border: '1px solid #bfdbfe' }}>
+                  📜 RWA NOC Facilitation
+                </span>
+              </div>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+                {t('societyManagement.evCharger', 'EV Charger Installation')}
+              </h3>
+              <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
+                {t('societyManagement.evChargerDesc', 'Hassle-free Electric Vehicle charger setup at your personal parking spot with RWA NOC included.')}
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Setup & Hardware</div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#1d4ed8' }}>
+                  From ₹4,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(3.3kW to 7.4kW Fast Wallbox)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  ✓ Licensed EV Engineer • RFID Lock & Shock MCB Included
+                </div>
+              </div>
+            </div>
+            <Link
+              to="/customer/society-flow?type=ev-charger"
+              className="btn"
+              style={{ padding: '14px 16px', background: '#1d4ed8', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)', transition: 'transform 0.15s ease' }}
+            >
+              {t('societyManagement.reqInstall', 'Request Installation')}
+            </Link>
+          </div>
 
- {/* Waterless Car Wash */}
- <div className="service-card-hover" style={{
- background: 'white',
- border: '1px solid var(--gray-100)',
- borderRadius: '20px',
- padding: '32px 24px',
- boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
- display: 'flex',
- flexDirection: 'column',
- justifyContent: 'space-between',
- cursor: 'pointer'
- }}>
- <div>
- <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- {t('societyManagement.waterWash', 'Waterless Car Wash')} 
- </h3>
- <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
- {t('societyManagement.waterWashDesc', 'Eco-friendly, RWA-approved daily car cleaning subscription right in your parking spot.')}
- </p>
- </div>
- <Link
- to="/customer/society-flow?type=waterless-wash"
- className="btn"
- style={{ padding: '12px 16px', background: '#0f172a', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none' }}
- >
- {t('societyManagement.setupSub', 'Setup Subscription')}
- </Link>
- </div>
+          {/* Waterless Car Wash */}
+          <div className="service-card-hover" style={{
+            background: 'white',
+            border: '1px solid var(--gray-200)',
+            borderRadius: '20px',
+            padding: '28px 24px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span style={{ fontSize: '1.8rem' }}>✨</span>
+                <span style={{ background: '#f0fdf4', color: '#16a34a', fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                  🌿 100% Waterless & Eco
+                </span>
+              </div>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
+                {t('societyManagement.waterWash', 'Waterless Car Wash')}
+              </h3>
+              <p style={{ fontSize: '0.88rem', color: '#64748b', lineHeight: '1.6', marginBottom: '16px' }}>
+                {t('societyManagement.waterWashDesc', 'Eco-friendly, RWA-approved daily car cleaning subscription right in your parking spot.')}
+              </p>
+              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Monthly Subscription</div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0284c7' }}>
+                  ₹799/month onwards <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(6 Days/Week Daily)</span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  ✓ Ultra-soft Microfiber • Scratch-Free & Spill-Free
+                </div>
+              </div>
+            </div>
+            <Link
+              to="/customer/society-flow?type=waterless-wash"
+              className="btn"
+              style={{ padding: '14px 16px', background: '#0284c7', color: 'white', fontWeight: 800, textAlign: 'center', borderRadius: '12px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)', transition: 'transform 0.15s ease' }}
+            >
+              {t('societyManagement.setupSub', 'Setup Subscription')}
+            </Link>
+          </div>
 
- </div>
- </div>
+        </div>
+      </div>
 
- </div>
- );
+    </div>
+  );
 };
 
 export default SocietyManagementHub;

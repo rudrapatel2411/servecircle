@@ -15,6 +15,43 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Complete Comprehensive Premium Society Experiences Suite (Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash) (done, verified 2026-11-24)
+
+**User outcome:**
+Build out complete, production-grade, customer-centric 4-step interactive workflows, pages, features, and buttons for all 3 **Premium Society Experiences** in `SocietyManagementHub.jsx` and `SocietyPremiumFlow.jsx`:
+1. **Community Yoga & Zumba (`type=community-fitness`)**:
+   - 4 Specialized Disciplines: Sunrise Hatha & Ashtanga Yoga (₹1,499/session or ₹3,999/mo), High-Energy Zumba & Bollywood Dance (₹1,499/session or ₹3,999/mo), Functional HIIT & Core Conditioning (₹1,799/session or ₹4,499/mo), Senior Gentle Mobility & Chair Yoga (₹1,299/session or ₹3,499/mo).
+   - Venue selector: Society Clubhouse / Multipurpose Hall, Central Society Lawn / Garden, Open Amphitheatre / Rooftop Deck.
+   - Batch format & Neighbor Cost Split: Private Family (1-4 residents), Small Group (5-10 residents @ ₹299/person), Mega Community (11-25 residents @ ₹199/person).
+   - Instant WhatsApp neighbor cost-sharing invite link generator with pre-filled message.
+   - Schedule & timing: Early Bird Sunrise (06:15 - 07:15 AM), Morning Refresh (07:30 - 08:30 AM), Evening Sunset (06:00 - 07:00 PM), Late Evening Dance (07:15 - 08:15 PM).
+   - Certified Instructor Card (Coach Aditi Sharma, Yoga Alliance 500-HR / ZIN Licensed), noise level control guarantee (<65dB), portable sound system, and checkout handoff to `/customer/book`.
+2. **EV Charger Installation (`type=ev-charger`)**:
+   - Vehicle & Charger Specifications: 2-Wheeler 3.3 kW 16A Smart Socket (₹4,999), 4-Wheeler 7.4 kW Type-2 AC Wallbox with RFID Lock (₹9,999), Commercial / Dual-Gun 11 kW Three-Phase Charger (₹18,999), or Bring-Your-Own-Charger Installation (₹3,499).
+   - Parking Location & Cable Feasibility: Basement B1/B2, Ground Stilt, Open Outdoor Covered; Distance from meter room (<15m standard, 15-35m heavy conduit, 35-60m+ armored cable).
+   - RWA Facilitation & Safety Hardware: Standardized RWA architectural application drawings and electrical load calculation certificate signed by licensed electrical supervisor (Included FREE).
+   - Anti-Theft & Electrical Protection: RFID smart card access lock (Included), Dedicated MCB & 30mA RCCB Shock Protection Box (Included), Weatherproof IP65 box (+₹899), Wi-Fi Energy Sub-Meter (+₹1,499).
+   - Certified EVSE Specialist Card (Er. Rakesh Trivedi, Grade-A Electrical License), 1-Year comprehensive warranty, Discom load guidance & checkout handoff.
+3. **Waterless Car Wash (`type=waterless-wash`)**:
+   - Vehicle category: Hatchback, Sedan, Compact/Mid SUV, Full-Size SUV/MUV/Luxury.
+   - Car details: Registration number and vehicle color.
+   - Subscription plan tiers: Daily Eco Shine 6-Days/Week (₹799/mo), Pro Glaze Daily + Glass Rain Repellent (₹1,199/mo), Elite Showroom Pass with Bi-Weekly Interior Vacuuming (₹1,599/mo), or Single Trial Deep Clean (₹299).
+   - Parking bay and early morning cleaning slot: Early Bird 05:30 - 07:00 AM, Regular Office 07:00 - 08:30 AM, Flexible 08:30 - 10:00 AM.
+   - Detailer Card (Deepak Verma, EcoShine Master Detailer), 100% scratch-free microfiber dual-wipe guarantee, zero water spillage / 100% RWA compliant, 1-click pause/resume when traveling & checkout handoff.
+4. **Enhanced Hub Cards (`SocietyManagementHub.jsx`)**:
+   - Upgrade the 3 cards in "Premium Society Experiences" with highlight badges, transparent pricing, key feature checkmarks, and icons.
+5. **Core Services Compatibility (`cleanups`, `guards`, `contracts`, `packages`)**:
+   - Maintain seamless compatibility and booking flow for all core society services.
+
+**Constraint:** Direct push is strictly forbidden by user request ("direct push mat karo"). All changes remain strictly verified locally.
+
+**Tasks & Verification:**
+- [x] Upgrade `client/src/pages/customer/SocietyManagementHub.jsx` cards with badges, pricing, icons, and clear links.
+- [x] Build `client/src/pages/customer/SocietyPremiumFlow.jsx` into a comprehensive 4-step interactive wizard for Community Fitness, EV Charger, and Waterless Car Wash.
+- [x] Verify client production build (`npm --prefix client run build`) — PASSED in 6.44s with 0 errors.
+- [x] Verify test suites (`verify-worker-ops-suite.mjs`) — 30/30 PASSED.
+- [x] Update `PROJECT_BRAIN/brain.md` journal. (Strictly kept local; NO git push performed).
+
 ## Working plan — Complete Comprehensive Premium Wellness Therapies Suite (IV Drip, Sports Recovery, Elderly Care) (done, verified 2026-11-24)
 
 **User outcome:**
@@ -1140,6 +1177,35 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-24 — Complete Comprehensive Premium Society Experiences Suite (Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash)
+
+- **Premium Society Experiences Hub Upgrades (`client/src/pages/customer/SocietyManagementHub.jsx`)**:
+  * Upgraded all 3 service cards with high-contrast icons, highlight badges, transparent starting pricing, and clear checkmark features.
+  * Added direct deep links to `/customer/society-flow?type=community-fitness`, `ev-charger`, and `waterless-wash`.
+
+- **Comprehensive 4-Step Interactive Flow (`client/src/pages/customer/SocietyPremiumFlow.jsx`)**:
+  * **Community Yoga & Zumba (`community-fitness`)**:
+    - Step 1: 4 disciplines (Sunrise Hatha & Ashtanga Yoga, High-Energy Zumba & Bollywood Dance, Functional HIIT & Core, Senior Citizen Gentle Mobility).
+    - Step 2: Society venue selection (Clubhouse, Central Lawn, Amphitheatre), session format (Private Family, Open Group with Dynamic Neighbor Cost Split Slider, Society Mega Camp), and instant shareable WhatsApp invite link generator with 1-click clipboard copy.
+    - Step 3: Preferred time slots (Sunrise Early Bird, Morning Refresh, Sunset De-Stress, Post-Work Dance), commitment frequency (Single, Weekday 12-pass, Weekend 8-camp), society tower/flat details, and add-ons (Loaner mats set, chilled tender coconut / detox smoothies).
+    - Step 4: Assigned certified instructor card (Coach Aditi Sharma, Yoga Alliance 500-HR / ZIN Licensed), noise limit guarantee (<65 dB), rain reschedule guarantee, itemized price breakdown, and checkout handoff.
+  * **EV Charger Installation (`ev-charger`)**:
+    - Step 1: Vehicle category (2-wheeler, 4-wheeler, commercial fleet), 4 charger tiers (3.3kW Smart Socket ₹4,999, 7.4kW Type-2 AC Fast Wallbox with RFID Lock ₹9,999, 11kW Three-Phase AC Fast ₹18,999, Bring-Your-Own-Charger installation ₹3,499).
+    - Step 2: Parking bay level (B1, B2, Ground Stilt, Open Covered), distance from society meter room (<15m included, 15-35m heavy conduit, 35-60m+ armored cable with cable trays), and allocated parking bay number.
+    - Step 3: RWA Documentation & Fire Safety (RWA NOC kit with SLD single-line diagram and load certification included FREE, dedicated 32A MCB + 30mA RCCB shock prevention included FREE, RFID anti-theft keycard included FREE), optional lockable weatherproof metal box (+₹899), smart Wi-Fi energy sub-meter (+₹1,499), and 1-year AMC warranty (+₹699).
+    - Step 4: Assigned licensed engineer card (Er. Rakesh Trivedi, Licensed Electrical Contractor #EL-49102), transparent itemized quotation, Discom load advice, and checkout handoff.
+  * **Waterless Car Wash Subscription (`waterless-wash`)**:
+    - Step 1: Vehicle category (Hatchback, Sedan, Compact/Mid SUV, Full SUV/Luxury), license plate registration, and car color.
+    - Step 2: 4 subscription tiers (Daily Eco Shine 6-Days/Week ₹799/mo, Pro Glaze Daily + Glass Rain Repellent ₹1,199/mo, Elite Showroom Pass Daily + Bi-Weekly Interior Vacuuming ₹1,599/mo, Single Trial Deep Clean ₹299).
+    - Step 3: Daily morning cleaning slot (05:30-07:00 AM, 07:00-08:30 AM, 08:30-10:00 AM), parking slot number, and add-ons (Carnauba wax hand buff +₹349, organic citrus perfume diffuser +₹199, anti-smear wiper concentrate refill +₹149).
+    - Step 4: Assigned master detailer card (Deepak Verma, EcoShine Master Detailer), 100% scratch-free 450 GSM microfiber guarantee, zero water spillage / 100% RWA water ban compliant, 1-click subscription pause/rollover when traveling, and checkout handoff.
+  * **Maintained Core Society Flows**: Retained compatibility and booking routing for cleanups, guards, contracts, and packages.
+
+- **Verification & Constraints**:
+  * `npm --prefix client run build`: PASSED in 6.44s with 0 errors.
+  * `node server/scripts/verify-worker-ops-suite.mjs`: PASSED (30/30 checks).
+  * Strict constraint: Kept all changes strictly local (NO git push origin main).
 
 ### 2026-11-23 — UI Color Palette Transition: Brown to Professional Blue & Warm Off-White
 
