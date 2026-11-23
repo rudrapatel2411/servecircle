@@ -173,6 +173,7 @@ function App() {
           <Route path="pet-demo" element={<PetRelocationDemo />} />
           <Route path="vehicle-demo" element={<VehicleRelocationDemo />} />
           <Route path="health-demo" element={<HealthWellnessDemo />} />
+          <Route path="health-flow" element={<HealthWellnessDemo />} />
           <Route path="pet-flow" element={<PetPremiumFlow />} />
           <Route path="food-flow" element={<FoodPremiumFlow />} />
           <Route path="travel-flow" element={<TravelPremiumFlow />} />

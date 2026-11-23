@@ -15,6 +15,45 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Complete Comprehensive Premium Wellness Therapies Suite (IV Drip, Sports Recovery, Elderly Care) (done, verified 2026-11-24)
+
+**User outcome:**
+Build out complete, production-grade, customer-centric 4-step interactive workflows, pages, features, and buttons for all 3 **Premium Wellness Therapies** in `HealthWellnessHub.jsx` and `HealthWellnessDemo.jsx` (re-engineered as a full flow):
+1. **IV Drip Therapy at Home (`type=iv`)**:
+   - 5 Medical Drip Formulations: Glutathione Royal Radiance & Detox (₹2,999), Immunity Mega-Shield (₹2,499), Rapid Hydration & Hangover Detox (₹1,999), Athletic Muscle Recovery & Electrolytes (₹2,499), NAD+ Cellular Anti-Aging & Brain Focus (₹4,499).
+   - Clinical safety triage: Digital vitals pre-screening (BP/pulse), medical contraindication checklist, allergy disclosures.
+   - Doctor Tele-Signoff guarantee: Mandatory clinical tele-review by Dr. Meera Iyer (MBBS, MD) before cannula insertion.
+   - Nursing & Administration: Certified ICU/emergency BSc nursing officer stays at bedside throughout 45-60 min infusion.
+   - Hospital-grade single-use BD Venflon cannulas & sterile disposables.
+   - Clinical Add-ons: Vitamin D3/B12 booster shot (+₹399), 5-min capillary blood sugar/Hb check (+₹199), Aromatherapy eye mask (+₹149).
+   - Assigned nurse profile card (Sister Ananya Roy, BSc Nursing, BLS Certified) & checkout handoff to `/customer/book`.
+2. **Sports Recovery & Pain Management (`type=sports`)**:
+   - Targeted pain areas: Lower back & glutes / sciatica, shoulders & rotator cuff, knees & IT band, neck & postural stress, full-body athletic overhaul.
+   - Athlete lifestyle profiling & pain scale selector (1-10).
+   - 3 Specialized Recovery Modality Tiers: Targeted Myofascial Deep Tissue (₹1,699 / 60 mins), Theragun PRO Percussion & Myofascial Cupping (₹2,299 / 75 mins), Pro Elite Athlete Recovery Protocol (₹2,999 / 90 mins).
+   - Equipment Guarantee: Portable orthopedic massage table, sanitized linens, genuine 16mm Theragun PRO, medical suction cups.
+   - Add-ons: Pneumatic Compression Boots Lymphatic Flush (+₹499), Hot Basalt Stone Heat Therapy (+₹399), Kinesiology RockTape Taping (+₹299).
+   - Assigned sports therapist profile card (Dr. Kunal Sengupta, BPT, MPT Sports Medicine) & direct checkout handoff.
+3. **Elderly Care & In-Home Physiotherapy Subscriptions (`type=elderly`)**:
+   - Senior patient condition profile: Osteoarthritis & knee pain, post-stroke neuro rehab, cervical/lumbar spine spondylosis, Parkinson's functional mobility, fall prevention & balance.
+   - Mobility level audit (Independent, walker/stick, assisted).
+   - 3 Subscription Plans: 1 Trial Assessment Session (₹799), Bi-Weekly Mobility Plan 8 Sessions/Month (₹4,999/mo), Intensive Daily Rehab Care 16 Sessions/Month (₹8,999/mo).
+   - Family WhatsApp Video & Progress Report Promise: Dedicated weekly mobility score updates sent directly to son/daughter's WhatsApp.
+   - Consistent senior therapist guarantee throughout the month.
+   - Senior Add-ons: Home Safety & Fall-Risk Audit (+₹499), Monthly Geriatric Nurse Vitals & ECG Visit (+₹699/mo).
+   - Assigned doctor card (Dr. Sunita Deshmukh, MPT Geriatric Neuro-Rehab) & subscription checkout handoff.
+4. **Enhanced Hub Cards (`HealthWellnessHub.jsx`)**:
+   - Upgrade the 3 cards in "Premium Wellness Therapies" with rich highlight badges, transparent starting prices, key perk checkmarks, and icons.
+
+**Constraint:** Direct push is forbidden by user request ("direct push mat karo"). All changes remain strictly verified locally.
+
+**Tasks & Verification:**
+- [x] Upgrade `client/src/pages/customer/HealthWellnessHub.jsx` cards with badges, pricing, icons, and clear links.
+- [x] Build `client/src/pages/customer/HealthWellnessDemo.jsx` into a comprehensive 4-step interactive wizard for IV Drip, Sports Recovery, and Elderly Care.
+- [x] Verify client production build (`npm --prefix client run build`) — PASSED in 6.57s with 0 errors.
+- [x] Verify test suites (`verify-worker-ops-suite.mjs`) — 30/30 PASSED.
+- [x] Update `PROJECT_BRAIN/brain.md` journal. (Strictly kept local; NO git push performed).
+
 ## Working plan — Complete Comprehensive Pet Services Suite (Boarding, Training, Photography, Custom Box, 24/7 Emergency Vet) (done, verified 2026-11-24)
 
 **User outcome:**

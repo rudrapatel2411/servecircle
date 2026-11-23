@@ -522,45 +522,72 @@ const HealthWellnessHub = () => {
  </div>
 
  {/* Premium Wellness Therapies */}
- <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--navy-900)', marginBottom: '20px' }}>{t('healthWellnessExt.premiumTherapies')}</h3>
- <div style={{
- display: 'grid',
- gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
- gap: '20px',
- marginBottom: '40px'
- }}>
- {/* IV Drip Therapy */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('healthWellnessExt.ivDrip')}</h4>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('healthWellnessExt.ivDripDesc')}</p>
- <Link to="/customer/health-demo?type=iv" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#0ea5e9', background: '#0ea5e9', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
- Consult & Book
- </Link>
- </div>
+        <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--navy-900)', marginBottom: '20px' }}>{t('healthWellnessExt.premiumTherapies')}</h3>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '24px',
+          marginBottom: '40px'
+        }}>
+          {/* IV Drip Therapy */}
+          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <div style={{ fontSize: '2.5rem' }}>💧</div>
+              <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>BSc Nurse Administered</span>
+            </div>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.ivDrip')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0ea5e9', marginBottom: '8px' }}>₹1,999<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> onwards</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.ivDripDesc')}</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Sterile Single-Use Kit</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Doctor Tele-Signoff</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ 45-Min Home Infusion</span>
+            </div>
+            <Link to="/customer/health-demo?type=iv" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#0ea5e9', background: '#0ea5e9', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+              Consult & Book
+            </Link>
+          </div>
 
- {/* Sports Recovery */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('healthWellnessExt.sportsRecovery')}</h4>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('healthWellnessExt.sportsRecoveryDesc')}</p>
- <Link to="/customer/health-demo?type=sports" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#ea580c', background: '#ea580c', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
- Consult & Book
- </Link>
- </div>
+          {/* Sports Recovery */}
+          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <div style={{ fontSize: '2.5rem' }}>⚡</div>
+              <span style={{ background: '#ffedd5', color: '#c2410c', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Theragun PRO & Cupping</span>
+            </div>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.sportsRecovery')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ea580c', marginBottom: '8px' }}>₹1,699<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> onwards</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.sportsRecoveryDesc')}</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Certified Sports Physio</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Myofascial Cupping</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Assisted PNF Stretch</span>
+            </div>
+            <Link to="/customer/health-demo?type=sports" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#ea580c', background: '#ea580c', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+              Consult & Book
+            </Link>
+          </div>
 
- {/* Elderly Physio */}
- <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
- <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}></div>
- <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '24px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
- <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '10px', fontSize: '0.9rem', color: 'white', borderColor: '#3b7dc1', background: '#3b7dc1', textAlign: 'center', borderRadius: '10px', textDecoration: 'none' }}>
- Consult & Subscribe
- </Link>
- </div>
- </div>
+          {/* Elderly Physio */}
+          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <div style={{ fontSize: '2.5rem' }}>👵</div>
+              <span style={{ background: '#e1ebf5', color: '#1e40af', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Geriatric Specialists</span>
+            </div>
+            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1d4ed8', marginBottom: '8px' }}>₹799<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> trial / ₹4,999/mo</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Consistent Physio</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ WhatsApp Video Reports</span>
+              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Fall Risk & TENS</span>
+            </div>
+            <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#1d4ed8', background: '#1d4ed8', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+              Consult & Subscribe
+            </Link>
+          </div>
+        </div>
 
- <PdfViewerModal 
+        <PdfViewerModal 
  isOpen={pdfModalOpen} 
  onClose={() => setPdfModalOpen(false)} 
  fileName="Lab_Report.pdf" 
