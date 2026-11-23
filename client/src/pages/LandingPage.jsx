@@ -19,7 +19,7 @@ const LandingPage = () => {
  { icon: <HiOutlineWrench />, key: 'homeRepairs', color: '#536D57' },
  { icon: <HiOutlineTruck />, key: 'vehicleServices', color: '#364335' },
  { icon: <HiOutlineSparkles />, key: 'cleaning', color: '#536D57' },
- { icon: <HiOutlineStar />, key: 'events', color: '#29271F' },
+ { icon: <HiOutlineStar />, key: 'events', color: '#1E40AF' },
  { icon: <HiOutlinePaintBrush />, key: 'furniture', color: '#536D57' },
  { icon: <HiOutlineSun />, key: 'garden', color: '#364335' },
  { icon: <HiOutlineBolt />, key: 'emergency', color: '#A63B34' },
@@ -40,7 +40,7 @@ const LandingPage = () => {
  {
  key: 'gold', price: '₹499', priceNum: 499, popular: true,
  features: ['20% discount on all services', 'Priority emergency response', 'Free quarterly AC/geyser check', 'Warranty tracker + reminders', '2 free video consultations/month'],
- color: '#29271F',
+ color: '#1E40AF',
  },
  {
  key: 'platinum', price: '₹999', priceNum: 999,
@@ -234,7 +234,7 @@ const LandingPage = () => {
  <div className="categories-grid">
  {categories.map((cat) => (
  <div key={cat.key} className="category-card">
- <div className="category-icon" style={{ background: 'var(--sc-bg-primary, #F7F3EC)', color: cat.color }}>
+ <div className="category-icon" style={{ background: 'var(--sc-bg-primary, #FAF9F6)', color: cat.color }}>
  {cat.icon}
  </div>
  <h3 className="category-name">{t(`categories.${cat.key}`)}</h3>

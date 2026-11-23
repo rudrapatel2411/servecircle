@@ -48,14 +48,14 @@ const RegisterPage = () => {
       <header className="auth-top-bar">
         <div className="container auth-top-bar-inner">
           <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
-            <div className="navbar-logo-icon" style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--sc-dark-accent, #29271F)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="navbar-logo-icon" style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--sc-dark-accent, #1E40AF)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v10" />
                 <path d="M8 12h8" />
               </svg>
             </div>
-            <span className="logo-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)' }}>ServeCircle</span>
+            <span className="logo-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)' }}>ServeCircle</span>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <LanguageToggle />

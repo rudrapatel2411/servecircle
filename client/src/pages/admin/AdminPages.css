@@ -24,10 +24,10 @@
 
 /* Admin Form Card */
 .admin-form-card {
-  background: white; border: 1.5px solid var(--sc-surface-secondary, #E8E0D2); border-radius: var(--radius-lg);
+  background: white; border: 1.5px solid var(--sc-surface-secondary, #E2E8F0); border-radius: var(--radius-lg);
   padding: 28px; margin-bottom: 28px;
 }
-.admin-form-card h3 { font-size: 1.1rem; margin-bottom: 20px; color: var(--sc-dark-accent, #29271F); }
+.admin-form-card h3 { font-size: 1.1rem; margin-bottom: 20px; color: var(--sc-dark-accent, #1E40AF); }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px 20px; margin-bottom: 20px; }
 .form-actions { display: flex; gap: 12px; }
 
@@ -39,11 +39,11 @@
 /* Verification Cards */
 .verification-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr)); gap: 20px; }
 .verification-card {
-  background: white; border: 1.5px solid var(--sc-surface-secondary, #E8E0D2); border-radius: var(--radius-lg);
+  background: white; border: 1.5px solid var(--sc-surface-secondary, #E2E8F0); border-radius: var(--radius-lg);
   padding: 20px; transition: all var(--transition-base); position: relative;
   overflow: hidden !important; box-sizing: border-box !important;
 }
-.verification-card:hover { box-shadow: var(--shadow-md); border-color: var(--sc-surface-tertiary, #DCD8D1); }
+.verification-card:hover { box-shadow: var(--shadow-md); border-color: var(--sc-surface-tertiary, #CBD5E1); }
 .verification-card.status-pending { border-left: 4px solid #f59e0b; }
 .verification-card.status-verified { border-left: 4px solid var(--sc-primary-accent, #536D57); }
 .verification-card.status-rejected { border-left: 4px solid #ef4444; opacity: 0.7; }

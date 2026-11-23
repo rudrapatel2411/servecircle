@@ -41,8 +41,8 @@ const Navbar = () => {
               padding: '8px 18px',
               fontWeight: 700,
               fontSize: '0.875rem',
-              color: 'var(--sc-dark-accent, #29271F)',
-              borderColor: 'var(--sc-surface-secondary, #E8E0D2)',
+              color: 'var(--sc-dark-accent, #1E40AF)',
+              borderColor: 'var(--sc-surface-secondary, #E2E8F0)',
               background: 'transparent',
               textDecoration: 'none',
               transition: 'all 0.2s ease',
@@ -58,9 +58,9 @@ const Navbar = () => {
               padding: '8px 22px',
               fontWeight: 700,
               fontSize: '0.875rem',
-              background: 'var(--sc-dark-accent, #29271F)',
+              background: 'var(--sc-primary-blue, #1E40AF)',
               color: '#ffffff',
-              boxShadow: '0 2px 8px rgba(41, 39, 31, 0.16)',
+              boxShadow: '0 2px 8px rgba(30, 64, 175, 0.25)',
               textDecoration: 'none',
             }}
           >

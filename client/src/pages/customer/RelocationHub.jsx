@@ -122,16 +122,16 @@ const RelocationHub = () => {
         style={{
           marginBottom: '32px',
           padding: '24px 28px',
-          background: 'linear-gradient(135deg, #2E261D 0%, #3D3327 100%)',
+          background: 'linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%)',
           borderRadius: '20px',
-          color: '#F7F3EC',
+          color: '#FAF9F6',
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '20px',
-          border: '1px solid rgba(232, 224, 210, 0.25)',
-          boxShadow: '0 10px 30px -5px rgba(46, 38, 29, 0.3)',
+          border: '1px solid rgba(226, 232, 240, 0.25)',
+          boxShadow: '0 10px 30px -5px rgba(30, 64, 175, 0.3)',
         }}
       >
         <div style={{ flex: '1 1 340px' }}>
@@ -141,7 +141,7 @@ const RelocationHub = () => {
               alignItems: 'center',
               gap: '6px',
               background: 'rgba(83, 109, 87, 0.35)',
-              color: '#F7F3EC',
+              color: '#FAF9F6',
               padding: '4px 10px',
               borderRadius: '8px',
               fontSize: '0.72rem',
@@ -149,7 +149,7 @@ const RelocationHub = () => {
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               marginBottom: '10px',
-              border: '1px solid rgba(232, 224, 210, 0.2)',
+              border: '1px solid rgba(226, 232, 240, 0.2)',
             }}
           >
             <HiOutlineTruck /> ServeCircle Relocation &amp; Logistics
@@ -165,7 +165,7 @@ const RelocationHub = () => {
           >
             Smart Packers &amp; Movers 2.0
           </h2>
-          <p style={{ fontSize: '0.88rem', color: '#E8E0D2', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.88rem', color: '#E2E8F0', margin: 0, lineHeight: 1.5 }}>
             Calculate accurate vehicle sizes, customize your inventory, and enjoy guaranteed safe handling with zero hidden charges.
           </p>
         </div>
@@ -173,13 +173,13 @@ const RelocationHub = () => {
         <Link
           to="/customer/packers-demo"
           style={{
-            background: '#FAF7F2',
-            color: '#29271F',
+            background: '#FAF9F6',
+            color: '#0F172A',
             fontWeight: 800,
             fontSize: '0.9rem',
             padding: '12px 24px',
             borderRadius: '12px',
-            border: '1.5px solid #E8E0D2',
+            border: '1.5px solid #E2E8F0',
             textDecoration: 'none',
             display: 'inline-flex',
             alignItems: 'center',
@@ -206,10 +206,10 @@ const RelocationHub = () => {
         <div
           style={{
             background: '#FFFFFF',
-            border: '1px solid #E8E0D2',
+            border: '1px solid #E2E8F0',
             borderRadius: '20px',
             padding: '28px',
-            boxShadow: '0 4px 20px rgba(46, 38, 29, 0.05)',
+            boxShadow: '0 4px 20px rgba(30, 64, 175, 0.05)',
           }}
         >
           {/* Card Header */}
@@ -230,7 +230,7 @@ const RelocationHub = () => {
               <HiOutlineCalculator />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#29271F' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#1E40AF' }}>
                 {t('relocation.volumeEstimator', 'Interactive Shifting Planner')}
               </h3>
               <p style={{ margin: '2px 0 0 0', fontSize: '0.78rem', color: '#6B665C' }}>
@@ -246,7 +246,7 @@ const RelocationHub = () => {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#29271F',
+                  color: '#0F172A',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
@@ -264,11 +264,11 @@ const RelocationHub = () => {
                   width: '100%',
                   padding: '10px 12px',
                   borderRadius: '10px',
-                  border: '1.5px solid #E8E0D2',
-                  background: '#FAF7F2',
+                  border: '1.5px solid #E2E8F0',
+                  background: '#FAF9F6',
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#29271F',
+                  color: '#1E40AF',
                   outline: 'none',
                 }}
               />
@@ -278,7 +278,7 @@ const RelocationHub = () => {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#29271F',
+                  color: '#0F172A',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
@@ -296,11 +296,11 @@ const RelocationHub = () => {
                   width: '100%',
                   padding: '10px 12px',
                   borderRadius: '10px',
-                  border: '1.5px solid #E8E0D2',
-                  background: '#FAF7F2',
+                  border: '1.5px solid #E2E8F0',
+                  background: '#FAF9F6',
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#29271F',
+                  color: '#1E40AF',
                   outline: 'none',
                 }}
               />
@@ -316,14 +316,14 @@ const RelocationHub = () => {
                 flex: 1,
                 padding: '12px 14px',
                 borderRadius: '12px',
-                border: transitType === 'full' ? '1.5px solid #363027' : '1.5px solid #E8E0D2',
-                background: transitType === 'full' ? '#363027' : '#FAF7F2',
+                border: transitType === 'full' ? '1.5px solid #1E40AF' : '1.5px solid #E2E8F0',
+                background: transitType === 'full' ? '#1E40AF' : '#FAF9F6',
                 color: transitType === 'full' ? '#FFFFFF' : '#6B665C',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                boxShadow: transitType === 'full' ? '0 3px 10px rgba(46, 38, 29, 0.25)' : 'none',
+                boxShadow: transitType === 'full' ? '0 3px 10px rgba(30, 64, 175, 0.25)' : 'none',
               }}
             >
               {t('relocation.fullShifting', 'Full House Shifting')}
@@ -335,14 +335,14 @@ const RelocationHub = () => {
                 flex: 1,
                 padding: '12px 14px',
                 borderRadius: '12px',
-                border: transitType === 'single' ? '1.5px solid #363027' : '1.5px solid #E8E0D2',
-                background: transitType === 'single' ? '#363027' : '#FAF7F2',
+                border: transitType === 'single' ? '1.5px solid #1E40AF' : '1.5px solid #E2E8F0',
+                background: transitType === 'single' ? '#1E40AF' : '#FAF9F6',
                 color: transitType === 'single' ? '#FFFFFF' : '#6B665C',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                boxShadow: transitType === 'single' ? '0 3px 10px rgba(46, 38, 29, 0.25)' : 'none',
+                boxShadow: transitType === 'single' ? '0 3px 10px rgba(30, 64, 175, 0.25)' : 'none',
               }}
             >
               {t('relocation.singleLogistics', 'Single-Item Logistics')}
@@ -355,13 +355,13 @@ const RelocationHub = () => {
               style={{
                 marginBottom: '22px',
                 padding: '14px 18px',
-                background: '#FAF7F2',
+                background: '#FAF9F6',
                 borderRadius: '14px',
-                border: '1px solid #E8E0D2',
+                border: '1px solid #E2E8F0',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#29271F' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1E40AF' }}>
                   {t('relocationExt.autoFill', 'Quick Presets by House Size:')}
                 </span>
                 <span style={{ fontSize: '0.72rem', color: '#536D57', fontWeight: 700 }}>
@@ -378,11 +378,11 @@ const RelocationHub = () => {
                       flex: 1,
                       padding: '8px',
                       background: '#FFFFFF',
-                      border: '1px solid #E8E0D2',
+                      border: '1px solid #E2E8F0',
                       borderRadius: '10px',
                       fontSize: '0.82rem',
                       fontWeight: 700,
-                      color: '#29271F',
+                      color: '#1E40AF',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
                     }}
@@ -426,13 +426,13 @@ const RelocationHub = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '10px 14px',
-                  background: '#FAF7F2',
+                  background: '#FAF9F6',
                   borderRadius: '12px',
-                  border: '1px solid #E8E0D2',
+                  border: '1px solid #E2E8F0',
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.88rem', color: '#29271F', fontWeight: 700, display: 'block' }}>
+                  <span style={{ fontSize: '0.88rem', color: '#1E40AF', fontWeight: 700, display: 'block' }}>
                     {item.name}
                   </span>
                   <span style={{ fontSize: '0.72rem', color: '#6B665C' }}>
@@ -447,11 +447,11 @@ const RelocationHub = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      border: '1px solid #E8E0D2',
+                      border: '1px solid #E2E8F0',
                       background: '#FFFFFF',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      color: '#29271F',
+                      color: '#1E40AF',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -460,7 +460,7 @@ const RelocationHub = () => {
                   >
                     -
                   </button>
-                  <span style={{ minWidth: '22px', textAlign: 'center', fontWeight: 900, color: '#29271F', fontSize: '0.92rem' }}>
+                  <span style={{ minWidth: '22px', textAlign: 'center', fontWeight: 900, color: '#0F172A', fontSize: '0.92rem' }}>
                     {inventory[item.id] || 0}
                   </span>
                   <button
@@ -470,11 +470,11 @@ const RelocationHub = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      border: '1px solid #E8E0D2',
+                      border: '1px solid #E2E8F0',
                       background: '#FFFFFF',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      color: '#29271F',
+                      color: '#1E40AF',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -491,18 +491,18 @@ const RelocationHub = () => {
           {/* Add-ons and Floor Adjustments */}
           <div
             style={{
-              background: '#FAF7F2',
+              background: '#FAF9F6',
               padding: '16px',
               borderRadius: '14px',
               marginTop: '22px',
               display: 'flex',
               flexDirection: 'column',
               gap: '14px',
-              border: '1px solid #E8E0D2',
+              border: '1px solid #E2E8F0',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#29271F' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1E40AF' }}>
                 Elevator / Lift Available?
               </span>
               <select
@@ -511,10 +511,10 @@ const RelocationHub = () => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '8px',
-                  border: '1px solid #E8E0D2',
+                  border: '1px solid #E2E8F0',
                   fontSize: '0.82rem',
                   fontWeight: 600,
-                  color: '#29271F',
+                  color: '#1E40AF',
                   background: '#FFFFFF',
                   outline: 'none',
                 }}
@@ -525,7 +525,7 @@ const RelocationHub = () => {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#29271F' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0F172A' }}>
                 Packing Material Tier
               </span>
               <select
@@ -534,10 +534,10 @@ const RelocationHub = () => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '8px',
-                  border: '1px solid #E8E0D2',
+                  border: '1px solid #E2E8F0',
                   fontSize: '0.82rem',
                   fontWeight: 600,
-                  color: '#29271F',
+                  color: '#1E40AF',
                   background: '#FFFFFF',
                   outline: 'none',
                 }}
@@ -547,7 +547,7 @@ const RelocationHub = () => {
               </select>
             </div>
 
-            <div style={{ borderTop: '1px dashed #E8E0D2', paddingTop: '10px' }}>
+            <div style={{ borderTop: '1px dashed #E2E8F0', paddingTop: '10px' }}>
               <label
                 style={{
                   display: 'flex',
@@ -555,7 +555,7 @@ const RelocationHub = () => {
                   gap: '8px',
                   fontSize: '0.82rem',
                   fontWeight: 700,
-                  color: '#29271F',
+                  color: '#0F172A',
                   cursor: 'pointer',
                 }}
               >
@@ -563,7 +563,7 @@ const RelocationHub = () => {
                   type="checkbox"
                   checked={addInsurance}
                   onChange={(e) => setAddInsurance(e.target.checked)}
-                  style={{ width: '16px', height: '16px', accentColor: '#363027' }}
+                  style={{ width: '16px', height: '16px', accentColor: '#1E40AF' }}
                 />
                 Include Transit Insurance (Goods protected up to ₹1,00,000) (+₹499)
               </label>
@@ -575,16 +575,16 @@ const RelocationHub = () => {
         <div
           style={{
             background: '#FFFFFF',
-            border: '1.5px solid #E8E0D2',
+            border: '1.5px solid #E2E8F0',
             borderRadius: '20px',
             padding: '28px',
-            boxShadow: '0 8px 30px rgba(46, 38, 29, 0.08)',
+            boxShadow: '0 8px 30px rgba(30, 64, 175, 0.08)',
             position: 'sticky',
             top: '84px',
           }}
         >
           {/* Header & Fleet Recommendation Badge */}
-          <div style={{ borderBottom: '1px solid #E8E0D2', paddingBottom: '18px', marginBottom: '20px' }}>
+          <div style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '18px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#536D57', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Instant Moving Quote
@@ -609,12 +609,12 @@ const RelocationHub = () => {
                   width: '46px',
                   height: '46px',
                   borderRadius: '12px',
-                  background: '#FAF7F2',
-                  border: '1px solid #E8E0D2',
+                  background: '#FAF9F6',
+                  border: '1px solid #E2E8F0',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#363027',
+                  color: '#1E40AF',
                   fontSize: '1.4rem',
                 }}
               >
@@ -622,7 +622,7 @@ const RelocationHub = () => {
               </div>
               <div>
                 <span style={{ fontSize: '0.75rem', color: '#6B665C', display: 'block' }}>Recommended Fleet:</span>
-                <strong style={{ fontSize: '1.05rem', color: '#29271F' }}>{estimatedTrucks}</strong>
+                <strong style={{ fontSize: '1.05rem', color: '#1E40AF' }}>{estimatedTrucks}</strong>
               </div>
             </div>
           </div>
@@ -630,20 +630,20 @@ const RelocationHub = () => {
           {/* Weight & Specs Summary */}
           <div
             style={{
-              background: '#FAF7F2',
+              background: '#FAF9F6',
               borderRadius: '12px',
               padding: '14px 16px',
               marginBottom: '20px',
-              border: '1px solid #E8E0D2',
+              border: '1px solid #E2E8F0',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '8px' }}>
               <span style={{ color: '#6B665C' }}>Estimated Volume &amp; Load:</span>
-              <strong style={{ color: '#29271F' }}>{totalWeight} kg</strong>
+              <strong style={{ color: '#0F172A' }}>{totalWeight} kg</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
               <span style={{ color: '#6B665C' }}>Inventory Count:</span>
-              <strong style={{ color: '#29271F' }}>
+              <strong style={{ color: '#0F172A' }}>
                 {Object.values(inventory).reduce((a, b) => a + b, 0)} Items
               </strong>
             </div>
@@ -688,7 +688,7 @@ const RelocationHub = () => {
           {/* Total Price Banner */}
           <div
             style={{
-              borderTop: '1.5px solid #E8E0D2',
+              borderTop: '1.5px solid #E2E8F0',
               paddingTop: '16px',
               marginBottom: '20px',
               display: 'flex',
@@ -705,7 +705,7 @@ const RelocationHub = () => {
               </span>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '1.65rem', fontWeight: 900, color: '#29271F' }}>
+              <span style={{ fontSize: '1.65rem', fontWeight: 900, color: '#0F172A' }}>
                 ₹{dynamicPrice.toLocaleString()}
               </span>
             </div>
@@ -721,7 +721,7 @@ const RelocationHub = () => {
               fontSize: '1rem',
               fontWeight: 800,
               textAlign: 'center',
-              background: '#363027',
+              background: '#1E40AF',
               color: '#FFFFFF',
               border: 'none',
               display: 'flex',
@@ -729,7 +729,7 @@ const RelocationHub = () => {
               justifyContent: 'center',
               gap: '8px',
               textDecoration: 'none',
-              boxShadow: '0 4px 16px rgba(54, 48, 39, 0.3)',
+              boxShadow: '0 4px 16px rgba(30, 64, 175, 0.3)',
               transition: 'all 0.2s',
             }}
           >
@@ -751,7 +751,7 @@ const RelocationHub = () => {
       {/* Specialized Moving Services Section */}
       <div style={{ marginTop: '48px' }}>
         <div style={{ marginBottom: '22px' }}>
-          <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#29271F', margin: '0 0 4px 0' }}>
+          <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 4px 0' }}>
             Specialized Relocation Solutions
           </h3>
           <p style={{ fontSize: '0.85rem', color: '#6B665C', margin: 0 }}>
@@ -770,10 +770,10 @@ const RelocationHub = () => {
           <div
             style={{
               background: '#FFFFFF',
-              border: '1px solid #E8E0D2',
+              border: '1px solid #E2E8F0',
               borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 2px 12px rgba(46, 38, 29, 0.04)',
+              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -794,7 +794,7 @@ const RelocationHub = () => {
               >
                 Safe Car &amp; Bike Carrier
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#29271F', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
                 {t('relocationExt.vehicleRelocation', 'Vehicle Relocation')}
               </h4>
               <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
@@ -804,7 +804,7 @@ const RelocationHub = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
                 <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Starting from:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#29271F' }}>₹4,999</span>
+                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹4,999</span>
               </div>
               <Link
                 to={`/customer/book?service=${encodeURIComponent(
@@ -815,13 +815,13 @@ const RelocationHub = () => {
                   padding: '11px',
                   fontSize: '0.88rem',
                   color: '#FFFFFF',
-                  background: '#363027',
+                  background: '#1E40AF',
                   textAlign: 'center',
                   borderRadius: '10px',
                   textDecoration: 'none',
                   fontWeight: 800,
                   display: 'block',
-                  boxShadow: '0 2px 8px rgba(54, 48, 39, 0.2)',
+                  boxShadow: '0 2px 8px rgba(30, 64, 175, 0.2)',
                 }}
               >
                 Book VIP Vehicle Transport
@@ -833,10 +833,10 @@ const RelocationHub = () => {
           <div
             style={{
               background: '#FFFFFF',
-              border: '1px solid #E8E0D2',
+              border: '1px solid #E2E8F0',
               borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 2px 12px rgba(46, 38, 29, 0.04)',
+              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -857,7 +857,7 @@ const RelocationHub = () => {
               >
                 Climate-Controlled Travel
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#29271F', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', margin: '0 0 8px 0' }}>
                 {t('relocationExt.petRelocation', 'Pet Relocation & Cab')}
               </h4>
               <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
@@ -867,7 +867,7 @@ const RelocationHub = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
                 <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Starting from:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#29271F' }}>₹2,999</span>
+                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹2,999</span>
               </div>
               <Link
                 to={`/customer/book?service=${encodeURIComponent(
@@ -878,13 +878,13 @@ const RelocationHub = () => {
                   padding: '11px',
                   fontSize: '0.88rem',
                   color: '#FFFFFF',
-                  background: '#363027',
+                  background: '#1E40AF',
                   textAlign: 'center',
                   borderRadius: '10px',
                   textDecoration: 'none',
                   fontWeight: 800,
                   display: 'block',
-                  boxShadow: '0 2px 8px rgba(54, 48, 39, 0.2)',
+                  boxShadow: '0 2px 8px rgba(30, 64, 175, 0.2)',
                 }}
               >
                 Book VIP Pet Travel
@@ -896,10 +896,10 @@ const RelocationHub = () => {
           <div
             style={{
               background: '#FFFFFF',
-              border: '1px solid #E8E0D2',
+              border: '1px solid #E2E8F0',
               borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 2px 12px rgba(46, 38, 29, 0.04)',
+              boxShadow: '0 2px 12px rgba(30, 64, 175, 0.04)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -920,7 +920,7 @@ const RelocationHub = () => {
               >
                 Pre-Move Declutter
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#29271F', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E40AF', margin: '0 0 8px 0' }}>
                 {t('relocationExt.scrapRemoval', 'Scrap & Junk Removal')}
               </h4>
               <p style={{ fontSize: '0.84rem', color: '#6B665C', lineHeight: 1.5, margin: '0 0 20px 0' }}>
@@ -930,7 +930,7 @@ const RelocationHub = () => {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '14px' }}>
                 <span style={{ fontSize: '0.75rem', color: '#6B665C' }}>Evaluation Fee:</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#29271F' }}>₹499</span>
+                <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>₹499</span>
               </div>
               <Link
                 to={`/customer/book?service=${encodeURIComponent(
@@ -940,9 +940,9 @@ const RelocationHub = () => {
                   width: '100%',
                   padding: '11px',
                   fontSize: '0.88rem',
-                  color: '#29271F',
-                  background: '#FAF7F2',
-                  border: '1.5px solid #E8E0D2',
+                  color: '#0F172A',
+                  background: '#FAF9F6',
+                  border: '1.5px solid #E2E8F0',
                   textAlign: 'center',
                   borderRadius: '10px',
                   textDecoration: 'none',

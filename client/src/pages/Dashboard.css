@@ -20,7 +20,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-dark-accent, #1E40AF);
   margin-bottom: 2px;
 }
 
@@ -32,13 +32,13 @@
 
 /* Welcome Banner Card */
 .welcome-banner-card {
-  background: var(--sc-dark-accent, #29271F);
+  background: var(--sc-dark-accent, #1E40AF);
   border-radius: 20px;
   padding: 22px 28px;
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--sc-dark-surface, #333026);
-  box-shadow: 0 8px 24px -4px rgba(41, 39, 31, 0.12);
+  border: 1px solid var(--sc-dark-surface, #0F172A);
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.12);
   margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
@@ -211,7 +211,7 @@
   grid-template-columns: 1.2fr 1fr !important;
   gap: 24px !important;
   align-items: center !important;
-  box-shadow: 0 12px 32px rgba(41, 39, 31, 0.16) !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16) !important;
   color: #FFFFFF !important;
   margin-bottom: 8px !important;
   position: relative !important;
@@ -237,7 +237,7 @@
 
 .rtt-track-btn {
   background: #FFFFFF !important;
-  color: var(--sc-dark-accent, #29271F) !important;
+  color: var(--sc-dark-accent, #1E40AF) !important;
   border-radius: var(--radius-full, 9999px) !important;
   padding: 10px 22px !important;
   font-weight: 800 !important;
@@ -249,7 +249,7 @@
 }
 
 .rtt-track-btn:hover {
-  background: var(--sc-surface-secondary, #E8E0D2) !important;
+  background: var(--sc-surface-secondary, #E2E8F0) !important;
   transform: translateY(-2px);
 }
 
@@ -258,7 +258,7 @@
   height: 140px;
   border-radius: 18px;
   overflow: hidden;
-  background: #E8E0D2 url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600') center/cover no-repeat;
+  background: #E2E8F0 url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600') center/cover no-repeat;
   border: 2px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
@@ -278,7 +278,7 @@
   position: absolute;
   bottom: 14px;
   right: 14px;
-  background: var(--sc-dark-accent, #29271F);
+  background: var(--sc-dark-accent, #1E40AF);
   color: #FFFFFF;
   font-size: 0.72rem;
   font-weight: 700;
@@ -503,11 +503,11 @@
   justify-content: space-between;
   text-decoration: none;
   background: #ffffff;
-  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1px solid var(--sc-surface-secondary, #E2E8F0);
   border-left: 4px solid var(--sc-primary-accent, #536D57);
   border-radius: var(--radius-lg, 16px);
   padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(41, 39, 31, 0.05);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
   transition: all var(--transition-fast, 0.2s ease);
   position: relative;
   overflow: hidden;
@@ -516,9 +516,9 @@
 }
 
 .active-tracking-pass:hover {
-  border-color: var(--sc-surface-tertiary, #DCD8D1);
+  border-color: var(--sc-surface-tertiary, #CBD5E1);
   border-left-color: var(--sc-primary-accent, #536D57);
-  box-shadow: 0 6px 20px rgba(41, 39, 31, 0.10);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.10);
   transform: translateY(-2px);
 }
 
@@ -569,17 +569,17 @@
   font-weight: 700;
   letter-spacing: 0.03em;
   font-family: monospace;
-  background: var(--sc-bg-primary, #F7F3EC);
+  background: var(--sc-bg-primary, #FAF9F6);
   padding: 2px 7px;
   border-radius: 6px;
-  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1px solid var(--sc-surface-secondary, #E2E8F0);
   white-space: nowrap;
 }
 
 .tracking-title {
   font-size: 1.05rem;
   font-weight: 800;
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-dark-accent, #1E40AF);
   font-family: var(--font-heading);
   margin: 4px 0 10px 0;
   letter-spacing: -0.01em;
@@ -598,7 +598,7 @@
 .ticket-line {
   flex: 1;
   height: 1px;
-  border-top: 1px dashed var(--sc-surface-secondary, #E8E0D2);
+  border-top: 1px dashed var(--sc-surface-secondary, #E2E8F0);
 }
 
 .tracking-worker-profile {
@@ -612,7 +612,7 @@
   height: 38px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1.5px solid var(--sc-surface-secondary, #E2E8F0);
   box-shadow: var(--shadow-xs);
   flex-shrink: 0;
 }
@@ -625,7 +625,7 @@
 .tracking-worker-name {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-dark-accent, #1E40AF);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -652,13 +652,13 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: var(--sc-dark-accent, #29271F);
+  background: var(--sc-dark-accent, #1E40AF);
   color: #ffffff;
   padding: 7px 12px;
   border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(41, 39, 31, 0.15);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
   transition: all var(--transition-fast, 0.2s ease);
   flex-shrink: 0;
   white-space: nowrap;

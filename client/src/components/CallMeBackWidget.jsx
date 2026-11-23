@@ -199,7 +199,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
         className="call-me-back-float"
         style={{
           background: 'linear-gradient(135deg, #2D5A3C 0%, #1E3D29 100%)',
-          color: '#F7F3EC',
+          color: '#FAF9F6',
           width: '50px',
           height: '50px',
           borderRadius: '50%',
@@ -209,7 +209,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
           boxShadow: '0 8px 24px rgba(45, 90, 60, 0.4), 0 2px 6px rgba(0,0,0,0.2)',
           cursor: 'pointer',
           userSelect: 'none',
-          border: '1.5px solid rgba(232, 224, 210, 0.5)',
+          border: '1.5px solid rgba(226, 232, 240, 0.5)',
           transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s',
         }}
         onMouseEnter={(e) => {
@@ -234,7 +234,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
             pointerEvents: 'none',
           }}
         />
-        <HiOutlinePhone size={22} style={{ color: '#F7F3EC' }} />
+        <HiOutlinePhone size={22} style={{ color: '#FAF9F6' }} />
       </div>
 
       {/* Modal Popup */}
@@ -243,7 +243,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(41, 39, 31, 0.55)',
+            background: 'rgba(15, 23, 42, 0.55)',
             backdropFilter: 'blur(5px)',
             zIndex: 99999,
             display: 'flex',
@@ -261,8 +261,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
               maxWidth: '440px',
               width: '100%',
               padding: '28px',
-              boxShadow: '0 25px 60px -15px rgba(41, 39, 31, 0.35)',
-              border: '1px solid #E8E0D2',
+              boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.25)',
+              border: '1px solid #E2E8F0',
               position: 'relative',
               animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
@@ -275,8 +275,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                 position: 'absolute',
                 top: '16px',
                 right: '16px',
-                background: '#F7F3EC',
-                border: '1px solid #E8E0D2',
+                background: '#FAF9F6',
+                border: '1px solid #E2E8F0',
                 borderRadius: '50%',
                 width: '32px',
                 height: '32px',
@@ -284,7 +284,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                color: '#29271F',
+                color: '#0F172A',
                 transition: 'all 0.2s',
               }}
               title="Close"
@@ -300,12 +300,12 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                       width: '44px',
                       height: '44px',
                       borderRadius: '12px',
-                      background: 'rgba(83, 109, 87, 0.12)',
-                      color: '#2D5A3C',
+                      background: 'rgba(30, 64, 175, 0.12)',
+                      color: '#1E40AF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      border: '1px solid rgba(83, 109, 87, 0.2)',
+                      border: '1px solid rgba(30, 64, 175, 0.2)',
                     }}
                   >
                     <HiOutlinePhone size={24} />
@@ -316,7 +316,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         margin: 0,
                         fontSize: '1.18rem',
                         fontWeight: 800,
-                        color: '#29271F',
+                        color: '#0F172A',
                       }}
                     >
                       {t('callMeBack.title', 'Need Instant Help?')}
@@ -325,7 +325,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                       style={{
                         margin: 0,
                         fontSize: '0.8rem',
-                        color: '#6B665C',
+                        color: '#475569',
                       }}
                     >
                       Enter number &amp; service — specialist will call you back!
@@ -340,7 +340,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         display: 'block',
                         fontSize: '0.8rem',
                         fontWeight: 700,
-                        color: '#29271F',
+                        color: '#0F172A',
                         marginBottom: '6px',
                       }}
                     >
@@ -350,20 +350,20 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        border: '1.5px solid #E8E0D2',
+                        border: '1.5px solid #E2E8F0',
                         borderRadius: '12px',
                         overflow: 'hidden',
-                        background: '#FAF7F2',
+                        background: '#FAF9F6',
                       }}
                     >
                       <span
                         style={{
                           padding: '10px 14px',
-                          background: '#E8E0D2',
+                          background: '#F1F5F9',
                           fontSize: '0.85rem',
                           fontWeight: 700,
-                          color: '#29271F',
-                          borderRight: '1px solid #DCD8D1',
+                          color: '#0F172A',
+                          borderRight: '1px solid #CBD5E1',
                         }}
                       >
                         +91
@@ -381,7 +381,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                           fontSize: '0.92rem',
                           fontWeight: 600,
                           background: 'transparent',
-                          color: '#29271F',
+                          color: '#0F172A',
                         }}
                         autoFocus
                       />
@@ -394,7 +394,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         display: 'block',
                         fontSize: '0.8rem',
                         fontWeight: 700,
-                        color: '#29271F',
+                        color: '#0F172A',
                         marginBottom: '6px',
                       }}
                     >
@@ -406,13 +406,13 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                       style={{
                         width: '100%',
                         padding: '10px 12px',
-                        border: '1.5px solid #E8E0D2',
+                        border: '1.5px solid #E2E8F0',
                         borderRadius: '12px',
                         fontSize: '0.82rem',
                         fontWeight: 600,
                         outline: 'none',
-                        background: '#FAF7F2',
-                        color: '#29271F',
+                        background: '#FAF9F6',
+                        color: '#0F172A',
                       }}
                     >
                       {SERVICE_TYPES.map((s) => (
@@ -421,7 +421,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         </option>
                       ))}
                     </select>
-                    <span style={{ fontSize: '0.72rem', color: '#536D57', marginTop: '5px', display: 'block', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.72rem', color: '#1E40AF', marginTop: '5px', display: 'block', fontWeight: 600 }}>
                       Notification will be dispatched to <strong>{serviceType}</strong> verified specialists &amp; Admin.
                     </span>
                   </div>
@@ -445,8 +445,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      background: 'linear-gradient(135deg, #2D5A3C 0%, #1E3D29 100%)',
-                      color: '#F7F3EC',
+                      background: 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)',
+                      color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '12px',
                       fontWeight: 800,
@@ -457,7 +457,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      boxShadow: '0 4px 15px rgba(45, 90, 60, 0.35)',
+                      boxShadow: '0 4px 15px rgba(30, 64, 175, 0.35)',
                       transition: 'all 0.2s',
                     }}
                   >
@@ -474,7 +474,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     gap: '6px',
                     marginTop: '16px',
                     fontSize: '0.75rem',
-                    color: '#948E82',
+                    color: '#64748B',
                   }}
                 >
                   <HiOutlineClock />
@@ -489,13 +489,13 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     width: '60px',
                     height: '60px',
                     borderRadius: '50%',
-                    background: 'rgba(83, 109, 87, 0.12)',
-                    color: '#2D5A3C',
+                    background: 'rgba(30, 64, 175, 0.12)',
+                    color: '#1E40AF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 16px',
-                    border: '1.5px solid rgba(83, 109, 87, 0.25)',
+                    border: '1.5px solid rgba(30, 64, 175, 0.25)',
                   }}
                 >
                   <HiOutlineCheckCircle size={36} />
@@ -505,7 +505,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                   style={{
                     fontSize: '1.25rem',
                     fontWeight: 800,
-                    color: '#29271F',
+                    color: '#0F172A',
                     marginBottom: '8px',
                   }}
                 >
@@ -515,29 +515,29 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                 <p
                   style={{
                     fontSize: '0.85rem',
-                    color: '#6B665C',
+                    color: '#475569',
                     lineHeight: 1.5,
                     marginBottom: '16px',
                   }}
                 >
                   Your callback request for <strong>{serviceType}</strong> has been dispatched to online specialists and Admin. A verified specialist will call you on{' '}
-                  <strong style={{ color: '#29271F' }}>+91 {phone}</strong> shortly.
+                  <strong style={{ color: '#0F172A' }}>+91 {phone}</strong> shortly.
                 </p>
 
                 {requestId && (
                   <div
                     style={{
-                      background: '#FAF7F2',
-                      border: '1px solid #E8E0D2',
+                      background: '#FAF9F6',
+                      border: '1px solid #E2E8F0',
                       padding: '8px 16px',
                       borderRadius: '8px',
                       display: 'inline-block',
                       fontSize: '0.75rem',
-                      color: '#6B665C',
+                      color: '#475569',
                       marginBottom: '20px',
                     }}
                   >
-                    Request ID: <strong style={{ color: '#29271F' }}>{requestId}</strong>
+                    Request ID: <strong style={{ color: '#0F172A' }}>{requestId}</strong>
                   </div>
                 )}
 
@@ -547,9 +547,9 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     style={{
                       flex: 1,
                       padding: '10px',
-                      background: '#FAF7F2',
-                      color: '#29271F',
-                      border: '1px solid #E8E0D2',
+                      background: '#FAF9F6',
+                      color: '#0F172A',
+                      border: '1px solid #E2E8F0',
                       borderRadius: '10px',
                       fontWeight: 700,
                       fontSize: '0.85rem',
@@ -563,8 +563,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     style={{
                       flex: 1,
                       padding: '10px',
-                      background: '#2D5A3C',
-                      color: '#F7F3EC',
+                      background: '#1E40AF',
+                      color: '#FFFFFF',
                       border: 'none',
                       borderRadius: '10px',
                       fontWeight: 700,

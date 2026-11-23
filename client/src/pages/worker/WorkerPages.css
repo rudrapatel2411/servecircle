@@ -247,7 +247,7 @@
   gap: 8px;
   overflow-x: auto;
   padding: 8px;
-  background: var(--sc-surface-secondary, #E8E0D2);
+  background: var(--sc-surface-secondary, #E2E8F0);
   border-radius: 16px;
   margin-bottom: 24px;
   scrollbar-width: none;
@@ -275,26 +275,26 @@
 }
 
 .tab-btn:hover {
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-dark-accent, #1E40AF);
   background: rgba(255, 255, 255, 0.65);
 }
 
 .tab-btn.active {
   background: #ffffff;
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-dark-accent, #1E40AF);
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(41, 39, 31, 0.08);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
   font-weight: 800;
 }
 
 /* Master Job Card — Spacious, Responsive & Uncrowded */
 .job-card {
   background: #ffffff;
-  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1px solid var(--sc-surface-secondary, #E2E8F0);
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 20px rgba(41, 39, 31, 0.04);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 28px;
@@ -305,8 +305,8 @@
 }
 
 .job-card:hover {
-  box-shadow: 0 10px 30px rgba(41, 39, 31, 0.08);
-  border-color: var(--sc-surface-tertiary, #DCD8D1);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border-color: var(--sc-surface-tertiary, #CBD5E1);
 }
 
 /* Left Side: Job Information Hierarchy */

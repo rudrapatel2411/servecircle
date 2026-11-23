@@ -66,9 +66,9 @@ const AdminDashboard = () => {
  };
 
  const stats = [
- { icon: <HiOutlineBanknotes />, value: '12,450', label: 'Total Bookings', trend: '↑ 12%', color: 'var(--sc-dark-accent, #29271F)', bg: 'var(--sc-surface-secondary, #E8E0D2)' },
+ { icon: <HiOutlineBanknotes />, value: '12,450', label: 'Total Bookings', trend: '↑ 12%', color: 'var(--sc-dark-accent, #1E40AF)', bg: 'var(--sc-surface-secondary, #E2E8F0)' },
  { icon: <HiOutlineUsers />, value: '1,248', label: 'Active Workers', trend: '↑ 8%', color: 'var(--sc-primary-accent, #536D57)', bg: 'rgba(83, 109, 87, 0.12)' },
- { icon: <HiOutlineShieldCheck />, value: '98.6%', label: 'Success Rate', trend: '↑ 0.4%', color: 'var(--sc-forest-deep, #364335)', bg: 'var(--sc-bg-primary, #F7F3EC)' },
+ { icon: <HiOutlineShieldCheck />, value: '98.6%', label: 'Success Rate', trend: '↑ 0.4%', color: 'var(--sc-forest-deep, #364335)', bg: 'var(--sc-bg-primary, #FAF9F6)' },
  { icon: <HiOutlineExclamationTriangle />, value: String(activeSosList.length + 7), label: t('admin.openComplaints', 'Open Incidents'), trend: 'Active desk', color: '#A63B34', bg: '#FEE2E2' },
  ];
 
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
 
  <div className="stats-container" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', margin: 0 }}>
  {stats.map((stat, i) => (
- <div key={i} className="stat-card animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s`, border: '1px solid var(--sc-surface-secondary, #E8E0D2)', borderRadius: 'var(--radius-lg, 18px)' }}>
+ <div key={i} className="stat-card animate-fade-in-up" style={{ animationDelay: `${i * 0.1}s`, border: '1px solid var(--sc-surface-secondary, #E2E8F0)', borderRadius: 'var(--radius-lg, 18px)' }}>
  <div className="stat-icon" style={{ background: stat.bg, color: stat.color }}>{stat.icon}</div>
  <div className="stat-details">
  <span className="stat-value">{stat.value}</span>

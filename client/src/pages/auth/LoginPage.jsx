@@ -196,14 +196,14 @@ const LoginPage = () => {
  <header className="auth-top-bar">
  <div className="container auth-top-bar-inner">
  <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
- <div className="navbar-logo-icon" style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--sc-dark-accent, #29271F)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+ <div className="navbar-logo-icon" style={{ width: '34px', height: '34px', borderRadius: '10px', background: 'var(--sc-dark-accent, #1E40AF)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
  <circle cx="12" cy="12" r="9" />
  <path d="M12 7v10" />
  <path d="M8 12h8" />
  </svg>
  </div>
- <span className="logo-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)' }}>ServeCircle</span>
+ <span className="logo-text" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)' }}>ServeCircle</span>
  </Link>
  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
  <LanguageToggle />
@@ -239,7 +239,7 @@ const LoginPage = () => {
  display: 'grid',
  gridTemplateColumns: 'repeat(4, 1fr)',
  gap: '6px',
- background: 'var(--sc-surface-secondary, #E8E0D2)',
+ background: 'var(--sc-surface-secondary, #E2E8F0)',
  padding: '5px',
  borderRadius: '16px',
  marginBottom: '20px',
@@ -268,9 +268,9 @@ const LoginPage = () => {
  cursor: 'pointer',
  fontSize: '0.82rem',
  fontWeight: active ? 700 : 600,
- background: active ? 'var(--sc-dark-accent, #29271F)' : 'transparent',
+ background: active ? 'var(--sc-dark-accent, #1E40AF)' : 'transparent',
  color: active ? '#FFFFFF' : 'var(--sc-text-secondary, #6B665C)',
- boxShadow: active ? '0 2px 8px rgba(41, 39, 31, 0.16)' : 'none',
+ boxShadow: active ? '0 2px 8px rgba(15, 23, 42, 0.16)' : 'none',
  transition: 'all 0.2s ease',
  }}
  >
@@ -283,8 +283,8 @@ const LoginPage = () => {
 
  {/* Smart Demo Profiles Switcher */}
  <div style={{
- background: 'rgba(232, 224, 210, 0.4)',
- border: '1px solid var(--sc-surface-secondary, #E8E0D2)',
+ background: 'rgba(226, 232, 240, 0.4)',
+ border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
  borderRadius: '14px',
  padding: '14px',
  marginBottom: '20px',
@@ -292,7 +292,7 @@ const LoginPage = () => {
  {role === 'customer' && (
  <>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
- <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--sc-dark-accent, #29271F)' }}>
+ <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--sc-dark-accent, #1E40AF)' }}>
  1-Click Customer Profiles:
  </span>
  <span style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)', fontWeight: 600 }}>
@@ -312,9 +312,9 @@ const LoginPage = () => {
  borderRadius: '20px',
  fontSize: '0.75rem',
  fontWeight: selected ? 700 : 600,
- border: `1px solid ${selected ? 'var(--sc-dark-accent, #29271F)' : 'var(--sc-surface-tertiary, #DCD8D1)'}`,
- background: selected ? 'var(--sc-dark-accent, #29271F)' : '#FFFFFF',
- color: selected ? '#FFFFFF' : 'var(--sc-text-main, #29271F)',
+ border: `1px solid ${selected ? 'var(--sc-dark-accent, #1E40AF)' : 'var(--sc-surface-tertiary, #CBD5E1)'}`,
+ background: selected ? 'var(--sc-dark-accent, #1E40AF)' : '#FFFFFF',
+ color: selected ? '#FFFFFF' : 'var(--sc-text-main, #0F172A)',
  cursor: 'pointer',
  transition: 'all 0.15s ease',
  }}
@@ -330,7 +330,7 @@ const LoginPage = () => {
  {role === 'worker' && (
  <>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
- <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--sc-dark-accent, #29271F)' }}>
+ <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--sc-dark-accent, #1E40AF)' }}>
  Select Worker Domain (All 19 Services):
  </span>
  <span style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)', fontWeight: 600 }}>
@@ -341,7 +341,7 @@ const LoginPage = () => {
  className="input-field"
  value={email}
  onChange={(e) => handleWorkerOptionChange(e.target.value)}
- style={{ background: '#FFFFFF', fontWeight: 600, fontSize: '0.82rem', borderColor: 'var(--sc-surface-secondary, #E8E0D2)', borderRadius: '10px' }}
+ style={{ background: '#FFFFFF', fontWeight: 600, fontSize: '0.82rem', borderColor: 'var(--sc-surface-secondary, #E2E8F0)', borderRadius: '10px' }}
  >
  {WORKER_OPTIONS.map((w) => (
  <option key={w.email} value={w.email}>
@@ -355,7 +355,7 @@ const LoginPage = () => {
  {role === 'admin' && (
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <div>
- <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--sc-dark-accent, #29271F)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--sc-dark-accent, #1E40AF)' }}>
  Platform Administrator
  </div>
  <div style={{ fontSize: '0.75rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -368,7 +368,7 @@ const LoginPage = () => {
  style={{
  padding: '5px 14px',
  borderRadius: '16px',
- background: 'var(--sc-dark-accent, #29271F)',
+ background: 'var(--sc-dark-accent, #1E40AF)',
  color: '#ffffff',
  border: 'none',
  fontSize: '0.75rem',
@@ -384,7 +384,7 @@ const LoginPage = () => {
  {role === 'b2b' && (
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <div>
- <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--sc-dark-accent, #29271F)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--sc-dark-accent, #1E40AF)' }}>
  Society & B2B Partner
  </div>
  <div style={{ fontSize: '0.75rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -397,7 +397,7 @@ const LoginPage = () => {
  style={{
  padding: '5px 14px',
  borderRadius: '16px',
- background: 'var(--sc-dark-accent, #29271F)',
+ background: 'var(--sc-dark-accent, #1E40AF)',
  color: '#ffffff',
  border: 'none',
  fontSize: '0.75rem',
@@ -450,9 +450,9 @@ const LoginPage = () => {
  borderRadius: '14px',
  fontSize: '0.95rem',
  fontWeight: 700,
- background: 'var(--sc-dark-accent, #29271F)',
+ background: 'var(--sc-dark-accent, #1E40AF)',
  color: '#FFFFFF',
- boxShadow: '0 4px 14px rgba(41, 39, 31, 0.18)',
+ boxShadow: '0 4px 14px rgba(15, 23, 42, 0.18)',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -493,8 +493,8 @@ const LoginPage = () => {
  style={{
  padding: '10px 14px',
  borderRadius: '12px',
- background: active ? 'var(--sc-surface-secondary, #E8E0D2)' : '#FFFFFF',
- border: `1.5px solid ${active ? 'var(--sc-dark-accent, #29271F)' : 'var(--sc-surface-secondary, #E8E0D2)'}`,
+ background: active ? 'var(--sc-surface-secondary, #E2E8F0)' : '#FFFFFF',
+ border: `1.5px solid ${active ? 'var(--sc-dark-accent, #1E40AF)' : 'var(--sc-surface-secondary, #E2E8F0)'}`,
  cursor: 'pointer',
  display: 'flex',
  alignItems: 'center',
@@ -503,7 +503,7 @@ const LoginPage = () => {
  }}
  >
  <div>
- <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--sc-dark-accent, #29271F)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--sc-dark-accent, #1E40AF)' }}>
  {c.name}
  </div>
  <div style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)', fontFamily: 'monospace' }}>
@@ -514,14 +514,14 @@ const LoginPage = () => {
  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--sc-primary-accent, #536D57)' }}>
  {c.balance}
  </span>
- {active && <HiOutlineCheckCircle style={{ color: 'var(--sc-dark-accent, #29271F)', fontSize: '1.1rem' }} />}
+ {active && <HiOutlineCheckCircle style={{ color: 'var(--sc-dark-accent, #1E40AF)', fontSize: '1.1rem' }} />}
  </div>
  </div>
  );
  })}
  </div>
 
- <div style={{ marginTop: '18px', padding: '12px 14px', background: 'rgba(232, 224, 210, 0.45)', borderRadius: '12px', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', fontSize: '0.78rem', color: 'var(--sc-text-main, #29271F)' }}>
+ <div style={{ marginTop: '18px', padding: '12px 14px', background: 'rgba(226, 232, 240, 0.45)', borderRadius: '12px', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', fontSize: '0.78rem', color: 'var(--sc-text-main, #0F172A)' }}>
  <strong>Full Access</strong>: All 5 profiles have pre-loaded bookings, warranty items, and wallet credits ready for testing.
  </div>
  </div>
@@ -543,8 +543,8 @@ const LoginPage = () => {
  style={{
  padding: '8px 12px',
  borderRadius: '10px',
- background: active ? 'var(--sc-surface-secondary, #E8E0D2)' : '#FFFFFF',
- border: `1px solid ${active ? 'var(--sc-dark-accent, #29271F)' : 'var(--sc-surface-secondary, #E8E0D2)'}`,
+ background: active ? 'var(--sc-surface-secondary, #E2E8F0)' : '#FFFFFF',
+ border: `1px solid ${active ? 'var(--sc-dark-accent, #1E40AF)' : 'var(--sc-surface-secondary, #E2E8F0)'}`,
  cursor: 'pointer',
  fontSize: '0.78rem',
  display: 'flex',
@@ -554,16 +554,16 @@ const LoginPage = () => {
  }}
  >
  <div>
- <strong style={{ color: 'var(--sc-dark-accent, #29271F)' }}>{w.num}. {w.service}</strong>
+ <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>{w.num}. {w.service}</strong>
  <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--sc-text-secondary, #6B665C)', fontFamily: 'monospace' }}>{w.email}</span>
  </div>
- {active && <HiOutlineCheckCircle style={{ color: 'var(--sc-dark-accent, #29271F)', fontSize: '1.05rem' }} />}
+ {active && <HiOutlineCheckCircle style={{ color: 'var(--sc-dark-accent, #1E40AF)', fontSize: '1.05rem' }} />}
  </div>
  );
  })}
  </div>
 
- <div style={{ marginTop: '14px', padding: '10px 12px', background: 'rgba(232, 224, 210, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', fontSize: '0.75rem', color: 'var(--sc-text-main, #29271F)' }}>
+ <div style={{ marginTop: '14px', padding: '10px 12px', background: 'rgba(226, 232, 240, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', fontSize: '0.75rem', color: 'var(--sc-text-main, #0F172A)' }}>
  <strong>Golden Worker Rule</strong>: Zero platform commission on pass-throughs (parts, tolls, stairs carry) + instant UPI payouts.
  </div>
  </div>
@@ -576,8 +576,8 @@ const LoginPage = () => {
  Full system oversight with role-based governance across all platform operations:
  </p>
  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  1. Worker Verification Desk
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -585,8 +585,8 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  2. Dynamic Pricing Engine
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -594,8 +594,8 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  3. Live Dispatch Oversight
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -604,7 +604,7 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ marginTop: '16px', padding: '10px 12px', background: 'rgba(232, 224, 210, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', fontSize: '0.75rem', color: 'var(--sc-text-main, #29271F)' }}>
+ <div style={{ marginTop: '16px', padding: '10px 12px', background: 'rgba(226, 232, 240, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', fontSize: '0.75rem', color: 'var(--sc-text-main, #0F172A)' }}>
  <strong>Admin Credentials</strong>: <code>admin2@gmail.com</code> / <code>Admin@123</code>
  </div>
  </div>
@@ -617,8 +617,8 @@ const LoginPage = () => {
  Dedicated management portal for residential societies, commercial complexes, and enterprises:
  </p>
  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  1. Society AMC & Preventative Care
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -626,8 +626,8 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  2. Security & Facility Staffing
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -635,8 +635,8 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
- <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #29271F)', marginBottom: '2px' }}>
+ <div style={{ padding: '12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
+ <div style={{ fontWeight: 700, fontSize: '0.84rem', color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '2px' }}>
  3. Consolidated Billing & Invoices
  </div>
  <div style={{ fontSize: '0.76rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
@@ -645,7 +645,7 @@ const LoginPage = () => {
  </div>
  </div>
 
- <div style={{ marginTop: '16px', padding: '10px 12px', background: 'rgba(232, 224, 210, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', fontSize: '0.75rem', color: 'var(--sc-text-main, #29271F)' }}>
+ <div style={{ marginTop: '16px', padding: '10px 12px', background: 'rgba(226, 232, 240, 0.45)', borderRadius: '10px', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', fontSize: '0.75rem', color: 'var(--sc-text-main, #0F172A)' }}>
  <strong>B2B Credentials</strong>: <code>b2b@gmail.com</code> / <code>B2B@123</code>
  </div>
  </div>

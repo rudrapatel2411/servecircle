@@ -56,18 +56,18 @@ export default function ServeCircleHeroVisual() {
           <defs>
             <radialGradient id="scBaseGrad" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-              <stop offset="65%" stopColor="#FAF7F2" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#EDE6D8" stopOpacity="0.8" />
+              <stop offset="65%" stopColor="#FAF9F6" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#F1F5F9" stopOpacity="0.8" />
             </radialGradient>
             <linearGradient id="scTrackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#536D57" stopOpacity="0.6" />
-              <stop offset="50%" stopColor="#966B32" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#29271F" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#2563EB" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="#3B82F6" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#1E40AF" stopOpacity="0.5" />
             </linearGradient>
           </defs>
 
           {/* Base Background Disc */}
-          <circle cx="200" cy="200" r="190" fill="url(#scBaseGrad)" stroke="#E8E0D2" strokeWidth="1.5" />
+          <circle cx="200" cy="200" r="190" fill="url(#scBaseGrad)" stroke="#E2E8F0" strokeWidth="1.5" />
           
           {/* Outer Dashed Orbit Ring */}
           <circle
@@ -82,12 +82,12 @@ export default function ServeCircleHeroVisual() {
           />
 
           {/* Inner Guidance Track */}
-          <circle cx="200" cy="200" r="110" fill="none" stroke="#DCD8D1" strokeWidth="1" strokeDasharray="3 4" />
+          <circle cx="200" cy="200" r="110" fill="none" stroke="#CBD5E1" strokeWidth="1" strokeDasharray="3 4" />
 
           {/* Animated Flow Particles Traveling along the Ring */}
-          <circle cx="200" cy="50" r="4.5" fill="#536D57" className="sc-particle" />
-          <circle cx="330" cy="275" r="4.5" fill="#966B32" className="sc-particle" />
-          <circle cx="70" cy="275" r="4.5" fill="#29271F" className="sc-particle" />
+          <circle cx="200" cy="50" r="4.5" fill="#2563EB" className="sc-particle" />
+          <circle cx="330" cy="275" r="4.5" fill="#3B82F6" className="sc-particle" />
+          <circle cx="70" cy="275" r="4.5" fill="#1E40AF" className="sc-particle" />
         </svg>
 
         {/* 3 Circular Ecosystem Nodes on the Ring (The 3 Pillars of ServeCircle) */}

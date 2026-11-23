@@ -133,7 +133,7 @@
   max-width: 290px !important;
   height: 100% !important;
   background: #ffffff;
-  border-right: 1px solid var(--navy-200, #E8E0D2);
+  border-right: 1px solid var(--navy-200, #E2E8F0);
   flex-shrink: 0;
   z-index: 10;
   display: flex;
@@ -144,7 +144,7 @@
 
 .sidebar--category .sidebar-header {
   padding: 20px 22px;
-  border-bottom: 1px solid var(--navy-200, #E8E0D2);
+  border-bottom: 1px solid var(--navy-200, #E2E8F0);
   background: #ffffff;
 }
 
@@ -157,8 +157,8 @@
 .category-sidebar-icon {
   width: 42px;
   height: 42px;
-  background: var(--sc-surface-secondary, #E8E0D2);
-  color: var(--sc-dark-accent, #29271F);
+  background: var(--sc-surface-secondary, #EFF6FF);
+  color: var(--sc-dark-accent, #1E40AF);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -170,20 +170,20 @@
 .category-sidebar-heading {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--sc-dark-accent, #29271F);
+  color: var(--sc-text-main, #0F172A);
   letter-spacing: -0.01em;
 }
 
 .category-sidebar-sub {
   font-size: 0.78rem;
-  color: var(--sc-text-secondary, #6B665C);
+  color: var(--sc-text-secondary, #475569);
   margin-top: 2px;
 }
 
 .category-nav-label {
   font-size: 0.72rem;
   font-weight: 800;
-  color: var(--sc-text-muted, #948E82);
+  color: var(--sc-text-muted, #64748B);
   text-transform: uppercase;
   letter-spacing: 0.07em;
   padding: 10px 16px 4px;
@@ -198,19 +198,19 @@
   border-radius: 12px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--sc-text-main, #29271F);
+  color: var(--sc-text-main, #0F172A);
   text-decoration: none;
   transition: all var(--transition-fast);
 }
 
 .category-sidebar-link:hover {
-  background: var(--sc-bg-primary, #F7F3EC);
-  color: var(--sc-dark-accent, #29271F);
+  background: var(--sc-bg-primary, #FAF9F6);
+  color: var(--sc-dark-accent, #1E40AF);
 }
 
 .category-sidebar-link--active {
-  background: var(--sc-surface-secondary, #E8E0D2) !important;
-  color: var(--sc-dark-accent, #29271F) !important;
+  background: #EFF6FF !important;
+  color: #1E40AF !important;
   font-weight: 700;
 }
 

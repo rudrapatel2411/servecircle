@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LoadingSpinner = ({ size = 38, color = '#363027' }) => (
+export const LoadingSpinner = ({ size = 38, color = '#1E40AF' }) => (
   <div
     style={{
       width: `${size}px`,
@@ -17,7 +17,7 @@ export const LoadingSpinner = ({ size = 38, color = '#363027' }) => (
         position: 'absolute',
         inset: 0,
         borderRadius: '50%',
-        border: '3px solid rgba(232, 224, 210, 0.45)',
+        border: '3px solid rgba(226, 232, 240, 0.65)',
         borderTopColor: color,
         animation: 'scSpin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite',
       }}
@@ -28,7 +28,7 @@ export const LoadingSpinner = ({ size = 38, color = '#363027' }) => (
         width: `${Math.round(size * 0.38)}px`,
         height: `${Math.round(size * 0.38)}px`,
         borderRadius: '50%',
-        background: 'var(--sc-primary-accent, #536D57)',
+        background: '#2563EB',
         animation: 'scPulse 1.4s ease-in-out infinite',
       }}
     />
@@ -55,14 +55,14 @@ const LoadingScreen = ({ message = 'Loading experience...', fullScreen = false }
           height: '72px',
           borderRadius: '20px',
           background: '#FFFFFF',
-          border: '1.5px solid #E8E0D2',
+          border: '1.5px solid #E2E8F0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(46, 38, 29, 0.08)',
+          boxShadow: '0 8px 24px rgba(15, 23, 42, 0.08)',
         }}
       >
-        <LoadingSpinner size={42} color="#363027" />
+        <LoadingSpinner size={42} color="#1E40AF" />
       </div>
 
       <div style={{ textAlign: 'center' }}>
@@ -71,7 +71,7 @@ const LoadingScreen = ({ message = 'Loading experience...', fullScreen = false }
             margin: '0 0 4px 0',
             fontSize: '0.92rem',
             fontWeight: 800,
-            color: '#29271F',
+            color: '#0F172A',
             letterSpacing: '-0.01em',
           }}
         >
@@ -80,7 +80,7 @@ const LoadingScreen = ({ message = 'Loading experience...', fullScreen = false }
         <span
           style={{
             fontSize: '0.75rem',
-            color: '#8C8272',
+            color: '#64748B',
             fontWeight: 600,
           }}
         >

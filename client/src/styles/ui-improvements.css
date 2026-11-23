@@ -20,10 +20,10 @@
   --border-width-lg: 2px;
 
   /* Consistent shadow elevation */
-  --shadow-card: 0 2px 8px -1px rgba(41, 39, 31, 0.04), 0 1px 3px -1px rgba(41, 39, 31, 0.02);
-  --shadow-card-hover: 0 8px 24px -4px rgba(41, 39, 31, 0.08), 0 4px 8px -2px rgba(41, 39, 31, 0.04);
-  --shadow-box: 0 4px 16px -2px rgba(41, 39, 31, 0.06), 0 2px 6px -1px rgba(41, 39, 31, 0.03);
-  --shadow-box-hover: 0 12px 28px -4px rgba(41, 39, 31, 0.10), 0 6px 12px -2px rgba(41, 39, 31, 0.05);
+  --shadow-card: 0 2px 8px -1px rgba(15, 23, 42, 0.04), 0 1px 3px -1px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  --shadow-box: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-box-hover: 0 12px 28px -4px rgba(15, 23, 42, 0.10), 0 6px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
 /* ===== UNIVERSAL CARD/BOX BASELINE - FORCE OVER INLINE STYLES ===== */
@@ -547,9 +547,9 @@ input[type="radio"] {
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: var(--sc-bg-primary, #F7F3EC) !important;
-  border-color: var(--sc-surface-tertiary, #DCD8D1) !important;
-  color: var(--sc-dark-accent, #29271F) !important;
+  background: var(--sc-bg-primary, #FAF9F6) !important;
+  border-color: var(--sc-surface-tertiary, #CBD5E1) !important;
+  color: var(--sc-dark-accent, #1E40AF) !important;
 }
 
 .pagination-btn:disabled {
@@ -583,17 +583,17 @@ input[type="radio"] {
 }
 
 .pagination-page-btn:hover:not(.active) {
-  background: var(--sc-bg-primary, #F7F3EC) !important;
-  border-color: var(--sc-surface-tertiary, #DCD8D1) !important;
-  color: var(--sc-dark-accent, #29271F) !important;
+  background: var(--sc-bg-primary, #FAF9F6) !important;
+  border-color: var(--sc-surface-tertiary, #CBD5E1) !important;
+  color: var(--sc-dark-accent, #1E40AF) !important;
 }
 
 .pagination-page-btn.active {
-  background: var(--sc-dark-accent, #29271F) !important;
-  border-color: var(--sc-dark-accent, #29271F) !important;
+  background: var(--sc-dark-accent, #1E40AF) !important;
+  border-color: var(--sc-dark-accent, #1E40AF) !important;
   color: #ffffff !important;
   font-weight: 800 !important;
-  box-shadow: 0 2px 8px rgba(41, 39, 31, 0.20) !important;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25) !important;
 }
 
 .pagination-ellipsis {
@@ -680,7 +680,7 @@ a.btn:active,
 .job-card:hover,
 .active-tracking-pass:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 10px 24px -4px rgba(41, 39, 31, 0.10) !important;
+  box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.10) !important;
 }
 
 /* Input & Form Control Focus Smoothness */

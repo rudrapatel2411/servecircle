@@ -105,9 +105,9 @@ export default function WorkerDutySwitch({
     offline: {
       label: 'Off Duty',
       desc: 'You are offline. Toggle online when you are ready to work.',
-      color: '#29271F',
-      bg: '#E8E0D2',
-      border: '#DCD8D1',
+      color: '#475569',
+      bg: '#F1F5F9',
+      border: '#E2E8F0',
     },
   };
 
@@ -122,7 +122,7 @@ export default function WorkerDutySwitch({
         borderRadius: 'var(--radius-lg, 18px)',
         padding: '16px 20px',
         marginBottom: '20px',
-        boxShadow: '0 2px 10px rgba(41,39,31,0.04)',
+        boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)',
       }}
     >
       <div
@@ -146,7 +146,7 @@ export default function WorkerDutySwitch({
           />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--sc-dark-accent, #29271F)' }}>
+              <span style={{ fontWeight: '800', fontSize: '1rem', color: 'var(--sc-dark-accent, #1E40AF)' }}>
                 Duty Status:
               </span>
               <span
@@ -164,7 +164,7 @@ export default function WorkerDutySwitch({
                 {status}
               </span>
             </div>
-            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--sc-text-secondary, #475569)' }}>
               {currentCfg.desc}
             </p>
           </div>
@@ -185,9 +185,9 @@ export default function WorkerDutySwitch({
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'online' || loading ? 'default' : 'pointer',
-              border: status === 'online' ? '1.5px solid #536D57' : '1px solid #DCD8D1',
-              backgroundColor: status === 'online' ? '#536D57' : '#ffffff',
-              color: status === 'online' ? '#ffffff' : '#29271F',
+              border: status === 'online' ? '1.5px solid #16a34a' : '1px solid #CBD5E1',
+              backgroundColor: status === 'online' ? '#16a34a' : '#ffffff',
+              color: status === 'online' ? '#ffffff' : '#0F172A',
               transition: 'all 0.2s ease',
             }}
           >
@@ -207,9 +207,9 @@ export default function WorkerDutySwitch({
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'paused' || loading ? 'default' : 'pointer',
-              border: status === 'paused' ? '1.5px solid #B87B2E' : '1px solid #DCD8D1',
+              border: status === 'paused' ? '1.5px solid #B87B2E' : '1px solid #CBD5E1',
               backgroundColor: status === 'paused' ? '#B87B2E' : '#ffffff',
-              color: status === 'paused' ? '#ffffff' : '#29271F',
+              color: status === 'paused' ? '#ffffff' : '#0F172A',
               transition: 'all 0.2s ease',
             }}
           >
@@ -229,9 +229,9 @@ export default function WorkerDutySwitch({
               fontSize: '0.85rem',
               fontWeight: '700',
               cursor: status === 'offline' || loading ? 'default' : 'pointer',
-              border: status === 'offline' ? '1.5px solid #29271F' : '1px solid #DCD8D1',
-              backgroundColor: status === 'offline' ? '#29271F' : '#ffffff',
-              color: status === 'offline' ? '#ffffff' : '#29271F',
+              border: status === 'offline' ? '1.5px solid #1E293B' : '1px solid #CBD5E1',
+              backgroundColor: status === 'offline' ? '#1E293B' : '#ffffff',
+              color: status === 'offline' ? '#ffffff' : '#0F172A',
               transition: 'all 0.2s ease',
             }}
           >

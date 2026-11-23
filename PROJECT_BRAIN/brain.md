@@ -15,6 +15,83 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+## Working plan — Hyper-Realistic 3D Cybernetic AI Avatar with Dynamic Cursor Tracking (done, verified 2026-11-23)
+
+**User outcome:**
+User requested: "vo jo avtar hai or realistic banao" (Make the avatar much more realistic).
+1. **Realistic 3D Cranial & Visor Geometry**:
+   - Replaced flat boxy cartoon shape with an aerodynamic 3D cybernetic spherical cranial shell (brushed titanium key light, rich royal sapphire gradient, ambient occlusion shadows, environmental bounce rim light).
+   - Multi-layer convex optical glass visor dome with curved top specular glass glare and bottom secondary optical glint, giving authentic physical glass depth.
+2. **Realistic Ocular Iris & Eye Optics**:
+   - Replaced flat circle pupils with multi-layered biometric camera-iris ocular sensors:
+     - Recessed 3D ocular chambers with ambient occlusion.
+     - Aperture tick ring and radial glowing sapphire/cyan iris pool.
+     - True obsidian pupil core with cyan focal aperture.
+     - Dual corneal specular reflections (primary 10 o'clock key light, secondary 4 o'clock soft fill reflection) providing lifelike eye depth.
+   - Smooth cursor gaze tracking with realistic physics, natural micro-saccades, and biometric curved eyelid shutter blinking.
+3. **Lifelike Presence & Shading**:
+   - Added subtle 3D floating hover physics (`@keyframes realisticBotHover`) with synchronized breathing drop shadow (`@keyframes shadowBreathe`).
+   - Dynamic 3D perspective head tilt responding to mouse position.
+   - Thinking mode rotating holographic aura rings, side status LED pulses, and active laser scanning sweep across the visor.
+4. **Sync & Verification**:
+   - Verified client build cleanly (`npm --prefix client run build`) — PASSED in 4.99s with 0 errors.
+   - Synchronized all files to active runtime `D:\ServeCircle`.
+
+**Tasks & Verification:**
+- [x] Upgrade `AITrackingAvatar` component in `client/src/pages/customer/CustomerAIChat.jsx` with 3D spherical gradients, realistic multi-layer glass visor, and biometric iris optics.
+- [x] Add realistic lighting, shadows, corneal glints, and hover physics in `client/src/pages/customer/CustomerAIChat.css`.
+- [x] Verify build cleanly and synchronize to active runtime `D:\ServeCircle`.
+
+## Working plan — AI Chat UI Enhancement: Centered Layout, Thought-Bubble Messages, Cursor-Tracking AI Avatar & Dynamic Thinking Animation (done, verified 2026-11-23)
+
+**User outcome:**
+User requested: "ai chat ko achhe se screen me formating karke uske screen ko bich me lock karo and uska ui thoda achha karo like mssg ko tha msssg jesa halka sa shape do thoughts jesa and thinking ke tim,e kuch intrusting animation lagao thinking ke upar and usme upar ai ka logo ya avtar  lagao jo cursor ko track kare"
+1. **Screen formatting & Centered Lock**:
+   - Formatted and locked the AI Chat window directly in the center of the viewport (`display: flex; justify-content: center; align-items: center; height: calc(100vh - 64px); overflow: hidden;`).
+   - Gave `.ai-chat-shell` a polished card container (`max-width: 860px; height: 100%; max-height: 820px; border-radius: 24px; box-shadow: 0 20px 48px -12px rgba(15, 23, 42, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.04); border: 1px solid rgba(226, 232, 240, 0.95);`).
+   - Added runtime scroll-locking hook to parent `.dashboard-content` to prevent double scrollbars.
+2. **Thought-Bubble Message Styling**:
+   - Redesigned chat messages with organic curved thought bubble shapes (`border-radius: 22px 22px 22px 6px` for assistant, `22px 22px 6px 22px` for user) with authentic cartoon thought trail circles (`::before` and `::after`).
+   - Assistant bubbles: Clean crisp off-white (`#ffffff`) with subtle slate borders (`#E2E8F0`).
+   - User bubbles: Professional Blue gradient (`#1E40AF` to `#2563EB`) with crisp white typography.
+3. **Cursor-Tracking AI Avatar/Logo**:
+   - Added interactive `AITrackingAvatar` component in the header and welcome hero screen.
+   - Listens to mouse movements in real time, calculating pupil delta $x, y$ along $\theta = \operatorname{atan2}(\Delta Y, \Delta X)$ and moving eye pupils towards the cursor.
+   - Added 3D perspective head tilt (`perspective(320px) rotateX(...) rotateY(...)`), periodic blinks, thinking halo aura, antenna pulses, and click reactions.
+4. **Engaging Thinking Animation**:
+   - Built a custom visual thinking scene placed directly above the thinking message bubble when `isSending` is active.
+   - Features animated 3-ring concentric ripples (`@keyframes ripplePulse`), glowing core with mini thinking bot, 3 ascending floating thought dots (`@keyframes floatThoughtDot`), shimmering gradient text, and a neural equalizer audio wave (`@keyframes neuralWave`).
+5. **Sync & Verification**:
+   - Verified production build (`npm --prefix client run build`) — PASSED in 4.86s with 0 errors.
+   - Synchronized all updated files to active runtime `D:\ServeCircle`.
+
+**Tasks & Verification:**
+- [x] Add `AITrackingAvatar` component with mousemove cursor pupil and tilt tracking in `CustomerAIChat.jsx`.
+- [x] Add creative floating thought cloud / neural ripple thinking animation component above thinking status.
+- [x] Overhaul `CustomerAIChat.css` with centered locked layout, thought-bubble styling, and rich animations.
+- [x] Verify client production build with 0 errors.
+- [x] Sync files to `D:\ServeCircle` and update journal.
+
+## Working plan — Transition Whole Project Color Scheme: Brown to Professional Blue & Warm Off-White (done, verified 2026-11-23)
+
+**User outcome:**
+Operator reported: "kuchh change mat karna sirf ui ka jo brown shade hai usko blue karna hai proffesional and bg off white halka warm dont make any mistake and dont add any addditional alement just change the color of whole project dont touch other thhing and backend"
+1. Transitioned all brown UI shades (`#363027`, `#2B251E`, `#29271F`, `#3D392E`, `#333026`, etc.) strictly to a high-trust, corporate Professional Blue palette (`#1E40AF` royal corporate navy, `#1D4ED8` vibrant corporate blue, `#1E3A8A` hover navy, `#EFF6FF` soft ice-blue surface).
+2. Transitioned the background from warm yellow/brown cream (`#F7F3EC`) to a crisp, slightly warm off-white (`#FAF9F6`).
+3. Replaced muddy brown/sand surfaces and borders (`#E8E0D2`, `#DCD8D1`) with clean slate-neutral borders (`#E2E8F0`, `#CBD5E1`).
+4. Replaced brownish-charcoal text with high-contrast slate-navy black (`#0F172A`, `#334155`, `#64748B`).
+5. Replaced brown shadows with clean neutral/slate shadows.
+6. Strictly preserved all existing elements, layouts, features, endpoints, and backend code without adding any unnecessary elements or altering behavior.
+
+**Tasks & Verification:**
+- [x] Update `client/src/index.css` root tokens and global styles.
+- [x] Update `DashboardNavbar.css`, `Navbar.css`, `Sidebar.css`, and navigation indicators.
+- [x] Update `ErrorBoundary.jsx`, `LoadingScreen.jsx`, `CallMeBackWidget.jsx`, `WorkerDutySwitch.jsx`, and `ServeCircleHeroVisual.css`.
+- [x] Update `LandingPage.css`, `Dashboard.css`, `CustomerPages.css`, `RelocationHub.jsx`, `TravelPremiumFlow.jsx`, and other pages with hardcoded brown shades.
+- [x] Verify client production build (`npm --prefix client run build`) — PASSED in 12.37s with 0 errors.
+- [x] Verified zero remaining brown hex codes or brown rgb/rgba patterns across all client code.
+- [x] Update `PROJECT_BRAIN/brain.md` journal.
+
 ## Working plan — Reposition Customer Floating Call Button to Bottom-Right without Element Obstruction (done, verified 2026-11-23)
 
 **User outcome:**
@@ -976,6 +1053,29 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-23 — UI Color Palette Transition: Brown to Professional Blue & Warm Off-White
+
+- **Design System & Token Modernization (`client/src/index.css`)**:
+  * **Professional Corporate Blue**:
+    - Replaced all brown primary accents (`#363027`, `#2B251E`, `#29271F`, `#3D392E`, `#333026`) with a high-trust, corporate blue scale (`--sc-primary-blue: #1E40AF`, `--primary-700: #1D4ED8`, `--primary-800: #1E40AF`, `--primary-900: #1E3A8A`, hover `#1D4ED8`, active `#172554`).
+    - Standardized `.btn-primary` and interactive badges to high-contrast `#1E40AF` with crisp white text.
+    - Updated active navigation indicators and squircles (`.customer-top-nav-indicator`, `.customer-top-nav-link--active`, `.navbar-links a.active`) to `#1E40AF`.
+  * **Warm Off-White Canvas**:
+    - Replaced heavy yellowish-brown cream (`#F7F3EC`, `#FAF7F2`) with clean, slightly warm off-white (`--sc-bg-primary: #FAF9F6`).
+    - Updated `body`, `DashboardLayout.css`, `Navbar.css`, and `DashboardNavbar.css` sticky backdrop blurs.
+  * **Slate-Neutral Elevation & Crisp Borders**:
+    - Replaced sandy/taupe borders (`#E8E0D2`, `#DCD8D1`) with high-trust slate borders (`#E2E8F0`, `#CBD5E1`).
+    - Replaced brownish-charcoal text with high-contrast slate-navy black (`#0F172A`, `#334155`, `#64748B`).
+    - Replaced brown shadows (`rgba(41, 39, 31, ...)`, `rgba(46, 38, 29, ...)`) with clean neutral/slate and soft blue shadows.
+- **Component & Page Palette Alignment**:
+  * Updated `DashboardNavbar.css`, `Navbar.css`, `Sidebar.css`, `ErrorBoundary.jsx`, `LoadingScreen.jsx`, `CallMeBackWidget.jsx`, `WorkerDutySwitch.jsx`, and `ServeCircleHeroVisual.css`.
+  * Updated `LandingPage.css`, `Dashboard.css`, `CustomerPages.css`, `RelocationHub.jsx`, `TravelPremiumFlow.jsx`, `LoginPage.jsx`, `RegisterPage.jsx`, and `WorkerRegister.jsx`.
+  * Preserved 100% of existing layout structures, features, and workflows without introducing any additional elements.
+  * Backend (`server/`) was kept 100% untouched.
+- **Validation**:
+  * Production client build (`npm --prefix client run build`): PASSED in 12.37s with 0 errors.
+  * Verified 0 remaining brown hexes or brown rgba patterns across `client/src/`.
 
 ### 2026-11-23 — Customer-Compulsory Workflow Completeness Audit & Polish
 

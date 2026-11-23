@@ -320,11 +320,11 @@ const TravelPremiumFlow = () => {
           title: 'Corporate Carpool Match & Pass',
           subtitle: 'Share Premium Daily Rides with Verified Executives on Your Tech-Park Route',
           icon: <HiOutlineBriefcase size={36} color="white" />,
-          gradient: 'linear-gradient(135deg, #363027 0%, #1f1b16 100%)',
-          color: '#363027',
-          bgSoft: '#faf7f2',
-          borderActive: '#363027',
-          shadowActive: '0 8px 24px rgba(54, 48, 39, 0.25)',
+          gradient: 'linear-gradient(135deg, #1E40AF 0%, #0F172A 100%)',
+          color: '#1E40AF',
+          bgSoft: '#FAF9F6',
+          borderActive: '#1E40AF',
+          shadowActive: '0 8px 24px rgba(30, 64, 175, 0.25)',
         };
       default:
         return {
@@ -1482,9 +1482,9 @@ const TravelPremiumFlow = () => {
                     style={{
                       padding: '8px 10px',
                       borderRadius: '8px',
-                      border: `1.5px solid ${carpoolStartDate === st ? '#363027' : '#cbd5e1'}`,
-                      background: carpoolStartDate === st ? '#faf7f2' : 'white',
-                      color: carpoolStartDate === st ? '#363027' : '#475569',
+                      border: `1.5px solid ${carpoolStartDate === st ? '#1E40AF' : '#cbd5e1'}`,
+                      background: carpoolStartDate === st ? '#FAF9F6' : 'white',
+                      color: carpoolStartDate === st ? '#1E40AF' : '#475569',
                       fontWeight: 700,
                       fontSize: '0.78rem',
                       cursor: 'pointer'
@@ -1549,12 +1549,12 @@ const TravelPremiumFlow = () => {
                       style={{
                         padding: '12px 14px',
                         borderRadius: '10px',
-                        border: `1.5px solid ${isSel ? '#363027' : '#e2e8f0'}`,
-                        background: isSel ? '#faf7f2' : 'white',
+                        border: `1.5px solid ${isSel ? '#1E40AF' : '#e2e8f0'}`,
+                        background: isSel ? '#FAF9F6' : 'white',
                         cursor: 'pointer'
                       }}
                     >
-                      <strong style={{ fontSize: '0.85rem', color: isSel ? '#363027' : '#1e293b', display: 'block' }}>{d.label}</strong>
+                      <strong style={{ fontSize: '0.85rem', color: isSel ? '#1E40AF' : '#1e293b', display: 'block' }}>{d.label}</strong>
                       <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{d.sub}</span>
                     </div>
                   );
@@ -1580,12 +1580,12 @@ const TravelPremiumFlow = () => {
                       style={{
                         padding: '14px',
                         borderRadius: '12px',
-                        border: `2px solid ${isSel ? '#363027' : '#e2e8f0'}`,
-                        background: isSel ? '#faf7f2' : 'white',
+                        border: `2px solid ${isSel ? '#1E40AF' : '#e2e8f0'}`,
+                        background: isSel ? '#FAF9F6' : 'white',
                         cursor: 'pointer'
                       }}
                     >
-                      <strong style={{ fontSize: '0.88rem', color: isSel ? '#363027' : '#1e293b', display: 'block' }}>{v.name}</strong>
+                      <strong style={{ fontSize: '0.88rem', color: isSel ? '#1E40AF' : '#1e293b', display: 'block' }}>{v.name}</strong>
                       <span style={{ fontSize: '0.95rem', color: '#0f766e', fontWeight: 900, display: 'block', margin: '4px 0' }}>{v.price}</span>
                       <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{v.desc}</span>
                     </div>
@@ -1628,8 +1628,8 @@ const TravelPremiumFlow = () => {
               style={{
                 padding: '14px 16px',
                 borderRadius: '12px',
-                border: `1.5px solid ${quietRideMode ? '#363027' : '#e2e8f0'}`,
-                background: quietRideMode ? '#faf7f2' : 'white',
+                border: `1.5px solid ${quietRideMode ? '#1E40AF' : '#e2e8f0'}`,
+                background: quietRideMode ? '#FAF9F6' : 'white',
                 cursor: 'pointer',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -1644,7 +1644,7 @@ const TravelPremiumFlow = () => {
                   Peaceful cabin environment for work catch-up or relaxation.
                 </span>
               </div>
-              <input type="checkbox" checked={quietRideMode} readOnly style={{ width: '18px', height: '18px', accentColor: '#363027' }} />
+              <input type="checkbox" checked={quietRideMode} readOnly style={{ width: '18px', height: '18px', accentColor: '#1E40AF' }} />
             </div>
 
             {/* Women-Only Cohort */}
@@ -1745,7 +1745,7 @@ const TravelPremiumFlow = () => {
               <p style={{ fontSize: '0.78rem', color: '#475569', margin: '4px 0 0 0' }}>
                 Pickup: {pickupLandmark} • Org: {corporateOrg === 'Other' ? customOrgName : corporateOrg} ({corporateEmail})
               </p>
-              <span style={{ fontSize: '0.72rem', color: '#363027', fontWeight: 700, background: '#faf7f2', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', marginTop: '6px' }}>
+              <span style={{ fontSize: '0.72rem', color: '#1E40AF', fontWeight: 700, background: '#FAF9F6', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', marginTop: '6px' }}>
                 Starts: {carpoolStartDate} • Shift: {morningInTime} In ⇄ {eveningOutTime} Out ({carpoolDays} Days/Week)
               </span>
             </div>
@@ -1772,7 +1772,7 @@ const TravelPremiumFlow = () => {
                 <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block' }}>Monthly Pass Total</span>
                 <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>Zero cancellation penalty</span>
               </div>
-              <strong style={{ fontSize: '1.6rem', color: '#363027', fontWeight: 900 }}>
+              <strong style={{ fontSize: '1.6rem', color: '#1E40AF', fontWeight: 900 }}>
                 ₹{total.toLocaleString()}<span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>/month</span>
               </strong>
             </div>

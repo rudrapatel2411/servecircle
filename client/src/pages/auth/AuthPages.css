@@ -6,14 +6,14 @@
   min-height: 100vh;
   padding-top: 0;
   padding-bottom: 48px;
-  background-color: var(--sc-bg-primary, #F7F3EC);
+  background-color: var(--sc-bg-primary, #FAF9F6);
 }
 
 .auth-top-bar {
-  background: rgba(247, 243, 236, 0.94);
+  background: rgba(250, 249, 246, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border-bottom: 1px solid var(--sc-surface-secondary, #E2E8F0);
   margin-bottom: 32px;
 }
 
@@ -33,9 +33,9 @@
 /* Warm organic panel */
 .auth-panel {
   background: #ffffff;
-  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1px solid var(--sc-surface-secondary, #E2E8F0);
   border-radius: 24px;
-  box-shadow: 0 4px 20px rgba(41, 39, 31, 0.05);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
   padding: 36px;
 }
 
@@ -109,7 +109,7 @@
 
 /* Clean role card */
 .auth-role-card {
-  border: 1px solid var(--sc-surface-secondary, #E8E0D2);
+  border: 1px solid var(--sc-surface-secondary, #E2E8F0);
   border-radius: 16px;
   padding: 16px;
   background: #ffffff;
@@ -119,8 +119,8 @@
 }
 
 .auth-role-card:hover {
-  border-color: var(--sc-surface-tertiary, #DCD8D1);
-  background: var(--sc-bg-primary, #F7F3EC);
+  border-color: var(--sc-surface-tertiary, #CBD5E1);
+  background: var(--sc-bg-primary, #FAF9F6);
 }
 
 .auth-role-head {

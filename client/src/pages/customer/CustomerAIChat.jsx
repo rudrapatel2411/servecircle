@@ -22,6 +22,463 @@ import servicesCatalog from '../../data/servicesCatalog.json';
 const ACTIVE_SESSION_ID_KEY = 'servecircle_ai_active_session_id';
 const SESSIONS_STORAGE_KEY = 'servecircle_ai_chat_sessions';
 
+/**
+ * AITrackingAvatar — Hyper-Realistic 3D Cybernetic AI Companion Avatar
+ * Features:
+ * - 3D spherical cranial geometry with brushed titanium & sapphire lacquer shading
+ * - Convex optical glass visor dome with dual specular light glares
+ * - Biometric camera-iris ocular optics with radial cyan/sapphire glow & dual corneal reflections
+ * - Real-time cursor gaze tracking with natural physics, micro-saccades, and smooth blinking
+ * - Idle floating hover physics and responsive 3D head perspective tilt
+ */
+function AITrackingAvatar({ size = 44, isThinking = false, interactive = true }) {
+  const avatarRef = useRef(null);
+  const [pupilPos, setPupilPos] = useState({ x: 0, y: 0 });
+  const [headTilt, setHeadTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const [isBlinking, setIsBlinking] = useState(false);
+  const [isWinking, setIsWinking] = useState(false);
+  const [saccade, setSaccade] = useState({ x: 0, y: 0 });
+
+  // Cursor Tracking with smooth physics
+  useEffect(() => {
+    let animationFrameId;
+
+    const handleMouseMove = (e) => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(() => {
+        if (!avatarRef.current) return;
+        const rect = avatarRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const deltaX = e.clientX - centerX;
+        const deltaY = e.clientY - centerY;
+        const distance = Math.hypot(deltaX, deltaY);
+        const angle = Math.atan2(deltaY, deltaX);
+
+        // Pupil max range (scaled relative to size)
+        const maxMove = Math.max(3.6, size * 0.09);
+        const intensity = Math.min(distance / 22, maxMove);
+        const x = Math.cos(angle) * intensity;
+        const y = Math.sin(angle) * intensity;
+
+        // Realistic 3D perspective tilt (degrees)
+        const maxTilt = 11;
+        const tiltX = Math.max(-maxTilt, Math.min(maxTilt, -(deltaY / (window.innerHeight || 800)) * maxTilt * 2));
+        const tiltY = Math.max(-maxTilt, Math.min(maxTilt, (deltaX / (window.innerWidth || 1200)) * maxTilt * 2));
+
+        setPupilPos({ x, y });
+        setHeadTilt({ rotateX: tiltX, rotateY: tiltY });
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [size]);
+
+  // Subtle lifelike micro-saccades (natural eye movement)
+  useEffect(() => {
+    const saccadeInterval = setInterval(() => {
+      if (Math.random() > 0.4) {
+        const sx = (Math.random() - 0.5) * 0.8;
+        const sy = (Math.random() - 0.5) * 0.8;
+        setSaccade({ x: sx, y: sy });
+      } else {
+        setSaccade({ x: 0, y: 0 });
+      }
+    }, 1800);
+    return () => clearInterval(saccadeInterval);
+  }, []);
+
+  // Natural periodic double/single blinks
+  useEffect(() => {
+    const blinkTimer = setInterval(() => {
+      setIsBlinking(true);
+      setTimeout(() => {
+        setIsBlinking(false);
+        // Occasional double-blink
+        if (Math.random() > 0.65) {
+          setTimeout(() => {
+            setIsBlinking(true);
+            setTimeout(() => setIsBlinking(false), 120);
+          }, 140);
+        }
+      }, 160);
+    }, 4200);
+    return () => clearInterval(blinkTimer);
+  }, []);
+
+  const handleClick = () => {
+    if (!interactive) return;
+    setIsWinking(true);
+    setTimeout(() => setIsWinking(false), 650);
+  };
+
+  const currentEyeX = pupilPos.x + saccade.x;
+  const currentEyeY = pupilPos.y + saccade.y;
+
+  return (
+    <div
+      ref={avatarRef}
+      className={`ai-tracking-avatar-wrap ${isThinking ? 'ai-tracking-avatar--thinking' : ''}`}
+      onClick={handleClick}
+      title="ServeCircle AI — Realistic 3D Cursor-Tracking Companion"
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        cursor: interactive ? 'pointer' : 'default',
+      }}
+    >
+      <div
+        className="ai-tracking-avatar-head"
+        style={{
+          transform: `perspective(360px) rotateX(${headTilt.rotateX}deg) rotateY(${headTilt.rotateY}deg)`,
+          transition: 'transform 0.08s cubic-bezier(0.2, 0.8, 0.4, 1)',
+        }}
+      >
+        <svg
+          viewBox="0 0 100 100"
+          width={size}
+          height={size}
+          className="ai-avatar-svg ai-avatar-svg--realistic"
+          style={{ overflow: 'visible' }}
+        >
+          <defs>
+            {/* 3D Cranial Sphere Radial Gradient with Key Light & Ambient Occlusion */}
+            <radialGradient id={`cranialSphere-${size}`} cx="38%" cy="28%" r="68%">
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="12%" stopColor="#DBEAFE" />
+              <stop offset="38%" stopColor="#2563EB" />
+              <stop offset="70%" stopColor="#1D4ED8" />
+              <stop offset="88%" stopColor="#1E3A8A" />
+              <stop offset="100%" stopColor="#0B132B" />
+            </radialGradient>
+
+            {/* Bottom Environmental Bounce Rim Gradient */}
+            <linearGradient id={`bottomBounce-${size}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="75%" stopColor="transparent" />
+              <stop offset="100%" stopColor="rgba(96, 165, 250, 0.45)" />
+            </linearGradient>
+
+            {/* Obsidian Glass Visor Chamber */}
+            <radialGradient id={`visorChamber-${size}`} cx="50%" cy="38%" r="60%">
+              <stop offset="0%" stopColor="#0F172A" />
+              <stop offset="55%" stopColor="#090E1A" />
+              <stop offset="100%" stopColor="#020408" />
+            </radialGradient>
+
+            {/* Upper Glass Specular Curved Glare */}
+            <linearGradient id={`glassGlareTop-${size}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255, 255, 255, 0.65)" />
+              <stop offset="45%" stopColor="rgba(255, 255, 255, 0.2)" />
+              <stop offset="100%" stopColor="rgba(255, 255, 255, 0)" />
+            </linearGradient>
+
+            {/* Biometric Luminous Iris Radial Gradient */}
+            <radialGradient id={`luminousIris-${size}`} cx="44%" cy="38%" r="58%">
+              <stop offset="0%" stopColor="#F0FDFA" />
+              <stop offset="25%" stopColor="#38BDF8" />
+              <stop offset="55%" stopColor="#0284C7" />
+              <stop offset="82%" stopColor="#0369A1" />
+              <stop offset="100%" stopColor="#082F49" />
+            </radialGradient>
+
+            {/* Metallic Ear Bevel Gradient */}
+            <linearGradient id={`earBevel-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#64748B" />
+              <stop offset="40%" stopColor="#E2E8F0" />
+              <stop offset="70%" stopColor="#334155" />
+              <stop offset="100%" stopColor="#0F172A" />
+            </linearGradient>
+
+            {/* Mouth / HUD Glow Gradient */}
+            <linearGradient id={`hudGlow-${size}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#67E8F9" stopOpacity="1" />
+              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.4" />
+            </linearGradient>
+
+            {/* Neon Bloom Filter for Ocular Optics */}
+            <filter id={`bloomFilter-${size}`} x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Dynamic Thinking Aura Halo */}
+          {isThinking && (
+            <g className="ai-realistic-thinking-halo">
+              <circle
+                cx="50"
+                cy="50"
+                r="48"
+                fill="none"
+                stroke="url(#hudGlow-${size})"
+                strokeWidth="1.8"
+                strokeDasharray="8 6"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="44"
+                fill="none"
+                stroke="rgba(56, 189, 248, 0.3)"
+                strokeWidth="1"
+                strokeDasharray="4 8"
+              />
+            </g>
+          )}
+
+          {/* 3D Drop Shadow underneath the floating head */}
+          <ellipse
+            cx="50"
+            cy="93"
+            rx="32"
+            ry="4.5"
+            fill="rgba(15, 23, 42, 0.28)"
+            className="ai-avatar-drop-shadow"
+          />
+
+          {/* Side Cybernetic Ear-Pods with Metallic Bevels & Glowing Aperture */}
+          <g>
+            {/* Left Ear */}
+            <ellipse cx="9" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="#1E293B" strokeWidth="1" />
+            <ellipse cx="8" cy="50" rx="2" ry="7" fill="#0B132B" />
+            <circle cx="8" cy="50" r="1.6" fill={isThinking ? '#38BDF8' : '#60A5FA'} filter={`url(#bloomFilter-${size})`} />
+
+            {/* Right Ear */}
+            <ellipse cx="91" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="#1E293B" strokeWidth="1" />
+            <ellipse cx="92" cy="50" rx="2" ry="7" fill="#0B132B" />
+            <circle cx="92" cy="50" r="1.6" fill={isThinking ? '#38BDF8' : '#60A5FA'} filter={`url(#bloomFilter-${size})`} />
+          </g>
+
+          {/* Main 3D Spherical Cranial Shell */}
+          <path
+            d="M 50 8 C 76 8, 91 22, 91 50 C 91 76, 75 92, 50 92 C 25 92, 9 76, 9 50 C 9 22, 24 8, 50 8 Z"
+            fill={`url(#cranialSphere-${size})`}
+            stroke="#93C5FD"
+            strokeWidth="1.2"
+          />
+
+          {/* Bottom Environmental Bounce Light Reflection */}
+          <path
+            d="M 50 8 C 76 8, 91 22, 91 50 C 91 76, 75 92, 50 92 C 25 92, 9 76, 9 50 C 9 22, 24 8, 50 8 Z"
+            fill={`url(#bottomBounce-${size})`}
+            pointerEvents="none"
+          />
+
+          {/* Cranial Top Light Accent Line */}
+          <path
+            d="M 32 12 Q 50 9 68 12"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.75)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            filter="drop-shadow(0 1px 2px rgba(255, 255, 255, 0.6))"
+          />
+
+          {/* Forehead Cyan AI Neural Status Beacon */}
+          <circle
+            cx="50"
+            cy="18"
+            r="2.2"
+            fill={isThinking ? '#38BDF8' : '#60A5FA'}
+            filter={`url(#bloomFilter-${size})`}
+            className={isThinking ? 'ai-antenna-pulse' : ''}
+          />
+
+          {/* Convex Optical Glass Visor Frame & Obsidian Chamber */}
+          <g>
+            {/* Outer Visor Bezel / Rim with dark depth */}
+            <path
+              d="M 18 33 C 28 20, 72 20, 82 33 C 89 44, 88 64, 80 74 C 70 84, 30 84, 20 74 C 12 64, 11 44, 18 33 Z"
+              fill="#060A14"
+              stroke="#1E293B"
+              strokeWidth="1.6"
+            />
+
+            {/* Obsidian Glass Chamber Interior */}
+            <path
+              d="M 20 34 C 29 22, 71 22, 80 34 C 86 44, 85 63, 78 72 C 69 82, 31 82, 22 72 C 15 63, 14 44, 20 34 Z"
+              fill={`url(#visorChamber-${size})`}
+            />
+
+            {/* Subtle Ocular Alignment Grid / HUD reticle line in background */}
+            <line x1="22" y1="51" x2="78" y2="51" stroke="rgba(56, 189, 248, 0.12)" strokeWidth="0.8" strokeDasharray="3 3" />
+            <circle cx="50" cy="51" r="2.5" fill="none" stroke="rgba(56, 189, 248, 0.15)" strokeWidth="0.8" />
+          </g>
+
+          {/* ─── Left Eye Ocular Sensor ─── */}
+          <g transform="translate(36, 50)">
+            {/* Recessed Eye Socket Shadow */}
+            <circle cx="0" cy="0" r="10.5" fill="#020617" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
+            <circle cx="0" cy="0" r="9.2" fill="#040812" />
+
+            {/* Outer Aperture Tick Ring */}
+            <circle cx="0" cy="0" r="8.2" fill="none" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="0.8" strokeDasharray="2 2" />
+
+            {isBlinking || isWinking ? (
+              /* Realistic Curved Biometric Shutter Closed */
+              <path
+                d="M -9 0 Q 0 4 9 0"
+                stroke="#38BDF8"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                fill="none"
+                filter={`url(#bloomFilter-${size})`}
+              />
+            ) : (
+              <>
+                {/* Luminous Camera-Iris Optics Tracking Cursor */}
+                <g transform={`translate(${currentEyeX}, ${currentEyeY})`}>
+                  {/* Glowing Sapphire Iris Sphere */}
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="6.8"
+                    fill={`url(#luminousIris-${size})`}
+                    filter={`url(#bloomFilter-${size})`}
+                  />
+                  {/* Concentric Internal Iris Ring */}
+                  <circle cx="0" cy="0" r="4.6" fill="none" stroke="rgba(240, 253, 250, 0.45)" strokeWidth="0.6" />
+                  {/* True Obsidian Pupil Core */}
+                  <circle cx="0" cy="0" r="3.2" fill="#020617" />
+                  {/* Central Aperture Laser Dot */}
+                  <circle cx="0" cy="0" r="1.1" fill="#67E8F9" />
+                </g>
+
+                {/* Primary Corneal Key-Light Specular Glint (Fixed at 10 o'clock for authentic 3D sphere look) */}
+                <circle
+                  cx={currentEyeX * 0.7 - 2.5}
+                  cy={currentEyeY * 0.7 - 2.5}
+                  r="2"
+                  fill="#FFFFFF"
+                />
+                {/* Secondary Corneal Soft Fill Reflection at 4 o'clock */}
+                <circle
+                  cx={currentEyeX * 0.7 + 2.2}
+                  cy={currentEyeY * 0.7 + 2.2}
+                  r="1"
+                  fill="rgba(255, 255, 255, 0.65)"
+                />
+              </>
+            )}
+          </g>
+
+          {/* ─── Right Eye Ocular Sensor ─── */}
+          <g transform="translate(64, 50)">
+            {/* Recessed Eye Socket Shadow */}
+            <circle cx="0" cy="0" r="10.5" fill="#020617" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
+            <circle cx="0" cy="0" r="9.2" fill="#040812" />
+
+            {/* Outer Aperture Tick Ring */}
+            <circle cx="0" cy="0" r="8.2" fill="none" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="0.8" strokeDasharray="2 2" />
+
+            {isBlinking ? (
+              /* Realistic Curved Biometric Shutter Closed */
+              <path
+                d="M -9 0 Q 0 4 9 0"
+                stroke="#38BDF8"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                fill="none"
+                filter={`url(#bloomFilter-${size})`}
+              />
+            ) : (
+              <>
+                {/* Luminous Camera-Iris Optics Tracking Cursor */}
+                <g transform={`translate(${currentEyeX}, ${currentEyeY})`}>
+                  {/* Glowing Sapphire Iris Sphere */}
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="6.8"
+                    fill={`url(#luminousIris-${size})`}
+                    filter={`url(#bloomFilter-${size})`}
+                  />
+                  {/* Concentric Internal Iris Ring */}
+                  <circle cx="0" cy="0" r="4.6" fill="none" stroke="rgba(240, 253, 250, 0.45)" strokeWidth="0.6" />
+                  {/* True Obsidian Pupil Core */}
+                  <circle cx="0" cy="0" r="3.2" fill="#020617" />
+                  {/* Central Aperture Laser Dot */}
+                  <circle cx="0" cy="0" r="1.1" fill="#67E8F9" />
+                </g>
+
+                {/* Primary Corneal Key-Light Specular Glint */}
+                <circle
+                  cx={currentEyeX * 0.7 - 2.5}
+                  cy={currentEyeY * 0.7 - 2.5}
+                  r="2"
+                  fill="#FFFFFF"
+                />
+                {/* Secondary Corneal Soft Fill Reflection */}
+                <circle
+                  cx={currentEyeX * 0.7 + 2.2}
+                  cy={currentEyeY * 0.7 + 2.2}
+                  r="1"
+                  fill="rgba(255, 255, 255, 0.65)"
+                />
+              </>
+            )}
+          </g>
+
+          {/* ─── Convex Glass Specular Reflections (Overlays on Top of Eyes!) ─── */}
+          {/* Upper Curved Glass Dome Crescent Reflection */}
+          <path
+            d="M 23 34 C 33 24, 67 24, 77 34 C 70 41, 30 41, 23 34 Z"
+            fill={`url(#glassGlareTop-${size})`}
+            pointerEvents="none"
+          />
+
+          {/* Lower Glass Edge Secondary Specular Rim */}
+          <path
+            d="M 32 75 C 48 78, 68 76, 75 70 C 69 73, 49 75, 32 75 Z"
+            fill="rgba(96, 165, 250, 0.35)"
+            pointerEvents="none"
+          />
+
+          {/* ─── Mouth / Visor Biometric HUD Line ─── */}
+          <path
+            d={
+              isThinking
+                ? 'M 42 74 Q 50 70 58 74'
+                : isWinking
+                ? 'M 40 73 Q 50 82 60 73'
+                : 'M 41 73 Q 50 79 59 73'
+            }
+            stroke={`url(#hudGlow-${size})`}
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            fill="none"
+            filter={`url(#bloomFilter-${size})`}
+          />
+
+          {/* Thinking Laser Scan Line sweeping across visor */}
+          {isThinking && (
+            <line
+              x1="24"
+              y1="51"
+              x2="76"
+              y2="51"
+              stroke="#38BDF8"
+              strokeWidth="1.5"
+              strokeDasharray="12 20"
+              className="ai-realistic-laser-scan"
+              filter={`url(#bloomFilter-${size})`}
+            />
+          )}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 const initialMessages = [
  {
  id: 'welcome',
@@ -211,6 +668,21 @@ const CustomerAIChat = () => {
  const [isRecording, setIsRecording] = useState(false);
  const [voiceError, setVoiceError] = useState('');
  const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
+
+ // Lock parent layout scrolling so the AI chat window is firmly locked in the center of the screen
+ useEffect(() => {
+ const parentContent = document.querySelector('.dashboard-content');
+ if (parentContent) {
+ parentContent.style.overflow = 'hidden';
+ parentContent.style.paddingBottom = '16px';
+ }
+ return () => {
+ if (parentContent) {
+ parentContent.style.overflow = '';
+ parentContent.style.paddingBottom = '';
+ }
+ };
+ }, []);
 
  // Sync active session and sessions list to localStorage whenever messages change
  useEffect(() => {
@@ -437,10 +909,16 @@ const CustomerAIChat = () => {
  <HiOutlineArrowLeft />
  </button>
  <div className="ai-title">
- <span><HiOutlineSparkles /></span>
- <div>
+ <AITrackingAvatar size={42} isThinking={isSending} />
+ <div className="ai-title-text">
+ <div className="ai-title-row">
  <h1>ServeCircle AI</h1>
- <p>Chat, image, and voice service routing</p>
+ <span className="ai-status-badge">
+ <span className="ai-status-pulse" />
+ {isSending ? 'Thinking' : 'Online'}
+ </span>
+ </div>
+ <p>Cursor-tracking smart service diagnostics</p>
  </div>
  </div>
  <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -467,6 +945,19 @@ const CustomerAIChat = () => {
  {messages.map((message) => (
  <article key={message.id} className={`ai-message ai-message--${message.role}${message.isError ? ' ai-message--error' : ''}`}>
  {message.imageUrl && <img className="ai-message-image" src={message.imageUrl} alt="Customer upload preview" />}
+
+ {message.id === 'welcome' && (
+ <div className="ai-welcome-hero-card">
+ <div className="ai-welcome-hero-avatar">
+ <AITrackingAvatar size={56} isThinking={isSending} />
+ </div>
+ <div className="ai-welcome-hero-text">
+ <h3>ServeCircle AI Assistant</h3>
+ <p>Move your cursor around to watch my eyes track you! Tell me what you need, upload a photo, or choose a quick prompt.</p>
+ </div>
+ </div>
+ )}
+
  <p>{message.content}</p>
 
  {message.id === 'welcome' && messages.length <= 1 && (
@@ -551,10 +1042,38 @@ const CustomerAIChat = () => {
  </article>
  ))}
  {isSending && (
- <article className="ai-message ai-message--assistant">
- <p>{image ? 'Looking at your photo...' : 'Thinking...'}</p>
- <div className="ai-thinking"><span /><span /><span /></div>
+ <div className="ai-thinking-stage-wrapper">
+ {/* Visual Thinking Scene placed above thinking message */}
+ <div className="ai-thinking-scene">
+ <div className="ai-thinking-ripple-stage">
+ <span className="ai-thinking-ripple ring-1" />
+ <span className="ai-thinking-ripple ring-2" />
+ <span className="ai-thinking-ripple ring-3" />
+ <div className="ai-thinking-avatar-core">
+ <AITrackingAvatar size={34} isThinking={true} interactive={false} />
+ </div>
+ </div>
+ {/* Ascending thought bubbles bridge */}
+ <div className="ai-thought-bubbles-bridge">
+ <span className="ai-thought-dot dot-sm" />
+ <span className="ai-thought-dot dot-md" />
+ <span className="ai-thought-dot dot-lg" />
+ </div>
+ </div>
+
+ {/* Thought bubble message */}
+ <article className="ai-message ai-message--assistant ai-message--thinking">
+ <div className="ai-thinking-content">
+ <span className="ai-thinking-indicator-dot" />
+ <p className="ai-thinking-label">
+ {image ? 'Analyzing your photo & issue diagnostics...' : 'Thinking & mapping best verified experts...'}
+ </p>
+ </div>
+ <div className="ai-thinking-wave">
+ <span /><span /><span /><span /><span />
+ </div>
  </article>
+ </div>
  )}
  <div ref={messagesEndRef} />
  </main>

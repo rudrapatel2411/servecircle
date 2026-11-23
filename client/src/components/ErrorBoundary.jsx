@@ -51,8 +51,8 @@ class ErrorBoundary extends React.Component {
               width: '100%',
               background: '#FFFFFF',
               borderRadius: '20px',
-              border: '1.5px solid #E8E0D2',
-              boxShadow: '0 12px 40px rgba(46, 38, 29, 0.1)',
+              border: '1.5px solid #E2E8F0',
+              boxShadow: '0 12px 40px rgba(15, 23, 42, 0.08)',
               padding: '36px 32px',
               textAlign: 'center',
             }}
@@ -80,7 +80,7 @@ class ErrorBoundary extends React.Component {
               style={{
                 fontSize: '1.35rem',
                 fontWeight: 900,
-                color: '#29271F',
+                color: '#0F172A',
                 margin: '0 0 10px 0',
                 letterSpacing: '-0.01em',
               }}
@@ -91,7 +91,7 @@ class ErrorBoundary extends React.Component {
             <p
               style={{
                 fontSize: '0.88rem',
-                color: '#6B665C',
+                color: '#475569',
                 lineHeight: 1.55,
                 margin: '0 0 24px 0',
               }}
@@ -115,7 +115,7 @@ class ErrorBoundary extends React.Component {
                 style={{
                   flex: '1 1 140px',
                   padding: '12px 18px',
-                  background: '#363027',
+                  background: '#1E40AF',
                   color: '#FFFFFF',
                   borderRadius: '12px',
                   border: 'none',
@@ -126,7 +126,7 @@ class ErrorBoundary extends React.Component {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 3px 10px rgba(54, 48, 39, 0.25)',
+                  boxShadow: '0 3px 10px rgba(30, 64, 175, 0.25)',
                   transition: 'all 0.2s',
                 }}
               >
@@ -139,10 +139,10 @@ class ErrorBoundary extends React.Component {
                 style={{
                   flex: '1 1 140px',
                   padding: '12px 18px',
-                  background: '#FAF7F2',
-                  color: '#29271F',
+                  background: '#FAF9F6',
+                  color: '#0F172A',
                   borderRadius: '12px',
-                  border: '1.5px solid #E8E0D2',
+                  border: '1.5px solid #E2E8F0',
                   fontSize: '0.88rem',
                   fontWeight: 800,
                   cursor: 'pointer',
@@ -163,15 +163,15 @@ class ErrorBoundary extends React.Component {
                 style={{
                   marginTop: '20px',
                   textAlign: 'left',
-                  background: '#FAF7F2',
+                  background: '#FAF9F6',
                   borderRadius: '10px',
                   padding: '10px 14px',
                   fontSize: '0.75rem',
-                  color: '#6B665C',
-                  border: '1px solid #E8E0D2',
+                  color: '#475569',
+                  border: '1px solid #E2E8F0',
                 }}
               >
-                <summary style={{ cursor: 'pointer', fontWeight: 700, color: '#363027' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 700, color: '#1E40AF' }}>
                   Technical Error Details
                 </summary>
                 <pre

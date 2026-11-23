@@ -74,8 +74,8 @@ const CustomerDashboard = () => {
       icon: <HiOutlineWallet />, 
       value: '₹1,250', 
       label: 'Wallet Balance',
-      iconBg: 'var(--sc-surface-secondary, #E8E0D2)',
-      iconColor: 'var(--sc-dark-accent, #29271F)'
+      iconBg: 'var(--sc-surface-secondary, #E2E8F0)',
+      iconColor: 'var(--sc-dark-accent, #1E40AF)'
     },
   ];
 
@@ -95,7 +95,7 @@ const CustomerDashboard = () => {
   {/* Welcome Header (Master Artboard Match) */}
   <div className="dash-welcome-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
     <div>
-      <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         Welcome back, {userName}! <span style={{ fontSize: '1.6rem' }}>👋</span>
       </h1>
       <p className="page-subtitle" style={{ fontSize: '0.88rem', color: 'var(--sc-text-secondary, #6B665C)', margin: 0 }}>
@@ -107,12 +107,12 @@ const CustomerDashboard = () => {
   {/* 1. Master Artboard 3-Card Stat Row */}
   <div className="stats-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', margin: 0 }}>
     {stats.map((stat, i) => (
-      <div key={i} className="stat-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '18px 20px', borderRadius: '16px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', boxShadow: '0 2px 8px rgba(41, 39, 31, 0.04)' }}>
+      <div key={i} className="stat-card" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '18px 20px', borderRadius: '16px', background: '#FFFFFF', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)' }}>
         <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: stat.iconBg, color: stat.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.35rem', flexShrink: 0 }}>
           {stat.icon}
         </div>
         <div className="stat-details" style={{ display: 'flex', flexDirection: 'column' }}>
-          <span className="stat-value" style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)', lineHeight: 1.1 }}>{stat.value}</span>
+          <span className="stat-value" style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', lineHeight: 1.1 }}>{stat.value}</span>
           <span className="stat-label" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--sc-text-secondary, #6B665C)', marginTop: '2px' }}>{stat.label}</span>
         </div>
       </div>
@@ -131,7 +131,7 @@ const CustomerDashboard = () => {
     position: 'relative',
     overflow: 'hidden',
     boxShadow: '0 10px 25px -4px rgba(26, 34, 28, 0.3)',
-    border: '1px solid rgba(232, 224, 210, 0.15)',
+    border: '1px solid rgba(226, 232, 240, 0.15)',
     gap: '24px',
     flexWrap: 'wrap'
   }}>
@@ -148,12 +148,12 @@ const CustomerDashboard = () => {
           alignItems: 'center',
           gap: '8px',
           padding: '8px 18px',
-          background: 'rgba(247, 243, 236, 0.12)',
-          color: '#E8E0D2',
+          background: 'rgba(250, 249, 246, 0.12)',
+          color: '#E2E8F0',
           borderRadius: '100px',
           fontWeight: 700,
           fontSize: '0.84rem',
-          border: '1px solid rgba(232, 224, 210, 0.22)',
+          border: '1px solid rgba(226, 232, 240, 0.22)',
           letterSpacing: '0.02em',
           userSelect: 'none',
           pointerEvents: 'none',
@@ -197,7 +197,7 @@ const CustomerDashboard = () => {
         position: 'absolute',
         bottom: '12px',
         right: '12px',
-        background: 'rgba(41, 39, 31, 0.92)',
+        background: 'rgba(15, 23, 42, 0.92)',
         color: '#FFFFFF',
         padding: '5px 10px',
         borderRadius: '8px',
@@ -223,16 +223,16 @@ const CustomerDashboard = () => {
  View All →
  </Link>
  </div>
-  <div className="card" style={{ padding: '16px 20px', borderRadius: 'var(--radius-lg, 18px)', border: '1px solid var(--sc-surface-secondary, #E8E0D2)' }}>
+  <div className="card" style={{ padding: '16px 20px', borderRadius: 'var(--radius-lg, 18px)', border: '1px solid var(--sc-surface-secondary, #E2E8F0)' }}>
   {activeBookings.length > 0 ? (
   activeBookings.slice(0, 1).map((b) => (
   <div key={b.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--sc-surface-secondary, #E8E0D2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-primary-accent, #536D57)' }}>
+  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--sc-surface-secondary, #E2E8F0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-primary-accent, #536D57)' }}>
   <HiOutlineWrench size={22} />
   </div>
   <div>
-  <strong style={{ fontSize: '0.95rem', color: 'var(--sc-dark-accent, #29271F)', display: 'block' }}>{b.service}</strong>
+  <strong style={{ fontSize: '0.95rem', color: 'var(--sc-dark-accent, #1E40AF)', display: 'block' }}>{b.service}</strong>
   <span style={{ fontSize: '0.78rem', color: 'var(--sc-text-secondary, #6B665C)' }}>Tomorrow • 10:30 AM • {b.worker}</span>
   </div>
   </div>
@@ -243,7 +243,7 @@ const CustomerDashboard = () => {
   <Link
   to="/customer/bookings"
   title="View Booking Details"
-  style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-dark-accent, #29271F)', textDecoration: 'none' }}
+  style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--sc-bg-primary, #FAF9F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-dark-accent, #1E40AF)', textDecoration: 'none' }}
   >
   <HiOutlineArrowRight size={14} />
   </Link>
@@ -252,10 +252,10 @@ const CustomerDashboard = () => {
   ))
   ) : (
   <div style={{ textAlign: 'center', padding: '24px 16px', color: 'var(--sc-text-secondary, #6B665C)' }}>
-  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--sc-bg-primary, #F7F3EC)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-text-secondary, #6B665C)', marginBottom: '8px' }}>
+  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--sc-bg-primary, #FAF9F6)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sc-text-secondary, #6B665C)', marginBottom: '8px' }}>
   <HiOutlineCalendarDays size={22} />
   </div>
-  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--sc-dark-accent, #29271F)', marginBottom: '4px' }}>
+  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '4px' }}>
   No upcoming bookings
   </div>
   <div style={{ fontSize: '0.8rem' }}>

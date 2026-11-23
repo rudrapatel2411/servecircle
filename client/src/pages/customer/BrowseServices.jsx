@@ -347,7 +347,7 @@ const BrowseServices = () => {
  className="category-directory-icon-badge"
  style={{ 
  background: cat.bg || 'rgba(255, 255, 255, 0.95)', 
- color: cat.color || 'var(--sc-dark-accent, #29271F)' 
+ color: cat.color || 'var(--sc-dark-accent, #1E40AF)' 
  }}
  >
  {cat.icon}

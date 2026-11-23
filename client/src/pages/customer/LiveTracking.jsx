@@ -382,8 +382,8 @@ const LiveTracking = () => {
         const bg = isWorker
           ? 'linear-gradient(135deg, #536D57, #364335)'
           : isCustomer
-          ? 'linear-gradient(135deg, #29271F, #1F1E17)'
-          : 'linear-gradient(135deg, #DCD8D1, #B5AEA3)';
+          ? 'linear-gradient(135deg, #1E40AF, #172554)'
+          : 'linear-gradient(135deg, #CBD5E1, #B5AEA3)';
 
         const svgIcon = isWorker
           ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
@@ -401,7 +401,7 @@ const LiveTracking = () => {
               background: ${bg}; 
               border: 3px solid white;
               display: flex; align-items: center; justify-content: center;
-              box-shadow: 0 8px 24px rgba(41, 39, 31, 0.28);
+              box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
               ${isWorker ? 'animation: pulse 1.8s infinite;' : ''}
             ">
               ${svgIcon}
@@ -409,8 +409,8 @@ const LiveTracking = () => {
             <span style="
               font-size: 0.72rem; font-weight: 800; background: rgba(255,255,255,0.95);
               backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 20px;
-              border: 1px solid #E8E0D2; color: #29271F; display: inline-block;
-              margin-top: 5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(41,39,31,0.08);
+              border: 1px solid #E2E8F0; color: #0F172A; display: inline-block;
+              margin-top: 5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(15, 23, 42,0.08);
               position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
             ">${label}</span>
           `,
@@ -511,8 +511,8 @@ const LiveTracking = () => {
             width: '100%',
             background: '#ffffff',
             borderRadius: '20px',
-            border: '1.5px solid #E8E0D2',
-            boxShadow: '0 12px 36px rgba(41, 39, 31, 0.1)',
+            border: '1.5px solid #E2E8F0',
+            boxShadow: '0 12px 36px rgba(15, 23, 42, 0.1)',
             padding: '36px 28px',
             textAlign: 'center',
           }}
@@ -534,7 +534,7 @@ const LiveTracking = () => {
           >
             <HiOutlineShieldExclamation />
           </div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#29271F', margin: '0 0 10px 0' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 10px 0' }}>
             Worker Not Available
           </h2>
           <p style={{ fontSize: '0.88rem', color: '#6B665C', lineHeight: 1.55, margin: '0 0 24px 0' }}>
@@ -678,22 +678,22 @@ const LiveTracking = () => {
                 WebkitBackdropFilter: 'blur(12px)',
                 borderRadius: 'var(--radius-lg)',
                 padding: '12px 20px',
-                border: '1px solid var(--sc-surface-secondary, #E8E0D2)',
-                boxShadow: '0 8px 24px rgba(41, 39, 31, 0.12)',
+                border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
+                boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '14px',
                 zIndex: 30,
               }}
             >
-              <div style={{ background: 'var(--sc-bg-primary, #F7F3EC)', padding: '8px', borderRadius: '50%', display: 'flex' }}>
+              <div style={{ background: 'var(--sc-bg-primary, #FAF9F6)', padding: '8px', borderRadius: '50%', display: 'flex' }}>
                 <HiOutlineClock style={{ fontSize: '1.5rem', color: 'var(--sc-primary-accent, #536D57)' }} />
               </div>
               <div>
                 <span style={{ fontSize: '0.65rem', color: 'var(--sc-text-muted, #948E82)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 800 }}>
                   Live Status
                 </span>
-                <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--sc-dark-accent, #29271F)', display: 'block', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--sc-dark-accent, #1E40AF)', display: 'block', letterSpacing: '-0.02em' }}>
                   {eta === 0 ? 'Arrived at Doorstep' : `Arriving in ~${eta} min (1.8 km)`}
                 </span>
               </div>
@@ -728,8 +728,8 @@ const LiveTracking = () => {
           </div>
 
           {/* Service Progress tracker timeline */}
-          <div className="card" style={{ padding: '18px 22px', background: 'white', border: '1px solid var(--sc-surface-secondary, #E8E0D2)', borderRadius: 'var(--radius-lg)', flexShrink: 0 }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)', marginBottom: '4px' }}>
+          <div className="card" style={{ padding: '18px 22px', background: 'white', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', borderRadius: 'var(--radius-lg)', flexShrink: 0 }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '4px' }}>
               Service Status Updates
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--sc-text-secondary, #6B665C)', marginBottom: '16px', fontWeight: 600 }}>
@@ -737,7 +737,7 @@ const LiveTracking = () => {
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '3px', background: 'var(--sc-surface-secondary, #E8E0D2)', zIndex: 0 }} />
+              <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '3px', background: 'var(--sc-surface-secondary, #E2E8F0)', zIndex: 0 }} />
               <div
                 style={{
                   position: 'absolute',
@@ -761,7 +761,7 @@ const LiveTracking = () => {
                         width: '28px',
                         height: '28px',
                         borderRadius: '50%',
-                        background: isPassed ? 'var(--sc-primary-accent, #536D57)' : 'var(--sc-surface-secondary, #E8E0D2)',
+                        background: isPassed ? 'var(--sc-primary-accent, #536D57)' : 'var(--sc-surface-secondary, #E2E8F0)',
                         color: isPassed ? 'white' : 'var(--sc-text-secondary, #6B665C)',
                         display: 'flex',
                         alignItems: 'center',
@@ -769,7 +769,7 @@ const LiveTracking = () => {
                         fontWeight: 800,
                         fontSize: '0.75rem',
                         zIndex: 2,
-                        border: isActive ? '3px solid #DCD8D1' : 'none',
+                        border: isActive ? '3px solid #CBD5E1' : 'none',
                         boxShadow: isPassed ? '0 2px 6px rgba(83, 109, 87, 0.3)' : 'none',
                       }}
                     >
@@ -779,7 +779,7 @@ const LiveTracking = () => {
                       style={{
                         fontSize: '0.7rem',
                         fontWeight: isActive ? 800 : 600,
-                        color: isActive ? 'var(--sc-dark-accent, #29271F)' : 'var(--sc-text-muted, #948E82)',
+                        color: isActive ? 'var(--sc-dark-accent, #1E40AF)' : 'var(--sc-text-muted, #948E82)',
                         marginTop: '8px',
                       }}
                     >
@@ -976,7 +976,7 @@ const LiveTracking = () => {
               flexDirection: 'column',
               justifyContent: 'center',
               minHeight: 0,
-              border: '1px solid var(--sc-surface-secondary, #E8E0D2)',
+              border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
               borderRadius: 'var(--radius-lg)',
             }}
           >
@@ -991,23 +991,23 @@ const LiveTracking = () => {
                     width: '64px',
                     height: '64px',
                     borderRadius: '50%',
-                    background: 'var(--sc-dark-accent, #29271F)',
+                    background: 'var(--sc-dark-accent, #1E40AF)',
                     color: 'white',
-                    border: '3px solid var(--sc-surface-secondary, #E8E0D2)',
+                    border: '3px solid var(--sc-surface-secondary, #E2E8F0)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '1.4rem',
                     fontWeight: 800,
-                    boxShadow: '0 4px 14px rgba(41, 39, 31, 0.12)',
+                    boxShadow: '0 4px 14px rgba(15, 23, 42, 0.12)',
                   }}
                 >
                   {getInitials(workerName)}
                 </div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)', margin: '8px 0 2px' }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', margin: '8px 0 2px' }}>
                   {workerName}
                 </h4>
-                <div style={{ fontSize: '0.68rem', color: 'var(--sc-dark-accent, #29271F)', background: 'var(--sc-surface-secondary, #E8E0D2)', padding: '2px 10px', borderRadius: '12px', fontWeight: 700 }}>
+                <div style={{ fontSize: '0.68rem', color: 'var(--sc-dark-accent, #1E40AF)', background: 'var(--sc-surface-secondary, #E2E8F0)', padding: '2px 10px', borderRadius: '12px', fontWeight: 700 }}>
                   Verified Professional 4.9 ★
                 </div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)', marginTop: '4px' }}>
@@ -1039,16 +1039,16 @@ const LiveTracking = () => {
                 style={{
                   marginTop: '12px',
                   padding: '8px 12px',
-                  background: 'var(--sc-bg-primary, #F7F3EC)',
+                  background: 'var(--sc-bg-primary, #FAF9F6)',
                   borderRadius: '8px',
-                  border: '1px solid var(--sc-surface-secondary, #E8E0D2)',
+                  border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   wordBreak: 'break-word',
                   lineHeight: '1.4',
                 }}
               >
-                <strong style={{ color: 'var(--sc-dark-accent, #29271F)' }}>Specifications: </strong>
+                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>Specifications: </strong>
                 <span style={{ color: 'var(--sc-text-secondary, #6B665C)', fontWeight: 500 }}>
                   {bookingData.description.split('Specs:')[1]?.replace(/[\[\]]/g, '').trim()}
                 </span>
@@ -1060,7 +1060,7 @@ const LiveTracking = () => {
             className="card"
             style={{
               padding: '16px 20px',
-              border: '1px solid var(--sc-surface-secondary, #E8E0D2)',
+              border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
               borderRadius: 'var(--radius-lg)',
               background: 'white',
               flex: 0.8,
@@ -1070,18 +1070,18 @@ const LiveTracking = () => {
               minHeight: 0,
             }}
           >
-            <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--sc-dark-accent, #29271F)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <HiOutlineShieldCheck style={{ color: 'var(--sc-primary-accent, #536D57)', fontSize: '1.1rem' }} /> Safety Shield Active
             </h3>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #29271F)' }}>KYC Verification:</strong> 100% background-checked with Police & QR ID.
+                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>KYC Verification:</strong> 100% background-checked with Police & QR ID.
               </li>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #29271F)' }}>Live Route Tracking:</strong> Encrypted GPS coordinates monitored by dispatch.
+                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>Live Route Tracking:</strong> Encrypted GPS coordinates monitored by dispatch.
               </li>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #29271F)' }}>ServeCircle Guarantee:</strong> Service covered up to ₹10,000 for safety.
+                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>ServeCircle Guarantee:</strong> Service covered up to ₹10,000 for safety.
               </li>
             </ul>
           </div>
