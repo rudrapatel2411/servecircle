@@ -304,7 +304,7 @@ const PostMoveConcierge = ({ onNext }) => {
  ))}
  </div>
 
- <button className="btn btn-primary" onClick={() => navigate('/customer/relocation-hub')} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #38bdf8, #2563eb)', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+ <button className="btn btn-primary" onClick={() => navigate('/customer/relocation')} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #38bdf8, #2563eb)', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
  {t('packersFlow.completeBooking', 'Proceed to Relocation Hub')} <HiOutlineChevronRight />
  </button>
  </div>

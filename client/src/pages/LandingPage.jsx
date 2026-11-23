@@ -104,7 +104,7 @@ const LandingPage = () => {
  <span className="cat-item-icon"><HiOutlineSparkles size={18} /></span>
  <span className="cat-item-title">Food & Chef</span>
  </Link>
- <Link to="/customer/pet-care" className="cat-item-link">
+ <Link to="/customer/pet-services" className="cat-item-link">
  <span className="cat-item-icon"><HiOutlineHeart size={18} /></span>
  <span className="cat-item-title">Pet Care</span>
  </Link>
@@ -112,7 +112,7 @@ const LandingPage = () => {
  <span className="cat-item-icon"><HiOutlineHeart size={18} /></span>
  <span className="cat-item-title">Health & Doctor</span>
  </Link>
- <Link to="/customer/society-life" className="cat-item-link">
+ <Link to="/customer/society-management" className="cat-item-link">
  <span className="cat-item-icon"><HiOutlineBuildingOffice2 size={18} /></span>
  <span className="cat-item-title">Society Services</span>
  </Link>
@@ -393,7 +393,7 @@ const LandingPage = () => {
  </div>
  <div className="footer-col">
  <h4>{t('footer.support', 'Support')}</h4>
- <Link to="/customer/help">{t('footer.helpCenter', 'Help Center')}</Link>
+ <Link to="/customer/trust-safety">{t('footer.helpCenter', 'Help Center')}</Link>
  <Link to="/customer">{t('footer.terms', 'Terms & Conditions')}</Link>
  <Link to="/customer">{t('footer.privacy', 'Privacy Policy')}</Link>
  </div>

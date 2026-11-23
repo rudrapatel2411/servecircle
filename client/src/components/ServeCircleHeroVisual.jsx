@@ -214,7 +214,7 @@ export default function ServeCircleHeroVisual() {
 
       {/* Badge 4: Middle/Bottom-Right (Pet Care & More) */}
       <Link
-        to="/customer/pet-care"
+        to="/customer/pet-services"
         className={`sc-art-badge art-mid-right ${hoveredBadge === 'pet' ? 'is-hover' : ''}`}
         onMouseEnter={() => setHoveredBadge('pet')}
         onMouseLeave={() => setHoveredBadge(null)}

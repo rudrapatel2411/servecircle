@@ -546,9 +546,9 @@ const OrderedServices = () => {
  <span style={{ fontSize: '0.8rem', color: 'var(--navy-600)', display: 'flex', alignItems: 'center', gap: '4px' }}>
  <HiOutlineMapPin /> {order.address}
  </span>
- {order.status === 'en-route' && (
+ {['pending', 'confirmed', 'en-route', 'active'].includes(order.status) && (
  <Link
- to={`/customer/live-tracking?bookingId=${order.id}&service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker.name)}&price=${order.amount}`}
+ to={`/customer/live-tracking?bookingId=${encodeURIComponent(order.rawId || order.id.replace('#', ''))}&service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker?.name || '')}&price=${order.amount}`}
  className="btn btn-primary"
  style={{ marginLeft: 'auto', fontSize: '0.8rem', padding: '8px 16px' }}
  >
@@ -557,7 +557,7 @@ const OrderedServices = () => {
  )}
  {order.status === 'completed' && (
  <Link
- to={`/customer/review/${order.id}?service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker.name)}`}
+ to={`/customer/review/${encodeURIComponent(order.rawId || order.id.replace('#', ''))}?service=${encodeURIComponent(order.service)}&worker=${encodeURIComponent(order.worker?.name || '')}&price=${order.amount}`}
  className="btn btn-primary"
  style={{ marginLeft: 'auto', fontSize: '0.8rem', padding: '8px 16px' }}
  >

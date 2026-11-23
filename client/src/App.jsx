@@ -138,9 +138,14 @@ function App() {
           <Route path="travel-commute" element={<TravelCommuteHub />} />
           <Route path="food-kitchen" element={<FoodKitchenHub />} />
           <Route path="pet-services" element={<PetHub />} />
+          <Route path="pet-care" element={<PetHub />} />
           <Route path="health-wellness" element={<HealthWellnessHub />} />
           <Route path="society-management" element={<SocietyManagementHub />} />
+          <Route path="society-life" element={<SocietyManagementHub />} />
           <Route path="relocation" element={<RelocationHub />} />
+          <Route path="relocation-hub" element={<RelocationHub />} />
+          <Route path="help" element={<TrustSafety />} />
+          <Route path="orders" element={<OrderedServices />} />
 
           {/* Legacy category routes under services */}
           <Route path="services/home-repairs" element={<HomeRepairsHub />} />
