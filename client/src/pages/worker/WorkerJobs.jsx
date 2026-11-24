@@ -202,21 +202,79 @@ const WorkerJobs = () => {
  openCodModal(jobId, amount);
  };
 
+ const updateB2BWorkOrderStatus = (jobId, nextStatus) => {
+ try {
+ const raw = localStorage.getItem('b2bWorkOrders');
+ if (raw) {
+ const parsed = JSON.parse(raw);
+ const updated = parsed.map(o => (o.id === jobId || o.rawId === jobId ? { ...o, status: nextStatus } : o));
+ localStorage.setItem('b2bWorkOrders', JSON.stringify(updated));
+ window.dispatchEvent(new CustomEvent('servecircle:b2b-status-updated', { detail: { jobId, status: nextStatus } }));
+ }
+ } catch (e) {
+ console.warn('B2B work order sync warning:', e);
+ }
+ };
+
  const loadJobs = async (status = activeTab) => {
+ let b2bJobs = [];
+ try {
+ const raw = localStorage.getItem('b2bWorkOrders');
+ if (raw) {
+ const parsed = JSON.parse(raw);
+ b2bJobs = parsed.map(o => ({
+ _id: o.rawId || o.id,
+ id: o.id,
+ service: o.service,
+ category: o.category || 'Society Management',
+ scheduledDate: o.date ? new Date(o.date).toISOString() : new Date().toISOString(),
+ scheduledTime: o.time || '10:00 AM',
+ address: `${o.tower || 'Central Campus'}, Green Valley Society, Ahmedabad`,
+ amount: o.amount || o.cost || 2500,
+ workerEarnings: Math.round((o.amount || o.cost || 2500) * 0.9),
+ status: o.status || 'confirmed',
+ isEmergency: Boolean(o.urgency && o.urgency.includes('Emergency')),
+ isB2B: true,
+ societyName: o.societyName || 'Green Valley Society',
+ tower: o.tower,
+ gatePassPin: o.gatePassPin,
+ customer: { name: 'Rajesh Mehta (RWA Secretary)', phone: '+91 98765 43210' },
+ description: `Specs: [Society: ${o.societyName || 'Green Valley Society'}, Wing: ${o.tower || 'All Towers'}, GatePIN: ${o.gatePassPin || '4892'}]`,
+ }));
+ }
+ } catch (e) {
+ console.warn('Error reading local B2B work orders:', e);
+ }
+
  if (isDemoMode) {
- // Demo mode: filter mock jobs
+ // Demo mode: filter mock jobs + B2B jobs
+ const allDemo = [...b2bJobs, ...DEMO_JOBS];
  const filtered = status === 'all'
- ? DEMO_JOBS
- : DEMO_JOBS.filter((j) => j.status === status);
+ ? allDemo
+ : allDemo.filter((j) => j.status === status);
  setJobs(filtered);
  return;
  }
- if (!token) return;
+ if (!token) {
+ if (b2bJobs.length > 0) {
+ const filtered = status === 'all' ? b2bJobs : b2bJobs.filter(j => j.status === status);
+ setJobs(filtered);
+ }
+ return;
+ }
  setLoading(true);
  setError('');
  try {
  const data = await fetchWorkerJobs(token, status);
- setJobs(data);
+ const merged = Array.isArray(data) ? [...data] : [];
+ b2bJobs.forEach(bj => {
+ if (!merged.some(m => m._id === bj._id || m.bookingId === bj.id)) {
+ if (status === 'all' || bj.status === status) {
+ merged.unshift(bj);
+ }
+ }
+ });
+ setJobs(merged);
  } catch (err) {
  setError(err.message || 'Failed to load jobs');
  } finally {
@@ -261,7 +319,11 @@ const WorkerJobs = () => {
  };
 
  const handleStatus = async (bookingId, nextStatus) => {
- if (!token) return;
+ updateB2BWorkOrderStatus(bookingId, nextStatus);
+ if (!token) {
+ await loadJobs(activeTab);
+ return;
+ }
  setActionLoading(`${bookingId}-${nextStatus}`);
  setError('');
  try {
@@ -506,9 +568,19 @@ const WorkerJobs = () => {
  style={isEmergency ? { borderLeft: '4px solid #ef4444' } : {}}
  >
  <div className="job-info">
- <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+ <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
  {job.service}
  {isEmergency && <span style={{ background: '#fef2f2', color: '#ef4444', padding: '2px 8px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>EMERGENCY: 2x PAY</span>}
+ {job.isB2B && (
+ <span style={{ background: '#f5f3ff', color: '#6d28d9', padding: '2px 8px', borderRadius: '100px', fontSize: '0.72rem', fontWeight: 800, border: '1px solid #ddd6fe' }}>
+ 🏢 Society Work Order: {job.societyName} ({job.tower || 'Common Area'})
+ </span>
+ )}
+ {job.gatePassPin && (
+ <span style={{ background: '#ecfdf5', color: '#047857', padding: '2px 8px', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700, border: '1px solid #a7f3d0' }}>
+ Gate PIN: {job.gatePassPin}
+ </span>
+ )}
  </h4>
  <div className="job-meta" style={{ flexWrap: 'wrap' }}>
  <span><HiOutlineCalendarDays /> {formatDate(job.scheduledDate)}</span>

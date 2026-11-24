@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineChevronDown, HiOutlineEnvelope, HiOutlinePhone, HiOutlineUserCircle } from 'react-icons/hi2';
+import {
+  HiOutlineChevronDown,
+  HiOutlineEnvelope,
+  HiOutlinePhone,
+  HiOutlineUserCircle,
+  HiOutlineCheckCircle,
+  HiOutlineTicket,
+} from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
 
@@ -8,25 +15,54 @@ const B2BClientSupport = () => {
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState(null);
   const [ticketForm, setTicketForm] = useState({ type: 'Complaint', subject: '', desc: '' });
+  const [tickets, setTickets] = useState([]);
+  const [toastMsg, setToastMsg] = useState('');
 
-  const faqs = [
-    { q: t('b2bClient.support.faqs.q1'), a: t('b2bClient.support.faqs.a1') },
-    { q: t('b2bClient.support.faqs.q2'), a: t('b2bClient.support.faqs.a2') },
-    { q: t('b2bClient.support.faqs.q3'), a: t('b2bClient.support.faqs.a3') },
-    { q: t('b2bClient.support.faqs.q4'), a: t('b2bClient.support.faqs.a4') },
-    { q: t('b2bClient.support.faqs.q5'), a: t('b2bClient.support.faqs.a5') },
-    { q: t('b2bClient.support.faqs.q6'), a: t('b2bClient.support.faqs.a6') },
-    { q: t('b2bClient.support.faqs.q7'), a: t('b2bClient.support.faqs.a7') },
-    { q: t('b2bClient.support.faqs.q8'), a: t('b2bClient.support.faqs.a8') },
-  ];
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 4500);
+  };
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('b2bSupportTickets');
+      if (raw) setTickets(JSON.parse(raw));
+      else {
+        const initial = [
+          { id: 'TKT-10482', type: 'Billing', subject: 'July GST Invoice Clarification', status: 'In Review', date: '22 Jul 2026' },
+          { id: 'TKT-10391', type: 'Maintenance', subject: 'Basement Sensor Light Replacement', status: 'Resolved', date: '18 Jul 2026' },
+        ];
+        localStorage.setItem('b2bSupportTickets', JSON.stringify(initial));
+        setTickets(initial);
+      }
+    } catch (e) { /* ignore */ }
+  }, []);
 
   const handleTicketSubmit = (e) => {
     e.preventDefault();
     if (!ticketForm.subject || !ticketForm.desc) return;
     const ticketId = `TKT-${Math.floor(Math.random() * 90000) + 10000}`;
-    alert(`${t('b2bClient.support.form.successMsg')} ${ticketId}`);
+    const newTicket = {
+      id: ticketId,
+      type: ticketForm.type,
+      subject: ticketForm.subject,
+      desc: ticketForm.desc,
+      status: 'In Review',
+      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+    };
+    const updated = [newTicket, ...tickets];
+    setTickets(updated);
+    localStorage.setItem('b2bSupportTickets', JSON.stringify(updated));
+    showToast(`Support Ticket ${ticketId} created! Assigned to Account Manager Ananya Sharma.`);
     setTicketForm({ type: 'Complaint', subject: '', desc: '' });
   };
+
+  const faqs = [
+    { q: t('b2bClient.support.faqs.q1', 'How do I raise an emergency repair ticket?'), a: t('b2bClient.support.faqs.a1', 'You can use the 24/7 Society Emergency Hotline button or raise an Emergency ticket from this page.') },
+    { q: t('b2bClient.support.faqs.q2', 'How are AMC vendor payments processed?'), a: t('b2bClient.support.faqs.a2', 'All monthly and quarterly invoices are consolidated under Invoices & Payments with instant online payment.') },
+    { q: t('b2bClient.support.faqs.q3', 'Can multiple committee members have access?'), a: t('b2bClient.support.faqs.a3', 'Yes, RWA Chairman, Secretary, and Treasurer can each have tailored access under Society Team.') },
+    { q: t('b2bClient.support.faqs.q4', 'Where do security guards verify incoming technicians?'), a: t('b2bClient.support.faqs.a4', 'Each dispatched work order generates a 4-digit Security Gate PIN displayed in your Work Orders tracker.') },
+  ];
 
   return (
     <div className="page-content">
@@ -170,8 +206,58 @@ const B2BClientSupport = () => {
               </button>
             </form>
           </section>
+
+          {/* Active Tickets List */}
+          {tickets.length > 0 && (
+            <section className="b2b-card" style={{ marginTop: '20px' }}>
+              <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HiOutlineTicket style={{ color: '#2563eb' }} /> Active Support Tickets
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {tickets.map(tkt => (
+                  <div key={tkt.id} style={{ padding: '10px 14px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #e2e8f0', fontSize: '0.85rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <strong style={{ color: '#0f172a' }}>{tkt.id} &middot; {tkt.subject}</strong>
+                      <span style={{
+                        padding: '2px 8px', borderRadius: '4px', fontSize: '0.72rem', fontWeight: 700,
+                        background: tkt.status === 'Resolved' ? '#dcfce7' : '#eff6ff',
+                        color: tkt.status === 'Resolved' ? '#166534' : '#1d4ed8'
+                      }}>
+                        {tkt.status}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      Category: {tkt.type} &middot; Submitted: {tkt.date}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
+
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: '#0f172a',
+          color: '#fff',
+          padding: '12px 20px',
+          borderRadius: '10px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+          fontSize: '0.9rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 9999,
+          maxWidth: '420px',
+        }}>
+          <HiOutlineCheckCircle style={{ color: '#22c55e', fontSize: '1.4rem', flexShrink: 0 }} />
+          <span>{toastMsg}</span>
+        </div>
+      )}
     </div>
   );
 };

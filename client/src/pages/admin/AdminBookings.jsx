@@ -32,13 +32,51 @@ const AdminBookings = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const session = getSession();
-    if (!session?.token) return;
+    const loadAllBookings = async () => {
+      let apiBookings = [];
+      const session = getSession();
+      if (session?.token) {
+        try {
+          const data = await requestApi('/bookings', { token: session.token });
+          apiBookings = data?.bookings || [];
+        } catch (requestError) {
+          setError(requestError.message || 'Unable to load bookings from server');
+        }
+      }
 
-    requestApi('/bookings', { token: session.token })
-      .then((data) => setBookings(data?.bookings || []))
-      .catch((requestError) => setError(requestError.message || 'Unable to load bookings'))
-      .finally(() => setIsLoading(false));
+      // Merge B2B Society Work Orders from persistent store
+      let localB2B = [];
+      try {
+        const raw = localStorage.getItem('b2bWorkOrders');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          localB2B = parsed.map(o => ({
+            _id: o.id,
+            bookingId: o.id,
+            service: o.service,
+            customer: { name: o.societyName || 'Green Valley Society (RWA)' },
+            worker: { name: o.leadName ? `${o.leadName} (${o.workers || 4} Pros)` : 'ServeCircle Verified Crew' },
+            scheduledDate: o.date,
+            scheduledTime: o.time,
+            amount: o.amount || o.cost || 2500,
+            status: o.status || 'pending',
+            paymentStatus: o.paymentStatus || 'pending',
+            isB2B: true,
+            tower: o.tower,
+            gatePassPin: o.gatePassPin,
+            notes: o.notes,
+          }));
+        }
+      } catch (e) {
+        console.warn('Error reading local B2B orders for admin:', e);
+      }
+
+      const merged = [...localB2B, ...apiBookings];
+      setBookings(merged);
+      setIsLoading(false);
+    };
+
+    loadAllBookings();
   }, []);
 
   const filtered = bookings.filter((b) => {
@@ -116,19 +154,43 @@ const AdminBookings = () => {
               const bookingId = b.bookingId || b._id;
               const cfg = statusConfig[b.status] || { label: b.status, color: 'warning' };
               return (
-                <tr key={bookingId} className={expandedId === bookingId ? 'row-expanded' : ''}>
-                  <td><strong>{bookingId}</strong></td>
-                  <td>{b.service}</td>
-                  <td>{b.customer?.name || 'Unknown customer'}</td>
-                  <td>{b.worker?.name || 'Pending assignment'}</td>
-                  <td><small>{b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString('en-IN') : 'Not scheduled'}, {b.scheduledTime || 'Flexible'}</small></td>
-                  <td><strong>₹{b.amount}</strong></td>
-                  <td><span className={`badge badge-${cfg.color}`}>{cfg.label}</span></td>
-                  <td><span className={`badge badge-${b.paymentStatus === 'paid' ? 'success' : b.paymentStatus === 'refunded' ? 'warning' : 'danger'}`}>{b.paymentStatus}</span></td>
-                  <td>
-                    <button className="btn-icon-sm" onClick={() => setExpandedId(expandedId === bookingId ? null : bookingId)}><HiOutlineEye /></button>
-                  </td>
-                </tr>
+                <>
+                  <tr key={bookingId} className={expandedId === bookingId ? 'row-expanded' : ''}>
+                    <td>
+                      <strong>{bookingId}</strong>
+                      {b.isB2B && (
+                        <span style={{ display: 'block', fontSize: '0.68rem', fontWeight: 800, color: '#1d4ed8', background: '#eff6ff', padding: '1px 6px', borderRadius: '4px', width: 'fit-content', marginTop: '3px' }}>
+                          🏢 Society B2B
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <div>{b.service}</div>
+                      {b.tower && <small style={{ color: '#64748b' }}>Wing: {b.tower}</small>}
+                    </td>
+                    <td>{b.customer?.name || 'Unknown customer'}</td>
+                    <td>{b.worker?.name || 'Pending assignment'}</td>
+                    <td><small>{b.scheduledDate ? (typeof b.scheduledDate === 'string' && b.scheduledDate.includes(' ') ? b.scheduledDate : new Date(b.scheduledDate).toLocaleDateString('en-IN')) : 'Not scheduled'}, {b.scheduledTime || 'Flexible'}</small></td>
+                    <td><strong>₹{b.amount}</strong></td>
+                    <td><span className={`badge badge-${cfg.color}`}>{cfg.label}</span></td>
+                    <td><span className={`badge badge-${b.paymentStatus === 'paid' ? 'success' : b.paymentStatus === 'refunded' ? 'warning' : 'danger'}`}>{b.paymentStatus}</span></td>
+                    <td>
+                      <button className="btn-icon-sm" onClick={() => setExpandedId(expandedId === bookingId ? null : bookingId)}><HiOutlineEye /></button>
+                    </td>
+                  </tr>
+                  {expandedId === bookingId && (
+                    <tr className="detail-row">
+                      <td colSpan="9" style={{ background: '#f8fafc', padding: '12px 16px', fontSize: '0.85rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                          <div><strong>Location / Campus:</strong> {b.address || 'Green Valley Society, Ahmedabad'}</div>
+                          {b.tower && <div><strong>Designated Tower:</strong> {b.tower}</div>}
+                          {b.gatePassPin && <div><strong>Security Gate PIN:</strong> <span style={{ color: '#166534', fontWeight: 700, letterSpacing: '2px' }}>{b.gatePassPin}</span></div>}
+                          {b.notes && <div><strong>Instructions:</strong> {b.notes}</div>}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               );
             })}
           </tbody>

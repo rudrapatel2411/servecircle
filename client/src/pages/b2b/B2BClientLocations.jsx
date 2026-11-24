@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   HiOutlinePlusCircle,
   HiOutlineXMark,
+  HiOutlineCheckCircle,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
@@ -28,6 +29,12 @@ const B2BClientLocations = () => {
   const [activeGroup, setActiveGroup] = useState(null);
   const [activeBlock, setActiveBlock] = useState(null);
   const [form, setForm] = useState({ tower: '', type: 'Residential', manager: '', flats: '' });
+  const [toastMsg, setToastMsg] = useState('');
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 4500);
+  };
 
   useEffect(() => {
     const saved = localStorage.getItem('b2bClientBlocks');
@@ -85,7 +92,7 @@ const B2BClientLocations = () => {
     setBlocks(updated);
     localStorage.setItem('b2bClientBlocks', JSON.stringify(updated));
     setForm({ tower: '', type: 'Residential', manager: '', flats: '' });
-    alert(t('b2bClient.locations.addForm.successMsg'));
+    showToast(t('b2bClient.locations.addForm.successMsg', 'Wing or facility registered successfully!'));
   };
 
   return (
@@ -285,7 +292,16 @@ const B2BClientLocations = () => {
               <button className="btn btn-outline" onClick={() => { setActiveBlock(null); navigate('/b2b/contracts'); }}>
                 {t('b2bClient.dashboard.quickActions.viewContracts')}
               </button>
-              <button className="btn btn-outline" onClick={() => alert(`${t('b2bClient.locations.detail.editManagerAlert')}`)}>
+              <button className="btn btn-outline" onClick={() => {
+                const newMgr = window.prompt('Enter new Facility / Wing Manager name:', activeBlock.manager || '');
+                if (newMgr && newMgr.trim()) {
+                  const updated = blocks.map(b => b.id === activeBlock.id ? { ...b, manager: newMgr.trim() } : b);
+                  setBlocks(updated);
+                  localStorage.setItem('b2bClientBlocks', JSON.stringify(updated));
+                  setActiveBlock(prev => prev ? { ...prev, manager: newMgr.trim() } : null);
+                  showToast(`Facility Manager for ${activeBlock.tower} updated to ${newMgr.trim()}`);
+                }
+              }}>
                 {t('b2bClient.locations.detail.editManagerBtn')}
               </button>
               <button className="btn btn-outline" onClick={() => { setActiveBlock(null); navigate('/b2b/support'); }}>
@@ -295,12 +311,35 @@ const B2BClientLocations = () => {
                 if (window.confirm(t('b2bClient.locations.detail.deactivateConfirm'))) {
                   setBlocks(prev => prev.filter(b => b.id !== activeBlock.id));
                   setActiveBlock(null);
+                  showToast(`Location deactivated`);
                 }
               }}>
                 {t('b2bClient.locations.detail.deactivateBtn')}
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: '#0f172a',
+          color: '#fff',
+          padding: '12px 20px',
+          borderRadius: '10px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+          fontSize: '0.9rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 9999,
+          maxWidth: '420px',
+        }}>
+          <HiOutlineCheckCircle style={{ color: '#22c55e', fontSize: '1.4rem', flexShrink: 0 }} />
+          <span>{toastMsg}</span>
         </div>
       )}
     </div>

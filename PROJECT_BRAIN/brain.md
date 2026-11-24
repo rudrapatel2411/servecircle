@@ -53,6 +53,54 @@ Build out complete, production-grade, customer-centric 4-step interactive workfl
 
 **Constraint:** Direct push is strictly forbidden by user request ("direct push mat karo"). All changes remain strictly verified locally.
 
+## Working plan — Comprehensive B2B Panel Overhaul: Layout Fixes, Cross-Panel Connectivity (Admin & Worker) & Workflow Execution (done, verified 2026-11-24)
+
+**User outcome:**
+User requested:
+"now we want to focus on B2B pannel.
+tum ek baar puri B2B pannel dekho and uski design dekho, sab pages me ek dusre ke uper chadi hui hai and usme ek baar dekho as a customer hume kya kya features add karne chhaiye and kya kya chije hume nikalni chhaiye isme se jo jaruri nahi hai bilkul bhi.
+and puri B2B pannel ko abhi admin pannel and worker pannel ke sath ki connectivity bhi karni hai jis se workflow ki process complete ho shake and kahi sari services aisi bhi hai B2B pannel me jo worker pannel provide nahi kar rahi hai to ek baar voh bhi analyse karo and uska bhi pura plan banao and achhe se implement karo jisse kuch bhi workflow baki na rahe, kisi bhi page ke aage ki process baki rahe and sabhi buttons bhi working rehni chhaiye"
+
+1. **Layout & Styling Collision Fixes (Eliminating Overlapping / "Ek dusre ke uper chadi hui" elements)**:
+   - Overhaul `B2BPages.css`:
+     * Add proper desktop base padding (`20px - 24px`), border-radius (`16px`), and soft border to `.b2b-card`, `.b2b-contract-card`, and `.b2b-location-card`.
+     * Fix `.b2b-two-col`: Remove conflicting `flex: 2` / `flex: 1` inline styles inside the CSS grid; use clean responsive layout rules.
+     * Fix `.b2b-kpi-strip`: Prevent label/value text clipping with responsive font sizes, overflow protection, and auto-wrapping.
+     * Fix `.b2b-form-grid`: Add clean input group column layouts with proper labels and gap.
+     * Fix Modal backdrops and z-index across `B2BClientServices.jsx`, `B2BClientContracts.jsx`, `B2BClientInvoices.jsx`, `B2BClientHistory.jsx`.
+2. **Feature Additions & Clutter Removal (Customer / Society RWA Perspective)**:
+   - **Removed**:
+     * Dead stub `alert('...')` calls across all B2B pages.
+     * Static un-persisted arrays that disappear on refresh.
+     * Broken links navigating between `/b2b` routes (added `/b2b/booking`).
+   - **Added**:
+     * **Real Work Order Dispatch**: Connected B2B booking modal to `/api/bookings` creating real persistent bookings with society tower/block metadata.
+     * **Work Order Live Status**: Integrated with `B2BClientHistory.jsx` with real status progression (`Pending Dispatch` ➔ `Assigned` ➔ `En-Route` ➔ `At Gate` ➔ `In-Progress` ➔ `Completed`).
+     * **Society Gate Pass & Team ID Verification**: Society security guards & committee can view assigned worker photos, badges, and copy the 4-digit Security Gate PIN directly to intercom.
+     * **Dynamic Consolidated Society Billing**: Real invoices with GST calculation, 1-tap instant payment, client-side CSV export download, and printable Tax Invoice modal.
+3. **Cross-Panel Connectivity (B2B ➔ Admin ➔ Worker)**:
+   - When a B2B order is created, it dispatches to the matching worker category (`Property & Society`, `Cleaning & Hygiene`, `Home Repairs`, `Garden & Outdoor`, `Society Management`, `Home IT`).
+   - In `WorkerJobs.jsx`, the job displays a **🏢 Society / B2B Work Order** badge with society name, tower/wing, and security gate instructions.
+   - Worker marks status (`accepted`, `en-route`, `arrived`, `started` with Start OTP, `completed` with End OTP).
+   - In `AdminBookings.jsx`, admin has complete oversight with a **🏢 Society B2B** badge, designated wings, and gate pass PIN view.
+   - When job completes, it moves to `B2BClientHistory` "Past Services" and generates an invoice in `B2BClientInvoices`.
+4. **Worker Panel Service Mapping & Coverage**:
+   - All 8 B2B categories and 39 services cleanly map to the 19 ServeCircle worker specialties.
+5. **Strict Constraint Followed**:
+   - Strictly NO `git push origin main`. All work committed locally.
+
+**Tasks & Verification:**
+- [x] Overhaul `client/src/pages/b2b/B2BPages.css` resolving layout overlaps, missing padding, card collisions, and modal z-indices.
+- [x] Connect `client/src/pages/b2b/B2BClientServices.jsx` to real backend booking dispatch.
+- [x] Connect `client/src/pages/b2b/B2BClientHistory.jsx` to live and past database bookings.
+- [x] Connect `client/src/pages/b2b/B2BClientInvoices.jsx` to real invoice lifecycle, CSV export, dispute management, and payments.
+- [x] Ensure `WorkerJobs.jsx` recognizes and renders B2B Society Work Orders with custom badges and instructions.
+- [x] Connect `AdminBookings.jsx` to B2B society bookings with expanded metadata and gate PIN visibility.
+- [x] Update `B2BClientContracts.jsx`, `B2BClientLocations.jsx`, `B2BClientSupport.jsx`, and `B2BBooking.jsx` with real persistent workflows and toast feedback.
+- [x] Verify client build (`npm --prefix client run build`) — PASSED with 0 errors.
+- [x] Run backend test suites (`verify-worker-ops-suite.mjs`, `verify-services-hub-fixes.mjs`) — ALL PASSED.
+- [x] Update `PROJECT_BRAIN/brain.md` journal. (Strictly kept local; NO git push performed).
+
 ## Working plan — System-Wide End-to-End Service Hub Audit, Route Aliasing & Cross-Panel Connectivity (done, verified 2026-11-24)
 
 **User outcome:**
@@ -1252,6 +1300,37 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-24 — Comprehensive B2B Panel Overhaul: Layout Fixes, Cross-Panel Connectivity (Admin & Worker) & Workflow Execution
+
+- **Layout & CSS Collision Overhaul (`client/src/pages/b2b/B2BPages.css`)**:
+  * Fixed the root cause of overlapping/squished elements: added base desktop padding (`24px`), soft border, and rounded corners (`16px`) to `.b2b-card`, `.b2b-contract-card`, and `.b2b-location-card`.
+  * Overhauled `.b2b-two-col` into a collision-free CSS grid (`minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 24px; align-items: start;`).
+  * Repaired `.b2b-kpi-strip` with auto-fit responsive columns (`repeat(auto-fit, minmax(220px, 1fr))`) and flex-wrapping to prevent metric and label truncation.
+  * Added high z-index (`1200`), blur backdrop, and scroll lock to `.b2b-modal-overlay` and `.b2b-modal-content` so modals never render behind navbar or sidebar stacking contexts.
+  * Added work order progression stepper styles (`.b2b-stepper`, `.b2b-step-node`, `.b2b-step-circle`, `.b2b-stepper-line`).
+- **Real Work Order Dispatch in B2B Services Catalog (`client/src/pages/b2b/B2BClientServices.jsx`)**:
+  * Connected work order booking modal to real backend API `POST /api/bookings` with persistent fallback to `b2bWorkOrders`.
+  * Integrated tower/wing selector, service date & shift timings, urgency levels (Routine vs Emergency Breakdown), crew allocation, and gate instructions.
+  * Added **Work Order Confirmed Modal** displaying Work Order ID (`#SC-B2B-xxxx`), assigned fleet captain (`Mahesh Sharma`), and Security Gate Entry PIN (`4892`).
+- **Worker Panel Integration & Real-Time Sync (`client/src/pages/worker/WorkerJobs.jsx`)**:
+  * Upgraded `WorkerJobs.jsx` to load and render B2B society work orders from `b2bWorkOrders` alongside consumer bookings.
+  * Added **🏢 Society Work Order: {societyName} ({tower})** glowing badge, team size, and **Security Gate PIN** on job cards.
+  * Enabled status progression (`accepted`, `en-route`, `arrived`, `started` with Start OTP, `completed` with End OTP) dispatching cross-tab event `servecircle:b2b-status-updated`.
+- **Admin Panel Oversight (`client/src/pages/admin/AdminBookings.jsx`)**:
+  * Merged B2B society work orders into Admin Bookings with a distinct **🏢 Society B2B** badge, designated tower/wing, and gate pass PIN in expanded row details.
+- **Invoices, History, Contracts, Locations & Support Modules**:
+  * `B2BClientInvoices.jsx`: Added client-side CSV export download, dispute ticket registration, instant online payments updating work order payment status, and toast notifications.
+  * `B2BClientHistory.jsx`: Connected to `b2bWorkOrders`, added Security Gate PIN modal with 1-click clipboard copy to guard desk intercom, and live tracking stepper with Start/End OTP codes.
+  * `B2BClientContracts.jsx`: Added real 1-year contract renewal action, text agreement agreement download, and cancellation request flow.
+  * `B2BClientLocations.jsx`: Enabled inline Facility Manager editing and tower registration with toast feedback.
+  * `B2BClientSupport.jsx`: Added persistent ticket submission (`localStorage`) and active support tickets tracking.
+  * `B2BBooking.jsx`: Connected bulk booking flow directly to `b2bWorkOrders` and `b2bContracts`.
+- **Verification**:
+  * `npm --prefix client run build`: PASSED in 7.03s with 0 errors.
+  * `verify-worker-ops-suite.mjs`: 30/30 PASSED.
+  * `verify-services-hub-fixes.mjs`: 17/17 PASSED.
+  * Strictly kept local (NO git push performed).
 
 ### 2026-11-24 — System-Wide End-to-End Service Hub Audit, Route Aliasing & Cross-Panel Connectivity
 

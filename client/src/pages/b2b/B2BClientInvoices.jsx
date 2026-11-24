@@ -30,8 +30,34 @@ const B2BClientInvoices = () => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
+  const [toastMsg, setToastMsg] = useState('');
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 4500);
+  };
+
   const [invoices, setInvoices] = useState(() => {
     let rows = [...defaultInvoices];
+    // Sync with completed work orders
+    try {
+      const orders = JSON.parse(localStorage.getItem('b2bWorkOrders') || '[]');
+      orders.forEach(o => {
+        const invId = `INV-${o.id.replace('SC-B2B-', 'B2B-')}`;
+        if (!rows.some(r => r.id === invId || r.contract === o.id)) {
+          rows.unshift({
+            id: invId,
+            month: 'Jul 2026',
+            contract: o.id,
+            service: o.service,
+            vendor: 'ServeCircle Verified Fleet',
+            amount: o.amount || o.cost || 2500,
+            status: o.status === 'completed' ? 'paid' : 'sent',
+            dueDate: '31 Jul 2026',
+          });
+        }
+      });
+    } catch (e) { /* ignore */ }
+
     // Generate invoices for any client contracts that don't have default invoices
     try {
       const contracts = JSON.parse(localStorage.getItem('b2bClientContracts') || '[]');
@@ -42,12 +68,12 @@ const B2BClientInvoices = () => {
           const monthly = Math.round((c.value || 12000) / 12);
           rows.push({
             id: `INV-${nextId++}`, month: 'Jul 2026', contract: c.id,
-            service: c.name || c.type, vendor: c.vendor || 'ServeCircle',
+            service: c.name || c.type, vendor: c.vendor || 'ServeCircle Verified Fleet',
             amount: monthly, status: 'sent', dueDate: '31 Jul 2026',
           });
           rows.push({
             id: `INV-${nextId++}`, month: 'Jun 2026', contract: c.id,
-            service: c.name || c.type, vendor: c.vendor || 'ServeCircle',
+            service: c.name || c.type, vendor: c.vendor || 'ServeCircle Verified Fleet',
             amount: monthly, status: 'paid', dueDate: '30 Jun 2026',
           });
         }
@@ -64,6 +90,33 @@ const B2BClientInvoices = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [activePaymentInvoice, setActivePaymentInvoice] = useState(null);
 
+  const exportCSV = () => {
+    const headers = ['Invoice ID', 'Service', 'Vendor', 'Month', 'Due Date', 'Amount (INR)', 'Status'];
+    const rows = invoices.map(inv => [
+      inv.id,
+      `"${inv.service.replace(/"/g, '""')}"`,
+      `"${inv.vendor.replace(/"/g, '""')}"`,
+      inv.month,
+      inv.dueDate,
+      inv.amount,
+      inv.status
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `ServeCircle_Invoices_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Invoices exported and downloaded as CSV successfully!');
+  };
+
+  const handleRaiseDispute = (invId) => {
+    setInvoices(prev => prev.map(inv => inv.id === invId ? { ...inv, disputed: true } : inv));
+    showToast(`Dispute ticket #DSP-${Math.floor(1000 + Math.random() * 9000)} registered for ${invId}. Our RWA accounts team will review within 24 hours.`);
+  };
+
   const filteredRows = useMemo(
     () => invoices.filter(r => {
       const statusMatch = statusFilter === 'all' || r.status === statusFilter;
@@ -79,6 +132,22 @@ const B2BClientInvoices = () => {
   const handlePaymentSuccess = () => {
     if (activePaymentInvoice) {
       setInvoices(prev => prev.map(r => r.id === activePaymentInvoice.id ? { ...r, status: 'paid' } : r));
+      try {
+        const raw = localStorage.getItem('b2bWorkOrders');
+        if (raw) {
+          const orders = JSON.parse(raw);
+          const updated = orders.map(ord => {
+            if (ord.id === activePaymentInvoice.id || ord.id === activePaymentInvoice.contract) {
+              return { ...ord, paymentStatus: 'paid' };
+            }
+            return ord;
+          });
+          localStorage.setItem('b2bWorkOrders', JSON.stringify(updated));
+        }
+      } catch (e) {
+        console.warn('Error updating b2bWorkOrders payment status:', e);
+      }
+      showToast(`Payment of ₹${activePaymentInvoice.amount.toLocaleString('en-IN')} confirmed for Invoice ${activePaymentInvoice.id}!`);
     }
     setPaymentModalOpen(false);
     setActivePaymentInvoice(null);
@@ -92,7 +161,7 @@ const B2BClientInvoices = () => {
           <p className="page-subtitle">Track all vendor bills, make payments, and download invoices for Green Valley Society.</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button className="btn btn-outline" onClick={() => alert('Exporting all invoices to CSV...')}>
+          <button className="btn btn-outline" onClick={exportCSV}>
             Export CSV
           </button>
           <button className="btn btn-primary" onClick={() => { setPdfFileName('Consolidated_Statement_Jul_2026.pdf'); setActivePdfInvoice(null); setPdfModalOpen(true); }}>
@@ -204,8 +273,8 @@ const B2BClientInvoices = () => {
                       </button>
                     )}
                     {row.status !== 'paid' && (
-                      <button className="b2b-mini-btn" style={{ background: '#fee2e2', color: '#991b1b' }} onClick={() => alert(`Dispute raised for invoice ${row.id}. Our accounts team will review and contact you.`)}>
-                        Dispute
+                      <button className="b2b-mini-btn" style={{ background: '#fee2e2', color: '#991b1b' }} onClick={() => handleRaiseDispute(row.id)}>
+                        {row.disputed ? 'Disputed' : 'Dispute'}
                       </button>
                     )}
                   </div>
@@ -301,6 +370,28 @@ const B2BClientInvoices = () => {
           onSuccess={handlePaymentSuccess}
           amount={activePaymentInvoice.amount}
         />
+      )}
+
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: '#0f172a',
+          color: '#fff',
+          padding: '12px 20px',
+          borderRadius: '10px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+          fontSize: '0.9rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 9999,
+          maxWidth: '420px',
+        }}>
+          <HiOutlineCheckCircle style={{ color: '#22c55e', fontSize: '1.4rem', flexShrink: 0 }} />
+          <span>{toastMsg}</span>
+        </div>
       )}
     </div>
   );

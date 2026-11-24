@@ -217,6 +217,7 @@ function App() {
         <Route path="/b2b" element={<DashboardLayout panel="b2b" />}>
           <Route index element={<B2BClientDashboard />} />
           <Route path="services" element={<B2BClientServices />} />
+          <Route path="booking" element={<B2BBooking />} />
           <Route path="contracts" element={<B2BClientContracts />} />
           <Route path="locations" element={<B2BClientLocations />} />
           <Route path="team" element={<B2BTeam />} />

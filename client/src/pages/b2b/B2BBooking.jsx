@@ -6,6 +6,7 @@ import {
   HiOutlineClock,
   HiOutlineMapPin,
   HiOutlinePlusCircle,
+  HiOutlineCheckCircle,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
@@ -95,13 +96,26 @@ const B2BBooking = () => {
     return Math.round(base * selectedLocations.length * multiplier * form.quantity);
   }, [form, selectedLocations]);
 
+  const [toastMsg, setToastMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), 4500);
+  };
+
   const handleSubmit = () => {
-    if (selectedLocations.length === 0) return alert('Please select at least one location');
+    if (selectedLocations.length === 0) {
+      setErrorMsg('Please select at least one campus block or building location');
+      setTimeout(() => setErrorMsg(''), 4000);
+      return;
+    }
     setIsSubmitting(true);
     
     // Create new bulk request/contract object
+    const requestId = `BB-${Math.floor(1000 + Math.random() * 9000)}`;
     const newRequest = {
-      id: `BB-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: requestId,
       name: `Bulk Request - ${form.service}`,
       type: form.service,
       value: estimatedCost,
@@ -115,11 +129,41 @@ const B2BBooking = () => {
     setLocalContracts(updatedContracts);
     localStorage.setItem('b2bContracts', JSON.stringify(updatedContracts));
 
+    // Also dispatch to b2bWorkOrders so Worker Panel and B2B History see it immediately
+    try {
+      const existingRaw = localStorage.getItem('b2bWorkOrders');
+      const existing = existingRaw ? JSON.parse(existingRaw) : [];
+      const newWorkOrder = {
+        id: `SC-B2B-${Math.floor(1000 + Math.random() * 9000)}`,
+        service: `Bulk ${form.service} (${selectedLocations.length} Wings)`,
+        tower: selectedLocations.join(', '),
+        date: form.preferredDate || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        time: form.preferredTime || '09:00 AM',
+        status: 'pending',
+        workers: Math.max(3, selectedLocations.length * 2),
+        vendor: 'ServeCircle Verified Fleet',
+        amount: estimatedCost,
+        cost: estimatedCost,
+        leadName: 'Mahesh Sharma',
+        gatePassPin: Math.floor(1000 + Math.random() * 9000).toString(),
+        startOtp: Math.floor(1000 + Math.random() * 9000).toString(),
+        endOtp: Math.floor(1000 + Math.random() * 9000).toString(),
+        notes: `Bulk order for ${selectedLocations.length} locations. Schedule: ${form.scheduleType || 'One-time'}.`,
+        societyName: 'Green Valley Society',
+        isB2B: true,
+      };
+      const updatedOrders = [newWorkOrder, ...existing];
+      localStorage.setItem('b2bWorkOrders', JSON.stringify(updatedOrders));
+      window.dispatchEvent(new CustomEvent('servecircle:b2b-booking-created', { detail: newWorkOrder }));
+    } catch (e) {
+      console.warn('Error saving to b2bWorkOrders:', e);
+    }
+
     setTimeout(() => {
       setIsSubmitting(false);
-      alert('Bulk request submitted successfully! Our team will review and approve the SLA shortly.');
-      navigate('/b2b');
-    }, 1200);
+      showToast('Bulk work order submitted! Dispatched to Fleet Operations.');
+      setTimeout(() => navigate('/b2b/history'), 1200);
+    }, 800);
   };
 
   return (
@@ -211,6 +255,11 @@ const B2BBooking = () => {
               />
             </div>
           </div>
+          {errorMsg && (
+            <div style={{ padding: '10px 14px', borderRadius: '8px', background: '#fee2e2', color: '#991b1b', fontSize: '0.85rem', marginBottom: '14px', border: '1px solid #fca5a5' }}>
+              {errorMsg}
+            </div>
+          )}
           <button className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting}>
             <HiOutlinePlusCircle /> {isSubmitting ? 'Submitting...' : t('b2bExtended.submitBulk', 'Submit Bulk Request')}
           </button>
@@ -247,6 +296,28 @@ const B2BBooking = () => {
           ))}
         </div>
       </div>
+
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: '#0f172a',
+          color: '#fff',
+          padding: '12px 20px',
+          borderRadius: '10px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+          fontSize: '0.9rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 9999,
+          maxWidth: '420px',
+        }}>
+          <HiOutlineCheckCircle style={{ color: '#22c55e', fontSize: '1.4rem', flexShrink: 0 }} />
+          <span>{toastMsg}</span>
+        </div>
+      )}
     </div>
   );
 };

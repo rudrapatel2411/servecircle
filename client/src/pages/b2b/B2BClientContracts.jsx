@@ -5,6 +5,9 @@ import {
  HiOutlineCalendarDays,
  HiOutlineXMark,
  HiOutlineBanknotes,
+ HiOutlineCheckCircle,
+ HiOutlinePhone,
+ HiOutlineDocumentArrowDown,
 } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './B2BPages.css';
@@ -26,6 +29,65 @@ const B2BClientContracts = () => {
  const [contracts, setContracts] = useState([]);
  const [statusFilter, setStatusFilter] = useState('all');
  const [selectedContract, setSelectedContract] = useState(null);
+ const [toastMsg, setToastMsg] = useState('');
+
+ const showToast = (msg) => {
+  setToastMsg(msg);
+  setTimeout(() => setToastMsg(''), 4500);
+ };
+
+ const handleRenewContract = (contract) => {
+  const updated = contracts.map(c => {
+   if (c.id === contract.id) {
+    const endParts = c.endDate ? c.endDate.split(' ') : ['31', 'Dec', '2026'];
+    const nextYear = (parseInt(endParts[2] || '2026') + 1).toString();
+    return { ...c, status: 'active', endDate: `${endParts[0]} ${endParts[1]} ${nextYear}` };
+   }
+   return c;
+  });
+  setContracts(updated);
+  localStorage.setItem('b2bClientContracts', JSON.stringify(updated));
+  showToast(`Contract renewal submitted! ${contract.name} extended successfully.`);
+  if (selectedContract?.id === contract.id) {
+   setSelectedContract(prev => prev ? { ...prev, status: 'active' } : null);
+  }
+ };
+
+ const handleCancelContract = (contract) => {
+  if (window.confirm(`Are you sure you want to request cancellation for "${contract.name}"?`)) {
+   const updated = contracts.map(c => c.id === contract.id ? { ...c, status: 'cancelled' } : c);
+   setContracts(updated);
+   localStorage.setItem('b2bClientContracts', JSON.stringify(updated));
+   showToast(`Cancellation notice registered for ${contract.name}. An RWA relation executive will call you.`);
+   setSelectedContract(null);
+  }
+ };
+
+ const handleDownloadPdf = (contract) => {
+  const content = `SERVECIRCLE ENTERPRISE CONTRACT AGREEMENT\n` +
+   `Contract ID: ${contract.id}\n` +
+   `Title: ${contract.name}\n` +
+   `Vendor: ${contract.vendor || 'ServeCircle Certified Fleet'}\n` +
+   `Society Campus: Green Valley Society, Ahmedabad\n` +
+   `Validity: ${contract.startDate} to ${contract.endDate}\n` +
+   `Annual Value: Rs. ${(contract.value || 0).toLocaleString('en-IN')}\n` +
+   `Coverage: ${contract.locations || 4} Towers & Common Areas\n` +
+   `SLA: 99.5% uptime guaranteed with 2-hour emergency turnaround.\n` +
+   `Generated on: ${new Date().toLocaleString()}\n`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ServeCircle_Agreement_${contract.id}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast(`Contract Agreement document for ${contract.id} downloaded successfully!`);
+ };
+
+ const handleContactVendor = (contract) => {
+  showToast(`Connecting with ${contract.vendor || 'Vendor Helpdesk'}: Hotline +91 800-482-9900 (Mon-Sat 8am-8pm)`);
+ };
 
  useEffect(() => {
  const saved = localStorage.getItem('b2bClientContracts');
@@ -147,7 +209,7 @@ const B2BClientContracts = () => {
  {t('b2bClient.contracts.towersBtn')}
  </button>
  {contract.status === 'renewal_due' && (
- <button className="b2b-mini-btn" style={{ flex: 1, background: '#fef9c3', color: '#854d0e' }} onClick={(e) => { e.stopPropagation(); alert(`${t('b2bClient.contracts.renewalRequestSent')} "${contract.name}". ${t('b2bClient.contracts.salesTeamContact')}`); }}>
+ <button className="b2b-mini-btn" style={{ flex: 1, background: '#fef9c3', color: '#854d0e' }} onClick={(e) => { e.stopPropagation(); handleRenewContract(contract); }}>
  {t('b2bClient.contracts.renewBtn')}
  </button>
  )}
@@ -222,26 +284,48 @@ const B2BClientContracts = () => {
  }}>
  {t('b2bClient.contracts.detail.serviceHistory')}
  </button>
- <button className="btn btn-outline" onClick={() => alert(`${t('b2bClient.contracts.detail.pdfGenerating').replace('Contract PDF', `"${selectedContract.name}" PDF`)}`)}>
+ <button className="btn btn-outline" onClick={() => handleDownloadPdf(selectedContract)}>
  {t('b2bClient.contracts.detail.downloadPdf')}
  </button>
  {selectedContract.vendor && (
- <button className="btn btn-outline" onClick={() => alert(`${t('b2bClient.contracts.detail.connectingVendor').replace('Connecting you to vendor', `Connecting you to ${selectedContract.vendor}`)}`)}>
+ <button className="btn btn-outline" onClick={() => handleContactVendor(selectedContract)}>
  {t('b2bClient.contracts.detail.contactVendor')}
  </button>
  )}
  {selectedContract.status === 'renewal_due' && (
- <button className="btn btn-primary" style={{ background: '#eab308' }} onClick={() => alert(`${t('b2bClient.contracts.renewalRequestSent')} "${selectedContract.name}". ${t('b2bClient.contracts.salesTeamContact')}`)}>
+ <button className="btn btn-primary" style={{ background: '#eab308' }} onClick={() => handleRenewContract(selectedContract)}>
  {t('b2bClient.contracts.detail.renewContract')}
  </button>
  )}
  {selectedContract.status === 'active' && (
- <button className="btn btn-outline" style={{ color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => alert(`${t('b2bClient.contracts.detail.cancelRequest')} ("${selectedContract.name}")`)}>
+ <button className="btn btn-outline" style={{ color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => handleCancelContract(selectedContract)}>
  {t('b2bClient.contracts.detail.requestCancellation')}
  </button>
  )}
  </div>
  </div>
+ </div>
+ )}
+
+ {toastMsg && (
+ <div style={{
+ position: 'fixed',
+ bottom: '24px',
+ right: '24px',
+ background: '#0f172a',
+ color: '#fff',
+ padding: '12px 20px',
+ borderRadius: '10px',
+ boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+ fontSize: '0.9rem',
+ display: 'flex',
+ alignItems: 'center',
+ gap: '10px',
+ zIndex: 9999,
+ maxWidth: '420px',
+ }}>
+ <HiOutlineCheckCircle style={{ color: '#22c55e', fontSize: '1.4rem', flexShrink: 0 }} />
+ <span>{toastMsg}</span>
  </div>
  )}
  </div>
