@@ -15,6 +15,10 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
+> [!IMPORTANT]
+> **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
+> Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
+
 ## Working plan — Streamline Premium Service Hub Flows into Simple 2-Step Wizards (done, verified 2026-11-25)
 
 **User outcome:**
