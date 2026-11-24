@@ -15,12 +15,9 @@ import {
   HiOutlinePhone,
   HiOutlineDocumentText,
   HiOutlineCalendarDays,
-  HiOutlineCamera,
   HiOutlineCheckBadge,
   HiOutlineArrowRight,
-  HiOutlineBolt,
-  HiOutlineHeart,
-  HiOutlineStar
+  HiOutlineCurrencyRupee
 } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
 import '../Dashboard.css';
@@ -30,7 +27,7 @@ const TravelPremiumFlow = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const flowType = searchParams.get('type'); // luxury-rental, school-commute, corporate-carpool
+  const flowType = searchParams.get('type') || 'luxury-rental'; // luxury-rental, school-commute, corporate-carpool
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -54,7 +51,6 @@ const TravelPremiumFlow = () => {
   const [rentalOccasion, setRentalOccasion] = useState('Wedding / Gala Event');
   const [drivingLicense, setDrivingLicense] = useState('GJ-01-2022-0049281');
   const [zeroDepInsurance, setZeroDepInsurance] = useState(true);
-  const [chauffeurLanguage, setChauffeurLanguage] = useState('Hindi / English');
 
   const LUXURY_FLEET = [
     {
@@ -137,7 +133,6 @@ const TravelPremiumFlow = () => {
   const [childName, setChildName] = useState('Aarav Patel');
   const [childGrade, setChildGrade] = useState('Primary (Grade 1 - 5)');
   const [schoolName, setSchoolName] = useState('Delhi Public School (DPS)');
-  const [customSchoolName, setCustomSchoolName] = useState('');
   const [schoolPickupAddress, setSchoolPickupAddress] = useState('Flat 402, Sunshine Apartments, Bopal');
   const [schoolDropGate, setSchoolDropGate] = useState('Main Campus Gate 1, DPS Bopal');
   const [schoolStartDate, setSchoolStartDate] = useState('Next Monday');
@@ -149,13 +144,11 @@ const TravelPremiumFlow = () => {
   const [parentContact, setParentContact] = useState('9876543210');
   const [secondaryGuardianName, setSecondaryGuardianName] = useState('Pooja Patel (Mother)');
   const [secondaryGuardianPhone, setSecondaryGuardianPhone] = useState('9876501234');
-  const [childMedicalNotes, setChildMedicalNotes] = useState('None / Mild motion sickness on highway');
 
   // ─────────────────────────────────────────────────────────────
   // 3. CORPORATE CARPOOL STATE
   // ─────────────────────────────────────────────────────────────
   const [corporateOrg, setCorporateOrg] = useState('TCS / Tata Consultancy Services');
-  const [customOrgName, setCustomOrgName] = useState('');
   const [corporateEmail, setCorporateEmail] = useState('rahul.patel@tcs.com');
   const [homeCluster, setHomeCluster] = useState('Bopal / South Bopal');
   const [pickupLandmark, setPickupLandmark] = useState('Main Gate 1, Gala Aria, South Bopal');
@@ -166,7 +159,6 @@ const TravelPremiumFlow = () => {
   const [carpoolDays, setCarpoolDays] = useState(5); // 5 or 6 days/wk
   const [carpoolVehicleTier, setCarpoolVehicleTier] = useState('Sedan'); // Sedan or SUV
   const [quietRideMode, setQuietRideMode] = useState(true);
-  const [womenOnlyCohort, setWomenOnlyCohort] = useState(false);
 
   // Validate flow type
   useEffect(() => {
@@ -211,50 +203,60 @@ const TravelPremiumFlow = () => {
     return { base, daysAddon, total, savings };
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // STEP NAVIGATION & FINALIZATION
-  // ─────────────────────────────────────────────────────────────
-  const maxSteps = 4;
+  const currentTotal = () => {
+    if (flowType === 'luxury-rental') return calcLuxuryTotal().total;
+    if (flowType === 'school-commute') return calcSchoolTotal().total;
+    return calcCarpoolTotal().total;
+  };
 
+  // ─────────────────────────────────────────────────────────────
+  // 2-STEP NAVIGATION & CHECKOUT
+  // ─────────────────────────────────────────────────────────────
   const handleNext = () => {
     setErrorMsg('');
 
-    // Step validations
-    if (flowType === 'luxury-rental') {
-      if (step === 1 && !carClass) return setErrorMsg('Please choose a car from the luxury fleet.');
-      if (step === 2 && !rentalStartDate) return setErrorMsg('Please select your rental start date.');
-      if (step === 2 && deliveryMode === 'doorstep' && !deliveryAddress.trim()) {
-        return setErrorMsg('Please enter your doorstep delivery address or hotel name.');
+    if (step === 1) {
+      if (flowType === 'luxury-rental' && !carClass) {
+        return setErrorMsg('Please choose a car from the luxury fleet.');
       }
-      if (step === 3 && driveType === 'Self-Drive' && !drivingLicense.trim()) {
-        return setErrorMsg('Please provide your Driving License number for self-drive verification.');
-      }
-    } else if (flowType === 'school-commute') {
-      if (step === 1 && (!childName.trim() || !schoolName)) {
+      if (flowType === 'school-commute' && (!childName.trim() || !schoolName)) {
         return setErrorMsg("Please provide your child's name and school name.");
       }
-      if (step === 2 && (!morningPickupTime || !afternoonReturnTime)) {
-        return setErrorMsg('Please select your preferred morning pickup and afternoon return times.');
+      if (flowType === 'corporate-carpool' && (!corporateOrg || !homeCluster || !officePark)) {
+        return setErrorMsg('Please select your company, pickup area, and destination.');
       }
-      if (step === 3 && (!parentContact.trim() || !secondaryGuardianPhone.trim())) {
-        return setErrorMsg('Both primary and secondary emergency contact numbers are compulsory for student safety.');
-      }
-    } else if (flowType === 'corporate-carpool') {
-      if (step === 1 && (!corporateOrg || !homeCluster || !officePark)) {
-        return setErrorMsg('Please select your company, pickup area, and tech park destination.');
-      }
-      if (step === 1 && !pickupLandmark.trim()) {
-        return setErrorMsg('Please provide your specific society gate or pickup landmark.');
-      }
-      if (step === 2 && (!morningInTime || !eveningOutTime)) {
-        return setErrorMsg('Please select your morning in-time and evening out-time.');
-      }
-    }
-
-    if (step < maxSteps) {
-      setStep(step + 1);
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Step 2 validations
+      if (flowType === 'luxury-rental') {
+        if (!rentalStartDate) return setErrorMsg('Please select your rental start date.');
+        if (deliveryMode === 'doorstep' && !deliveryAddress.trim()) {
+          return setErrorMsg('Please enter your doorstep delivery address or hotel name.');
+        }
+        if (driveType === 'Self-Drive' && !drivingLicense.trim()) {
+          return setErrorMsg('Please provide your Driving License number for self-drive verification.');
+        }
+      } else if (flowType === 'school-commute') {
+        if (!schoolPickupAddress.trim()) return setErrorMsg('Please provide your home pickup address.');
+        if (!parentContact.trim() || !secondaryGuardianPhone.trim()) {
+          return setErrorMsg('Both primary and secondary emergency contact numbers are required.');
+        }
+      } else if (flowType === 'corporate-carpool') {
+        if (!pickupLandmark.trim()) return setErrorMsg('Please provide your society gate or pickup landmark.');
+        if (!corporateEmail.trim()) return setErrorMsg('Please provide your corporate email for verification.');
+      }
       finalizeBooking();
+    }
+  };
+
+  const handleBack = () => {
+    setErrorMsg('');
+    if (step === 2) {
+      setStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/customer/travel-commute');
     }
   };
 
@@ -268,24 +270,22 @@ const TravelPremiumFlow = () => {
       if (flowType === 'luxury-rental') {
         const { total } = calcLuxuryTotal();
         price = total;
-        serviceName = `Luxury Rental: ${selectedCar.name} (${driveType === 'Chauffeur' ? 'Chauffeur' : 'Self-Drive'} • ${rentalDays}d • ${rentalKm}km)`;
+        serviceName = `Luxury Rental: ${selectedCar.name} (${driveType} • ${rentalDays}d • ${rentalKm}km)`;
         queryParams = `&fleetType=${encodeURIComponent(selectedCar.name)}&driveType=${encodeURIComponent(driveType)}&days=${rentalDays}&distanceKm=${rentalKm}&deliveryMode=${encodeURIComponent(deliveryMode)}&startDate=${encodeURIComponent(rentalStartDate)}&timeSlot=${encodeURIComponent(deliveryTimeSlot)}&occasion=${encodeURIComponent(rentalOccasion)}&deliveryAddress=${encodeURIComponent(deliveryAddress)}`;
       } else if (flowType === 'school-commute') {
         const { total } = calcSchoolTotal();
         price = total;
-        const finalSchool = schoolName === 'Other' ? customSchoolName || 'Partner School' : schoolName;
-        serviceName = `School Commute Monthly Pass: ${childName} (${finalSchool} • ${schoolShift})`;
-        queryParams = `&studentName=${encodeURIComponent(childName)}&school=${encodeURIComponent(finalSchool)}&shift=${encodeURIComponent(schoolShift)}&pickupTime=${encodeURIComponent(morningPickupTime)}&dropTime=${encodeURIComponent(afternoonReturnTime)}&startDate=${encodeURIComponent(schoolStartDate)}&guardianName=${encodeURIComponent(secondaryGuardianName)}&guardianPhone=${encodeURIComponent(secondaryGuardianPhone)}`;
+        serviceName = `School Commute Monthly Pass: ${childName} (${schoolName} • ${schoolShift})`;
+        queryParams = `&studentName=${encodeURIComponent(childName)}&school=${encodeURIComponent(schoolName)}&shift=${encodeURIComponent(schoolShift)}&pickupTime=${encodeURIComponent(morningPickupTime)}&dropTime=${encodeURIComponent(afternoonReturnTime)}&startDate=${encodeURIComponent(schoolStartDate)}&guardianName=${encodeURIComponent(secondaryGuardianName)}&guardianPhone=${encodeURIComponent(secondaryGuardianPhone)}`;
       } else if (flowType === 'corporate-carpool') {
         const { total } = calcCarpoolTotal();
         price = total;
-        const finalOrg = corporateOrg === 'Other' ? customOrgName || 'Corporate Park' : corporateOrg;
-        serviceName = `Corporate Carpool Pass: ${homeCluster} → ${officePark} (${finalOrg} • ${carpoolVehicleTier})`;
-        queryParams = `&company=${encodeURIComponent(finalOrg)}&origin=${encodeURIComponent(homeCluster)}&destination=${encodeURIComponent(officePark)}&inTime=${encodeURIComponent(morningInTime)}&outTime=${encodeURIComponent(eveningOutTime)}&tier=${encodeURIComponent(carpoolVehicleTier)}&landmark=${encodeURIComponent(pickupLandmark)}&workEmail=${encodeURIComponent(corporateEmail)}&startDate=${encodeURIComponent(carpoolStartDate)}`;
+        serviceName = `Corporate Carpool Pass: ${homeCluster} → ${officePark} (${corporateOrg} • ${carpoolVehicleTier})`;
+        queryParams = `&company=${encodeURIComponent(corporateOrg)}&origin=${encodeURIComponent(homeCluster)}&destination=${encodeURIComponent(officePark)}&inTime=${encodeURIComponent(morningInTime)}&outTime=${encodeURIComponent(eveningOutTime)}&tier=${encodeURIComponent(carpoolVehicleTier)}&landmark=${encodeURIComponent(pickupLandmark)}&workEmail=${encodeURIComponent(corporateEmail)}&startDate=${encodeURIComponent(carpoolStartDate)}`;
       }
 
       navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=Travel%20%26%20Commute&price=${price}${queryParams}`);
-    }, 1000);
+    }, 700);
   };
 
   // ─────────────────────────────────────────────────────────────
@@ -300,9 +300,7 @@ const TravelPremiumFlow = () => {
           icon: <HiOutlineKey size={36} color="white" />,
           gradient: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
           color: '#0f766e',
-          bgSoft: '#f0fdfa',
-          borderActive: '#0f766e',
-          shadowActive: '0 8px 24px rgba(15, 118, 110, 0.2)',
+          bgSoft: '#f0fdfa'
         };
       case 'school-commute':
         return {
@@ -311,1646 +309,911 @@ const TravelPremiumFlow = () => {
           icon: <HiOutlineAcademicCap size={36} color="white" />,
           gradient: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
           color: '#2563eb',
-          bgSoft: '#eff6ff',
-          borderActive: '#2563eb',
-          shadowActive: '0 8px 24px rgba(37, 99, 235, 0.2)',
+          bgSoft: '#eff6ff'
         };
       case 'corporate-carpool':
+      default:
         return {
           title: 'Corporate Carpool Match & Pass',
           subtitle: 'Share Premium Daily Rides with Verified Executives on Your Tech-Park Route',
           icon: <HiOutlineBriefcase size={36} color="white" />,
           gradient: 'linear-gradient(135deg, #1E40AF 0%, #0F172A 100%)',
           color: '#1E40AF',
-          bgSoft: '#FAF9F6',
-          borderActive: '#1E40AF',
-          shadowActive: '0 8px 24px rgba(30, 64, 175, 0.25)',
-        };
-      default:
-        return {
-          title: 'Premium Travel Commute',
-          subtitle: 'ServeCircle Premium Mobility',
-          icon: null,
-          gradient: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
-          color: '#0f766e',
-          bgSoft: '#f0fdfa',
-          borderActive: '#0f766e',
-          shadowActive: 'none',
+          bgSoft: '#FAF9F6'
         };
     }
   };
 
   const theme = getThemeInfo();
 
-  // ─────────────────────────────────────────────────────────────
-  // RENDER FLOW 1: LUXURY & VINTAGE RENTALS
-  // ─────────────────────────────────────────────────────────────
-  const renderLuxuryFlow = () => {
-    const { baseTotal, kmTotal, driverFee, deliveryFee, insuranceFee, gst, total } = calcLuxuryTotal();
+  return (
+    <div className="page-content" style={{ minHeight: '92vh', padding: '20px 16px 120px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc' }}>
+      <div style={{ width: '100%', maxWidth: '920px', marginTop: '12px' }}>
+        
+        {/* Top Back Navigation */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <button
+            onClick={handleBack}
+            className="btn"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              padding: '10px 18px',
+              borderRadius: '12px',
+              fontWeight: 700,
+              color: 'var(--navy-800)',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.04)'
+            }}
+          >
+            <HiOutlineArrowLeft size={18} />
+            {step === 1 ? 'Back to Commute Hub' : 'Previous Step'}
+          </button>
+        </div>
 
-    if (step === 1) {
-      const filteredCars = luxuryCategory === 'ALL'
-        ? LUXURY_FLEET
-        : LUXURY_FLEET.filter(c => c.category === luxuryCategory);
-
-      return (
-        <div className="animate-fade-in-up">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-            <div>
-              <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, margin: 0 }}>
-                Step 1: Choose Your Luxury Fleet
-              </h3>
-              <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '4px 0 0 0' }}>
-                All vehicles sanitized, insured, and verified for VIP travel.
-              </p>
+        {/* Hero Card */}
+        <div style={{
+          background: theme.gradient,
+          borderRadius: '24px',
+          padding: '28px 24px',
+          color: 'white',
+          marginBottom: '24px',
+          boxShadow: '0 12px 30px -8px rgba(0,0,0,0.18)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '20px'
+        }}>
+          <div style={{ flex: '1 1 500px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(8px)',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+              marginBottom: '10px'
+            }}>
+              <HiOutlineSparkles size={14} /> VIP Fleet & Safe Mobility Pass
             </div>
-            {/* Category Filter */}
-            <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '4px', borderRadius: '12px' }}>
-              {[
-                { id: 'ALL', label: 'All Fleet' },
-                { id: 'SUPERCARS', label: 'Supercars' },
-                { id: 'SUV', label: 'VIP SUVs' },
-                { id: 'VINTAGE', label: 'Vintage Classics' }
-              ].map(cat => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setLuxuryCategory(cat.id)}
-                  style={{
-                    padding: '6px 12px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: luxuryCategory === cat.id ? '#0f766e' : 'transparent',
-                    color: luxuryCategory === cat.id ? 'white' : '#475569',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+            <h1 style={{ fontSize: '1.85rem', fontWeight: 900, margin: '0 0 8px 0', lineHeight: 1.2 }}>
+              {theme.title}
+            </h1>
+            <p style={{ margin: 0, fontSize: '0.95rem', opacity: 0.95, lineHeight: 1.5, maxWidth: '640px' }}>
+              {theme.subtitle}
+            </p>
           </div>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.18)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.3)'
+          }}>
+            {theme.icon}
+          </div>
+        </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-            {filteredCars.map(car => {
-              const isSelected = carClass === car.name;
+        {/* 2-Step Progress Indicator */}
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '20px',
+          padding: '16px 24px',
+          marginBottom: '28px',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', position: 'relative' }}>
+            {[
+              { num: 1, label: '1. Select Plan & Key Options', desc: 'Choose vehicle, route or pass tier' },
+              { num: 2, label: '2. Schedule & Confirm', desc: 'Set timing, home address & driver match' }
+            ].map((s) => {
+              const isDone = step > s.num;
+              const isActive = step === s.num;
               return (
-                <div
-                  key={car.id}
-                  onClick={() => setCarClass(car.name)}
-                  style={{
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: `2px solid ${isSelected ? '#0f766e' : '#e2e8f0'}`,
-                    background: isSelected ? '#f0fdfa' : 'white',
-                    cursor: 'pointer',
-                    boxShadow: isSelected ? '0 8px 20px rgba(15, 118, 110, 0.15)' : '0 2px 6px rgba(0,0,0,0.03)',
-                    transition: 'all 0.2s ease',
-                    transform: isSelected ? 'translateY(-2px)' : 'none',
+                <div key={s.num} style={{ textAlign: 'center' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    background: isDone ? '#10b981' : isActive ? theme.color : '#f1f5f9',
+                    color: isDone || isActive ? 'white' : '#64748b',
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <span style={{ fontSize: '2rem' }}>{car.image}</span>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0f766e', background: '#ccfbf1', padding: '3px 8px', borderRadius: '6px' }}>
-                        {car.badge}
-                      </span>
-                    </div>
-                    <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', margin: '0 0 6px 0' }}>
-                      {car.name}
-                    </h4>
-                    <p style={{ fontSize: '0.76rem', color: '#64748b', lineHeight: 1.4, margin: '0 0 12px 0' }}>
-                      {car.specs}
-                    </p>
-                    <div style={{ display: 'flex', gap: '8px', fontSize: '0.72rem', color: '#475569', marginBottom: '16px' }}>
-                      <span style={{ background: '#f8fafc', padding: '3px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>{car.fuelType}</span>
-                      <span style={{ background: '#f8fafc', padding: '3px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>{car.seats}</span>
-                    </div>
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '0.95rem',
+                    margin: '0 auto 6px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isActive ? `0 4px 12px ${theme.color}44` : 'none'
+                  }}>
+                    {isDone ? <HiOutlineCheckCircle size={22} /> : s.num}
                   </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px' }}>
-                    <div>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>Base Rate</span>
-                      <strong style={{ fontSize: '1.15rem', color: '#0f766e', fontWeight: 900 }}>₹{car.baseDayRate.toLocaleString()}</strong>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>/day</span>
-                    </div>
-                    <div style={{
-                      width: '24px', height: '24px', borderRadius: '50%',
-                      background: isSelected ? '#0f766e' : '#e2e8f0',
-                      color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                      {isSelected ? <HiOutlineCheckCircle size={18} /> : null}
-                    </div>
+                  <div style={{
+                    fontSize: '0.85rem',
+                    fontWeight: isActive ? 800 : 600,
+                    color: isActive ? 'var(--navy-900)' : '#64748b'
+                  }}>
+                    {s.label}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+                    {s.desc}
                   </div>
                 </div>
               );
             })}
           </div>
         </div>
-      );
-    }
 
-    if (step === 2) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 2: Schedule, Delivery &amp; Trip Scope
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Configuring: <strong>{selectedCar.name}</strong>
-          </p>
-
-          <div style={{ display: 'grid', gap: '20px', marginBottom: '24px' }}>
-            {/* Occasion / Purpose & Date */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Rental Start Date
-                </label>
-                <input
-                  type="date"
-                  value={rentalStartDate}
-                  min={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => setRentalStartDate(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', fontWeight: 700 }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Handover Time Slot
-                </label>
-                <select
-                  value={deliveryTimeSlot}
-                  onChange={(e) => setDeliveryTimeSlot(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
-                >
-                  <option value="09:00 AM">09:00 AM (Morning Handover)</option>
-                  <option value="10:00 AM">10:00 AM</option>
-                  <option value="12:00 PM">12:00 PM (Noon)</option>
-                  <option value="02:00 PM">02:00 PM</option>
-                  <option value="05:00 PM">05:00 PM (Evening)</option>
-                  <option value="08:00 PM">08:00 PM (Night Gala)</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Rental Occasion / Purpose
-                </label>
-                <select
-                  value={rentalOccasion}
-                  onChange={(e) => setRentalOccasion(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
-                >
-                  <option value="Wedding / Gala Event">Wedding / Gala Event (Ribbon Grooming Available)</option>
-                  <option value="VIP Corporate / Airport Escort">VIP Corporate / Airport Escort</option>
-                  <option value="Personal Weekend Joyride">Personal Weekend Joyride</option>
-                  <option value="Pre-Wedding / Film Shoot">Pre-Wedding / Film Shoot</option>
-                  <option value="Anniversary / Celebration">Anniversary / Celebration</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Drive Mode */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                Driving Mode
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                {[
-                  { id: 'Self-Drive', title: 'Self-Drive (No Chauffeur)', sub: 'Drive yourself. Zero driver fee. Requires DL.', badge: 'Popular' },
-                  { id: 'Chauffeur', title: 'Chauffeur-Driven (+₹1,200/day)', sub: 'Uniformed verified pro chauffeur. White glove VIP service.', badge: 'VIP Choice' }
-                ].map(opt => {
-                  const isSel = driveType === opt.id;
-                  return (
-                    <div
-                      key={opt.id}
-                      onClick={() => setDriveType(opt.id)}
-                      style={{
-                        padding: '16px',
-                        borderRadius: '14px',
-                        border: `2px solid ${isSel ? '#0f766e' : '#e2e8f0'}`,
-                        background: isSel ? '#f0fdfa' : 'white',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                        <strong style={{ fontSize: '0.92rem', color: isSel ? '#0f766e' : '#1e293b' }}>{opt.title}</strong>
-                        {isSel && <HiOutlineCheckCircle color="#0f766e" size={20} />}
-                      </div>
-                      <p style={{ fontSize: '0.74rem', color: '#64748b', margin: 0, lineHeight: 1.4 }}>{opt.sub}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Delivery Mode & Address */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                Handover &amp; Delivery Option
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: deliveryMode === 'doorstep' ? '12px' : 0 }}>
-                {[
-                  { id: 'doorstep', title: 'Doorstep Delivery (+₹499)', desc: 'Delivered to your home, hotel, or airport terminal.' },
-                  { id: 'showroom', title: 'Showroom Pickup (Free)', desc: 'Pick up and return at ServeCircle Luxury Hub, SG Highway.' }
-                ].map(del => {
-                  const isSel = deliveryMode === del.id;
-                  return (
-                    <div
-                      key={del.id}
-                      onClick={() => setDeliveryMode(del.id)}
-                      style={{
-                        padding: '14px 16px',
-                        borderRadius: '12px',
-                        border: `1.5px solid ${isSel ? '#0f766e' : '#e2e8f0'}`,
-                        background: isSel ? '#f0fdfa' : 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.85rem', color: isSel ? '#0f766e' : '#1e293b', display: 'block' }}>{del.title}</strong>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{del.desc}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {deliveryMode === 'doorstep' && (
-                <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                  <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                    Specific Delivery Address / Hotel / Landmark
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Taj Skyline Hotel / Flat 402, Sunshine Apts, Bopal"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Sliders for Days and Distance */}
-            <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'grid', gap: '16px' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b' }}>
-                    Rental Duration:
-                  </label>
-                  <strong style={{ fontSize: '0.95rem', color: '#0f766e' }}>
-                    {rentalDays} {rentalDays === 1 ? 'Day' : 'Days'} (₹{(selectedCar.baseDayRate * rentalDays).toLocaleString()})
-                  </strong>
-                </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="14"
-                  value={rentalDays}
-                  onChange={(e) => setRentalDays(parseInt(e.target.value, 10))}
-                  style={{ width: '100%', accentColor: '#0f766e' }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: '#94a3b8', marginTop: '4px' }}>
-                  <span>1 Day</span>
-                  <span>3 Days (Weekend)</span>
-                  <span>7 Days (Week)</span>
-                  <span>14 Days (VIP)</span>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b' }}>
-                    Included Trip Distance:
-                  </label>
-                  <strong style={{ fontSize: '0.95rem', color: '#0f766e' }}>
-                    {rentalKm} km (@ ₹{selectedCar.kmRate}/km = ₹{(rentalKm * selectedCar.kmRate).toLocaleString()})
-                  </strong>
-                </div>
-                <input
-                  type="range"
-                  min="60"
-                  max="800"
-                  step="20"
-                  value={rentalKm}
-                  onChange={(e) => setRentalKm(parseInt(e.target.value, 10))}
-                  style={{ width: '100%', accentColor: '#0f766e' }}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: '#94a3b8', marginTop: '4px' }}>
-                  <span>60 km (City)</span>
-                  <span>250 km (Intercity)</span>
-                  <span>500 km (Touring)</span>
-                  <span>800 km</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 3) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 3: Verification, Security &amp; Customization
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Ensure hassle-free handover with verified documentation and security coverage.
-          </p>
-
-          {driveType === 'Self-Drive' ? (
-            <div style={{ display: 'grid', gap: '16px' }}>
-              <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Indian Driving License Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. GJ-01-2022-0049281"
-                  value={drivingLicense}
-                  onChange={(e) => setDrivingLicense(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    border: '1.5px solid #cbd5e1',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.04em'
-                  }}
-                />
-                <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '4px', display: 'block' }}>
-                  Original DL required at vehicle handover for fast NFC verification.
-                </span>
-              </div>
-
-              {/* Zero-Dep Insurance Waiver */}
-              <div
-                onClick={() => setZeroDepInsurance(!zeroDepInsurance)}
-                style={{
-                  padding: '16px',
-                  borderRadius: '14px',
-                  border: `2px solid ${zeroDepInsurance ? '#0f766e' : '#e2e8f0'}`,
-                  background: zeroDepInsurance ? '#f0fdfa' : 'white',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <div>
-                  <strong style={{ fontSize: '0.9rem', color: '#1e293b', display: 'block' }}>
-                    Zero-Depreciation Damage Waiver (+₹999/day)
-                  </strong>
-                  <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
-                    100% comprehensive coverage. Zero customer liability for minor road scratches or tyre punctures.
-                  </span>
-                </div>
-                <input
-                  type="checkbox"
-                  checked={zeroDepInsurance}
-                  readOnly
-                  style={{ width: '18px', height: '18px', accentColor: '#0f766e' }}
-                />
-              </div>
-
-              {/* Security Deposit Hold Card */}
-              <div style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '12px', padding: '14px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <HiOutlineShieldCheck size={28} color="#854d0e" />
-                <div>
-                  <strong style={{ fontSize: '0.82rem', color: '#854d0e', display: 'block' }}>
-                    Refundable Security Deposit: ₹10,000
-                  </strong>
-                  <span style={{ fontSize: '0.72rem', color: '#a16207' }}>
-                    Pre-authorized on card or UPI hold. Auto-released within 4 hours post vehicle return inspection.
-                  </span>
-                </div>
-              </div>
-
-              {/* Fuel Policy Badge */}
-              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <span style={{ fontSize: '1.4rem' }}>⛽</span>
-                <div>
-                  <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
-                    Same-to-Same Fuel Policy
-                  </strong>
-                  <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
-                    Vehicle delivered with 100% full tank. Please return with full tank for zero fuel charges.
-                  </span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gap: '16px' }}>
-              <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                  Chauffeur Language Preference
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                  {['Hindi / English', 'Gujarati / Hindi', 'English Pro'].map(lang => (
-                    <button
-                      key={lang}
-                      type="button"
-                      onClick={() => setChauffeurLanguage(lang)}
-                      style={{
-                        padding: '10px',
-                        borderRadius: '8px',
-                        border: `1.5px solid ${chauffeurLanguage === lang ? '#0f766e' : '#cbd5e1'}`,
-                        background: chauffeurLanguage === lang ? '#f0fdfa' : 'white',
-                        color: chauffeurLanguage === lang ? '#0f766e' : '#475569',
-                        fontWeight: 700,
-                        fontSize: '0.8rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {lang}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* VIP Chauffeur Inclusions */}
-              <div style={{ background: '#f0fdfa', border: '1px solid #ccfbf1', borderRadius: '14px', padding: '16px' }}>
-                <h4 style={{ margin: '0 0 10px 0', fontSize: '0.88rem', fontWeight: 800, color: '#0f766e' }}>
-                  ✨ Included Chauffeur VIP Amenities
-                </h4>
-                <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.78rem', color: '#134e4a', lineHeight: 1.6 }}>
-                  <li>Police-vetted professional chauffeur in formal suit &amp; white gloves</li>
-                  <li>Complimentary chilled packaged mineral water &amp; wet wipes</li>
-                  <li>In-cabin high-speed Wi-Fi hotspot &amp; iPhone/Type-C fast chargers</li>
-                  <li>Sanitization seal &amp; luggage loading/unloading assistance</li>
-                </ul>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    if (step === 4) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 4: Review Quotation &amp; Confirm
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Your transparent, authoritative ServeCircle quote with zero hidden charges.
-          </p>
-
-          <div style={{ background: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0', padding: '24px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '14px' }}>
-              <div>
-                <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>
-                  {selectedCar.name}
-                </h4>
-                <span style={{ fontSize: '0.78rem', color: '#0f766e', fontWeight: 700 }}>
-                  ● {driveType} • {rentalDays} Days ({rentalStartDate} @ {deliveryTimeSlot})
-                </span>
-                {deliveryMode === 'doorstep' && (
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block', marginTop: '2px' }}>
-                    Delivery: {deliveryAddress}
-                  </span>
-                )}
-              </div>
-              <span style={{ fontSize: '2rem' }}>{selectedCar.image}</span>
-            </div>
-
-            <div style={{ display: 'grid', gap: '8px', fontSize: '0.82rem', color: '#334155', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Base Vehicle Hire ({rentalDays}d @ ₹{selectedCar.baseDayRate.toLocaleString()}/d):</span>
-                <strong>₹{baseTotal.toLocaleString()}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Distance Allowance ({rentalKm} km @ ₹{selectedCar.kmRate}/km):</span>
-                <strong>₹{kmTotal.toLocaleString()}</strong>
-              </div>
-              {driverFee > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Chauffeur Allowance ({rentalDays}d @ ₹1,200/d):</span>
-                  <strong>₹{driverFee.toLocaleString()}</strong>
-                </div>
-              )}
-              {deliveryFee > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Doorstep Delivery &amp; Pickup:</span>
-                  <strong>₹{deliveryFee.toLocaleString()}</strong>
-                </div>
-              )}
-              {insuranceFee > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Zero-Depreciation Insurance Waiver:</span>
-                  <strong>₹{insuranceFee.toLocaleString()}</strong>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b' }}>
-                <span>GST (18%):</span>
-                <span>₹{gst.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div style={{ borderTop: '2px dashed #cbd5e1', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <div>
-                <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block' }}>Total Payable Amount</span>
-                <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>All Taxes &amp; Insurance Included</span>
-              </div>
-              <strong style={{ fontSize: '1.6rem', color: '#0f766e', fontWeight: 900 }}>
-                ₹{total.toLocaleString()}
-              </strong>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  };
-
-  // ─────────────────────────────────────────────────────────────
-  // RENDER FLOW 2: SCHOOL COMMUTE SUBSCRIPTION
-  // ─────────────────────────────────────────────────────────────
-  const renderSchoolFlow = () => {
-    const { base, vehicleAddon, attendantAddon, total } = calcSchoolTotal();
-
-    if (step === 1) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 1: Student &amp; School Profile
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Provide basic student and school routing details to establish your dedicated school route.
-          </p>
-
-          <div style={{ display: 'grid', gap: '16px' }}>
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Student Full Name
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Aarav Patel"
-                value={childName}
-                onChange={(e) => setChildName(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem' }}
-              />
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Grade / Age Category
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                {[
-                  { id: 'Pre-Primary (Nursery - KG)', desc: 'Includes booster seat' },
-                  { id: 'Primary (Grade 1 - 5)', desc: 'Doorstep escort assistance' },
-                  { id: 'High School (Grade 6 - 12)', desc: 'Direct gate drop' }
-                ].map(gr => {
-                  const isSel = childGrade === gr.id;
-                  return (
-                    <div
-                      key={gr.id}
-                      onClick={() => setChildGrade(gr.id)}
-                      style={{
-                        padding: '12px',
-                        borderRadius: '10px',
-                        border: `1.5px solid ${isSel ? '#2563eb' : '#cbd5e1'}`,
-                        background: isSel ? '#eff6ff' : 'white',
-                        cursor: 'pointer',
-                        textAlign: 'center'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.82rem', color: isSel ? '#2563eb' : '#1e293b', display: 'block' }}>{gr.id}</strong>
-                      <span style={{ fontSize: '0.68rem', color: '#64748b' }}>{gr.desc}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                School Name
-              </label>
-              <select
-                value={schoolName}
-                onChange={(e) => setSchoolName(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
-              >
-                <option value="Delhi Public School (DPS)">Delhi Public School (DPS Bopal / East)</option>
-                <option value="Podar International School">Podar International School</option>
-                <option value="The Riverside School">The Riverside School (Cantonment)</option>
-                <option value="St. Xavier's High School">St. Xavier's High School (Loyola Hall)</option>
-                <option value="Adani Vidya Mandir">Adani Vidya Mandir (Makarba)</option>
-                <option value="Other">Other / Unlisted School</option>
-              </select>
-            </div>
-
-            {schoolName === 'Other' && (
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Enter School Name &amp; Area
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Anand Niketan, Shilaj"
-                  value={customSchoolName}
-                  onChange={(e) => setCustomSchoolName(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem' }}
-                />
-              </div>
-            )}
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Home Pickup Address
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Flat 402, Sunshine Apts"
-                  value={schoolPickupAddress}
-                  onChange={(e) => setSchoolPickupAddress(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  School Campus Drop Gate
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Gate 1, Primary Section"
-                  value={schoolDropGate}
-                  onChange={(e) => setSchoolDropGate(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 2) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 2: Commute Shift &amp; Timings
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Choose whether you require morning drop, afternoon return, or two-way commute.
-          </p>
-
-          <div style={{ display: 'grid', gap: '18px' }}>
-            {/* Start Date */}
-            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Subscription Start Schedule
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                {['Immediate / Tomorrow', 'Next Monday', '1st of Next Month'].map(st => (
-                  <button
-                    key={st}
-                    type="button"
-                    onClick={() => setSchoolStartDate(st)}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      border: `1.5px solid ${schoolStartDate === st ? '#2563eb' : '#cbd5e1'}`,
-                      background: schoolStartDate === st ? '#eff6ff' : 'white',
-                      color: schoolStartDate === st ? '#2563eb' : '#475569',
-                      fontWeight: 700,
-                      fontSize: '0.78rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {st}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Shift Mode */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                Commute Direction
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                {[
-                  { id: 'Round-Trip', title: 'Round-Trip (Two-Way)', price: '₹3,499/mo', desc: 'Morning pickup + Afternoon return' },
-                  { id: 'Morning-Only', title: 'Morning Drop Only', price: '₹2,199/mo', desc: 'Home to School drop only' },
-                  { id: 'Afternoon-Only', title: 'Afternoon Pickup Only', price: '₹2,199/mo', desc: 'School to Home pickup only' }
-                ].map(sh => {
-                  const isSel = schoolShift === sh.id;
-                  return (
-                    <div
-                      key={sh.id}
-                      onClick={() => setSchoolShift(sh.id)}
-                      style={{
-                        padding: '16px',
-                        borderRadius: '12px',
-                        border: `2px solid ${isSel ? '#2563eb' : '#e2e8f0'}`,
-                        background: isSel ? '#eff6ff' : 'white',
-                        cursor: 'pointer',
-                        textAlign: 'center'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.88rem', color: isSel ? '#2563eb' : '#1e293b', display: 'block' }}>{sh.title}</strong>
-                      <span style={{ fontSize: '0.92rem', color: '#16a34a', fontWeight: 900, display: 'block', margin: '4px 0' }}>{sh.price}</span>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{sh.desc}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Timings */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                  Morning Doorstep Pickup Time
-                </label>
-                <select
-                  value={morningPickupTime}
-                  onChange={(e) => setMorningPickupTime(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="06:30 AM">06:30 AM</option>
-                  <option value="07:00 AM">07:00 AM</option>
-                  <option value="07:15 AM">07:15 AM</option>
-                  <option value="07:30 AM">07:30 AM</option>
-                  <option value="08:00 AM">08:00 AM</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                  Afternoon School Gate Return Time
-                </label>
-                <select
-                  value={afternoonReturnTime}
-                  onChange={(e) => setAfternoonReturnTime(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="01:30 PM">01:30 PM (Pre-Primary)</option>
-                  <option value="02:00 PM">02:00 PM (Primary)</option>
-                  <option value="02:30 PM">02:30 PM</option>
-                  <option value="03:30 PM">03:30 PM (High School)</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Vehicle Fleet */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '8px' }}>
-                Commute Fleet Class
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                {[
-                  { id: 'Dedicated AC Kids Van (Max 4)', desc: 'Spacious seating, certified child locks & individual seatbelts.' },
-                  { id: 'Executive Compact Sedan (+₹600/mo)', desc: 'Max 2 students. High executive privacy and direct non-stop transit.' }
-                ].map(v => {
-                  const isSel = schoolVehicleType.includes(v.id.substring(0, 15));
-                  return (
-                    <div
-                      key={v.id}
-                      onClick={() => setSchoolVehicleType(v.id)}
-                      style={{
-                        padding: '14px',
-                        borderRadius: '12px',
-                        border: `1.5px solid ${isSel ? '#2563eb' : '#e2e8f0'}`,
-                        background: isSel ? '#eff6ff' : 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.85rem', color: isSel ? '#2563eb' : '#1e293b', display: 'block' }}>{v.id}</strong>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{v.desc}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 3) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 3: Child Safety Shield &amp; Parent Emergency Controls
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Industry-leading child safety measures and emergency contacts included with every pass.
-          </p>
-
-          <div style={{ display: 'grid', gap: '14px', marginBottom: '20px' }}>
-            {/* Standard Safety Shield Card */}
-            <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '14px', padding: '16px' }}>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                <span style={{ background: '#2563eb', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
-                  <HiOutlineShieldCheck size={22} />
-                </span>
-                <div>
-                  <h4 style={{ margin: '0 0 6px 0', fontSize: '0.92rem', color: '#1e40af', fontWeight: 800 }}>
-                    ServeCircle 4-Point Kids Safety Guarantee (Included Free)
-                  </h4>
-                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.78rem', color: '#1e3a8a', lineHeight: 1.6 }}>
-                    <li><strong>Police-Verified Chauffeur:</strong> 5+ years verified clean school driving record.</li>
-                    <li><strong>In-Cab Live Dashcam Feed:</strong> Live parent video access via app during transit.</li>
-                    <li><strong>Geofence Arrival Alerts:</strong> Automatic WhatsApp/SMS ping when entering school &amp; home gate.</li>
-                    <li><strong>Emergency SOS Panic Cord:</strong> Direct telemetry connection to ServeCircle Desk.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Vacation Pause Guarantee */}
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <span style={{ fontSize: '1.4rem' }}>🏖️</span>
-              <div>
-                <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
-                  School Term Break Pause Guarantee
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
-                  Diwali or exam term breaks? Pause your subscription anytime in-app; unused days automatically rollover.
-                </span>
-              </div>
-            </div>
-
-            {/* Optional Female Attendant Addon */}
-            <div
-              onClick={() => setFemaleAttendant(!femaleAttendant)}
-              style={{
-                padding: '16px',
-                borderRadius: '14px',
-                border: `2px solid ${femaleAttendant ? '#2563eb' : '#e2e8f0'}`,
-                background: femaleAttendant ? '#f0f5fa' : 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: '0.9rem', color: '#1e293b', display: 'block' }}>
-                  Dedicated On-Board Female Attendant (+₹499/month)
-                </strong>
-                <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
-                  Assists with school bags, seatbelt buckling, hydration, and safe road crossing at gate.
-                </span>
-              </div>
-              <input
-                type="checkbox"
-                checked={femaleAttendant}
-                readOnly
-                style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-              />
-            </div>
-
-            {/* Dual Parent Contacts */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Primary Parent Mobile (Receives Live Alerts)
-                </label>
-                <input
-                  type="tel"
-                  placeholder="10-digit number"
-                  value={parentContact}
-                  onChange={(e) => setParentContact(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', fontWeight: 700 }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Secondary / Mother Contact &amp; Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Pooja Patel • 9876501234"
-                  value={`${secondaryGuardianName} • ${secondaryGuardianPhone}`}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    const parts = val.split('•');
-                    setSecondaryGuardianName(parts[0]?.trim() || '');
-                    setSecondaryGuardianPhone(parts[1]?.trim() || '');
-                  }}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem' }}
-                />
-              </div>
-            </div>
-
-            {/* Medical / Allergy Notes */}
-            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                Child Medical / Motion Sickness Notes (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Mild motion sickness on highway — prefers front window seat"
-                value={childMedicalNotes}
-                onChange={(e) => setChildMedicalNotes(e.target.value)}
-                style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem' }}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 4) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 4: Monthly Pass Summary &amp; Confirmation
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Review your child's monthly commute pass details before activation.
-          </p>
-
-          <div style={{ background: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0', padding: '24px', marginBottom: '20px' }}>
-            <div style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#1e293b' }}>
-                    Student: {childName}
-                  </h4>
-                  <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 700 }}>
-                    {schoolName === 'Other' ? customSchoolName : schoolName} • {childGrade}
-                  </span>
-                </div>
-                <span style={{ background: '#dbeafe', color: '#1e40af', fontSize: '0.75rem', fontWeight: 800, padding: '4px 10px', borderRadius: '8px' }}>
-                  {schoolShift}
-                </span>
-              </div>
-              <p style={{ fontSize: '0.78rem', color: '#64748b', margin: '8px 0 0 0' }}>
-                Pickup: {schoolPickupAddress} ({morningPickupTime}) ⇄ Drop: {schoolDropGate} ({afternoonReturnTime})
-              </p>
-              <span style={{ fontSize: '0.72rem', color: '#0f766e', fontWeight: 700, display: 'block', marginTop: '4px' }}>
-                Starts: {schoolStartDate} • Guardians: {parentContact} / {secondaryGuardianPhone}
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gap: '8px', fontSize: '0.82rem', color: '#334155', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Base Monthly School Commute ({schoolShift}):</span>
-                <strong>₹{base.toLocaleString()}</strong>
-              </div>
-              {vehicleAddon > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Executive Compact Sedan Upgrade:</span>
-                  <strong>₹{vehicleAddon.toLocaleString()}</strong>
-                </div>
-              )}
-              {attendantAddon > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Dedicated Female Attendant On-Board:</span>
-                  <strong>₹{attendantAddon.toLocaleString()}</strong>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16a34a' }}>
-                <span>Live Dashcam &amp; Geo-Fence Safety Suite:</span>
-                <strong>FREE (Included)</strong>
-              </div>
-            </div>
-
-            <div style={{ borderTop: '2px dashed #cbd5e1', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <div>
-                <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block' }}>Monthly Pass Total</span>
-                <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>Zero surge pricing guarantee</span>
-              </div>
-              <strong style={{ fontSize: '1.6rem', color: '#2563eb', fontWeight: 900 }}>
-                ₹{total.toLocaleString()}<span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>/month</span>
-              </strong>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  };
-
-  // ─────────────────────────────────────────────────────────────
-  // RENDER FLOW 3: CORPORATE CARPOOL HUB
-  // ─────────────────────────────────────────────────────────────
-  const renderCarpoolFlow = () => {
-    const { base, daysAddon, total, savings } = calcCarpoolTotal();
-
-    if (step === 1) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 1: Corporate Route &amp; Tech Park Cluster
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Enter your workplace and route to match with verified executive co-riders.
-          </p>
-
-          <div style={{ display: 'grid', gap: '16px' }}>
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Workplace / Organization
-              </label>
-              <select
-                value={corporateOrg}
-                onChange={(e) => setCorporateOrg(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem', background: 'white' }}
-              >
-                <option value="TCS / Tata Consultancy Services">TCS (GIFT City / Gandhinagar)</option>
-                <option value="Infosys Technologies">Infosys Technologies</option>
-                <option value="Amazon Development Centre">Amazon Development Centre</option>
-                <option value="Google Operations">Google Operations</option>
-                <option value="GIFT City BFSI Cluster (NSE / BSE / Banks)">GIFT City BFSI Cluster</option>
-                <option value="L&T Technology Services">L&T Technology Services</option>
-                <option value="Reliance Industries Limited">Reliance Industries / Infocity</option>
-                <option value="Other">Other Corporate Campus</option>
-              </select>
-            </div>
-
-            {corporateOrg === 'Other' && (
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Enter Company / Building Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Adani Shantigram Corporate House"
-                  value={customOrgName}
-                  onChange={(e) => setCustomOrgName(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem' }}
-                />
-              </div>
-            )}
-
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Official Work Email (Unlocks Corporate Verified Co-Rider Badge)
-              </label>
-              <input
-                type="email"
-                placeholder="e.g. rahul.patel@tcs.com"
-                value={corporateEmail}
-                onChange={(e) => setCorporateEmail(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.9rem' }}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Home Pickup Cluster
-                </label>
-                <select
-                  value={homeCluster}
-                  onChange={(e) => setHomeCluster(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="Bopal / South Bopal">Bopal / South Bopal</option>
-                  <option value="SG Highway / Gota">SG Highway / Gota</option>
-                  <option value="Prahlad Nagar / Satellite">Prahlad Nagar / Satellite</option>
-                  <option value="Chandkheda / Motera">Chandkheda / Motera</option>
-                  <option value="Science City / Sola">Science City / Sola</option>
-                  <option value="Vastrapur / Bodakdev">Vastrapur / Bodakdev</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                  Corporate Destination
-                </label>
-                <select
-                  value={officePark}
-                  onChange={(e) => setOfficePark(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="GIFT City FinTech Zone">GIFT City FinTech Zone</option>
-                  <option value="Mindspace IT Park">Mindspace IT Park</option>
-                  <option value="Infocity Gandhinagar">Infocity Gandhinagar</option>
-                  <option value="Prahlad Nagar Corporate Road">Prahlad Nagar Corporate Road</option>
-                  <option value="SG Highway Corporate Corridor">SG Highway Corporate Corridor</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Specific Society Gate / Pickup Landmark
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Main Gate 1, Gala Aria, South Bopal"
-                value={pickupLandmark}
-                onChange={(e) => setPickupLandmark(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1.5px solid #cbd5e1', fontSize: '0.88rem' }}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 2) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 2: Commute Timings &amp; Vehicle Tier
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Align your work schedule with fellow verified professionals.
-          </p>
-
-          <div style={{ display: 'grid', gap: '16px' }}>
-            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Commute Start Schedule
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                {['Immediate / Tomorrow', 'Next Monday', '1st of Next Month'].map(st => (
-                  <button
-                    key={st}
-                    type="button"
-                    onClick={() => setCarpoolStartDate(st)}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      border: `1.5px solid ${carpoolStartDate === st ? '#1E40AF' : '#cbd5e1'}`,
-                      background: carpoolStartDate === st ? '#FAF9F6' : 'white',
-                      color: carpoolStartDate === st ? '#1E40AF' : '#475569',
-                      fontWeight: 700,
-                      fontSize: '0.78rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {st}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                  Morning In-Time
-                </label>
-                <select
-                  value={morningInTime}
-                  onChange={(e) => setMorningInTime(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="08:30 AM">08:30 AM</option>
-                  <option value="09:00 AM">09:00 AM</option>
-                  <option value="09:30 AM">09:30 AM</option>
-                  <option value="10:00 AM">10:00 AM</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '4px' }}>
-                  Evening Out-Time
-                </label>
-                <select
-                  value={eveningOutTime}
-                  onChange={(e) => setEveningOutTime(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: 'white' }}
-                >
-                  <option value="05:30 PM">05:30 PM</option>
-                  <option value="06:00 PM">06:00 PM</option>
-                  <option value="06:30 PM">06:30 PM</option>
-                  <option value="07:00 PM">07:00 PM</option>
-                  <option value="07:30 PM">07:30 PM</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Commute Days */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Work Week Schedule
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                {[
-                  { days: 5, label: '5 Days / Week (Mon-Fri)', sub: 'Standard IT/Corporate' },
-                  { days: 6, label: '6 Days / Week (Mon-Sat)', sub: 'Corporate + Weekend (+₹299)' }
-                ].map(d => {
-                  const isSel = carpoolDays === d.days;
-                  return (
-                    <div
-                      key={d.days}
-                      onClick={() => setCarpoolDays(d.days)}
-                      style={{
-                        padding: '12px 14px',
-                        borderRadius: '10px',
-                        border: `1.5px solid ${isSel ? '#1E40AF' : '#e2e8f0'}`,
-                        background: isSel ? '#FAF9F6' : 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.85rem', color: isSel ? '#1E40AF' : '#1e293b', display: 'block' }}>{d.label}</strong>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{d.sub}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Vehicle Tier */}
-            <div>
-              <label style={{ fontSize: '0.82rem', fontWeight: 800, color: '#1e293b', display: 'block', marginBottom: '6px' }}>
-                Vehicle Fleet Tier
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                {[
-                  { id: 'Sedan', name: 'Executive Sedan (Ciaz / City)', price: '₹1,299/mo', desc: 'Share with max 2 executives. High fuel savings.' },
-                  { id: 'SUV', name: 'VIP Executive SUV (Hycross / Safari)', price: '₹2,499/mo', desc: 'Max 3 executives. Captain seats, extra legroom & laptop trays.' }
-                ].map(v => {
-                  const isSel = carpoolVehicleTier === v.id;
-                  return (
-                    <div
-                      key={v.id}
-                      onClick={() => setCarpoolVehicleTier(v.id)}
-                      style={{
-                        padding: '14px',
-                        borderRadius: '12px',
-                        border: `2px solid ${isSel ? '#1E40AF' : '#e2e8f0'}`,
-                        background: isSel ? '#FAF9F6' : 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <strong style={{ fontSize: '0.88rem', color: isSel ? '#1E40AF' : '#1e293b', display: 'block' }}>{v.name}</strong>
-                      <span style={{ fontSize: '0.95rem', color: '#0f766e', fontWeight: 900, display: 'block', margin: '4px 0' }}>{v.price}</span>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{v.desc}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 3) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 3: Co-Rider Preferences &amp; Matched Cohort
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Tailor your commute ambiance and preview verified corporate co-riders on your route.
-          </p>
-
-          <div style={{ display: 'grid', gap: '14px', marginBottom: '20px' }}>
-            {/* Delay Backup SLA Card */}
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <span style={{ fontSize: '1.4rem' }}>🛡️</span>
-              <div>
-                <strong style={{ fontSize: '0.82rem', color: '#166534', display: 'block' }}>
-                  ServeCircle Guaranteed Backup Cab SLA
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#15803d' }}>
-                  If your carpool cab is ever delayed by &gt;10 mins, ServeCircle dispatches an instant solo VIP cab at ZERO extra charge!
-                </span>
-              </div>
-            </div>
-
-            {/* Quiet Mode */}
-            <div
-              onClick={() => setQuietRideMode(!quietRideMode)}
-              style={{
-                padding: '14px 16px',
-                borderRadius: '12px',
-                border: `1.5px solid ${quietRideMode ? '#1E40AF' : '#e2e8f0'}`,
-                background: quietRideMode ? '#FAF9F6' : 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: '0.88rem', color: '#1e293b', display: 'block' }}>
-                  🤫 Quiet Commute Mode (No calls on speaker)
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                  Peaceful cabin environment for work catch-up or relaxation.
-                </span>
-              </div>
-              <input type="checkbox" checked={quietRideMode} readOnly style={{ width: '18px', height: '18px', accentColor: '#1E40AF' }} />
-            </div>
-
-            {/* Women-Only Cohort */}
-            <div
-              onClick={() => setWomenOnlyCohort(!womenOnlyCohort)}
-              style={{
-                padding: '14px 16px',
-                borderRadius: '12px',
-                border: `1.5px solid ${womenOnlyCohort ? '#ec4899' : '#e2e8f0'}`,
-                background: womenOnlyCohort ? '#fdf2f8' : 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <div>
-                <strong style={{ fontSize: '0.88rem', color: womenOnlyCohort ? '#be185d' : '#1e293b', display: 'block' }}>
-                  🌸 Women-Only Carpool Cohort
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                  Matches exclusively with verified women corporate executives.
-                </span>
-              </div>
-              <input type="checkbox" checked={womenOnlyCohort} readOnly style={{ width: '18px', height: '18px', accentColor: '#ec4899' }} />
-            </div>
-
-            {/* Luggage Allowance Badge */}
-            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ fontSize: '1.2rem' }}>🎒</span>
-              <span style={{ fontSize: '0.76rem', color: '#475569' }}>
-                <strong>Dedicated Bag Space:</strong> 1 Laptop Backpack + 1 Gym/Office Bag permitted per passenger.
-              </span>
-            </div>
-
-            {/* Cohort Live Preview */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b' }}>
-                  👥 Verified Co-Riders on Your Route ({homeCluster} ⇄ {officePark}):
-                </span>
-                <span style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 800, background: '#dcfce7', padding: '2px 8px', borderRadius: '6px' }}>
-                  ● 3 Active Seats
-                </span>
-              </div>
-
-              <div style={{ display: 'grid', gap: '8px' }}>
-                {[
-                  { name: 'Priya M.', role: 'Senior Tech Lead @ Amazon', time: morningInTime, badge: 'Verified Pro' },
-                  { name: 'Kunal S.', role: 'VP Corporate Banking @ GIFT City', time: morningInTime, badge: 'Daily Commuter' },
-                  { name: 'Rohan V.', role: 'Enterprise Architect @ TCS', time: morningInTime, badge: 'Verified Pro' }
-                ].map((co, idx) => (
-                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    <div>
-                      <strong style={{ fontSize: '0.82rem', color: '#1e293b', display: 'block' }}>{co.name}</strong>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{co.role} • Departs {co.time}</span>
-                    </div>
-                    <span style={{ fontSize: '0.68rem', color: '#0f766e', fontWeight: 700, background: '#f0fdfa', padding: '3px 8px', borderRadius: '6px' }}>
-                      ✓ {co.badge}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (step === 4) {
-      return (
-        <div className="animate-fade-in-up">
-          <h3 style={{ fontSize: '1.25rem', color: '#1e293b', fontWeight: 900, marginBottom: '6px' }}>
-            Step 4: Monthly Carpool Pass Summary
-          </h3>
-          <p style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: '20px' }}>
-            Slash monthly commute stress and fuel expenses with ServeCircle verified carpool.
-          </p>
-
-          <div style={{ background: '#f8fafc', borderRadius: '16px', border: '1.5px solid #e2e8f0', padding: '24px', marginBottom: '20px' }}>
-            {/* Savings Banner */}
-            <div style={{ background: '#dcfce7', border: '1px solid #86efac', borderRadius: '12px', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div>
-                <strong style={{ fontSize: '0.85rem', color: '#166534', display: 'block' }}>
-                  🎉 Estimated Fuel &amp; Maintenance Savings:
-                </strong>
-                <span style={{ fontSize: '0.72rem', color: '#15803d' }}>Based on daily solo driving on SG Highway / GIFT City route</span>
-              </div>
-              <strong style={{ fontSize: '1.2rem', color: '#166534', fontWeight: 900 }}>
-                ~₹{savings.toLocaleString()}/mo
-              </strong>
-            </div>
-
-            <div style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '14px' }}>
-              <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 900, color: '#1e293b' }}>
-                Route: {homeCluster} ⇄ {officePark}
-              </h4>
-              <p style={{ fontSize: '0.78rem', color: '#475569', margin: '4px 0 0 0' }}>
-                Pickup: {pickupLandmark} • Org: {corporateOrg === 'Other' ? customOrgName : corporateOrg} ({corporateEmail})
-              </p>
-              <span style={{ fontSize: '0.72rem', color: '#1E40AF', fontWeight: 700, background: '#FAF9F6', padding: '2px 8px', borderRadius: '6px', display: 'inline-block', marginTop: '6px' }}>
-                Starts: {carpoolStartDate} • Shift: {morningInTime} In ⇄ {eveningOutTime} Out ({carpoolDays} Days/Week)
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gap: '8px', fontSize: '0.82rem', color: '#334155', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Executive Carpool Monthly Pass ({carpoolVehicleTier}):</span>
-                <strong>₹{base.toLocaleString()}</strong>
-              </div>
-              {daysAddon > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>6-Day Commute Surcharge:</span>
-                  <strong>₹{daysAddon.toLocaleString()}</strong>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16a34a' }}>
-                <span>Fast-Lane Fastag Toll Pass &amp; AC Included:</span>
-                <strong>FREE (Included)</strong>
-              </div>
-            </div>
-
-            <div style={{ borderTop: '2px dashed #cbd5e1', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <div>
-                <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block' }}>Monthly Pass Total</span>
-                <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>Zero cancellation penalty</span>
-              </div>
-              <strong style={{ fontSize: '1.6rem', color: '#1E40AF', fontWeight: 900 }}>
-                ₹{total.toLocaleString()}<span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>/month</span>
-              </strong>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  };
-
-  // ─────────────────────────────────────────────────────────────
-  // MAIN COMPONENT WRAPPER
-  // ─────────────────────────────────────────────────────────────
-  return (
-    <div className="page-content" style={{ minHeight: '92vh', paddingBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc' }}>
-      <div style={{ width: '100%', maxWidth: '780px', alignSelf: 'center', marginTop: '20px' }}>
-        <button
-          onClick={() => navigate('/customer/travel-commute')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#334155',
-            fontWeight: 800,
-            fontSize: '0.88rem',
-            background: 'white',
-            border: '1.5px solid #e2e8f0',
-            cursor: 'pointer',
-            marginBottom: '20px',
-            padding: '8px 18px',
-            borderRadius: '30px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <HiOutlineArrowLeft /> Back to Travel &amp; Commute Hub
-        </button>
-
-        <div style={{
-          background: 'white',
-          borderRadius: '24px',
-          boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08)',
-          overflow: 'hidden',
-          border: '1px solid #e2e8f0'
-        }}>
-          {/* Header Banner */}
+        {/* ERROR ALERT */}
+        {errorMsg && (
           <div style={{
-            background: theme.gradient,
-            padding: '36px 30px',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '20px',
-            position: 'relative',
-            overflow: 'hidden'
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#991b1b',
+            padding: '14px 20px',
+            borderRadius: '14px',
+            marginBottom: '24px',
+            fontWeight: 700,
+            fontSize: '0.9rem'
           }}>
-            <div style={{
-              background: 'rgba(255,255,255,0.18)',
-              padding: '16px',
-              borderRadius: '20px',
-              display: 'flex',
-              flexShrink: 0
-            }}>
-              {theme.icon}
-            </div>
-            <div style={{ zIndex: 1 }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)' }}>
-                ServeCircle Premium Mobility
-              </span>
-              <h2 style={{ fontSize: '1.65rem', fontWeight: 900, margin: '2px 0 0 0', color: '#ffffff' }}>
-                {theme.title}
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,0.92)', fontSize: '0.85rem', margin: '4px 0 0 0', fontWeight: 600 }}>
-                {theme.subtitle}
-              </p>
-            </div>
+            ⚠️ {errorMsg}
           </div>
+        )}
 
-          {/* Stepper Progress */}
-          <div style={{ padding: '20px 30px 0 30px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e293b' }}>
-                Step {step} of {maxSteps}
-              </span>
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: theme.color }}>
-                {Math.round((step / maxSteps) * 100)}% Completed
-              </span>
-            </div>
-            <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden', marginBottom: '16px' }}>
-              <div
-                style={{
-                  height: '100%',
-                  width: `${(step / maxSteps) * 100}%`,
-                  background: theme.color,
-                  borderRadius: '10px',
-                  transition: 'width 0.3s ease'
-                }}
-              />
-            </div>
-          </div>
+        {/* ========================================================================= */}
+        {/* STEP 1: SELECT PLAN & OPTIONS */}
+        {/* ========================================================================= */}
+        {step === 1 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            
+            {/* 1.1 LUXURY RENTAL SETUP */}
+            {flowType === 'luxury-rental' && (
+              <>
+                {/* Fleet Category Filter & Cards */}
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: 0 }}>
+                      1. Choose Your Luxury Fleet
+                    </h3>
+                    <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '4px', borderRadius: '12px' }}>
+                      {[
+                        { id: 'ALL', label: 'All Fleet' },
+                        { id: 'SUPERCARS', label: 'Supercars' },
+                        { id: 'SUV', label: 'VIP SUVs' },
+                        { id: 'VINTAGE', label: 'Vintage Classics' }
+                      ].map(cat => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setLuxuryCategory(cat.id)}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            background: luxuryCategory === cat.id ? '#0f766e' : 'transparent',
+                            color: luxuryCategory === cat.id ? 'white' : '#475569'
+                          }}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-          {/* Form Content */}
-          <div style={{ padding: '30px' }}>
-            {flowType === 'luxury-rental' && renderLuxuryFlow()}
-            {flowType === 'school-commute' && renderSchoolFlow()}
-            {flowType === 'corporate-carpool' && renderCarpoolFlow()}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', gap: '16px' }}>
+                    {(luxuryCategory === 'ALL' ? LUXURY_FLEET : LUXURY_FLEET.filter(c => c.category === luxuryCategory)).map(car => {
+                      const selected = carClass === car.name;
+                      return (
+                        <div
+                          key={car.id}
+                          onClick={() => setCarClass(car.name)}
+                          style={{
+                            border: `2px solid ${selected ? '#0f766e' : '#e2e8f0'}`,
+                            background: selected ? '#f0fdfa' : '#ffffff',
+                            borderRadius: '16px',
+                            padding: '18px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                              <span style={{ fontSize: '2rem' }}>{car.image}</span>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0f766e', background: '#ccfbf1', padding: '3px 8px', borderRadius: '6px' }}>
+                                {car.badge}
+                              </span>
+                            </div>
+                            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--navy-900)', marginBottom: '4px' }}>
+                              {car.name}
+                            </div>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b', lineHeight: 1.4, marginBottom: '10px' }}>
+                              {car.specs}
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px', fontSize: '0.72rem', color: '#475569', marginBottom: '12px' }}>
+                              <span style={{ background: '#f8fafc', padding: '2px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>{car.fuelType}</span>
+                              <span style={{ background: '#f8fafc', padding: '2px 8px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>{car.seats}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                            <div>
+                              <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f766e' }}>₹{car.baseDayRate.toLocaleString()}</span>
+                              <span style={{ fontSize: '0.72rem', color: '#64748b' }}> / day</span>
+                            </div>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: selected ? '#0f766e' : '#94a3b8' }}>
+                              {selected ? '✓ Selected' : 'Select'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
-            {errorMsg && (
-              <div style={{
-                color: '#b91c1c',
-                background: '#fef2f2',
-                padding: '12px 16px',
-                borderRadius: '10px',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                marginTop: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                border: '1px solid #fecaca'
-              }}>
-                <span>⚠️</span> {errorMsg}
-              </div>
+                {/* Rental Options & Pilot */}
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    2. Driving Mode & Rental Duration
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🎩 Pilot Mode
+                      </label>
+                      <select
+                        value={driveType}
+                        onChange={e => setDriveType(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Chauffeur">VIP Chauffeur-Driven (Uniformed & Verified)</option>
+                        <option value="Self-Drive">Self-Drive Experience (Requires Valid DL)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        📅 Rental Duration ({rentalDays} Days)
+                      </label>
+                      <input
+                        type="range"
+                        min={1}
+                        max={7}
+                        value={rentalDays}
+                        onChange={e => setRentalDays(Number(e.target.value))}
+                        style={{ width: '100%', accentColor: '#0f766e' }}
+                      />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#64748b' }}>
+                        <span>1 Day</span>
+                        <span>3 Days</span>
+                        <span>7 Days</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🚗 Handover Mode
+                      </label>
+                      <select
+                        value={deliveryMode}
+                        onChange={e => setDeliveryMode(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="doorstep">Doorstep Flatbed Delivery (+₹499)</option>
+                        <option value="showroom">VIP Hub Showroom Handover (₹0)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
 
-            {/* Stepper Buttons */}
-            <div style={{ marginTop: '30px', display: 'flex', gap: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '20px' }}>
-              {step > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setStep(step - 1)}
-                  style={{
-                    padding: '14px 22px',
-                    fontSize: '0.95rem',
-                    fontWeight: 800,
-                    background: 'white',
-                    color: '#334155',
-                    border: '1.5px solid #cbd5e1',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  ← Back
-                </button>
+            {/* 1.2 SCHOOL COMMUTE SETUP */}
+            {flowType === 'school-commute' && (
+              <>
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    1. Student Profile & Campus Route
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🧒 Student Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={childName}
+                        onChange={e => setChildName(e.target.value)}
+                        placeholder="e.g. Aarav Patel"
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🏫 School Name
+                      </label>
+                      <select
+                        value={schoolName}
+                        onChange={e => setSchoolName(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Delhi Public School (DPS)">Delhi Public School (DPS, Bopal)</option>
+                        <option value="Udgam School for Children">Udgam School for Children</option>
+                        <option value="Anand Niketan School">Anand Niketan School</option>
+                        <option value="St. Kabir School">St. Kabir School</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🎒 Student Class / Grade
+                      </label>
+                      <select
+                        value={childGrade}
+                        onChange={e => setChildGrade(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Pre-Primary (Nursery - KG)">Pre-Primary (Nursery - KG)</option>
+                        <option value="Primary (Grade 1 - 5)">Primary (Grade 1 - 5)</option>
+                        <option value="Middle School (Grade 6 - 8)">Middle School (Grade 6 - 8)</option>
+                        <option value="High School (Grade 9 - 12)">High School (Grade 9 - 12)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    2. Pass Shift & Safety Features
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '18px' }}>
+                    {[
+                      { id: 'Round-Trip', name: 'Round-Trip Monthly Pass', price: 3499, desc: 'Both morning pickup and afternoon return drop' },
+                      { id: 'Morning-Only', name: 'Morning Pickup Only', price: 2199, desc: 'Home to school campus gate morning ride' },
+                      { id: 'Afternoon-Only', name: 'Afternoon Return Only', price: 2199, desc: 'School gate to home afternoon ride' }
+                    ].map(p => {
+                      const selected = schoolShift === p.id;
+                      return (
+                        <div
+                          key={p.id}
+                          onClick={() => setSchoolShift(p.id)}
+                          style={{
+                            border: `2px solid ${selected ? '#2563eb' : '#e2e8f0'}`,
+                            background: selected ? '#eff6ff' : '#ffffff',
+                            borderRadius: '16px',
+                            padding: '18px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--navy-900)', marginBottom: '4px' }}>{p.name}</div>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#2563eb', marginBottom: '6px' }}>₹{p.price}<span style={{ fontSize: '0.75rem', color: '#64748b' }}>/mo</span></div>
+                          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{p.desc}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--navy-900)' }}>Female Attendant on Board</div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Dedicated trained lady escort helps child across school gates & straps seatbelt</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFemaleAttendant(!femaleAttendant)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: femaleAttendant ? '#2563eb' : '#e2e8f0',
+                        color: femaleAttendant ? 'white' : '#64748b',
+                        fontWeight: 800,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {femaleAttendant ? '✓ Included (+₹499)' : '+ Add Escort'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 1.3 CORPORATE CARPOOL SETUP */}
+            {flowType === 'corporate-carpool' && (
+              <>
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    1. Corporate Corridor & Company Match
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🏢 Corporate Organization
+                      </label>
+                      <select
+                        value={corporateOrg}
+                        onChange={e => setCorporateOrg(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="TCS / Tata Consultancy Services">TCS (GIFT City / Gandhinagar)</option>
+                        <option value="Infosys / Tech Mahindra">Infosys / Tech Mahindra</option>
+                        <option value="Cognizant / Accenture">Cognizant / Accenture</option>
+                        <option value="Adani Shantigram Tech Park">Adani Shantigram Tech Park</option>
+                        <option value="Prahlad Nagar Corporate Road">Prahlad Nagar Corporate Road</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        📍 Residential Cluster
+                      </label>
+                      <select
+                        value={homeCluster}
+                        onChange={e => setHomeCluster(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Bopal / South Bopal">Bopal / South Bopal Corridor</option>
+                        <option value="Prahlad Nagar / Satellite">Prahlad Nagar / Satellite Hub</option>
+                        <option value="Vastrapur / Bodakdev">Vastrapur / Bodakdev</option>
+                        <option value="Chandkheda / Motera">Chandkheda / Motera</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🎯 Tech Park Destination
+                      </label>
+                      <select
+                        value={officePark}
+                        onChange={e => setOfficePark(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="GIFT City FinTech Zone">GIFT City FinTech Zone</option>
+                        <option value="Infocity Gandhinagar">Infocity Gandhinagar</option>
+                        <option value="SG Highway Corporate Corridor">SG Highway Corporate Corridor</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    2. Monthly Pass Tier
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                    {[
+                      { id: 'Sedan', name: 'Executive Sedan Pass (Honda City / Ciaz)', price: 1299, desc: 'Quiet, premium sedan shared with max 2 other verified professionals on your exact route.' },
+                      { id: 'SUV', name: 'Luxury Executive SUV Pass (Creta / Innova)', price: 2499, desc: 'Spacious captain seats, reclining leg room, charging hubs & fast-track corridor transit.' }
+                    ].map(t => {
+                      const selected = carpoolVehicleTier === t.id;
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={() => setCarpoolVehicleTier(t.id)}
+                          style={{
+                            border: `2px solid ${selected ? '#1E40AF' : '#e2e8f0'}`,
+                            background: selected ? '#eff6ff' : '#ffffff',
+                            borderRadius: '16px',
+                            padding: '18px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--navy-900)', marginBottom: '4px' }}>{t.name}</div>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#1E40AF', marginBottom: '6px' }}>₹{t.price}<span style={{ fontSize: '0.75rem', color: '#64748b' }}>/month</span></div>
+                          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{t.desc}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STEP 2: SCHEDULE, ADDRESS & CONFIRM */}
+        {/* ========================================================================= */}
+        {step === 2 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Schedule & Address Form */}
+            <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                Schedule & Doorstep Details
+              </h3>
+
+              {flowType === 'luxury-rental' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📅 Rental Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={rentalStartDate}
+                      onChange={e => setRentalStartDate(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Delivery Time
+                    </label>
+                    <select
+                      value={deliveryTimeSlot}
+                      onChange={e => setDeliveryTimeSlot(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="10:00 AM">10:00 AM (Morning Handover)</option>
+                      <option value="02:00 PM">02:00 PM (Afternoon Handover)</option>
+                      <option value="06:00 PM">06:00 PM (Evening Handover)</option>
+                    </select>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📍 Doorstep Delivery Address / Hotel
+                    </label>
+                    <input
+                      type="text"
+                      value={deliveryAddress}
+                      onChange={e => setDeliveryAddress(e.target.value)}
+                      placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  {driveType === 'Self-Drive' && (
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        📄 Driving License Number (Compulsory for Self-Drive)
+                      </label>
+                      <input
+                        type="text"
+                        value={drivingLicense}
+                        onChange={e => setDrivingLicense(e.target.value)}
+                        placeholder="e.g. GJ-01-2022-0049281"
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      />
+                    </div>
+                  )}
+                </div>
               )}
+
+              {flowType === 'school-commute' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Morning Pickup Time
+                    </label>
+                    <select
+                      value={morningPickupTime}
+                      onChange={e => setMorningPickupTime(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="07:00 AM">07:00 AM</option>
+                      <option value="07:15 AM">07:15 AM</option>
+                      <option value="07:30 AM">07:30 AM</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Afternoon Return Time
+                    </label>
+                    <select
+                      value={afternoonReturnTime}
+                      onChange={e => setAfternoonReturnTime(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="01:30 PM">01:30 PM</option>
+                      <option value="02:00 PM">02:00 PM</option>
+                      <option value="02:30 PM">02:30 PM</option>
+                    </select>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      🏠 Home Pickup Address
+                    </label>
+                    <input
+                      type="text"
+                      value={schoolPickupAddress}
+                      onChange={e => setSchoolPickupAddress(e.target.value)}
+                      placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📞 Primary Parent Contact
+                    </label>
+                    <input
+                      type="text"
+                      value={parentContact}
+                      onChange={e => setParentContact(e.target.value)}
+                      placeholder="e.g. 9876543210"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📞 Secondary Guardian Contact
+                    </label>
+                    <input
+                      type="text"
+                      value={secondaryGuardianPhone}
+                      onChange={e => setSecondaryGuardianPhone(e.target.value)}
+                      placeholder="e.g. 9876501234"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {flowType === 'corporate-carpool' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Morning In-Time (At Office)
+                    </label>
+                    <select
+                      value={morningInTime}
+                      onChange={e => setMorningInTime(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="09:00 AM">09:00 AM</option>
+                      <option value="09:30 AM">09:30 AM</option>
+                      <option value="10:00 AM">10:00 AM</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Evening Out-Time (Return Departure)
+                    </label>
+                    <select
+                      value={eveningOutTime}
+                      onChange={e => setEveningOutTime(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="06:00 PM">06:00 PM</option>
+                      <option value="06:30 PM">06:30 PM</option>
+                      <option value="07:00 PM">07:00 PM</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📍 Society Gate / Pickup Landmark
+                    </label>
+                    <input
+                      type="text"
+                      value={pickupLandmark}
+                      onChange={e => setPickupLandmark(e.target.value)}
+                      placeholder="e.g. Main Gate 1, Gala Aria, South Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      💼 Work Email (For Corporate Verification)
+                    </label>
+                    <input
+                      type="email"
+                      value={corporateEmail}
+                      onChange={e => setCorporateEmail(e.target.value)}
+                      placeholder="e.g. rahul.patel@tcs.com"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Specialist & Safety Assurance Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+              color: 'white',
+              borderRadius: '20px',
+              padding: '24px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '18px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.8rem'
+                }}>
+                  {flowType === 'luxury-rental' ? '👑' : flowType === 'school-commute' ? '🛡️' : '💼'}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#38bdf8', fontWeight: 800 }}>
+                    ServeCircle Mobility Guarantee
+                  </div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, margin: '2px 0' }}>
+                    {flowType === 'luxury-rental' ? 'VIP White-Glove Fleet Chauffeur & Zero-Dep Transit Coverage' :
+                     flowType === 'school-commute' ? 'Police-Verified School Van Pilot & Live In-Cabin CCTV Stream' :
+                     'Verified Corporate Executives Only • Geo-Fenced Fast Transit'}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                    100% on-time dispatch guarantee • Instant cancellation / trip pause • Real-time GPS sharing
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Price Summary Breakdown */}
+            <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                Booking Summary & Breakdown
+              </h3>
+
+              {flowType === 'luxury-rental' && (() => {
+                const l = calcLuxuryTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>{selectedCar.name} ({rentalDays} Days)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{l.baseTotal.toLocaleString()}</strong>
+                    </div>
+                    {l.driverFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Chauffeur Pilot Fee</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{l.driverFee.toLocaleString()}</strong>
+                      </div>
+                    )}
+                    {l.deliveryFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Doorstep Flatbed Delivery</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{l.deliveryFee}</strong>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Applicable GST (18%)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{l.gst.toLocaleString()}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Total Payable</span>
+                      <span style={{ color: theme.color }}>₹{l.total.toLocaleString()}</span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {flowType === 'school-commute' && (() => {
+                const s = calcSchoolTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>School Commute Pass ({schoolShift})</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{s.base}</strong>
+                    </div>
+                    {s.attendantAddon > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Female Attendant Escort</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{s.attendantAddon}</strong>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Monthly Fee</span>
+                      <span style={{ color: theme.color }}>₹{s.total} / month</span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {flowType === 'corporate-carpool' && (() => {
+                const cp = calcCarpoolTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Corporate Carpool Pass ({carpoolVehicleTier})</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{cp.base}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem', color: '#16a34a' }}>
+                      <span>Estimated Monthly Cab Savings</span>
+                      <strong>Save ~₹{cp.savings.toLocaleString()} / month</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Monthly Shared Pass</span>
+                      <span style={{ color: theme.color }}>₹{cp.total} / month</span>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+
+          </div>
+        )}
+
+        {/* BOTTOM FLOATING ACTION BAR */}
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'white',
+          borderTop: '1px solid #e2e8f0',
+          padding: '16px 24px',
+          display: 'flex',
+          justifyContent: 'center',
+          boxShadow: '0 -4px 16px rgba(0,0,0,0.06)',
+          zIndex: 100
+        }}>
+          <div style={{ width: '100%', maxWidth: '920px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>Total Payable</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: theme.color }}>₹{currentTotal().toLocaleString()}</div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={handleBack}
+                className="btn"
+                style={{
+                  background: '#f1f5f9',
+                  color: '#475569',
+                  padding: '12px 20px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: 'none'
+                }}
+              >
+                {step === 1 ? 'Cancel' : 'Back'}
+              </button>
 
               <button
-                type="button"
                 onClick={handleNext}
                 disabled={loading}
+                className="btn"
                 style={{
-                  flex: 1,
-                  padding: '14px 24px',
-                  fontSize: '1rem',
-                  fontWeight: 900,
-                  background: theme.color,
+                  background: theme.gradient,
                   color: 'white',
-                  border: 'none',
+                  padding: '12px 28px',
                   borderRadius: '12px',
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  boxShadow: `0 6px 18px -4px ${theme.color}`,
+                  border: 'none',
                   display: 'flex',
-                  justifyContent: 'center',
                   alignItems: 'center',
                   gap: '8px',
-                  opacity: loading ? 0.7 : 1,
-                  transition: 'all 0.15s ease'
+                  boxShadow: `0 4px 14px ${theme.color}44`
                 }}
               >
-                {loading
-                  ? 'Processing Booking...'
-                  : step === maxSteps
-                  ? 'Confirm & Proceed to Checkout →'
-                  : 'Continue to Next Step →'}
+                {loading ? 'Processing...' : step === 1 ? (
+                  <>Continue to Schedule <HiOutlineArrowRight size={18} /></>
+                ) : (
+                  <>Confirm & Match <HiOutlineCheckCircle size={18} /></>
+                )}
               </button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

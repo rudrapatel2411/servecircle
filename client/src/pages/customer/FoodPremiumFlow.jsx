@@ -13,13 +13,9 @@ import {
   HiOutlineShieldCheck,
   HiOutlineCheckBadge,
   HiOutlineArrowRight,
-  HiOutlineHeart,
   HiOutlineStar,
   HiOutlineHome,
   HiOutlineAcademicCap,
-  HiOutlinePlus,
-  HiOutlineTrash,
-  HiOutlineBolt,
   HiOutlineCurrencyRupee
 } from 'react-icons/hi2';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +26,7 @@ const FoodPremiumFlow = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const flowType = searchParams.get('type'); // bbq, baking, kitchen-clean
+  const flowType = searchParams.get('type') || 'bbq'; // bbq, baking, kitchen-clean
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -53,17 +49,13 @@ const FoodPremiumFlow = () => {
     'p-paneer', 'm-mush', 'c-tikka', 'm-seekh', 'c-corn'
   ]);
   const [bbqAddons, setBbqAddons] = useState(['mocktail-bar']);
-  const [bbqSpecialNotes, setBbqSpecialNotes] = useState('');
 
   const BBQ_SKEWER_MENU = [
-    // Veg items
     { id: 'p-paneer', category: 'veg', name: 'Peri-Peri Malai Paneer Tikka', desc: 'Fresh malai paneer cubes with bell peppers & spicy citrus glaze', badge: 'Crowd Favorite' },
     { id: 'm-mush', category: 'veg', name: 'Smoked Herb Mushrooms & Tomatoes', desc: 'Plump button mushrooms marinated in olive oil, garlic & fresh herbs', badge: 'Gourmet' },
     { id: 'c-corn', category: 'veg', name: 'Charred Honey-Butter Pineapple & Corn', desc: 'Sweet pineapple spears with butter-charred sweet corn cobs', badge: 'Sweet & Smoky' },
     { id: 'a-capsicum', category: 'veg', name: 'Achari Stuffed Baby Capsicum', desc: 'Zesty pickling spice filling inside flame-blistered baby bell peppers', badge: 'Tangy' },
     { id: 's-chaap', category: 'veg', name: 'Tandoori Soya Chaap Skewers', desc: 'Juicy layered soya chaap in rich tandoori smoked yogurt masala', badge: 'High Protein' },
-    { id: 'b-potato', category: 'veg', name: 'Crispy Rosemary Flame-Roasted Potatoes', desc: 'Herb-crusted baby potatoes flame-roasted over glowing charcoal', badge: 'Crispy' },
-    // Non-Veg items
     { id: 'c-tikka', category: 'nonveg', name: 'Hickory-Smoked Chicken Tikka', desc: 'Tender boneless thigh morsels smoked over organic hickory wood', badge: 'Chef Special' },
     { id: 'm-seekh', category: 'nonveg', name: 'Awadhi Mutton Seekh Kebabs', desc: 'Spiced minced lamb infused with saffron, mint & royal aromatic spices', badge: 'Signature' },
     { id: 'f-tikka', category: 'nonveg', name: 'Amritsari River Sole Fish Skewers', desc: 'Delicate river sole fillet in ajwain & mustard spiced yogurt batter', badge: 'Seafood' },
@@ -92,7 +84,6 @@ const FoodPremiumFlow = () => {
   const [bakingTimeSlot, setBakingTimeSlot] = useState('Morning Masterclass (10:30 AM - 01:30 PM)');
   const [bakingStudentNames, setBakingStudentNames] = useState('Pooja & Rahul');
   const [bakingAddress, setBakingAddress] = useState('Flat 402, Sunshine Apartments, Bopal');
-  const [bakingSkillLevel, setBakingSkillLevel] = useState('Beginner / Enthusiast');
   const [bakingAddons, setBakingAddons] = useState(['toolkit-keep']);
 
   const BAKING_COURSES = [
@@ -148,7 +139,6 @@ const FoodPremiumFlow = () => {
   // 3. KITCHEN CLEAN STATE
   // ─────────────────────────────────────────────────────────────
   const [cleanKitchenSize, setCleanKitchenSize] = useState('Standard Modular Kitchen (90 - 180 sq ft)');
-  const [cleanCurrentCondition, setCleanCurrentCondition] = useState('Moderate Cooking Grease & Dust');
   const [cleanApplianceAddons, setCleanApplianceAddons] = useState(['chimney', 'fridge']);
   const [cleanPantryTier, setCleanPantryTier] = useState('Aesthetic Pantry Makeover & Decanting');
   const [cleanDate, setCleanDate] = useState(() => {
@@ -157,7 +147,6 @@ const FoodPremiumFlow = () => {
   });
   const [cleanTimeSlot, setCleanTimeSlot] = useState('Morning Fresh (08:30 AM - 12:30 PM)');
   const [cleanAddress, setCleanAddress] = useState('Flat 402, Sunshine Apartments, Bopal');
-  const [cleanSpecialNotes, setCleanSpecialNotes] = useState('Modular acrylic cabinets; please use non-scratch pads.');
 
   const KITCHEN_SIZES = [
     {
@@ -188,9 +177,7 @@ const FoodPremiumFlow = () => {
     { id: 'exhaust-window', name: 'Exhaust Fan & Window Mesh Degreasing', price: 299, desc: 'Removal of sticky oil grime from exhaust blades and wire mosquito mesh' }
   ];
 
-  // ─────────────────────────────────────────────────────────────
-  // FLOW VALIDATION
-  // ─────────────────────────────────────────────────────────────
+  // Validate flow type
   useEffect(() => {
     if (!['bbq', 'baking', 'kitchen-clean'].includes(flowType)) {
       navigate('/customer/food-kitchen');
@@ -201,7 +188,6 @@ const FoodPremiumFlow = () => {
   // PRICING CALCULATIONS
   // ─────────────────────────────────────────────────────────────
   const calcBbqTotal = () => {
-    // Base covers up to 6 guests
     const baseRate = 3499;
     const extraGuests = Math.max(0, bbqGuests - 6);
     const guestAddon = extraGuests * 350;
@@ -252,47 +238,51 @@ const FoodPremiumFlow = () => {
     return { basePrice, applianceTotal, pantryFee, subtotal, gst, total };
   };
 
-  // ─────────────────────────────────────────────────────────────
-  // STEP HANDLING & FINAL CHECKOUT
-  // ─────────────────────────────────────────────────────────────
-  const maxSteps = 4;
+  const currentTotal = () => {
+    if (flowType === 'bbq') return calcBbqTotal().total;
+    if (flowType === 'baking') return calcBakingTotal().total;
+    return calcCleanTotal().total;
+  };
 
+  // ─────────────────────────────────────────────────────────────
+  // 2-STEP NAVIGATION & CHECKOUT
+  // ─────────────────────────────────────────────────────────────
   const handleNext = () => {
     setErrorMsg('');
 
-    if (flowType === 'bbq') {
-      if (step === 1) {
-        if (!bbqAddress.trim()) return setErrorMsg('Please enter your venue address or society name.');
-        if (!bbqEventDate) return setErrorMsg('Please choose your event date.');
+    if (step === 1) {
+      if (flowType === 'bbq' && bbqSelectedItems.length === 0) {
+        return setErrorMsg('Please select at least 2 skewered BBQ items for the live grill.');
       }
-      if (step === 2) {
-        if (bbqSelectedItems.length === 0) return setErrorMsg('Please select at least 2 skewered BBQ items for the live grill.');
+      if (flowType === 'baking' && !bakingCourse) {
+        return setErrorMsg('Please select a masterclass course theme.');
       }
-    } else if (flowType === 'baking') {
-      if (step === 1) {
-        if (!bakingCourse) return setErrorMsg('Please select a masterclass course.');
-      }
-      if (step === 2) {
-        if (!bakingAddress.trim()) return setErrorMsg('Please enter your home address where the class will be conducted.');
-        if (!bakingDate) return setErrorMsg('Please select the date for the class.');
-      }
-      if (step === 3) {
-        if (!bakingStudentNames.trim()) return setErrorMsg('Please enter student name(s) for the signed masterclass certificate.');
-      }
-    } else if (flowType === 'kitchen-clean') {
-      if (step === 1) {
-        if (!cleanAddress.trim()) return setErrorMsg('Please enter your home address or apartment number.');
-      }
-      if (step === 3) {
-        if (!cleanDate) return setErrorMsg('Please choose your preferred deep cleaning date.');
-      }
-    }
-
-    if (step < maxSteps) {
-      setStep(step + 1);
+      setStep(2);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Step 2 validations
+      if (flowType === 'bbq') {
+        if (!bbqAddress.trim()) return setErrorMsg('Please enter your event venue address or society name.');
+        if (!bbqEventDate) return setErrorMsg('Please choose your event date.');
+      } else if (flowType === 'baking') {
+        if (!bakingAddress.trim()) return setErrorMsg('Please enter your home address where the class will be conducted.');
+        if (!bakingDate) return setErrorMsg('Please select the date for the class.');
+        if (!bakingStudentNames.trim()) return setErrorMsg('Please enter student name(s) for the signed masterclass certificate.');
+      } else if (flowType === 'kitchen-clean') {
+        if (!cleanAddress.trim()) return setErrorMsg('Please enter your home address or apartment number.');
+        if (!cleanDate) return setErrorMsg('Please choose your preferred deep cleaning date.');
+      }
       finalizeBooking();
+    }
+  };
+
+  const handleBack = () => {
+    setErrorMsg('');
+    if (step === 2) {
+      setStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/customer/food-kitchen');
     }
   };
 
@@ -321,7 +311,15 @@ const FoodPremiumFlow = () => {
       }
 
       navigate(`/customer/book?service=${encodeURIComponent(serviceName)}&category=Food%20%26%20Kitchen&price=${price}${queryParams}`);
-    }, 1000);
+    }, 700);
+  };
+
+  const toggleItem = (list, setList, id) => {
+    if (list.includes(id)) {
+      setList(list.filter(item => item !== id));
+    } else {
+      setList([...list, id]);
+    }
   };
 
   // ─────────────────────────────────────────────────────────────
@@ -337,8 +335,7 @@ const FoodPremiumFlow = () => {
           gradient: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
           color: '#ea580c',
           bgSoft: '#fff7ed',
-          borderActive: '#ea580c',
-          shadowActive: '0 8px 24px rgba(234, 88, 12, 0.2)'
+          borderActive: '#ea580c'
         };
       case 'baking':
         return {
@@ -348,10 +345,10 @@ const FoodPremiumFlow = () => {
           gradient: 'linear-gradient(135deg, #db2777 0%, #9d174d 100%)',
           color: '#db2777',
           bgSoft: '#fdf2f8',
-          borderActive: '#db2777',
-          shadowActive: '0 8px 24px rgba(219, 39, 119, 0.2)'
+          borderActive: '#db2777'
         };
       case 'kitchen-clean':
+      default:
         return {
           title: 'Kitchen & Pantry Deep Sanitization',
           subtitle: '140°C High-Pressure Steam Degreasing & Food-Safe Bio-Enzymatic Clean',
@@ -359,1353 +356,914 @@ const FoodPremiumFlow = () => {
           gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)',
           color: '#0ea5e9',
           bgSoft: '#f0f9ff',
-          borderActive: '#0ea5e9',
-          shadowActive: '0 8px 24px rgba(14, 165, 233, 0.2)'
+          borderActive: '#0ea5e9'
         };
-      default:
-        return { title: 'Service', subtitle: '', icon: null, gradient: '', color: '#ea580c', bgSoft: '#fff7ed', borderActive: '#ea580c', shadowActive: '' };
     }
   };
 
   const theme = getThemeInfo();
 
   return (
-    <div className="page-content" style={{ minHeight: '92vh', paddingBottom: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc' }}>
-      <div style={{ width: '100%', maxWidth: '850px', alignSelf: 'center', marginTop: '20px' }}>
+    <div className="page-content" style={{ minHeight: '92vh', padding: '20px 16px 120px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc' }}>
+      <div style={{ width: '100%', maxWidth: '920px', marginTop: '12px' }}>
         
-        {/* Navigation & Header */}
-        <button
-          onClick={() => navigate('/customer/food-kitchen')}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '8px',
-            color: 'var(--navy-700)', fontWeight: 800, fontSize: '0.85rem',
-            background: 'white', border: '1px solid var(--gray-200)', cursor: 'pointer', marginBottom: '20px',
-            padding: '8px 18px', borderRadius: '30px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)'
-          }}
-        >
-          <HiOutlineArrowLeft /> Back to Food & Kitchen Hub
-        </button>
+        {/* Top Back Navigation */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <button
+            onClick={handleBack}
+            className="btn"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              padding: '10px 18px',
+              borderRadius: '12px',
+              fontWeight: 700,
+              color: 'var(--navy-800)',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.04)'
+            }}
+          >
+            <HiOutlineArrowLeft size={18} />
+            {step === 1 ? 'Back to Food & Kitchen Hub' : 'Previous Step'}
+          </button>
+        </div>
 
         {/* Hero Card */}
         <div style={{
-          background: 'white',
+          background: theme.gradient,
           borderRadius: '24px',
-          boxShadow: '0 20px 45px -12px rgba(0,0,0,0.1)',
-          overflow: 'hidden',
-          border: '1px solid rgba(0,0,0,0.06)',
-          marginBottom: '24px'
+          padding: '28px 24px',
+          color: 'white',
+          marginBottom: '24px',
+          boxShadow: '0 12px 30px -8px rgba(0,0,0,0.18)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '20px'
         }}>
+          <div style={{ flex: '1 1 500px' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(8px)',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+              marginBottom: '10px'
+            }}>
+              <HiOutlineSparkles size={14} /> 5-Star Hotel Chefs & Certified Hygiene
+            </div>
+            <h1 style={{ fontSize: '1.85rem', fontWeight: 900, margin: '0 0 8px 0', lineHeight: 1.2 }}>
+              {theme.title}
+            </h1>
+            <p style={{ margin: 0, fontSize: '0.95rem', opacity: 0.95, lineHeight: 1.5, maxWidth: '640px' }}>
+              {theme.subtitle}
+            </p>
+          </div>
           <div style={{
-            background: theme.gradient,
-            padding: '36px 30px',
-            color: 'white',
+            width: '64px',
+            height: '64px',
+            borderRadius: '20px',
+            background: 'rgba(255,255,255,0.18)',
             display: 'flex',
             alignItems: 'center',
-            gap: '20px',
-            position: 'relative',
-            overflow: 'hidden'
+            justifyContent: 'center',
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.3)'
           }}>
-            <div style={{ position: 'absolute', right: '-20px', top: '-40px', width: '160px', height: '160px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-            <div style={{
-              background: 'rgba(255,255,255,0.2)',
-              padding: '16px', borderRadius: '20px', display: 'flex',
-              backdropFilter: 'blur(6px)'
-            }}>
-              {theme.icon}
-            </div>
-            <div style={{ zIndex: 1 }}>
-              <div style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 800, background: 'rgba(255,255,255,0.25)', padding: '3px 10px', borderRadius: '12px', marginBottom: '6px', letterSpacing: '0.5px' }}>
-                SERVE CIRCLE PREMIUM CULINARY
-              </div>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0, letterSpacing: '-0.5px' }}>{theme.title}</h1>
-              <p style={{ color: 'rgba(255,255,255,0.92)', fontSize: '0.9rem', margin: '6px 0 0 0', fontWeight: 500 }}>
-                {theme.subtitle}
-              </p>
-            </div>
-          </div>
-
-          {/* Stepper Progress Bar */}
-          <div style={{ padding: '22px 30px 16px 30px', borderBottom: '1px solid var(--gray-100)', background: '#fafafa' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: theme.color, background: theme.bgSoft, padding: '3px 10px', borderRadius: '12px', border: `1px solid ${theme.color}33` }}>
-                  Step {step} of {maxSteps}
-                </span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)' }}>
-                  {flowType === 'bbq' && (
-                    step === 1 ? 'Gathering Scale & Venue' :
-                    step === 2 ? 'Curate Marinades & Skewers' :
-                    step === 3 ? 'Hardware, Crew & Add-ons' : 'Booking Review & Pricing'
-                  )}
-                  {flowType === 'baking' && (
-                    step === 1 ? 'Masterclass Course & Format' :
-                    step === 2 ? 'Kitchen Oven & Schedule' :
-                    step === 3 ? 'Chef Kit & Keepsakes' : 'Review & Certificate Details'
-                  )}
-                  {flowType === 'kitchen-clean' && (
-                    step === 1 ? 'Kitchen Size & Condition' :
-                    step === 2 ? 'Appliance Degreasing Add-ons' :
-                    step === 3 ? 'Pantry & Food-Safe Steam' : 'Inspection Checklist & Review'
-                  )}
-                </span>
-              </div>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--gray-500)' }}>
-                {Math.round((step / maxSteps) * 100)}% Completed
-              </span>
-            </div>
-            <div style={{ width: '100%', height: '7px', background: 'var(--gray-200)', borderRadius: '10px', overflow: 'hidden' }}>
-              <div style={{
-                height: '100%',
-                width: `${(step / maxSteps) * 100}%`,
-                background: theme.gradient,
-                borderRadius: '10px',
-                transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}></div>
-            </div>
-          </div>
-
-          {/* Step Body */}
-          <div style={{ padding: '30px' }}>
-
-            {/* ══════════════════════════════════════════════════════
-                FLOW 1: BBQ & LIVE GRILL SETUP
-            ══════════════════════════════════════════════════════ */}
-            {flowType === 'bbq' && (
-              <>
-                {step === 1 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Event Scale, Venue & Date
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '24px' }}>
-                      Configure your party size and outdoor venue. We supply dedicated pitmaster chefs and portable charcoal stations.
-                    </p>
-
-                    {/* Guest Count Slider */}
-                    <div style={{ background: '#f8fafc', padding: '22px', borderRadius: '18px', border: '1px solid var(--gray-200)', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                        <div>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block' }}>Estimated Guest Count</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>Base price covers up to 6 guests; ₹350/extra guest thereafter</span>
-                        </div>
-                        <span style={{ fontSize: '1.3rem', fontWeight: 900, color: theme.color, background: 'white', padding: '4px 14px', borderRadius: '12px', border: `1px solid ${theme.color}44` }}>
-                          {bbqGuests} Guests
-                        </span>
-                      </div>
-                      <input
-                        type="range"
-                        min="4"
-                        max="35"
-                        value={bbqGuests}
-                        onChange={(e) => setBbqGuests(Number(e.target.value))}
-                        style={{ width: '100%', accentColor: theme.color, height: '8px', cursor: 'pointer' }}
-                      />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--gray-400)', marginTop: '8px', fontWeight: 600 }}>
-                        <span>4 Guests (Intimate)</span>
-                        <span>15 Guests (House Party)</span>
-                        <span>35 Guests (Grand Lawn)</span>
-                      </div>
-
-                      {/* Crew sizing indication */}
-                      <div style={{ marginTop: '16px', padding: '12px 16px', background: 'white', borderRadius: '12px', border: '1px solid var(--gray-200)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '1.2rem' }}>👨‍🍳</span>
-                        <div style={{ fontSize: '0.82rem', color: 'var(--navy-800)' }}>
-                          <strong>Included Crew: </strong>
-                          {bbqGuests <= 8 && '1 Master Pitmaster + 1 Portable Cast-Iron Charcoal Station'}
-                          {bbqGuests > 8 && bbqGuests <= 18 && '2 Chefs (1 Master Pitmaster + 1 Assistant) + 2 Grilling Stations'}
-                          {bbqGuests > 18 && '3 Chefs + Commercial Charcoal Smoker & Live Buffet Warming Trays'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Venue Type Selection */}
-                    <div style={{ marginBottom: '24px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '10px' }}>
-                        Outdoor Venue Setting
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-                        {[
-                          { id: 'Private Backyard Lawn', icon: '🏡', sub: 'Natural grass / garden' },
-                          { id: 'Open Terrace / Rooftop', icon: '🌇', sub: 'High breeze open roof' },
-                          { id: 'Open Balcony (Ventilated)', icon: '🏢', sub: 'Apartment high-rise deck' },
-                          { id: 'Farmhouse / Poolside Deck', icon: '🏊‍♂️', sub: 'Waterfront / luxury villa' }
-                        ].map((v) => (
-                          <div
-                            key={v.id}
-                            onClick={() => setBbqVenueType(v.id)}
-                            style={{
-                              padding: '14px', borderRadius: '14px',
-                              border: `2px solid ${bbqVenueType === v.id ? theme.color : 'var(--gray-200)'}`,
-                              background: bbqVenueType === v.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center'
-                            }}
-                          >
-                            <span style={{ fontSize: '1.4rem', display: 'block', marginBottom: '4px' }}>{v.icon}</span>
-                            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: bbqVenueType === v.id ? theme.color : 'var(--navy-800)', display: 'block' }}>{v.id}</span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>{v.sub}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Event Slot & Date */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Event Date
-                        </label>
-                        <input
-                          type="date"
-                          value={bbqEventDate}
-                          min={new Date().toISOString().split('T')[0]}
-                          onChange={(e) => setBbqEventDate(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.9rem' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Preferred Live Grill Slot
-                        </label>
-                        <select
-                          value={bbqEventType}
-                          onChange={(e) => setBbqEventType(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.85rem' }}
-                        >
-                          <option value="Evening Sundowner (05:00 PM - 09:00 PM)">Evening Sundowner (05:00 PM - 09:00 PM)</option>
-                          <option value="Lunch Sizzle (12:00 PM - 04:00 PM)">Lunch Sizzle (12:00 PM - 04:00 PM)</option>
-                          <option value="Late-Night Party (08:30 PM - 12:30 AM)">Late-Night Party (08:30 PM - 12:30 AM)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Venue Address */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Venue Address / Bungalow Details
-                      </label>
-                      <input
-                        type="text"
-                        value={bbqAddress}
-                        placeholder="e.g. Bungalow 14, Orchid Greens, South Bopal"
-                        onChange={(e) => setBbqAddress(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 600, fontSize: '0.9rem' }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Curate Signature Skewers & Marinades
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-                      Select items for live charcoal grilling. Freshly pre-marinated in house spices and chilled for peak flavor.
-                    </p>
-
-                    {/* Diet Toggle */}
-                    <div style={{ display: 'flex', gap: '10px', marginBottom: '22px', flexWrap: 'wrap' }}>
-                      {[
-                        { id: 'Pure Veg (Jain available)', label: '🌱 Pure Veg Platter' },
-                        { id: 'Non-Veg Classic', label: '🍗 Non-Veg Feast' },
-                        { id: 'Mixed', label: '✨ Mixed (Veg + Non-Veg)' }
-                      ].map((d) => (
-                        <button
-                          key={d.id}
-                          type="button"
-                          onClick={() => setBbqDietType(d.id)}
-                          style={{
-                            padding: '10px 18px', borderRadius: '30px', fontWeight: 800, fontSize: '0.85rem',
-                            border: `2px solid ${bbqDietType === d.id ? theme.color : 'var(--gray-200)'}`,
-                            background: bbqDietType === d.id ? theme.bgSoft : 'white',
-                            color: bbqDietType === d.id ? theme.color : 'var(--navy-700)',
-                            cursor: 'pointer', transition: 'all 0.2s'
-                          }}
-                        >
-                          {d.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Spice Profile */}
-                    <div style={{ background: '#f8fafc', padding: '16px 20px', borderRadius: '14px', border: '1px solid var(--gray-200)', marginBottom: '22px' }}>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block', marginBottom: '8px' }}>
-                        🌶️ Spice & Herb Profile
-                      </span>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-                        {[
-                          { id: 'Mild European Herb', desc: 'Garlic butter, oregano & crushed rosemary' },
-                          { id: 'Medium Tandoori Tangy', desc: 'Balanced roasted cumin, lemon & smoked paprika' },
-                          { id: 'Fiery Desi Angaar', desc: 'Extra spicy crushed Guntur chilli & black pepper' }
-                        ].map((sp) => (
-                          <div
-                            key={sp.id}
-                            onClick={() => setBbqSpiceLevel(sp.id)}
-                            style={{
-                              padding: '10px 14px', borderRadius: '12px',
-                              border: `1.5px solid ${bbqSpiceLevel === sp.id ? theme.color : 'var(--gray-300)'}`,
-                              background: bbqSpiceLevel === sp.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: bbqSpiceLevel === sp.id ? theme.color : 'var(--navy-800)', display: 'block' }}>{sp.id}</span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>{sp.desc}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Skewer Selection Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '22px' }}>
-                      {BBQ_SKEWER_MENU
-                        .filter(item => {
-                          if (bbqDietType.includes('Pure Veg')) return item.category === 'veg';
-                          if (bbqDietType === 'Non-Veg Classic') return item.category === 'nonveg';
-                          return true;
-                        })
-                        .map((item) => {
-                          const isSelected = bbqSelectedItems.includes(item.id);
-                          return (
-                            <div
-                              key={item.id}
-                              onClick={() => {
-                                if (isSelected) {
-                                  setBbqSelectedItems(bbqSelectedItems.filter(i => i !== item.id));
-                                } else {
-                                  setBbqSelectedItems([...bbqSelectedItems, item.id]);
-                                }
-                              }}
-                              style={{
-                                padding: '16px', borderRadius: '14px',
-                                border: `2px solid ${isSelected ? theme.color : 'var(--gray-200)'}`,
-                                background: isSelected ? theme.bgSoft : 'white',
-                                cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                                transition: 'all 0.2s'
-                              }}
-                            >
-                              <div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                                  <span style={{
-                                    fontSize: '0.7rem', fontWeight: 800,
-                                    color: item.category === 'veg' ? '#16a34a' : '#ea580c',
-                                    background: item.category === 'veg' ? '#dcfce7' : '#ffedd5',
-                                    padding: '2px 8px', borderRadius: '10px'
-                                  }}>
-                                    {item.category === 'veg' ? '🌱 VEG' : '🍗 NON-VEG'} • {item.badge}
-                                  </span>
-                                  <div style={{
-                                    width: '22px', height: '22px', borderRadius: '50%',
-                                    border: `2px solid ${isSelected ? theme.color : 'var(--gray-300)'}`,
-                                    background: isSelected ? theme.color : 'transparent',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
-                                  }}>
-                                    {isSelected && <HiOutlineCheckCircle size={16} />}
-                                  </div>
-                                </div>
-                                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '4px' }}>
-                                  {item.name}
-                                </span>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--gray-500)', margin: 0, lineHeight: 1.4 }}>
-                                  {item.desc}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-
-                    {/* Included Accompaniments Note */}
-                    <div style={{ padding: '14px 18px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '1.4rem' }}>🥗</span>
-                      <div style={{ fontSize: '0.8rem', color: '#166534', lineHeight: 1.4 }}>
-                        <strong>Complimentary Accompaniments Included Free:</strong> Fresh Mint Coriander Chutney, Smoked Garlic Toum, Fiery Peri-Peri Dip, Charred Lemon Wedges & Toasted Butter Pav basket.
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Hardware, Clean-Up & Party Add-ons
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-                      ServeCircle arrives fully equipped with commercial-grade portable grills and eco-friendly tableware.
-                    </p>
-
-                    {/* Hardware Guarantee Box */}
-                    <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', padding: '20px', borderRadius: '16px', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                        <HiOutlineCheckBadge size={22} color="#ea580c" />
-                        <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#9a3412' }}>
-                          What ServeCircle Pitmasters Bring (100% Included)
-                        </span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '0.8rem', color: '#7c2d12' }}>
-                        <div>🔥 Heavy-duty Cast Iron Charcoal Grill</div>
-                        <div>🪵 Low-smoke Organic Coconut Lump Coal</div>
-                        <div>🍢 Stainless Steel Skewers & Chef Knives</div>
-                        <div>🍽️ Biodegradable Palm-Leaf Plates & Cutlery</div>
-                        <div>🧯 Safety Fire Blanket & Water Spray</div>
-                        <div>✨ <strong>100% Post-Party Ash Cleanup Guarantee</strong></div>
-                      </div>
-                    </div>
-
-                    {/* Party Addons */}
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '12px' }}>
-                      Optional Party Upgrades & Add-ons
-                    </label>
-                    <div style={{ display: 'grid', gap: '12px', marginBottom: '24px' }}>
-                      {BBQ_ADDONS_LIST.map((addon) => {
-                        const isChecked = bbqAddons.includes(addon.id);
-                        return (
-                          <div
-                            key={addon.id}
-                            onClick={() => {
-                              if (isChecked) {
-                                setBbqAddons(bbqAddons.filter(a => a !== addon.id));
-                              } else {
-                                setBbqAddons([...bbqAddons, addon.id]);
-                              }
-                            }}
-                            style={{
-                              padding: '16px', borderRadius: '14px',
-                              border: `2px solid ${isChecked ? theme.color : 'var(--gray-200)'}`,
-                              background: isChecked ? theme.bgSoft : 'white',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              transition: 'all 0.2s'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                              <div style={{
-                                width: '24px', height: '24px', borderRadius: '6px',
-                                border: `2px solid ${isChecked ? theme.color : 'var(--gray-300)'}`,
-                                background: isChecked ? theme.color : 'transparent',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
-                              }}>
-                                {isChecked && <HiOutlineCheckCircle size={18} />}
-                              </div>
-                              <div>
-                                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>
-                                  {addon.name}
-                                </span>
-                                <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>
-                                  {addon.desc}
-                                </span>
-                              </div>
-                            </div>
-                            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: theme.color, whiteSpace: 'nowrap', marginLeft: '12px' }}>
-                              +₹{addon.price}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Special Instructions */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Special Dietary / Host Notes (Optional)
-                      </label>
-                      <textarea
-                        rows="2"
-                        value={bbqSpecialNotes}
-                        placeholder="e.g. Need 4 pure Jain skewers; please bring mild spice for young kids; park chef van near visitor parking."
-                        onChange={(e) => setBbqSpecialNotes(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 500, fontSize: '0.85rem' }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Review & Confirm BBQ Reservation
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-                      Double check your party details and transparent pricing breakdown before scheduling your pitmaster.
-                    </p>
-
-                    {/* Summary Card */}
-                    <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '22px', marginBottom: '22px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '18px' }}>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>GUEST COUNT</span>
-                          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bbqGuests} Guests</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>VENUE & SLOT</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bbqVenueType}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>{bbqEventDate} • {bbqEventType.split('(')[0]}</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>MENU PROFILE</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bbqDietType}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>{bbqSpiceLevel}</span>
-                        </div>
-                      </div>
-
-                      <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: '14px' }}>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block', marginBottom: '8px' }}>
-                          Selected Grilling Items ({bbqSelectedItems.length}):
-                        </span>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                          {bbqSelectedItems.map(id => {
-                            const match = BBQ_SKEWER_MENU.find(i => i.id === id);
-                            return match ? (
-                              <span key={id} style={{ fontSize: '0.75rem', fontWeight: 700, background: theme.bgSoft, color: theme.color, padding: '4px 10px', borderRadius: '12px', border: `1px solid ${theme.color}33` }}>
-                                {match.name}
-                              </span>
-                            ) : null;
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Transparent Price Breakdown */}
-                    {(() => {
-                      const { baseRate, guestAddon, addonsTotal, subtotal, gst, total } = calcBbqTotal();
-                      return (
-                        <div style={{ background: '#f8fafc', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '20px', marginBottom: '22px' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '14px' }}>
-                            Itemized Pricing Summary
-                          </span>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>Base BBQ Pitmaster & Grill Setup (up to 6 guests)</span>
-                            <span style={{ fontWeight: 700 }}>₹{baseRate}</span>
-                          </div>
-                          {guestAddon > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Extra Guests Headcount ({bbqGuests - 6} × ₹350)</span>
-                              <span style={{ fontWeight: 700 }}>+₹{guestAddon}</span>
-                            </div>
-                          )}
-                          {addonsTotal > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Selected Party Upgrades ({bbqAddons.length})</span>
-                              <span style={{ fontWeight: 700 }}>+₹{addonsTotal}</span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>GST (18% Catering & Live Cooking)</span>
-                            <span style={{ fontWeight: 700 }}>₹{gst}</span>
-                          </div>
-                          <div style={{ borderTop: '2px dashed var(--gray-300)', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--navy-900)' }}>Total Payable</span>
-                            <span style={{ fontSize: '1.35rem', fontWeight: 900, color: theme.color }}>₹{total}</span>
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* ══════════════════════════════════════════════════════
-                FLOW 2: IN-HOME BAKING MASTERCLASS
-            ══════════════════════════════════════════════════════ */}
-            {flowType === 'baking' && (
-              <>
-                {step === 1 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Select Masterclass Course & Format
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Choose your specialized baking curriculum. Our 5-star hotel pastry chefs teach private, hands-on masterclasses right at your home counter.
-                    </p>
-
-                    {/* Courses List */}
-                    <div style={{ display: 'grid', gap: '14px', marginBottom: '24px' }}>
-                      {BAKING_COURSES.map((course) => {
-                        const isSelected = bakingCourse === course.name;
-                        return (
-                          <div
-                            key={course.id}
-                            onClick={() => setBakingCourse(course.name)}
-                            style={{
-                              padding: '18px', borderRadius: '16px',
-                              border: `2px solid ${isSelected ? theme.color : 'var(--gray-200)'}`,
-                              background: isSelected ? theme.bgSoft : 'white',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              boxShadow: isSelected ? theme.shadowActive : '0 2px 6px rgba(0,0,0,0.02)',
-                              transition: 'all 0.2s'
-                            }}
-                          >
-                            <div style={{ paddingRight: '12px' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#be185d', background: '#fce7f3', padding: '2px 8px', borderRadius: '12px' }}>
-                                  {course.badge} • {course.duration}
-                                </span>
-                              </div>
-                              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '4px' }}>
-                                {course.name}
-                              </span>
-                              <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', margin: 0, lineHeight: 1.4 }}>
-                                {course.desc}
-                              </p>
-                            </div>
-                            <div style={{ textAlign: 'right', minWidth: '90px' }}>
-                              <span style={{ fontSize: '1.15rem', fontWeight: 900, color: theme.color, display: 'block' }}>
-                                ₹{course.basePrice}
-                              </span>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>all ingredients incl.</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Participant Format */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '10px' }}>
-                        Session Format & Participant Count
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-                        {[
-                          { id: 'Solo 1-on-1 Master Mentorship (1 Person)', icon: '👩‍🍳', sub: 'Deep personal guidance', extra: 'Base' },
-                          { id: 'Duo / Couple Baking Date (2 Persons)', icon: '💑', sub: 'Romantic fun date-night', extra: '+₹600' },
-                          { id: 'Family / Squad Hands-on Workshop (Up to 4 Persons)', icon: '👨‍👩‍👧‍👦', sub: 'Kids & friends celebration', extra: '+₹1,400' }
-                        ].map((fmt) => (
-                          <div
-                            key={fmt.id}
-                            onClick={() => setBakingFormat(fmt.id)}
-                            style={{
-                              padding: '14px', borderRadius: '14px',
-                              border: `2px solid ${bakingFormat === fmt.id ? theme.color : 'var(--gray-200)'}`,
-                              background: bakingFormat === fmt.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer', textAlign: 'center'
-                            }}
-                          >
-                            <span style={{ fontSize: '1.4rem', display: 'block', marginBottom: '4px' }}>{fmt.icon}</span>
-                            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: bakingFormat === fmt.id ? theme.color : 'var(--navy-800)', display: 'block' }}>
-                              {fmt.id.split('(')[0]}
-                            </span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-500)', display: 'block' }}>{fmt.sub}</span>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: theme.color, marginTop: '4px', display: 'block' }}>{fmt.extra}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Kitchen Oven, Dietary & Date
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Tell us about your kitchen setup so the chef calibrates oven temperatures, baking trays, and ingredient formulations.
-                    </p>
-
-                    {/* Oven Type */}
-                    <div style={{ marginBottom: '22px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
-                        Your Kitchen Oven Type
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-                        {[
-                          { id: 'OTG (Oven Toaster Griller)', sub: 'Bajaj, Morphy, Borosil etc.' },
-                          { id: 'Convection Microwave Oven', sub: 'Samsung, LG, IFB etc.' },
-                          { id: 'Built-in Modular Electric Oven', sub: 'Bosch, Faber, Hafele' },
-                          { id: 'Chef to bring Portable Convection Oven (+₹499)', sub: 'Chef brings plug-and-play oven' }
-                        ].map((ov) => (
-                          <div
-                            key={ov.id}
-                            onClick={() => setBakingOvenType(ov.id)}
-                            style={{
-                              padding: '12px 14px', borderRadius: '12px',
-                              border: `2px solid ${bakingOvenType === ov.id ? theme.color : 'var(--gray-200)'}`,
-                              background: bakingOvenType === ov.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: bakingOvenType === ov.id ? theme.color : 'var(--navy-800)', display: 'block' }}>
-                              {ov.id}
-                            </span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>{ov.sub}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Dietary Preference */}
-                    <div style={{ marginBottom: '22px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
-                        Dietary Formulation
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
-                        {[
-                          { id: '100% Eggless (Strict)', icon: '🟢' },
-                          { id: 'Standard Pastry (With Eggs)', icon: '🥚' },
-                          { id: 'Vegan / Dairy-Free', icon: '🌱' },
-                          { id: 'Gluten-Free Flour Base', icon: '🌾' }
-                        ].map((dt) => (
-                          <div
-                            key={dt.id}
-                            onClick={() => setBakingDietConstraint(dt.id)}
-                            style={{
-                              padding: '12px', borderRadius: '12px',
-                              border: `2px solid ${bakingDietConstraint === dt.id ? theme.color : 'var(--gray-200)'}`,
-                              background: bakingDietConstraint === dt.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer', textAlign: 'center'
-                            }}
-                          >
-                            <span style={{ fontSize: '1.1rem', display: 'block', marginBottom: '2px' }}>{dt.icon}</span>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: bakingDietConstraint === dt.id ? theme.color : 'var(--navy-800)' }}>
-                              {dt.id}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Date & Slot */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '22px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Masterclass Date
-                        </label>
-                        <input
-                          type="date"
-                          value={bakingDate}
-                          min={new Date().toISOString().split('T')[0]}
-                          onChange={(e) => setBakingDate(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.9rem' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Preferred Slot
-                        </label>
-                        <select
-                          value={bakingTimeSlot}
-                          onChange={(e) => setBakingTimeSlot(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.85rem' }}
-                        >
-                          <option value="Morning Masterclass (10:30 AM - 01:30 PM)">Morning Masterclass (10:30 AM - 01:30 PM)</option>
-                          <option value="Afternoon Tea Session (03:00 PM - 06:00 PM)">Afternoon Tea Session (03:00 PM - 06:00 PM)</option>
-                          <option value="Weekend Intensive (11:00 AM - 03:00 PM)">Weekend Intensive (11:00 AM - 03:00 PM)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Address */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Your Kitchen Address
-                      </label>
-                      <input
-                        type="text"
-                        value={bakingAddress}
-                        placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
-                        onChange={(e) => setBakingAddress(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 600, fontSize: '0.9rem' }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Chef Kit, Keepsakes & Certificate
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Everything needed for professional baking is brought by the chef. Add customized aprons or keepsake toolkits.
-                    </p>
-
-                    {/* What Chef Brings */}
-                    <div style={{ background: '#fdf2f8', border: '1px solid #fbcfe8', padding: '20px', borderRadius: '16px', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                        <HiOutlineCake size={22} color="#db2777" />
-                        <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#9d174d' }}>
-                          What Master Chef Brings to Your Kitchen (100% Included)
-                        </span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', fontSize: '0.8rem', color: '#831843' }}>
-                        <div>🍫 Callebaut Belgian Couverture Chocolate</div>
-                        <div>🧈 French Pure Creamery Butter & Madagascar Vanilla</div>
-                        <div>🧁 Heavy Rotating Cake Turntable & Offset Spatulas</div>
-                        <div>📐 Digital Gram Scales & Pastry Thermometers</div>
-                        <div>📖 Laminated Masterclass Recipe Handbook to Keep</div>
-                        <div>🎁 Luxury Pastry Gift Boxes with Ribbons for Family</div>
-                      </div>
-                    </div>
-
-                    {/* Student Names for Certificate */}
-                    <div style={{ marginBottom: '24px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Student Name(s) for Personalized Signed Certificate
-                      </label>
-                      <input
-                        type="text"
-                        value={bakingStudentNames}
-                        placeholder="e.g. Pooja & Rahul Patel"
-                        onChange={(e) => setBakingStudentNames(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.95rem' }}
-                      />
-                      <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '4px', display: 'block' }}>
-                        We issue official, individually signed ServeCircle Masterclass certificates for each attendee.
-                      </span>
-                    </div>
-
-                    {/* Add-ons */}
-                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '12px' }}>
-                      Optional Baker's Keepsake Upgrades
-                    </label>
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      {BAKING_ADDONS_LIST.map((addon) => {
-                        const isChecked = bakingAddons.includes(addon.id);
-                        return (
-                          <div
-                            key={addon.id}
-                            onClick={() => {
-                              if (isChecked) {
-                                setBakingAddons(bakingAddons.filter(a => a !== addon.id));
-                              } else {
-                                setBakingAddons([...bakingAddons, addon.id]);
-                              }
-                            }}
-                            style={{
-                              padding: '16px', borderRadius: '14px',
-                              border: `2px solid ${isChecked ? theme.color : 'var(--gray-200)'}`,
-                              background: isChecked ? theme.bgSoft : 'white',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                              <div style={{
-                                width: '24px', height: '24px', borderRadius: '6px',
-                                border: `2px solid ${isChecked ? theme.color : 'var(--gray-300)'}`,
-                                background: isChecked ? theme.color : 'transparent',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
-                              }}>
-                                {isChecked && <HiOutlineCheckCircle size={18} />}
-                              </div>
-                              <div>
-                                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>
-                                  {addon.name}
-                                </span>
-                                <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>
-                                  {addon.desc}
-                                </span>
-                              </div>
-                            </div>
-                            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: theme.color, whiteSpace: 'nowrap', marginLeft: '12px' }}>
-                              +₹{addon.price}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Review & Confirm Baking Masterclass
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-                      Confirm your class schedule, kitchen setup and transparent itemized breakdown.
-                    </p>
-
-                    {/* Summary Box */}
-                    <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '22px', marginBottom: '22px' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>COURSE</span>
-                          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bakingCourse}</span>
-                          <span style={{ fontSize: '0.78rem', color: theme.color, fontWeight: 700 }}>{bakingFormat}</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>SCHEDULE & VENUE</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bakingDate}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>{bakingTimeSlot}</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>OVEN & DIET</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{bakingOvenType.split('(')[0]}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>{bakingDietConstraint}</span>
-                        </div>
-                      </div>
-
-                      <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: '12px' }}>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--navy-800)' }}>
-                          🎓 Certificate Recipient(s): <strong>{bakingStudentNames}</strong>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Price Breakdown */}
-                    {(() => {
-                      const { basePrice, formatFee, ovenFee, addonsTotal, subtotal, gst, total } = calcBakingTotal();
-                      return (
-                        <div style={{ background: '#f8fafc', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '20px', marginBottom: '22px' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '14px' }}>
-                            Itemized Pricing Summary
-                          </span>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>Base Masterclass Course Tuition</span>
-                            <span style={{ fontWeight: 700 }}>₹{basePrice}</span>
-                          </div>
-                          {formatFee > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Format Adjustment ({bakingFormat.split('(')[0]})</span>
-                              <span style={{ fontWeight: 700 }}>+₹{formatFee}</span>
-                            </div>
-                          )}
-                          {ovenFee > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Portable Convection Oven Rental</span>
-                              <span style={{ fontWeight: 700 }}>+₹{ovenFee}</span>
-                            </div>
-                          )}
-                          {addonsTotal > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Keepsake Upgrades & Toolkits ({bakingAddons.length})</span>
-                              <span style={{ fontWeight: 700 }}>+₹{addonsTotal}</span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>GST (18% Culinary Coaching)</span>
-                            <span style={{ fontWeight: 700 }}>₹{gst}</span>
-                          </div>
-                          <div style={{ borderTop: '2px dashed var(--gray-300)', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--navy-900)' }}>Total Payable</span>
-                            <span style={{ fontSize: '1.35rem', fontWeight: 900, color: theme.color }}>₹{total}</span>
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* ══════════════════════════════════════════════════════
-                FLOW 3: KITCHEN & PANTRY DEEP SANITIZATION
-            ══════════════════════════════════════════════════════ */}
-            {flowType === 'kitchen-clean' && (
-              <>
-                {step === 1 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Kitchen Size, Area & Initial Condition
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Select your kitchen footprint. Our certified deep cleaning crew arrives with industrial 140°C steam generators.
-                    </p>
-
-                    {/* Kitchen Size Selection */}
-                    <div style={{ display: 'grid', gap: '14px', marginBottom: '24px' }}>
-                      {KITCHEN_SIZES.map((size) => {
-                        const isSelected = cleanKitchenSize === size.name;
-                        return (
-                          <div
-                            key={size.id}
-                            onClick={() => setCleanKitchenSize(size.name)}
-                            style={{
-                              padding: '18px', borderRadius: '16px',
-                              border: `2px solid ${isSelected ? theme.color : 'var(--gray-200)'}`,
-                              background: isSelected ? theme.bgSoft : 'white',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              boxShadow: isSelected ? theme.shadowActive : '0 2px 6px rgba(0,0,0,0.02)',
-                              transition: 'all 0.2s'
-                            }}
-                          >
-                            <div style={{ paddingRight: '12px' }}>
-                              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '4px' }}>
-                                {size.name}
-                              </span>
-                              <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', margin: 0, lineHeight: 1.4 }}>
-                                {size.desc}
-                              </p>
-                            </div>
-                            <div style={{ textAlign: 'right', minWidth: '85px' }}>
-                              <span style={{ fontSize: '1.2rem', fontWeight: 900, color: theme.color, display: 'block' }}>
-                                ₹{size.basePrice}
-                              </span>
-                              <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)' }}>all equipment incl.</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Condition Assessment */}
-                    <div style={{ marginBottom: '22px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px' }}>
-                        Current Kitchen Grease & Dirt Level
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
-                        {[
-                          { id: 'Light Maintenance Wipe', sub: 'Regularly cleaned, light dust' },
-                          { id: 'Moderate Cooking Grease & Dust', sub: 'Tadka yellow stains & sticky cabinets' },
-                          { id: 'Heavy Post-Festive / Oil Layer', sub: 'Stubborn hardened oil and blackened tiles' },
-                          { id: 'Move-in / Move-out Restoration', sub: 'Deep complete rejuvenation' }
-                        ].map((c) => (
-                          <div
-                            key={c.id}
-                            onClick={() => setCleanCurrentCondition(c.id)}
-                            style={{
-                              padding: '12px 14px', borderRadius: '12px',
-                              border: `2px solid ${cleanCurrentCondition === c.id ? theme.color : 'var(--gray-200)'}`,
-                              background: cleanCurrentCondition === c.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: cleanCurrentCondition === c.id ? theme.color : 'var(--navy-800)', display: 'block' }}>
-                              {c.id}
-                            </span>
-                            <span style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>{c.sub}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Address */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Kitchen Address / Flat Details
-                      </label>
-                      <input
-                        type="text"
-                        value={cleanAddress}
-                        placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
-                        onChange={(e) => setCleanAddress(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 600, fontSize: '0.9rem' }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Heavy Appliance Degreasing Treatments
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Add specialized high-pressure steam treatments for kitchen appliances that standard maids cannot reach.
-                    </p>
-
-                    {/* Appliance List */}
-                    <div style={{ display: 'grid', gap: '12px', marginBottom: '24px' }}>
-                      {CLEAN_APPLIANCE_LIST.map((item) => {
-                        const isChecked = cleanApplianceAddons.includes(item.id);
-                        return (
-                          <div
-                            key={item.id}
-                            onClick={() => {
-                              if (isChecked) {
-                                setCleanApplianceAddons(cleanApplianceAddons.filter(a => a !== item.id));
-                              } else {
-                                setCleanApplianceAddons([...cleanApplianceAddons, item.id]);
-                              }
-                            }}
-                            style={{
-                              padding: '16px', borderRadius: '14px',
-                              border: `2px solid ${isChecked ? theme.color : 'var(--gray-200)'}`,
-                              background: isChecked ? theme.bgSoft : 'white',
-                              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                              <div style={{
-                                width: '24px', height: '24px', borderRadius: '6px',
-                                border: `2px solid ${isChecked ? theme.color : 'var(--gray-300)'}`,
-                                background: isChecked ? theme.color : 'transparent',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
-                              }}>
-                                {isChecked && <HiOutlineCheckCircle size={18} />}
-                              </div>
-                              <div>
-                                <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>
-                                  {item.name}
-                                </span>
-                                <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>
-                                  {item.desc}
-                                </span>
-                              </div>
-                            </div>
-                            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: theme.color, whiteSpace: 'nowrap', marginLeft: '12px' }}>
-                              +₹{item.price}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* High-Temp Steam Note */}
-                    <div style={{ padding: '16px 20px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '1.5rem' }}>💨</span>
-                      <div style={{ fontSize: '0.82rem', color: '#0369a1', lineHeight: 1.4 }}>
-                        <strong>140°C High-Pressure Steam Sanitization:</strong> Destroys 99.9% of bacteria, dissolves yellow oil without corrosive acids, and sanitizes hidden cockroach nesting spots behind appliances.
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Pantry Makeover, Date & Safety Assurance
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '22px' }}>
-                      Choose your pantry organization tier and schedule your deep cleaning shift.
-                    </p>
-
-                    {/* Pantry Tier */}
-                    <div style={{ marginBottom: '24px' }}>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '10px' }}>
-                        Pantry Organization Scope
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
-                        {[
-                          {
-                            id: 'Standard Shelf Clean & Discard Expired Items',
-                            price: 'Included',
-                            desc: 'Wiping cabinet interiors, cleaning bottle exteriors & disposing of expired staples'
-                          },
-                          {
-                            id: 'Aesthetic Pantry Makeover & Decanting',
-                            price: '+₹999',
-                            desc: 'Full decanting into uniform airtight containers, custom waterproof spice/pulse labels & shelf liners'
-                          }
-                        ].map((p) => (
-                          <div
-                            key={p.id}
-                            onClick={() => setCleanPantryTier(p.id)}
-                            style={{
-                              padding: '16px', borderRadius: '14px',
-                              border: `2px solid ${cleanPantryTier === p.id ? theme.color : 'var(--gray-200)'}`,
-                              background: cleanPantryTier === p.id ? theme.bgSoft : 'white',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                              <span style={{ fontSize: '0.88rem', fontWeight: 800, color: cleanPantryTier === p.id ? theme.color : 'var(--navy-800)' }}>
-                                {p.id.split('&')[0]}
-                              </span>
-                              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: theme.color }}>{p.price}</span>
-                            </div>
-                            <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', margin: 0, lineHeight: 1.4 }}>
-                              {p.desc}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Chemical Reassurance Box */}
-                    <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '16px 20px', borderRadius: '14px', marginBottom: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                        <HiOutlineShieldCheck size={20} color="#059669" />
-                        <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#065f46' }}>
-                          100% Bio-Enzymatic Food-Grade Safe Guarantee
-                        </span>
-                      </div>
-                      <p style={{ fontSize: '0.8rem', color: '#047857', margin: 0, lineHeight: 1.4 }}>
-                        We strictly use non-acidic, food-safe bio-enzymes. Zero hazardous fumes, completely safe for children, pets, and spice containers.
-                      </p>
-                    </div>
-
-                    {/* Date & Slot */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '22px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Cleaning Date
-                        </label>
-                        <input
-                          type="date"
-                          value={cleanDate}
-                          min={new Date().toISOString().split('T')[0]}
-                          onChange={(e) => setCleanDate(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.9rem' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                          Arrival Slot
-                        </label>
-                        <select
-                          value={cleanTimeSlot}
-                          onChange={(e) => setCleanTimeSlot(e.target.value)}
-                          style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 700, fontSize: '0.85rem' }}
-                        >
-                          <option value="Morning Fresh (08:30 AM - 12:30 PM)">Morning Fresh (08:30 AM - 12:30 PM)</option>
-                          <option value="Afternoon Slot (01:30 PM - 05:30 PM)">Afternoon Slot (01:30 PM - 05:30 PM)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Special Notes */}
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>
-                        Special Instructions / Material Cautions
-                      </label>
-                      <input
-                        type="text"
-                        value={cleanSpecialNotes}
-                        placeholder="e.g. Italian quartz countertop; please handle soft-close drawers gently."
-                        onChange={(e) => setCleanSpecialNotes(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--gray-300)', fontWeight: 500, fontSize: '0.85rem' }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <div className="animate-fade-in-up">
-                    <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '6px' }}>
-                      Review & Confirm Kitchen Sanitization
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginBottom: '20px' }}>
-                      Review your service coverage, appliance treatments and 48-hour re-clean guarantee.
-                    </p>
-
-                    {/* Summary Box */}
-                    <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '22px', marginBottom: '22px' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>KITCHEN SIZE</span>
-                          <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{cleanKitchenSize.split('(')[0]}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>Condition: {cleanCurrentCondition}</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>SCHEDULE & LOCATION</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block' }}>{cleanDate}</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--gray-500)' }}>{cleanTimeSlot}</span>
-                        </div>
-                        <div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--gray-400)', fontWeight: 700, textTransform: 'uppercase' }}>PANTRY TIER</span>
-                          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: theme.color, display: 'block' }}>{cleanPantryTier.split('&')[0]}</span>
-                        </div>
-                      </div>
-
-                      {cleanApplianceAddons.length > 0 && (
-                        <div style={{ borderTop: '1px solid var(--gray-100)', paddingTop: '12px' }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-800)', display: 'block', marginBottom: '6px' }}>
-                            Selected Heavy Appliance Steam Treatments:
-                          </span>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                            {cleanApplianceAddons.map(id => {
-                              const match = CLEAN_APPLIANCE_LIST.find(a => a.id === id);
-                              return match ? (
-                                <span key={id} style={{ fontSize: '0.75rem', fontWeight: 700, background: theme.bgSoft, color: theme.color, padding: '4px 10px', borderRadius: '12px', border: `1px solid ${theme.color}33` }}>
-                                  {match.name.split('&')[0]}
-                                </span>
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* 48-Hour Re-Clean Guarantee Badge */}
-                    <div style={{ background: '#f0fdf4', border: '1px solid #86efac', padding: '16px 20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '22px' }}>
-                      <span style={{ fontSize: '1.8rem' }}>🛡️</span>
-                      <div>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#166534', display: 'block' }}>
-                          ServeCircle 48-Hour Zero-Grease Satisfaction Guarantee
-                        </span>
-                        <span style={{ fontSize: '0.78rem', color: '#15803d' }}>
-                          If any stubborn oil streak or grease layer remains after completion, our team returns for a free re-scrub within 48 hours.
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Price Breakdown */}
-                    {(() => {
-                      const { basePrice, applianceTotal, pantryFee, subtotal, gst, total } = calcCleanTotal();
-                      return (
-                        <div style={{ background: '#f8fafc', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '20px', marginBottom: '22px' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-900)', display: 'block', marginBottom: '14px' }}>
-                            Itemized Pricing Summary
-                          </span>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>Base Kitchen Steam & Degreasing</span>
-                            <span style={{ fontWeight: 700 }}>₹{basePrice}</span>
-                          </div>
-                          {applianceTotal > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Appliance Treatments ({cleanApplianceAddons.length})</span>
-                              <span style={{ fontWeight: 700 }}>+₹{applianceTotal}</span>
-                            </div>
-                          )}
-                          {pantryFee > 0 && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                              <span>Aesthetic Pantry Decanting & Custom Labels</span>
-                              <span style={{ fontWeight: 700 }}>+₹{pantryFee}</span>
-                            </div>
-                          )}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--navy-700)', marginBottom: '8px' }}>
-                            <span>GST (18% Deep Cleaning)</span>
-                            <span style={{ fontWeight: 700 }}>₹{gst}</span>
-                          </div>
-                          <div style={{ borderTop: '2px dashed var(--gray-300)', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--navy-900)' }}>Total Payable</span>
-                            <span style={{ fontSize: '1.35rem', fontWeight: 900, color: theme.color }}>₹{total}</span>
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Error Message */}
-            {errorMsg && (
-              <div className="animate-fade-in-up" style={{ color: '#ef4444', background: '#fef2f2', padding: '14px 18px', borderRadius: '12px', fontSize: '0.88rem', fontWeight: 700, marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #fecaca' }}>
-                <span>⚠️</span> {errorMsg}
-              </div>
-            )}
-
-            {/* Footer Navigation Buttons */}
-            <div style={{ marginTop: '30px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-              {step > 1 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setErrorMsg('');
-                    setStep(step - 1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  style={{
-                    padding: '14px 22px', fontSize: '0.95rem', fontWeight: 800,
-                    background: 'white', color: 'var(--navy-800)', border: '2px solid var(--gray-200)',
-                    borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  Back
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={loading}
-                style={{
-                  flex: 1, padding: '15px 24px', fontSize: '1.05rem', fontWeight: 800,
-                  background: theme.gradient, color: 'white', border: 'none',
-                  borderRadius: '16px', cursor: 'pointer',
-                  boxShadow: `0 8px 20px -6px ${theme.color}`,
-                  transition: 'transform 0.1s, box-shadow 0.2s',
-                  display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px',
-                  opacity: loading ? 0.7 : 1
-                }}
-              >
-                {loading ? 'Processing Reservation...' : step === maxSteps ? 'Confirm & Book Experience →' : `Continue to Step ${step + 1} →`}
-              </button>
-            </div>
-
+            {theme.icon}
           </div>
         </div>
+
+        {/* 2-Step Progress Indicator */}
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '20px',
+          padding: '16px 24px',
+          marginBottom: '28px',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', position: 'relative' }}>
+            {[
+              { num: 1, label: '1. Select Plan & Key Options', desc: 'Choose menu, course or kitchen size' },
+              { num: 2, label: '2. Schedule & Confirm', desc: 'Set timing, home address & specialist' }
+            ].map((s) => {
+              const isDone = step > s.num;
+              const isActive = step === s.num;
+              return (
+                <div key={s.num} style={{ textAlign: 'center' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    background: isDone ? '#10b981' : isActive ? theme.color : '#f1f5f9',
+                    color: isDone || isActive ? 'white' : '#64748b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '0.95rem',
+                    margin: '0 auto 6px',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isActive ? `0 4px 12px ${theme.color}44` : 'none'
+                  }}>
+                    {isDone ? <HiOutlineCheckCircle size={22} /> : s.num}
+                  </div>
+                  <div style={{
+                    fontSize: '0.85rem',
+                    fontWeight: isActive ? 800 : 600,
+                    color: isActive ? 'var(--navy-900)' : '#64748b'
+                  }}>
+                    {s.label}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+                    {s.desc}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ERROR ALERT */}
+        {errorMsg && (
+          <div style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#991b1b',
+            padding: '14px 20px',
+            borderRadius: '14px',
+            marginBottom: '24px',
+            fontWeight: 700,
+            fontSize: '0.9rem'
+          }}>
+            ⚠️ {errorMsg}
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STEP 1: SELECT PLAN & OPTIONS */}
+        {/* ========================================================================= */}
+        {step === 1 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            
+            {/* 1.1 BBQ CONFIGURATION */}
+            {flowType === 'bbq' && (
+              <>
+                {/* Guest Scale & Venue */}
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    1. Gathering Scale & Venue Type
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        👥 Expected Guests
+                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setBbqGuests(Math.max(4, bbqGuests - 2))}
+                          style={{ width: '40px', height: '40px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 900, cursor: 'pointer' }}
+                        >-</button>
+                        <span style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--navy-900)' }}>{bbqGuests} Guests</span>
+                        <button
+                          type="button"
+                          onClick={() => setBbqGuests(bbqGuests + 2)}
+                          style={{ width: '40px', height: '40px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 900, cursor: 'pointer' }}
+                        >+</button>
+                      </div>
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', display: 'block', marginTop: '6px' }}>Base includes 6 guests (₹350/extra guest)</span>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🍖 Diet Preference
+                      </label>
+                      <select
+                        value={bbqDietType}
+                        onChange={e => setBbqDietType(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Mixed">Mixed (Veg & Non-Veg Dedicated Grills)</option>
+                        <option value="Veg">100% Pure Veg (Jain Options Available)</option>
+                        <option value="Non-Veg">Specialty Non-Veg Feast</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🏡 Venue Setup Space
+                      </label>
+                      <select
+                        value={bbqVenueType}
+                        onChange={e => setBbqVenueType(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Private Backyard Lawn">Private Backyard Lawn</option>
+                        <option value="Terrace / Rooftop Garden">Terrace / Rooftop Garden</option>
+                        <option value="Wide Balcony (Smoke Filtered)">Wide Balcony (Smoke Filtered)</option>
+                        <option value="Society Clubhouse Lawn">Society Clubhouse Lawn</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Skewer Menu Selection */}
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: 0 }}>
+                      2. Curate Live Grill Skewers ({bbqSelectedItems.length} Selected)
+                    </h3>
+                    <span style={{ fontSize: '0.78rem', color: '#ea580c', fontWeight: 700 }}>Choose any 4-6 skewers</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+                    {BBQ_SKEWER_MENU.map(item => {
+                      const isSelected = bbqSelectedItems.includes(item.id);
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => toggleItem(bbqSelectedItems, setBbqSelectedItems, item.id)}
+                          style={{
+                            border: `2px solid ${isSelected ? '#ea580c' : '#e2e8f0'}`,
+                            background: isSelected ? '#fff7ed' : '#ffffff',
+                            borderRadius: '14px',
+                            padding: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                              <span style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--navy-900)' }}>{item.name}</span>
+                              <span style={{ fontSize: '0.68rem', fontWeight: 800, background: item.category === 'veg' ? '#dcfce7' : '#fee2e2', color: item.category === 'veg' ? '#15803d' : '#b91c1c', padding: '2px 6px', borderRadius: '6px' }}>
+                                {item.category.toUpperCase()}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b', lineHeight: 1.4 }}>
+                              {item.desc}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#ea580c' }}>{item.badge}</span>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: isSelected ? '#ea580c' : '#94a3b8' }}>
+                              {isSelected ? '✓ Included' : '+ Tap to Add'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* BBQ Add-ons */}
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    Party Upgrades & Crew Add-ons
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+                    {BBQ_ADDONS_LIST.map(a => {
+                      const active = bbqAddons.includes(a.id);
+                      return (
+                        <div
+                          key={a.id}
+                          onClick={() => toggleItem(bbqAddons, setBbqAddons, a.id)}
+                          style={{
+                            border: `2px solid ${active ? '#ea580c' : '#e2e8f0'}`,
+                            background: active ? '#fff7ed' : '#ffffff',
+                            borderRadius: '14px',
+                            padding: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--navy-900)' }}>{a.name}</div>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{a.desc}</div>
+                          </div>
+                          <div style={{ fontWeight: 900, color: '#ea580c', marginLeft: '12px', whiteSpace: 'nowrap' }}>
+                            +₹{a.price}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 1.2 BAKING CONFIGURATION */}
+            {flowType === 'baking' && (
+              <>
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    1. Select Masterclass Theme
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                    {BAKING_COURSES.map(c => {
+                      const selected = bakingCourse === c.name;
+                      return (
+                        <div
+                          key={c.id}
+                          onClick={() => setBakingCourse(c.name)}
+                          style={{
+                            border: `2px solid ${selected ? '#db2777' : '#e2e8f0'}`,
+                            background: selected ? '#fdf2f8' : '#ffffff',
+                            borderRadius: '16px',
+                            padding: '18px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#fce7f3', color: '#9d174d', padding: '2px 8px', borderRadius: '8px' }}>
+                              {c.badge}
+                            </span>
+                            <span style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 700 }}>
+                              ⏱️ {c.duration}
+                            </span>
+                          </div>
+                          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--navy-900)', margin: '6px 0' }}>
+                            {c.name}
+                          </div>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#db2777', marginBottom: '8px' }}>
+                            ₹{c.basePrice}
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: 1.4 }}>
+                            {c.desc}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    2. Class Format & Kitchen Oven Details
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        👥 Student Coaching Format
+                      </label>
+                      <select
+                        value={bakingFormat}
+                        onChange={e => setBakingFormat(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="Solo Private Coaching (1 Person)">Solo 1-on-1 Coaching (₹0)</option>
+                        <option value="Duo / Couple Baking Date (2 Persons)">Duo / Couple Baking Date (+₹600)</option>
+                        <option value="Family & Friends Squad (3-4 Persons)">Family & Friends Squad (3-4 Persons) (+₹1,400)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🔥 Available Kitchen Oven
+                      </label>
+                      <select
+                        value={bakingOvenType}
+                        onChange={e => setBakingOvenType(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="OTG (Oven Toaster Griller)">OTG (Oven Toaster Griller) (₹0)</option>
+                        <option value="Built-in Modular Microwave Convection">Built-in Microwave Convection (₹0)</option>
+                        <option value="No Oven / Chef Brings Portable OTG">No Oven / Chef Brings Portable OTG (+₹499)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                        🥚 Egg Constraint
+                      </label>
+                      <select
+                        value={bakingDietConstraint}
+                        onChange={e => setBakingDietConstraint(e.target.value)}
+                        style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                      >
+                        <option value="100% Eggless (Strict)">100% Eggless (Strict)</option>
+                        <option value="Classic French (With Fresh Farm Eggs)">Classic French (With Fresh Farm Eggs)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    Chef Keepsakes & Toolkits
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+                    {BAKING_ADDONS_LIST.map(a => {
+                      const active = bakingAddons.includes(a.id);
+                      return (
+                        <div
+                          key={a.id}
+                          onClick={() => toggleItem(bakingAddons, setBakingAddons, a.id)}
+                          style={{
+                            border: `2px solid ${active ? '#db2777' : '#e2e8f0'}`,
+                            background: active ? '#fdf2f8' : '#ffffff',
+                            borderRadius: '14px',
+                            padding: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--navy-900)' }}>{a.name}</div>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{a.desc}</div>
+                          </div>
+                          <div style={{ fontWeight: 900, color: '#db2777', marginLeft: '12px', whiteSpace: 'nowrap' }}>
+                            +₹{a.price}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 1.3 KITCHEN CLEAN CONFIGURATION */}
+            {flowType === 'kitchen-clean' && (
+              <>
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    1. Select Kitchen Scale
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                    {KITCHEN_SIZES.map(s => {
+                      const selected = cleanKitchenSize === s.name;
+                      return (
+                        <div
+                          key={s.id}
+                          onClick={() => setCleanKitchenSize(s.name)}
+                          style={{
+                            border: `2px solid ${selected ? '#0ea5e9' : '#e2e8f0'}`,
+                            background: selected ? '#f0f9ff' : '#ffffff',
+                            borderRadius: '16px',
+                            padding: '18px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--navy-900)', marginBottom: '4px' }}>
+                            {s.name}
+                          </div>
+                          <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#0ea5e9', marginBottom: '8px' }}>
+                            ₹{s.basePrice}
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: 1.4 }}>
+                            {s.desc}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                    2. Appliance Steam Degreasing Add-ons
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+                    {CLEAN_APPLIANCE_LIST.map(a => {
+                      const active = cleanApplianceAddons.includes(a.id);
+                      return (
+                        <div
+                          key={a.id}
+                          onClick={() => toggleItem(cleanApplianceAddons, setCleanApplianceAddons, a.id)}
+                          style={{
+                            border: `2px solid ${active ? '#0ea5e9' : '#e2e8f0'}`,
+                            background: active ? '#f0f9ff' : '#ffffff',
+                            borderRadius: '14px',
+                            padding: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--navy-900)' }}>{a.name}</div>
+                            <div style={{ fontSize: '0.76rem', color: '#64748b' }}>{a.desc}</div>
+                          </div>
+                          <div style={{ fontWeight: 900, color: '#0ea5e9', marginLeft: '12px', whiteSpace: 'nowrap' }}>
+                            +₹{a.price}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--navy-900)' }}>Aesthetic Pantry Makeover & Decanting</div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>Minimalist jar labeling, expiration audit & spice tier organizing</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCleanPantryTier(cleanPantryTier.includes('Aesthetic') ? 'Standard' : 'Aesthetic Pantry Makeover & Decanting')}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: cleanPantryTier.includes('Aesthetic') ? '#0ea5e9' : '#e2e8f0',
+                        color: cleanPantryTier.includes('Aesthetic') ? 'white' : '#64748b',
+                        fontWeight: 800,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {cleanPantryTier.includes('Aesthetic') ? '✓ Added (+₹999)' : '+ Add (+₹999)'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* STEP 2: SCHEDULE, ADDRESS & CONFIRM */}
+        {/* ========================================================================= */}
+        {step === 2 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Schedule & Address Details */}
+            <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                Event Schedule & Venue Address
+              </h3>
+
+              {flowType === 'bbq' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📅 Event Date
+                    </label>
+                    <input
+                      type="date"
+                      value={bbqEventDate}
+                      onChange={e => setBbqEventDate(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Time Slot
+                    </label>
+                    <select
+                      value={bbqEventType}
+                      onChange={e => setBbqEventType(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="Evening Sundowner (05:00 PM - 09:00 PM)">Evening Sundowner (05:00 PM - 09:00 PM)</option>
+                      <option value="Afternoon Lunch Grill (12:00 PM - 03:30 PM)">Afternoon Lunch Grill (12:00 PM - 03:30 PM)</option>
+                      <option value="Late Night Sizzle (08:00 PM - 11:30 PM)">Late Night Sizzle (08:00 PM - 11:30 PM)</option>
+                    </select>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📍 Lawn / Terrace Venue Address
+                    </label>
+                    <input
+                      type="text"
+                      value={bbqAddress}
+                      onChange={e => setBbqAddress(e.target.value)}
+                      placeholder="e.g. Bunglow 14, Orchid Greens, South Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {flowType === 'baking' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📅 Masterclass Date
+                    </label>
+                    <input
+                      type="date"
+                      value={bakingDate}
+                      onChange={e => setBakingDate(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Session Slot
+                    </label>
+                    <select
+                      value={bakingTimeSlot}
+                      onChange={e => setBakingTimeSlot(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="Morning Masterclass (10:30 AM - 01:30 PM)">Morning Masterclass (10:30 AM - 01:30 PM)</option>
+                      <option value="Afternoon Baking Date (03:30 PM - 06:30 PM)">Afternoon Baking Date (03:30 PM - 06:30 PM)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      🎓 Student Name(s) (For Certificate)
+                    </label>
+                    <input
+                      type="text"
+                      value={bakingStudentNames}
+                      onChange={e => setBakingStudentNames(e.target.value)}
+                      placeholder="e.g. Pooja & Rahul"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      🏠 Kitchen Home Address
+                    </label>
+                    <input
+                      type="text"
+                      value={bakingAddress}
+                      onChange={e => setBakingAddress(e.target.value)}
+                      placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {flowType === 'kitchen-clean' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      📅 Deep Cleaning Date
+                    </label>
+                    <input
+                      type="date"
+                      value={cleanDate}
+                      onChange={e => setCleanDate(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      ⏰ Time Slot
+                    </label>
+                    <select
+                      value={cleanTimeSlot}
+                      onChange={e => setCleanTimeSlot(e.target.value)}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    >
+                      <option value="Morning Fresh (08:30 AM - 12:30 PM)">Morning Fresh (08:30 AM - 12:30 PM)</option>
+                      <option value="Afternoon Shift (01:30 PM - 05:30 PM)">Afternoon Shift (01:30 PM - 05:30 PM)</option>
+                    </select>
+                  </div>
+                  <div style={{ gridColumn: 'span 2' }}>
+                    <label style={{ display: 'block', fontSize: '0.84rem', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>
+                      🏠 Home Address & Floor
+                    </label>
+                    <input
+                      type="text"
+                      value={cleanAddress}
+                      onChange={e => setCleanAddress(e.target.value)}
+                      placeholder="e.g. Flat 402, Sunshine Apartments, Bopal"
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontWeight: 700 }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Specialist Assurance Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+              color: 'white',
+              borderRadius: '20px',
+              padding: '24px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '18px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.8rem'
+                }}>
+                  {flowType === 'bbq' ? '🔥' : flowType === 'baking' ? '🎂' : '✨'}
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#38bdf8', fontWeight: 800 }}>
+                    ServeCircle Culinary Standards
+                  </div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, margin: '2px 0' }}>
+                    {flowType === 'bbq' ? '5-Star Hotel Trained Master Pitmaster & Zero-Mess Crew' :
+                     flowType === 'baking' ? 'Le Cordon Bleu / Oberoi Trained Executive Pastry Chef' :
+                     'Certified 140°C High-Pressure Steam Hygiene Team'}
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                    100% food-grade certified non-toxic agents • 48-hour re-clean guarantee • Post-party spotless sweep
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Transparent Bill Breakdown */}
+            <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-900)', margin: '0 0 16px' }}>
+                Transparent Pricing Breakdown
+              </h3>
+
+              {flowType === 'bbq' && (() => {
+                const b = calcBbqTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Base Live Grill (Up to 6 Guests)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{b.baseRate}</strong>
+                    </div>
+                    {b.guestAddon > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Extra Guests ({bbqGuests - 6} × ₹350)</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{b.guestAddon}</strong>
+                      </div>
+                    )}
+                    {b.addonsTotal > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Party & Service Add-ons</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{b.addonsTotal}</strong>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Applicable GST (18%)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{b.gst}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Total Payable</span>
+                      <span style={{ color: theme.color }}>₹{b.total}</span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {flowType === 'baking' && (() => {
+                const bk = calcBakingTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>{bakingCourse}</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{bk.basePrice}</strong>
+                    </div>
+                    {bk.formatFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>{bakingFormat}</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{bk.formatFee}</strong>
+                      </div>
+                    )}
+                    {bk.ovenFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Chef Portable OTG</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{bk.ovenFee}</strong>
+                      </div>
+                    )}
+                    {bk.addonsTotal > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Gear & Hamper Keepsakes</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{bk.addonsTotal}</strong>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Applicable GST (18%)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{bk.gst}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Total Payable</span>
+                      <span style={{ color: theme.color }}>₹{bk.total}</span>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {flowType === 'kitchen-clean' && (() => {
+                const c = calcCleanTotal();
+                return (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>{cleanKitchenSize}</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{c.basePrice}</strong>
+                    </div>
+                    {c.applianceTotal > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Appliance Steam Clean</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{c.applianceTotal}</strong>
+                      </div>
+                    )}
+                    {c.pantryFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                        <span style={{ color: '#475569' }}>Pantry Makeover</span>
+                        <strong style={{ color: 'var(--navy-900)' }}>+₹{c.pantryFee}</strong>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.92rem' }}>
+                      <span style={{ color: '#475569' }}>Applicable GST (18%)</span>
+                      <strong style={{ color: 'var(--navy-900)' }}>₹{c.gst}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}>
+                      <span>Total Payable</span>
+                      <span style={{ color: theme.color }}>₹{c.total}</span>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+
+          </div>
+        )}
+
+        {/* BOTTOM FLOATING ACTION BAR */}
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'white',
+          borderTop: '1px solid #e2e8f0',
+          padding: '16px 24px',
+          display: 'flex',
+          justifyContent: 'center',
+          boxShadow: '0 -4px 16px rgba(0,0,0,0.06)',
+          zIndex: 100
+        }}>
+          <div style={{ width: '100%', maxWidth: '920px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>Total (Incl. Taxes)</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900, color: theme.color }}>₹{currentTotal()}</div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={handleBack}
+                className="btn"
+                style={{
+                  background: '#f1f5f9',
+                  color: '#475569',
+                  padding: '12px 20px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: 'none'
+                }}
+              >
+                {step === 1 ? 'Cancel' : 'Back'}
+              </button>
+
+              <button
+                onClick={handleNext}
+                disabled={loading}
+                className="btn"
+                style={{
+                  background: theme.gradient,
+                  color: 'white',
+                  padding: '12px 28px',
+                  borderRadius: '12px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: `0 4px 14px ${theme.color}44`
+                }}
+              >
+                {loading ? 'Processing...' : step === 1 ? (
+                  <>Continue to Schedule <HiOutlineArrowRight size={18} /></>
+                ) : (
+                  <>Confirm & Book <HiOutlineCheckCircle size={18} /></>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

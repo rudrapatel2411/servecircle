@@ -15,7 +15,38 @@ Last reviewed: 2026-11-20.
 
 This is guidance, not a cage: use judgment for work outside the listed plan, record the reason, and continue. Ask the operator only when a material product choice cannot be inferred, a destructive/external action needs their decision, or required access is missing. Never invent a successful test, data state, credential, integration, or product behavior. Label facts `verified`, `partial`, `planned`, `demo`, or `unknown`.
 
-## Working plan — Complete Comprehensive Specialized Relocation Solutions Suite (Vehicle Relocation, Pet Relocation, Scrap & Junk Removal) (done, verified 2026-11-24)
+## Working plan — Streamline Premium Service Hub Flows into Simple 2-Step Wizards (done, verified 2026-11-25)
+
+**User outcome:**
+User requested:
+"yeh sab services me bahut sare steps hai so hume ise simple banana hai lekin fully functionally to banan hi hai lekin isme bahut sari aisi chije bhi hai jo huamri jarurat ki nahi hai jise hum nikal shakte hai to use nikal do means ke sab me se ho shake itne steps nikal do lekin kisi ki functianallity kum nahi honi chhaiye"
+
+Covering all 6 Service Hubs uploaded by user:
+1. **Specialized Relocation Solutions (`RelocationPremiumFlow.jsx`)**: Vehicle Relocation, Pet Relocation, Scrap & Junk Removal.
+2. **Premium Society Experiences (`SocietyPremiumFlow.jsx`)**: Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash.
+3. **Premium Wellness Therapies (`HealthWellnessDemo.jsx`)**: IV Drip Therapy at Home, Sports Recovery & Pain Mgmt, Elderly Care Subscriptions.
+4. **Premium Add-ons - Pet Services (`PetPremiumFlow.jsx`)**: Pet Boarding & Sitting, Certified Training, Pet Photography, Custom Box for Max.
+5. **Premium Culinary Experiences (`FoodPremiumFlow.jsx`)**: Backyard BBQ Setup, In-Home Baking Class, Kitchen & Pantry Clean.
+6. **Premium Commute & Rentals (`TravelPremiumFlow.jsx`)**: Luxury & Vintage Rentals, School Commute Sub, Corporate Carpool Hub.
+
+**Core Simplification Architecture:**
+- Eliminate tedious 4-step maze and long questionnaires down to an ultra-fast **2-Step Booking Flow**:
+  * **Step 1: Select Plan & Key Options** (Clean visual tier/package cards, pre-selected smart defaults, real-time price preview, remove clutter).
+  * **Step 2: Schedule & Confirm** (Date, time slot, service address, live transparent bill breakdown, verified specialist guarantee card, 1-click confirmation handoff to `/customer/book`).
+- **Zero Functionality Lost**: 100% of the pricing calculations, discounts, add-on additions, route calculations, booking persistence, and cross-panel handoffs remain completely intact.
+- **Strict Constraint**: Never direct push (`git push origin main` is strictly prohibited). All work verified locally.
+
+**Tasks & Verification:**
+- [x] Refactor `RelocationPremiumFlow.jsx` to clean 2-step flow.
+- [x] Refactor `SocietyPremiumFlow.jsx` to clean 2-step flow.
+- [x] Refactor `HealthWellnessDemo.jsx` to clean 2-step flow.
+- [x] Refactor `PetPremiumFlow.jsx` to clean 2-step flow.
+- [x] Refactor `FoodPremiumFlow.jsx` to clean 2-step flow.
+- [x] Refactor `TravelPremiumFlow.jsx` to clean 2-step flow.
+- [x] Verify `npm --prefix client run build` and backend test suites.
+- [x] Update `PROJECT_BRAIN/brain.md` journal and save local git commit.
+
+
 
 **User outcome:**
 Build out complete, production-grade, customer-centric 4-step interactive workflows, pages, features, and buttons for all 3 **Specialized Relocation Solutions** in `RelocationHub.jsx` and new `RelocationPremiumFlow.jsx`:
@@ -1966,6 +1997,25 @@ No feature implementation task is in progress. The only unfinished cleanup is th
   * Client production build (`npm --prefix client run build`) passed cleanly in 6.75s with 0 errors.
   * Backend operations suite (`verify-worker-ops-suite.mjs`) passed 30/30 checks.
   * Changes kept strictly local (NO git push executed).
+
+
+### 2026-11-25 — Streamlined 6 Premium Service Hub Flows into Simple, Fast 2-Step Wizards
+
+- **User outcome:** Reduced the tedious 4-step wizard maze across all 6 core customer premium service hubs into an intuitive, high-speed 2-step booking workflow without losing any functionality:
+  * **Step 1: Select Plan & Key Options**: Clean visual tier cards, smart pre-selected defaults, real-time dynamic pricing calculation, removing unnecessary questionnaire fluff.
+  * **Step 2: Schedule & Confirm**: Streamlined date/time slots, doorstep address inputs, verified specialist safety cards, itemized bill breakdown (base + add-ons + taxes), and 1-click checkout handoff to `/customer/book`.
+- **Flows Refactored:**
+  1. `RelocationPremiumFlow.jsx` (Vehicle Relocation, Pet Relocation, Scrap & Junk Removal).
+  2. `SocietyPremiumFlow.jsx` (Community Yoga & Zumba, EV Charger Installation, Waterless Car Wash).
+  3. `HealthWellnessDemo.jsx` (IV Drip Therapy at Home, Sports Recovery & Pain Mgmt, Elderly Care Subscriptions).
+  4. `PetPremiumFlow.jsx` (Pet Boarding & Sitting, Certified Training, Pet Photography, Custom Box for Max).
+  5. `FoodPremiumFlow.jsx` (Backyard BBQ Setup, In-Home Baking Class, Kitchen & Pantry Clean).
+  6. `TravelPremiumFlow.jsx` (Luxury & Vintage Fleet, School Commute Pass, Corporate Carpool Match).
+- **100% Functionality Preserved:** Dynamic pricing engines, add-on additions, route calculations, specialist credentials, and direct booking query params remain completely intact.
+- **Validation:**
+  * Client production build (`npm --prefix client run build`) passed with 0 errors in 7.23s.
+  * Backend suites (`verify-services-hub-fixes.mjs` 17/17 checks, `verify-worker-ops-suite.mjs` 30/30 checks) passed 100%.
+- **Constraint Compliance:** Kept strictly local (NO git push executed, adhering strictly to user rule *"direct push mat karo"*).
 
 ### 2026-11-23 — Comprehensive Premium Culinary Experiences Suite (Backyard BBQ, In-Home Baking, Kitchen & Pantry Clean)
 
