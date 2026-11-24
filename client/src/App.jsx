@@ -79,6 +79,13 @@ import WorkerTraining from './pages/worker/WorkerTraining';
 import WorkerProfile from './pages/worker/WorkerProfile';
 import BecomeAProHub from './pages/worker/BecomeAProHub';
 import WorkerSpecializedServices from './pages/worker/WorkerSpecializedServices';
+import WorkerRelocation from './pages/worker/WorkerRelocation';
+import WorkerTravel from './pages/worker/WorkerTravel';
+import WorkerFood from './pages/worker/WorkerFood';
+import WorkerPetServices from './pages/worker/WorkerPetServices';
+import WorkerHealthWellness from './pages/worker/WorkerHealthWellness';
+import WorkerSocietyManagement from './pages/worker/WorkerSocietyManagement';
+import WorkerEvents from './pages/worker/WorkerEvents';
 
 /* Admin */
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -192,6 +199,13 @@ function App() {
           <Route index element={<WorkerDashboard />} />
           <Route path="jobs" element={<WorkerJobs />} />
           <Route path="specialized" element={<WorkerSpecializedServices />} />
+          <Route path="relocation" element={<WorkerRelocation />} />
+          <Route path="travel" element={<WorkerTravel />} />
+          <Route path="food" element={<WorkerFood />} />
+          <Route path="pet-services" element={<WorkerPetServices />} />
+          <Route path="health-wellness" element={<WorkerHealthWellness />} />
+          <Route path="society-management" element={<WorkerSocietyManagement />} />
+          <Route path="events" element={<WorkerEvents />} />
           <Route path="schedule" element={<WorkerSchedule />} />
           <Route path="earnings" element={<WorkerEarnings />} />
           <Route path="training" element={<WorkerTraining />} />

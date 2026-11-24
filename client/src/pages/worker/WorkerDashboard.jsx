@@ -17,6 +17,8 @@ import {
  HiOutlineAcademicCap,
  HiOutlineLockClosed,
  HiOutlineLockOpen,
+ HiOutlineTruck,
+ HiOutlineBuildingOffice2,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
@@ -264,34 +266,139 @@ const WorkerDashboard = () => {
  <HiOutlineHeart className="empowerment-icon-bg" />
  </div>
 
- {/* --- SPECIALIZED ADVANCE BOOKINGS BANNER --- */}
+ {/* --- SPECIALIZED WORKER OPERATIONAL CONSOLES --- */}
  <div style={{
-  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-  color: 'white',
+  background: '#ffffff',
+  border: '1px solid #e2e8f0',
   borderRadius: 'var(--radius-lg)',
-  padding: '20px 24px',
+  padding: '20px 22px',
   marginBottom: '20px',
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '16px',
-  boxShadow: '0 8px 20px -4px rgba(2, 132, 199, 0.25)'
+  boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.05)'
  }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-   <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
-    ✨
-   </div>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
    <div>
-    <div style={{ fontWeight: 800, fontSize: '1.02rem', margin: 0 }}>Advance Bookings & Specialized Services Hub</div>
-    <div style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: '2px' }}>
-     Travel manifests, School van routes, Live BBQ setups, Pet care logs & Clinical health sessions.
-    </div>
+    <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+     <HiOutlineSparkles style={{ color: '#0284c7' }} />
+     Specialized & Advance Booking Consoles
+    </h3>
+    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>
+     Dedicated multi-stage operations cockpits for advance scheduled and specialized sector jobs.
+    </p>
    </div>
+   <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#eff6ff', color: '#1d4ed8', padding: '4px 10px', borderRadius: '999px' }}>
+    7 Specialized Sectors Active
+   </span>
   </div>
-  <Link to="/worker/specialized" className="btn" style={{ background: 'white', color: '#0369a1', fontWeight: 800, padding: '10px 18px', borderRadius: '12px', whiteSpace: 'nowrap' }}>
-   Open Specialized Console →
-  </Link>
+
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+   {[
+    {
+     title: 'Relocation & Packers',
+     path: '/worker/relocation',
+     desc: 'Vehicle ramps & scrap weigh audit',
+     color: '#2563eb',
+     bg: '#eff6ff',
+     icon: <HiOutlineTruck />
+    },
+    {
+     title: 'Travel & Commute',
+     path: '/worker/travel',
+     desc: 'Student manifest & vehicle safety',
+     color: '#0d9488',
+     bg: '#f0fdfa',
+     icon: <HiOutlineTruck />
+    },
+    {
+     title: 'Food & Culinary',
+     path: '/worker/food',
+     desc: 'Live charcoal BBQ & pastry masterclass',
+     color: '#ea580c',
+     bg: '#fff7ed',
+     icon: <HiOutlineSparkles />
+    },
+    {
+     title: 'Pet Care Operations',
+     path: '/worker/pet-services',
+     desc: '3x daily WhatsApp proof & pet boarding',
+     color: '#db2777',
+     bg: '#fdf2f8',
+     icon: <HiOutlineHeart />
+    },
+    {
+     title: 'Health & Wellness',
+     path: '/worker/health-wellness',
+     desc: 'Sterile IV drip therapy & sports physio',
+     color: '#0284c7',
+     bg: '#f0f9ff',
+     icon: <HiOutlineShieldCheck />
+    },
+    {
+     title: 'Society Management',
+     path: '/worker/society-management',
+     desc: 'Gate security pass & waterless wash',
+     color: '#16a34a',
+     bg: '#f0fdf4',
+     icon: <HiOutlineBuildingOffice2 />
+    },
+    {
+     title: 'Events & Production',
+     path: '/worker/events',
+     desc: 'AV sound checks & live stage cues',
+     color: '#6366f1',
+     bg: '#eef2ff',
+     icon: <HiOutlineSparkles />
+    }
+   ].map((c, i) => (
+    <Link
+     key={i}
+     to={c.path}
+     style={{
+      textDecoration: 'none',
+      background: '#f8fafc',
+      border: '1px solid #e2e8f0',
+      borderRadius: '12px',
+      padding: '12px 14px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      transition: 'all 0.2s ease',
+     }}
+     onMouseEnter={(e) => {
+      e.currentTarget.style.borderColor = c.color;
+      e.currentTarget.style.background = c.bg;
+      e.currentTarget.style.transform = 'translateY(-2px)';
+     }}
+     onMouseLeave={(e) => {
+      e.currentTarget.style.borderColor = '#e2e8f0';
+      e.currentTarget.style.background = '#f8fafc';
+      e.currentTarget.style.transform = 'none';
+     }}
+    >
+     <div style={{
+      width: '38px',
+      height: '38px',
+      borderRadius: '10px',
+      background: c.bg,
+      color: c.color,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '1.2rem',
+      flexShrink: 0
+     }}>
+      {c.icon}
+     </div>
+     <div style={{ minWidth: 0, flex: 1 }}>
+      <div style={{ fontWeight: 700, fontSize: '0.86rem', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+       {c.title}
+      </div>
+      <div style={{ fontSize: '0.74rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '2px' }}>
+       {c.desc}
+      </div>
+     </div>
+    </Link>
+   ))}
+  </div>
  </div>
 
  {loading ? (

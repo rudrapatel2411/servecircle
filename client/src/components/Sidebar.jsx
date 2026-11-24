@@ -23,6 +23,7 @@ import {
   HiOutlineCalendarDays,
   HiOutlineChatBubbleLeftRight,
   HiOutlineSparkles,
+  HiOutlineTruck,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
 import './Sidebar.css';
@@ -45,7 +46,13 @@ const sidebarConfig = {
   worker: [
     { path: '/worker', icon: <HiOutlineHome />, labelKey: 'worker.dashboard', end: true },
     { path: '/worker/jobs', icon: <HiOutlineBriefcase />, labelKey: 'worker.jobRequests' },
-    { path: '/worker/specialized', icon: <HiOutlineSparkles style={{ color: '#0ea5e9' }} />, labelKey: 'worker.specializedServices', fallbackLabel: 'Advance Services' },
+    { path: '/worker/relocation', icon: <HiOutlineTruck style={{ color: '#2563eb' }} />, labelKey: 'worker.relocation', fallbackLabel: 'Relocation & Moving' },
+    { path: '/worker/travel', icon: <HiOutlineTruck style={{ color: '#0d9488' }} />, labelKey: 'worker.travel', fallbackLabel: 'Travel & Commute' },
+    { path: '/worker/food', icon: <HiOutlineSparkles style={{ color: '#ea580c' }} />, labelKey: 'worker.food', fallbackLabel: 'Food & Culinary' },
+    { path: '/worker/pet-services', icon: <HiOutlineSparkles style={{ color: '#db2777' }} />, labelKey: 'worker.pets', fallbackLabel: 'Pet Care Operations' },
+    { path: '/worker/health-wellness', icon: <HiOutlineSparkles style={{ color: '#0284c7' }} />, labelKey: 'worker.health', fallbackLabel: 'Health & Wellness' },
+    { path: '/worker/society-management', icon: <HiOutlineBuildingOffice2 style={{ color: '#16a34a' }} />, labelKey: 'worker.society', fallbackLabel: 'Society Operations' },
+    { path: '/worker/events', icon: <HiOutlineSparkles style={{ color: '#6366f1' }} />, labelKey: 'worker.events', fallbackLabel: 'Events Production' },
     { path: '/worker/schedule', icon: <HiOutlineClipboardDocumentList />, labelKey: 'worker.mySchedule' },
     { path: '/worker/earnings', icon: <HiOutlineBanknotes />, labelKey: 'worker.earnings' },
     { path: '/worker/training', icon: <HiOutlineAcademicCap />, labelKey: 'worker.training' },

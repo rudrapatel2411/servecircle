@@ -33,6 +33,33 @@ import './WorkerPages.css';
 // SPECIALIZED ADVANCE BOOKING DATA FIXTURES
 // ─────────────────────────────────────────────────────────────
 const INITIAL_SPECIALIZED_JOBS = [
+  // 0. RELOCATION & PACKERS
+  {
+    id: 'ADV-REL-101',
+    category: 'relocation',
+    title: 'VIP Vehicle Relocation: Hyundai Creta (Hydraulic Container Pod)',
+    type: 'vehicle-relocation',
+    customer: 'Amitabh Sen',
+    phone: '+91 98250 11223',
+    scheduledDate: '2026-11-26',
+    timeSlot: '06:00 AM (Ahmedabad ➔ Mumbai Dispatch)',
+    pickupAddress: 'Flat 402, Sunshine Apts, Bopal, Ahmedabad',
+    dropAddress: 'Tower 4, Hiranandani Estate, Thane, Mumbai',
+    payout: 8999,
+    status: 'scheduled',
+    manifest: [
+      { name: 'Vehicle: Hyundai Creta SX (White, GJ-01-XX-9021)', status: 'Inspected' },
+      { name: 'Enclosed Hydraulic Carrier Truck #GJ-18-TT-4412', status: 'Assigned' }
+    ],
+    vehicleChecks: {
+      batteryDisconnected: true,
+      wheelChocksLocked: true,
+      fuelOdometerLogged: true,
+      fourSidePhotosTaken: true,
+      zeroScratchSigned: true
+    },
+    notes: 'Enclosed container pod. Wheel chocks fastened and zero-scratch signed.'
+  },
   // 1. TRAVEL & COMMUTE
   {
     id: 'ADV-TRV-801',
@@ -287,6 +314,7 @@ const INITIAL_SPECIALIZED_JOBS = [
 
 const SECTORS = [
   { id: 'all', label: 'All Operations', icon: <HiOutlineSparkles /> },
+  { id: 'relocation', label: 'Relocation & Packers', icon: <HiOutlineTruck /> },
   { id: 'travel-commute', label: 'Travel & Commute', icon: <HiOutlineTruck /> },
   { id: 'food-kitchen', label: 'Food & Kitchen', icon: <HiOutlineCake /> },
   { id: 'pet-services', label: 'Pet Services', icon: <HiOutlineHeart /> },

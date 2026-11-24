@@ -19,6 +19,49 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
 
+## Working plan — Build Distinct Dedicated Multi-Stage Worker Workflow Pages for All 7 Specialized Services (done, verified 2026-11-25)
+
+**User outcome:**
+User requested:
+"are mujhe aise nahi ......
+mujhe inn sab servcies ke worker page hi alag lage aise banane hai kyuki yeh sab main services hi dekhn abhi, worker yeh sab servcies book karta hai to worker ke paas alag sa workflow aayega na aisi sab servcies ke liye kyuki isme sirf worker ko customer ke gahr pe jaa kar sirf or sirf kaam nhi karna hai na inn sab servcies me to bahut kuch karna hota hai unn ssab ke workflow accornding worker pannek ke specific servcies ke worker pages me workflow according chanegs karne padege and relocation and packers wali servcies baki reh gai thi use bhi add kar dena"
+
+Building 7 distinct, fully-featured, specialized worker workflow pages with complete multi-stage operational lifecycles:
+1. **Relocation & Packers Operations (`WorkerRelocation.jsx` • `/worker/relocation`)**:
+   - Multi-stage: Pre-Move Inventory & 360° vehicle/dent audit ➔ Hydraulic container ramp loading & battery disconnect ➔ Transit GPS & highway halts ➔ Destination unloading, inventory checklist & broom-clean signoff.
+2. **Travel & Commute Operations (`WorkerTravel.jsx` • `/worker/travel`)**:
+   - Multi-stage: School van route & passenger manifest ➔ Pre-trip digital vehicle audit (tires, dashcam, battery/fuel) ➔ Boarded/Dropped attendance tracking ➔ Luxury car delivery odometer/scratch log & handover.
+3. **Food & Kitchen Operations (`WorkerFood.jsx` • `/worker/food`)**:
+   - Multi-stage: Event scale & skewer menu prep (Veg, Jain, Non-Veg) ➔ Hardware rig loading (Cast-iron grill, organic coal, palm plates, portable OTG) ➔ Live sizzle / baking masterclass ➔ Post-event zero-mess sweep audit.
+4. **Pet Care Operations (`WorkerPetServices.jsx` • `/worker/pet-services`)**:
+   - Multi-stage: Pet medical intake & feeding routine ➔ 3x daily WhatsApp photo/video proof center ➔ KCI behavioral training milestones tracker ➔ Check-out digital health signoff.
+5. **Health & Wellness Operations (`WorkerHealthWellness.jsx` • `/worker/health-wellness`)**:
+   - Multi-stage: Patient pre-vitals intake (BP, SpO2, Pulse, Doctor tele-signoff) ➔ Sterile cold-chain seal verification & IV cannula insertion ➔ 45-min drip rate monitoring / assisted PNF stretch ➔ Post-session clinical report.
+6. **Society & Community Operations (`WorkerSocietyManagement.jsx` • `/worker/society-management`)**:
+   - Multi-stage: Society security gate PIN pass ➔ Daily flat-by-flat waterless car wash matrix (plate scan, before/after photo) ➔ EV Charger load test & shock MCB breaker check ➔ RWA digital signoff.
+7. **Events & Production Operations (`WorkerEvents.jsx` • `/worker/events`)**:
+   - Multi-stage: Run-of-show timeline milestones (Load-in, Sound check, Showtime, Tear-down) ➔ AV hardware checklist (Mixers, mics, speakers, trussing) ➔ Client POC coordination & venue handover.
+
+**Integration & Routing:**
+- Register all 7 routes in `App.jsx` under `/worker/...`.
+- Update `Sidebar.jsx` with distinct worker navigation links for specialized workflows.
+- Update `WorkerDashboard.jsx` with a dedicated "Specialized Service Hubs" grid launcher.
+
+**Constraint Compliance:**
+- STRICTLY NO `git push` (All work kept local).
+
+**Tasks & Verification:**
+- [x] Create `WorkerRelocation.jsx`.
+- [x] Create `WorkerTravel.jsx`.
+- [x] Create `WorkerFood.jsx`.
+- [x] Create `WorkerPetServices.jsx`.
+- [x] Create `WorkerHealthWellness.jsx`.
+- [x] Create `WorkerSocietyManagement.jsx`.
+- [x] Create `WorkerEvents.jsx`.
+- [x] Register routes in `App.jsx` & update `Sidebar.jsx` and `WorkerDashboard.jsx`.
+- [x] Verify build with `npm --prefix client run build` and backend test suites.
+- [x] Update `PROJECT_BRAIN/brain.md` journal and save local commit.
+
 ## Working plan — Dedicated Worker Specialized Consoles for Advance Bookings & Quotation/Payment Strategy Analysis (done, verified 2026-11-25)
 
 **User outcome:**
@@ -1364,6 +1407,28 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-25 — 7 Dedicated Multi-Stage Worker Workflow Cockpits for Specialized & Advance Services
+
+- **Architecture & Domain Realization**:
+  * Specialized advance services (relocation, travel fleets, live culinary feasts, pet boarding, clinical therapies, society matrix, event productions) cannot use a generic 30-minute handyman arrival flow.
+  * Created 7 independent, dedicated operational cockpits with unique 3-stage visual pipelines, checklists, manifests, waypoint tracking, and client POC integration:
+    1. `WorkerRelocation.jsx` (`/worker/relocation`): 360° vehicle/dent audit & hydraulic ramp loading ➔ Highway GPS transit tracking ➔ Destination unloading & broom-clean signoff.
+    2. `WorkerTravel.jsx` (`/worker/travel`): Pre-departure vehicle checklist (dashcam, tires) ➔ Passenger attendance manifest (Boarded/Pending) ➔ Safe campus drop handover.
+    3. `WorkerFood.jsx` (`/worker/food`): Skewer marinade prep & hardware rig loading ➔ Live sizzle & pastry baking masterclass ➔ Post-party spotless sweep.
+    4. `WorkerPetServices.jsx` (`/worker/pet-services`): Pet health/diet intake & habit check ➔ 3x daily WhatsApp photo/video proof center ➔ KCI training milestones & check-out signoff.
+    5. `WorkerHealthWellness.jsx` (`/worker/health-wellness`): Patient pre-vitals intake (BP, SpO2, doctor tele-signoff) ➔ Sterile cold-chain seal verification & IV cannula insertion ➔ 45-min drip rate monitoring / assisted PNF stretch.
+    6. `WorkerSocietyManagement.jsx` (`/worker/society-management`): Security gate PIN pass ➔ Daily flat-by-flat waterless car wash matrix (plate scan, before/after photo) ➔ EV Charger load test & shock MCB breaker check ➔ RWA digital signoff.
+    7. `WorkerEvents.jsx` (`/worker/events`): Run-of-show timeline milestones (Load-in, Sound check, Showtime, Tear-down) ➔ AV hardware checklist (Mixers, mics, speakers, trussing) ➔ Client POC coordination & venue handover.
+- **Routing & Navigation Integration**:
+  * Registered all 7 routes under `/worker/...` in `client/src/App.jsx`.
+  * Updated `client/src/components/Sidebar.jsx` with direct navigation entries for all specialized sectors.
+  * Added 7-card **Specialized Service Consoles** launcher grid to `client/src/pages/worker/WorkerDashboard.jsx`.
+  * Updated `WorkerSpecializedServices.jsx` to include the relocation sector fixture and tabs.
+- **Verification & Local-Only Guarantee**:
+  * Verified client production build: `npm --prefix client run build` built cleanly with zero errors in 4.97s.
+  * Verified backend test suites: `node server/scripts/verify-services-hub-fixes.mjs` (17/17 passed) and `node server/scripts/verify-worker-ops-suite.mjs` (30/30 passed).
+  * STRICT USER RULE: Kept all changes 100% local; zero `git push origin main`.
 
 ### 2026-11-24 — Comprehensive B2B Panel Overhaul: Layout Fixes, Cross-Panel Connectivity (Admin & Worker) & Workflow Execution
 
