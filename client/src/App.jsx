@@ -78,6 +78,7 @@ import WorkerEarnings from './pages/worker/WorkerEarnings';
 import WorkerTraining from './pages/worker/WorkerTraining';
 import WorkerProfile from './pages/worker/WorkerProfile';
 import BecomeAProHub from './pages/worker/BecomeAProHub';
+import WorkerSpecializedServices from './pages/worker/WorkerSpecializedServices';
 
 /* Admin */
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -190,6 +191,7 @@ function App() {
         <Route path="/worker" element={<DashboardLayout panel="worker" />}>
           <Route index element={<WorkerDashboard />} />
           <Route path="jobs" element={<WorkerJobs />} />
+          <Route path="specialized" element={<WorkerSpecializedServices />} />
           <Route path="schedule" element={<WorkerSchedule />} />
           <Route path="earnings" element={<WorkerEarnings />} />
           <Route path="training" element={<WorkerTraining />} />

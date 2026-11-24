@@ -45,6 +45,7 @@ const sidebarConfig = {
   worker: [
     { path: '/worker', icon: <HiOutlineHome />, labelKey: 'worker.dashboard', end: true },
     { path: '/worker/jobs', icon: <HiOutlineBriefcase />, labelKey: 'worker.jobRequests' },
+    { path: '/worker/specialized', icon: <HiOutlineSparkles style={{ color: '#0ea5e9' }} />, labelKey: 'worker.specializedServices', fallbackLabel: 'Advance Services' },
     { path: '/worker/schedule', icon: <HiOutlineClipboardDocumentList />, labelKey: 'worker.mySchedule' },
     { path: '/worker/earnings', icon: <HiOutlineBanknotes />, labelKey: 'worker.earnings' },
     { path: '/worker/training', icon: <HiOutlineAcademicCap />, labelKey: 'worker.training' },
@@ -210,7 +211,7 @@ const Sidebar = ({ panel }) => {
             className={({ isActive }) => `sidebar-link ${isActive ? 'sidebar-link-active' : ''}`}
           >
             <span className="sidebar-link-icon">{link.icon}</span>
-            <span className="sidebar-link-text">{t(link.labelKey)}</span>
+            <span className="sidebar-link-text">{t(link.labelKey, link.fallbackLabel || link.labelKey)}</span>
           </NavLink>
         ))}
       </nav>

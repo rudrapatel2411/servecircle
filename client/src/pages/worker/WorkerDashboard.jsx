@@ -264,6 +264,36 @@ const WorkerDashboard = () => {
  <HiOutlineHeart className="empowerment-icon-bg" />
  </div>
 
+ {/* --- SPECIALIZED ADVANCE BOOKINGS BANNER --- */}
+ <div style={{
+  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+  color: 'white',
+  borderRadius: 'var(--radius-lg)',
+  padding: '20px 24px',
+  marginBottom: '20px',
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '16px',
+  boxShadow: '0 8px 20px -4px rgba(2, 132, 199, 0.25)'
+ }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+   <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>
+    ✨
+   </div>
+   <div>
+    <div style={{ fontWeight: 800, fontSize: '1.02rem', margin: 0 }}>Advance Bookings & Specialized Services Hub</div>
+    <div style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: '2px' }}>
+     Travel manifests, School van routes, Live BBQ setups, Pet care logs & Clinical health sessions.
+    </div>
+   </div>
+  </div>
+  <Link to="/worker/specialized" className="btn" style={{ background: 'white', color: '#0369a1', fontWeight: 800, padding: '10px 18px', borderRadius: '12px', whiteSpace: 'nowrap' }}>
+   Open Specialized Console →
+  </Link>
+ </div>
+
  {loading ? (
  <div className="chart-placeholder">Loading dashboard...</div>
  ) : (

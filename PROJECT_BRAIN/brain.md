@@ -19,6 +19,35 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
 
+## Working plan — Dedicated Worker Specialized Consoles for Advance Bookings & Quotation/Payment Strategy Analysis (done, verified 2026-11-25)
+
+**User outcome:**
+1. Deep strategic analysis and recommendation on the Payment & Quotation Architecture:
+   - When a customer books a slot, should full payment happen upfront, or visiting fee first + in-app revised quotation for spare parts/repairs later, or 100% post-service?
+   - Strategic review of industry models (Urban Company vs Porter vs TaskRabbit) with clear pros, cons, and recommendations for ServeCircle (strict constraint: analysis only, NO payment implementation code).
+2. Dedicated Worker Operations Consoles for the 6 specialized advance booking sectors:
+   - Unlike standard instant handyman jobs, these services operate on scheduled rosters, prep checklists, and specialized protocol tracking:
+     * **Travel & Commute**: Passenger/Kids attendance manifesto, pre-dispatch vehicle inspection, route timetable.
+     * **Food & Kitchen**: Event prep sheet, marinades & diet checklist, hardware rig inventory, post-event zero-mess sweep.
+     * **Pet Services**: Daily pet care log, 3x daily WhatsApp photo/video updates, behavioral training diary, intake medicals.
+     * **Health & Wellness**: Patient vitals log, therapy protocol checklists (IV drip sterile seal, percussion settings), multi-session tracker.
+     * **Society Management**: RWA gate pass & PIN, daily flat-by-flat vehicle wash checklist, EV installation NOC verification.
+     * **Events Hub**: Run-of-show timeline, AV sound/light checklist, venue POC contact & clearance.
+3. Worker Navigation Integration:
+   - Dedicated route `/worker/specialized` in `App.jsx`.
+   - New navigation link in `Sidebar.jsx` under worker section.
+   - Quick launcher banner in `WorkerDashboard.jsx` & `WorkerJobs.jsx`.
+4. Constraint Compliance:
+   - Strictly NO `git push` (local commits only).
+
+**Tasks & Verification:**
+- [x] Provide comprehensive architectural analysis & recommendation on Payment vs Quotation models.
+- [x] Implement `WorkerSpecializedServices.jsx` with dedicated operational consoles for all 6 sectors.
+- [x] Add route `/worker/specialized` in `App.jsx` and worker sidebar link in `Sidebar.jsx`.
+- [x] Add quick launcher banner in `WorkerDashboard.jsx` and `WorkerJobs.jsx`.
+- [x] Verify frontend build (`npm --prefix client run build`) and test suites.
+- [x] Update `PROJECT_BRAIN/brain.md` journal and save local commit.
+
 ## Working plan — Streamline Premium Service Hub Flows into Simple 2-Step Wizards (done, verified 2026-11-25)
 
 **User outcome:**
@@ -2002,6 +2031,26 @@ No feature implementation task is in progress. The only unfinished cleanup is th
   * Backend operations suite (`verify-worker-ops-suite.mjs`) passed 30/30 checks.
   * Changes kept strictly local (NO git push executed).
 
+
+### 2026-11-25 — Specialized Worker Operations Console for Advance Bookings & Quotation Strategy
+
+- **User outcome:** Built out dedicated, sector-specific operational consoles for all 6 specialized advance booking domains (Travel & Commute, Food & Kitchen, Pet Services, Health & Wellness, Society Management, Events Hub) and formulated a strategic architecture for handling upfront payment vs on-site spare-parts quotations.
+- **Worker Consoles Implemented (`client/src/pages/worker/WorkerSpecializedServices.jsx`)**:
+  * **Travel & Commute**: Passenger/Kids attendance manifesto (Boarded/Dropped), Pre-trip vehicle checklist (Tires, Battery/Fuel, Dashcam, Sanitized AC cab), Doorstep delivery handover log.
+  * **Food & Kitchen**: Live BBQ skewer & recipe checklist, Veg/Jain/Non-Veg split, Cast iron grill/coal/palm-leaf tableware loading audit, Post-event spotless sweep verification.
+  * **Pet Services**: Pet profile with custom diet & allergies, 3x daily WhatsApp video update center, Behavioral command milestones (Leash, Doorbell impulse).
+  * **Health & Wellness**: Clinical patient intake with BP & pulse log, Sterile IV drip single-use seal confirmation, Assisted PNF stretch & Theragun PRO protocol.
+  * **Society Operations**: Society Gate Pass PIN, Flat-by-flat waterless car wash matrix with photo timestamp confirmation.
+  * **Events Hub**: Run-of-show timeline milestones (Load-in, Sound Check, Showtime, Tear-down), AV hardware checklist.
+- **Navigation & Routing:**
+  * Registered `/worker/specialized` in `client/src/App.jsx`.
+  * Added "Advance Services" link to `client/src/components/Sidebar.jsx` under worker panel.
+  * Added prominent Quick Launch banners in both `WorkerDashboard.jsx` and `WorkerJobs.jsx`.
+- **Payment & Quotation Strategy Analyzed:** Formulated a 3-tier comparative roadmap (Upfront Token + In-App Dynamic Parts Quotation vs 100% Post-Service) without implementing any payment gateway changes.
+- **Constraint Compliance:** Kept strictly local (NO git push executed, adhering to user rule *"direct push mat karo"*).
+- **Validation:**
+  * Client production build (`npm --prefix client run build`) passed with 0 errors in 6.36s.
+  * Backend suites (`verify-services-hub-fixes.mjs` 17/17 checks, `verify-worker-ops-suite.mjs` 30/30 checks) passed 100%.
 
 ### 2026-11-25 — Streamlined 6 Premium Service Hub Flows into Simple, Fast 2-Step Wizards
 

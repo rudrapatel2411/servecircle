@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -528,6 +529,46 @@ const WorkerJobs = () => {
  </div>
  </div>
  )}
+
+ {/* Specialized Operations Notice */}
+ <div style={{
+  background: 'linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%)',
+  border: '1.5px solid #0284c7',
+  borderRadius: '16px',
+  padding: '14px 20px',
+  marginBottom: '18px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: '12px'
+ }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+   <span style={{ fontSize: '1.5rem' }}>✨</span>
+   <div>
+    <strong style={{ color: '#0369a1', fontSize: '0.92rem' }}>Looking for Advance Scheduled Bookings & Specialized Manifests?</strong>
+    <div style={{ color: '#475569', fontSize: '0.78rem' }}>
+     Travel routes, Kids school van attendance, Live BBQ setups, Pet care logs & Clinical health sessions.
+    </div>
+   </div>
+  </div>
+  <Link
+   to="/worker/specialized"
+   style={{
+    background: '#0284c7',
+    color: 'white',
+    padding: '8px 16px',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.8rem',
+    textDecoration: 'none',
+    boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
+    whiteSpace: 'nowrap'
+   }}
+  >
+   Open Advance Hub →
+  </Link>
+ </div>
 
  <div className="tabs-bar">
  {tabs.map((tab) => (
