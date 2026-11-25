@@ -10,7 +10,10 @@ import {
   HiOutlineMapPin,
   HiOutlineCheckBadge,
   HiOutlineArrowRight,
+  HiOutlineHeart,
+  HiOutlineTrash,
 } from 'react-icons/hi2';
+import { IconTile, StatusPill } from '../../components/ui';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -106,7 +109,7 @@ const RelocationHub = () => {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '8px',
-          color: '#6B665C',
+          color: 'var(--ink-2)',
           fontWeight: 700,
           fontSize: '0.86rem',
           textDecoration: 'none',
@@ -122,9 +125,9 @@ const RelocationHub = () => {
         style={{
           marginBottom: '32px',
           padding: '24px 28px',
-          background: 'linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%)',
-          borderRadius: '20px',
-          color: '#FAF9F6',
+          background: 'linear-gradient(135deg, var(--blue-deep) 0%, var(--ink) 100%)',
+          borderRadius: '26px',
+          color: 'var(--bg-page)',
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'space-between',
@@ -141,7 +144,7 @@ const RelocationHub = () => {
               alignItems: 'center',
               gap: '6px',
               background: 'rgba(83, 109, 87, 0.35)',
-              color: '#FAF9F6',
+              color: 'var(--bg-page)',
               padding: '4px 10px',
               borderRadius: '8px',
               fontSize: '0.72rem',
@@ -165,7 +168,7 @@ const RelocationHub = () => {
           >
             Smart Packers &amp; Movers 2.0
           </h2>
-          <p style={{ fontSize: '0.88rem', color: '#E2E8F0', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--glass-edge)', margin: 0, lineHeight: 1.5 }}>
             Calculate accurate vehicle sizes, customize your inventory, and enjoy guaranteed safe handling with zero hidden charges.
           </p>
         </div>
@@ -173,13 +176,13 @@ const RelocationHub = () => {
         <Link
           to="/customer/packers-demo"
           style={{
-            background: '#FAF9F6',
-            color: '#0F172A',
+            background: 'var(--bg-page)',
+            color: 'var(--ink)',
             fontWeight: 800,
             fontSize: '0.9rem',
             padding: '12px 24px',
             borderRadius: '12px',
-            border: '1.5px solid #E2E8F0',
+            border: '1.5px solid var(--glass-edge)',
             textDecoration: 'none',
             display: 'inline-flex',
             alignItems: 'center',
@@ -188,7 +191,7 @@ const RelocationHub = () => {
             transition: 'all 0.2s ease',
           }}
         >
-          <HiOutlineSparkles style={{ color: '#536D57', fontSize: '1.1rem' }} /> Try AI Room Scanner Demo
+          <HiOutlineSparkles style={{ color: 'var(--blue)', fontSize: '1.1rem' }} /> Try AI Room Scanner Demo
         </Link>
       </div>
 
@@ -204,12 +207,11 @@ const RelocationHub = () => {
       >
         {/* Left Column: Shifting Planner & Inventory Calculator */}
         <div
+          className="glass"
           style={{
-            background: '#FFFFFF',
-            border: '1px solid #E2E8F0',
-            borderRadius: '20px',
+            borderRadius: '26px',
             padding: '28px',
-            boxShadow: '0 4px 20px rgba(30, 64, 175, 0.05)',
+            boxShadow: 'var(--sh-card)',
           }}
         >
           {/* Card Header */}
@@ -220,7 +222,7 @@ const RelocationHub = () => {
                 height: '40px',
                 borderRadius: '12px',
                 background: 'rgba(83, 109, 87, 0.12)',
-                color: '#2D5A3C',
+                color: 'var(--ink)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -230,10 +232,10 @@ const RelocationHub = () => {
               <HiOutlineCalculator />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#1E40AF' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--blue)' }}>
                 {t('relocation.volumeEstimator', 'Interactive Shifting Planner')}
               </h3>
-              <p style={{ margin: '2px 0 0 0', fontSize: '0.78rem', color: '#6B665C' }}>
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.78rem', color: 'var(--ink-2)' }}>
                 Select your route, transit type, and items to compute real-time quotes.
               </p>
             </div>
@@ -246,14 +248,14 @@ const RelocationHub = () => {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#0F172A',
+                  color: 'var(--ink)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   marginBottom: '6px',
                 }}
               >
-                <HiOutlineMapPin style={{ color: '#536D57' }} /> {t('relocationExt.pickupCity', 'Pickup City / Area')}
+                <HiOutlineMapPin style={{ color: 'var(--blue)' }} /> {t('relocationExt.pickupCity', 'Pickup City / Area')}
               </label>
               <input
                 type="text"
@@ -264,11 +266,11 @@ const RelocationHub = () => {
                   width: '100%',
                   padding: '10px 12px',
                   borderRadius: '10px',
-                  border: '1.5px solid #E2E8F0',
-                  background: '#FAF9F6',
+                  border: '1.5px solid var(--glass-edge)',
+                  background: 'var(--bg-page)',
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#1E40AF',
+                  color: 'var(--blue)',
                   outline: 'none',
                 }}
               />
@@ -278,14 +280,14 @@ const RelocationHub = () => {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 700,
-                  color: '#0F172A',
+                  color: 'var(--ink)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   marginBottom: '6px',
                 }}
               >
-                <HiOutlineMapPin style={{ color: '#536D57' }} /> {t('relocationExt.dropCity', 'Drop City / Area')}
+                <HiOutlineMapPin style={{ color: 'var(--blue)' }} /> {t('relocationExt.dropCity', 'Drop City / Area')}
               </label>
               <input
                 type="text"
@@ -296,11 +298,11 @@ const RelocationHub = () => {
                   width: '100%',
                   padding: '10px 12px',
                   borderRadius: '10px',
-                  border: '1.5px solid #E2E8F0',
-                  background: '#FAF9F6',
+                  border: '1.5px solid var(--glass-edge)',
+                  background: 'var(--bg-page)',
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#1E40AF',
+                  color: 'var(--blue)',
                   outline: 'none',
                 }}
               />
@@ -316,9 +318,9 @@ const RelocationHub = () => {
                 flex: 1,
                 padding: '12px 14px',
                 borderRadius: '12px',
-                border: transitType === 'full' ? '1.5px solid #1E40AF' : '1.5px solid #E2E8F0',
-                background: transitType === 'full' ? '#1E40AF' : '#FAF9F6',
-                color: transitType === 'full' ? '#FFFFFF' : '#6B665C',
+                border: transitType === 'full' ? '1.5px solid var(--blue)' : '1.5px solid var(--glass-edge)',
+                background: transitType === 'full' ? 'var(--blue)' : 'var(--bg-page)',
+                color: transitType === 'full' ? '#FFFFFF' : 'var(--ink-2)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -335,9 +337,9 @@ const RelocationHub = () => {
                 flex: 1,
                 padding: '12px 14px',
                 borderRadius: '12px',
-                border: transitType === 'single' ? '1.5px solid #1E40AF' : '1.5px solid #E2E8F0',
-                background: transitType === 'single' ? '#1E40AF' : '#FAF9F6',
-                color: transitType === 'single' ? '#FFFFFF' : '#6B665C',
+                border: transitType === 'single' ? '1.5px solid var(--blue)' : '1.5px solid var(--glass-edge)',
+                background: transitType === 'single' ? 'var(--blue)' : 'var(--bg-page)',
+                color: transitType === 'single' ? '#FFFFFF' : 'var(--ink-2)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -355,16 +357,16 @@ const RelocationHub = () => {
               style={{
                 marginBottom: '22px',
                 padding: '14px 18px',
-                background: '#FAF9F6',
+                background: 'var(--bg-page)',
                 borderRadius: '14px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid var(--glass-edge)',
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#1E40AF' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--blue)' }}>
                   {t('relocationExt.autoFill', 'Quick Presets by House Size:')}
                 </span>
-                <span style={{ fontSize: '0.72rem', color: '#536D57', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--blue)', fontWeight: 700 }}>
                   1-Click Fill
                 </span>
               </div>
@@ -377,12 +379,12 @@ const RelocationHub = () => {
                     style={{
                       flex: 1,
                       padding: '8px',
-                      background: '#FFFFFF',
-                      border: '1px solid #E2E8F0',
+                      background: 'var(--glass)',
+                      border: '1px solid var(--glass-edge)',
                       borderRadius: '10px',
                       fontSize: '0.82rem',
                       fontWeight: 700,
-                      color: '#1E40AF',
+                      color: 'var(--blue)',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
                     }}
@@ -395,12 +397,12 @@ const RelocationHub = () => {
                   onClick={() => setInventory({ sofa: 0, doubleBed: 0, refrigerator: 0, wardrobe: 0, box: 0 })}
                   style={{
                     padding: '8px 14px',
-                    background: '#FFFFFF',
-                    border: '1px dashed #C5BCAC',
+                    background: 'var(--glass)',
+                    border: '1px dashed var(--ink-3)',
                     borderRadius: '10px',
                     fontSize: '0.78rem',
                     fontWeight: 700,
-                    color: '#8C8272',
+                    color: 'var(--ink-3)',
                     cursor: 'pointer',
                   }}
                 >
@@ -426,16 +428,16 @@ const RelocationHub = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '10px 14px',
-                  background: '#FAF9F6',
+                  background: 'var(--bg-page)',
                   borderRadius: '12px',
-                  border: '1px solid #E2E8F0',
+                  border: '1px solid var(--glass-edge)',
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.88rem', color: '#1E40AF', fontWeight: 700, display: 'block' }}>
+                  <span style={{ fontSize: '0.88rem', color: 'var(--blue)', fontWeight: 700, display: 'block' }}>
                     {item.name}
                   </span>
-                  <span style={{ fontSize: '0.72rem', color: '#6B665C' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--ink-2)' }}>
                     ~{item.weight} kg per unit
                   </span>
                 </div>
@@ -447,11 +449,11 @@ const RelocationHub = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      border: '1px solid #E2E8F0',
-                      background: '#FFFFFF',
+                      border: '1px solid var(--glass-edge)',
+                      background: 'var(--glass)',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      color: '#1E40AF',
+                      color: 'var(--blue)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -460,7 +462,7 @@ const RelocationHub = () => {
                   >
                     -
                   </button>
-                  <span style={{ minWidth: '22px', textAlign: 'center', fontWeight: 900, color: '#0F172A', fontSize: '0.92rem' }}>
+                  <span style={{ minWidth: '22px', textAlign: 'center', fontWeight: 900, color: 'var(--ink)', fontSize: '0.92rem' }}>
                     {inventory[item.id] || 0}
                   </span>
                   <button
@@ -470,11 +472,11 @@ const RelocationHub = () => {
                       width: '32px',
                       height: '32px',
                       borderRadius: '8px',
-                      border: '1px solid #E2E8F0',
-                      background: '#FFFFFF',
+                      border: '1px solid var(--glass-edge)',
+                      background: 'var(--glass)',
                       fontWeight: 800,
                       fontSize: '1rem',
-                      color: '#1E40AF',
+                      color: 'var(--blue)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -491,18 +493,18 @@ const RelocationHub = () => {
           {/* Add-ons and Floor Adjustments */}
           <div
             style={{
-              background: '#FAF9F6',
+              background: 'var(--bg-page)',
               padding: '16px',
               borderRadius: '14px',
               marginTop: '22px',
               display: 'flex',
               flexDirection: 'column',
               gap: '14px',
-              border: '1px solid #E2E8F0',
+              border: '1px solid var(--glass-edge)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#1E40AF' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--blue)' }}>
                 Elevator / Lift Available?
               </span>
               <select
@@ -511,11 +513,11 @@ const RelocationHub = () => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '8px',
-                  border: '1px solid #E2E8F0',
+                  border: '1px solid var(--glass-edge)',
                   fontSize: '0.82rem',
                   fontWeight: 600,
-                  color: '#1E40AF',
-                  background: '#FFFFFF',
+                  color: 'var(--blue)',
+                  background: 'var(--glass)',
                   outline: 'none',
                 }}
               >
@@ -525,7 +527,7 @@ const RelocationHub = () => {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0F172A' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ink)' }}>
                 Packing Material Tier
               </span>
               <select
@@ -534,11 +536,11 @@ const RelocationHub = () => {
                 style={{
                   padding: '6px 12px',
                   borderRadius: '8px',
-                  border: '1px solid #E2E8F0',
+                  border: '1px solid var(--glass-edge)',
                   fontSize: '0.82rem',
                   fontWeight: 600,
-                  color: '#1E40AF',
-                  background: '#FFFFFF',
+                  color: 'var(--blue)',
+                  background: 'var(--glass)',
                   outline: 'none',
                 }}
               >
@@ -547,7 +549,7 @@ const RelocationHub = () => {
               </select>
             </div>
 
-            <div style={{ borderTop: '1px dashed #E2E8F0', paddingTop: '10px' }}>
+            <div style={{ borderTop: '1px dashed var(--glass-edge)', paddingTop: '10px' }}>
               <label
                 style={{
                   display: 'flex',
@@ -555,7 +557,7 @@ const RelocationHub = () => {
                   gap: '8px',
                   fontSize: '0.82rem',
                   fontWeight: 700,
-                  color: '#0F172A',
+                  color: 'var(--ink)',
                   cursor: 'pointer',
                 }}
               >
@@ -563,7 +565,7 @@ const RelocationHub = () => {
                   type="checkbox"
                   checked={addInsurance}
                   onChange={(e) => setAddInsurance(e.target.checked)}
-                  style={{ width: '16px', height: '16px', accentColor: '#1E40AF' }}
+                  style={{ width: '16px', height: '16px', accentColor: 'var(--blue)' }}
                 />
                 Include Transit Insurance (Goods protected up to ₹1,00,000) (+₹499)
               </label>
@@ -573,26 +575,25 @@ const RelocationHub = () => {
 
         {/* Right Column: Real-Time Live Quote & Fleet Summary */}
         <div
+          className="glass"
           style={{
-            background: '#FFFFFF',
-            border: '1.5px solid #E2E8F0',
-            borderRadius: '20px',
+            borderRadius: '26px',
             padding: '28px',
-            boxShadow: '0 8px 30px rgba(30, 64, 175, 0.08)',
+            boxShadow: 'var(--sh-card)',
             position: 'sticky',
             top: '84px',
           }}
         >
           {/* Header & Fleet Recommendation Badge */}
-          <div style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '18px', marginBottom: '20px' }}>
+          <div style={{ borderBottom: '1px solid var(--glass-edge)', paddingBottom: '18px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#536D57', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Instant Moving Quote
               </span>
               <span
                 style={{
                   background: 'rgba(83, 109, 87, 0.12)',
-                  color: '#2D5A3C',
+                  color: 'var(--ink)',
                   fontSize: '0.72rem',
                   fontWeight: 800,
                   padding: '3px 8px',
@@ -609,20 +610,20 @@ const RelocationHub = () => {
                   width: '46px',
                   height: '46px',
                   borderRadius: '12px',
-                  background: '#FAF9F6',
-                  border: '1px solid #E2E8F0',
+                  background: 'var(--bg-page)',
+                  border: '1px solid var(--glass-edge)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#1E40AF',
+                  color: 'var(--blue)',
                   fontSize: '1.4rem',
                 }}
               >
                 <HiOutlineTruck />
               </div>
               <div>
-                <span style={{ fontSize: '0.75rem', color: '#6B665C', display: 'block' }}>Recommended Fleet:</span>
-                <strong style={{ fontSize: '1.05rem', color: '#1E40AF' }}>{estimatedTrucks}</strong>
+                <span style={{ fontSize: '0.75rem', color: 'var(--ink-2)', display: 'block' }}>Recommended Fleet:</span>
+                <strong style={{ fontSize: '1.05rem', color: 'var(--blue)' }}>{estimatedTrucks}</strong>
               </div>
             </div>
           </div>
@@ -630,20 +631,20 @@ const RelocationHub = () => {
           {/* Weight & Specs Summary */}
           <div
             style={{
-              background: '#FAF9F6',
+              background: 'var(--bg-page)',
               borderRadius: '12px',
               padding: '14px 16px',
               marginBottom: '20px',
-              border: '1px solid #E2E8F0',
+              border: '1px solid var(--glass-edge)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '8px' }}>
-              <span style={{ color: '#6B665C' }}>Estimated Volume &amp; Load:</span>
-              <strong style={{ color: '#0F172A' }}>{totalWeight} kg</strong>
+              <span style={{ color: 'var(--ink-2)' }}>Estimated Volume &amp; Load:</span>
+              <strong style={{ color: 'var(--ink)' }}>{totalWeight} kg</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-              <span style={{ color: '#6B665C' }}>Inventory Count:</span>
-              <strong style={{ color: '#0F172A' }}>
+              <span style={{ color: 'var(--ink-2)' }}>Inventory Count:</span>
+              <strong style={{ color: 'var(--ink)' }}>
                 {Object.values(inventory).reduce((a, b) => a + b, 0)} Items
               </strong>
             </div>
@@ -651,34 +652,34 @@ const RelocationHub = () => {
 
           {/* Itemized Breakdown */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', marginBottom: '22px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
               <span>Base Vehicle &amp; Crew Fare:</span>
               <span>₹{baseRate.toLocaleString()}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
               <span>Weight Load Handling:</span>
               <span>₹{weightCharge.toLocaleString()}</span>
             </div>
             {packingCharge > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
                 <span>3-Layer Bubble Wrap Packing:</span>
                 <span>₹{packingCharge.toLocaleString()}</span>
               </div>
             )}
             {liftCharge > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
                 <span>Staircase Carry Charge:</span>
                 <span>₹{liftCharge.toLocaleString()}</span>
               </div>
             )}
             {insuranceCharge > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
                 <span>Transit Protection Insurance:</span>
                 <span>₹{insuranceCharge.toLocaleString()}</span>
               </div>
             )}
             {intercityCharge > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#6B665C' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
                 <span>Intercity Transit &amp; Toll Surcharge:</span>
                 <span>₹{intercityCharge.toLocaleString()}</span>
               </div>
@@ -688,7 +689,7 @@ const RelocationHub = () => {
           {/* Total Price Banner */}
           <div
             style={{
-              borderTop: '1.5px solid #E2E8F0',
+              borderTop: '1.5px solid var(--glass-edge)',
               paddingTop: '16px',
               marginBottom: '20px',
               display: 'flex',
@@ -697,15 +698,15 @@ const RelocationHub = () => {
             }}
           >
             <div>
-              <span style={{ fontSize: '0.72rem', color: '#6B665C', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--ink-2)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>
                 Total Estimated Fare
               </span>
-              <span style={{ fontSize: '0.75rem', color: '#536D57', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--blue)', fontWeight: 600 }}>
                 Includes GST &amp; Toll Pass-Throughs
               </span>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '1.65rem', fontWeight: 900, color: '#0F172A' }}>
+              <span style={{ fontSize: '1.65rem', fontWeight: 900, color: 'var(--ink)' }}>
                 ₹{dynamicPrice.toLocaleString()}
               </span>
             </div>
@@ -721,7 +722,7 @@ const RelocationHub = () => {
               fontSize: '1rem',
               fontWeight: 800,
               textAlign: 'center',
-              background: '#1E40AF',
+              background: 'var(--blue)',
               color: '#FFFFFF',
               border: 'none',
               display: 'flex',
@@ -738,10 +739,10 @@ const RelocationHub = () => {
 
           {/* Trust Guarantees */}
           <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '0.76rem', color: '#536D57', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
+            <span style={{ fontSize: '0.76rem', color: 'var(--blue)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}>
               <HiOutlineCheckBadge /> 100% Background-Verified Moving Crews
             </span>
-            <span style={{ fontSize: '0.76rem', color: '#6B665C', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '0.76rem', color: 'var(--ink-2)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <HiOutlineShieldCheck /> Zero Hidden Charges Guarantee at Delivery
             </span>
           </div>
@@ -751,10 +752,10 @@ const RelocationHub = () => {
       {/* Specialized Moving Services Section */}
       <div style={{ marginTop: '48px', marginBottom: '32px' }}>
         <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--blue)', margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span>Specialized Relocation Solutions</span>
           </h3>
-          <p style={{ fontSize: '0.88rem', color: '#64748b', margin: 0 }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--ink-3)', margin: 0 }}>
             Dedicated transport services calibrated for vehicles, pets, and scrap removal with verified safety standards.
           </p>
         </div>
@@ -768,67 +769,49 @@ const RelocationHub = () => {
         >
           {/* 1. Vehicle Relocation */}
           <div
-            className="service-card-hover"
+            className="glass is-clickable"
             style={{
-              background: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
+              borderRadius: '26px',
               padding: '28px 24px',
-              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
+              boxShadow: 'var(--sh-card)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease',
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                <span style={{ fontSize: '1.8rem' }}>🚗</span>
-                <span
-                  style={{
-                    background: '#eff6ff',
-                    color: '#1d4ed8',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    border: '1px solid #bfdbfe',
-                  }}
-                >
-                  Safe Car & Bike Carrier
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <IconTile icon={HiOutlineTruck} tone="blue" size={48} />
+                <StatusPill status="Assigned" label="Safe Car & Bike Carrier" />
               </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px 0' }}>
                 {t('relocationExt.vehicleRelocation', 'Vehicle Relocation')}
               </h4>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              <p style={{ fontSize: '0.86rem', color: 'var(--ink-3)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
                 Enclosed container trucks with wheel stoppers, hydraulic ramp loading, and zero-dep insurance for your car or two-wheeler.
               </p>
-              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Starting from:</div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#1e40af' }}>
-                  ₹4,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Bike & Car Carrier)</span>
+              <div className="sunken" style={{ padding: '14px 16px', borderRadius: '18px', marginBottom: '18px' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--ink-3)', marginBottom: '4px' }}>Starting from:</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--blue)' }}>
+                  ₹4,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--ink-3)' }}>(Bike & Car Carrier)</span>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
-                  ✓ Hydraulic Ramp Loading • Live GPS Container Track
+                <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)', fontWeight: 700, marginTop: '6px' }}>
+                  Hydraulic Ramp Loading • Live GPS Container Track
                 </div>
               </div>
             </div>
             <div>
               <Link
                 to="/customer/relocation-flow?type=vehicle-relocation"
-                className="btn"
+                className="btn-primary"
                 style={{
                   width: '100%',
-                  padding: '13px',
+                  padding: '13px 20px',
                   fontSize: '0.92rem',
-                  color: '#FFFFFF',
-                  background: '#1E40AF',
                   textAlign: 'center',
-                  borderRadius: '12px',
                   textDecoration: 'none',
-                  fontWeight: 800,
-                  display: 'block',
-                  boxShadow: '0 4px 12px rgba(30, 64, 175, 0.25)',
+                  display: 'inline-block',
                   boxSizing: 'border-box'
                 }}
               >
@@ -839,67 +822,49 @@ const RelocationHub = () => {
 
           {/* 2. Pet Relocation */}
           <div
-            className="service-card-hover"
+            className="glass is-clickable"
             style={{
-              background: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
+              borderRadius: '26px',
               padding: '28px 24px',
-              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
+              boxShadow: 'var(--sh-card)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease',
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                <span style={{ fontSize: '1.8rem' }}>🐾</span>
-                <span
-                  style={{
-                    background: '#fdf4ff',
-                    color: '#a21caf',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    border: '1px solid #f0abfc',
-                  }}
-                >
-                  Climate-Controlled Travel
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <IconTile icon={HiOutlineHeart} tone="purple" size={48} />
+                <StatusPill status="In progress" label="Climate-Controlled Travel" />
               </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px 0' }}>
                 {t('relocationExt.petRelocation', 'Pet Relocation & Cab')}
               </h4>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              <p style={{ fontSize: '0.86rem', color: 'var(--ink-3)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
                 Dedicated AC sanitized cab, certified pet handler, scheduled hydration stops, and stress-free transit for your furry friends.
               </p>
-              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Starting from:</div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#a21caf' }}>
-                  ₹2,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Dedicated Pet Cab / Flight)</span>
+              <div className="sunken" style={{ padding: '14px 16px', borderRadius: '18px', marginBottom: '18px' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--ink-3)', marginBottom: '4px' }}>Starting from:</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--purple, #7c3aed)' }}>
+                  ₹2,999 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--ink-3)' }}>(Dedicated Pet Cab / Flight)</span>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
-                  ✓ Certified Pet Handler • Regular Hydration Breaks
+                <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)', fontWeight: 700, marginTop: '6px' }}>
+                  Certified Pet Handler • Regular Hydration Breaks
                 </div>
               </div>
             </div>
             <div>
               <Link
                 to="/customer/relocation-flow?type=pet-relocation"
-                className="btn"
+                className="btn-primary"
                 style={{
                   width: '100%',
-                  padding: '13px',
+                  padding: '13px 20px',
                   fontSize: '0.92rem',
-                  color: '#FFFFFF',
-                  background: '#a21caf',
                   textAlign: 'center',
-                  borderRadius: '12px',
                   textDecoration: 'none',
-                  fontWeight: 800,
-                  display: 'block',
-                  boxShadow: '0 4px 12px rgba(162, 28, 175, 0.25)',
+                  display: 'inline-block',
                   boxSizing: 'border-box'
                 }}
               >
@@ -910,67 +875,49 @@ const RelocationHub = () => {
 
           {/* 3. Junk & Scrap Removal */}
           <div
-            className="service-card-hover"
+            className="glass is-clickable"
             style={{
-              background: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
+              borderRadius: '26px',
               padding: '28px 24px',
-              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.05)',
+              boxShadow: 'var(--sh-card)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease',
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                <span style={{ fontSize: '1.8rem' }}>♻️</span>
-                <span
-                  style={{
-                    background: '#f0fdf4',
-                    color: '#16a34a',
-                    fontSize: '0.75rem',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    border: '1px solid #bbf7d0',
-                  }}
-                >
-                  Pre-Move Declutter
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <IconTile icon={HiOutlineTrash} tone="green" size={48} />
+                <StatusPill status="Completed" label="Pre-Move Declutter" />
               </div>
-              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0F172A', margin: '0 0 8px 0' }}>
+              <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px 0' }}>
                 {t('relocationExt.scrapRemoval', 'Scrap & Junk Removal')}
               </h4>
-              <p style={{ fontSize: '0.86rem', color: '#64748b', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              <p style={{ fontSize: '0.86rem', color: 'var(--ink-3)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
                 Declutter old mattresses, scrap metal, broken furniture & e-waste. Evaluation fee with salvage cash/UPI credited back.
               </p>
-              <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', marginBottom: '18px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '4px' }}>Evaluation Fee:</div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#16a34a' }}>
-                  ₹499 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b' }}>(Salvage cash credited back)</span>
+              <div className="sunken" style={{ padding: '14px 16px', borderRadius: '18px', marginBottom: '18px' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--ink-3)', marginBottom: '4px' }}>Evaluation Fee:</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--status-success-text)' }}>
+                  ₹499 <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--ink-3)' }}>(Salvage cash credited back)</span>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
-                  ✓ Heavy Furniture Dismantling • Broom-Clean Promise
+                <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)', fontWeight: 700, marginTop: '6px' }}>
+                  Heavy Furniture Dismantling • Broom-Clean Promise
                 </div>
               </div>
             </div>
             <div>
               <Link
                 to="/customer/relocation-flow?type=scrap-removal"
-                className="btn"
+                className="btn-primary"
                 style={{
                   width: '100%',
-                  padding: '13px',
+                  padding: '13px 20px',
                   fontSize: '0.92rem',
-                  color: '#FFFFFF',
-                  background: '#16a34a',
                   textAlign: 'center',
-                  borderRadius: '12px',
                   textDecoration: 'none',
-                  fontWeight: 800,
-                  display: 'block',
-                  boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+                  display: 'inline-block',
                   boxSizing: 'border-box'
                 }}
               >

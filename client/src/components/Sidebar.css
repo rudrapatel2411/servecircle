@@ -3,15 +3,18 @@
    Standard (worker/admin/b2b) + Category Menu (customer)
    ========================================================================== */
 
-/* ===== STANDARD SIDEBAR ===== */
+/* ===== STANDARD SIDEBAR (Frosted Glass System) ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: var(--sidebar-width);
   height: 100vh;
-  background: #ffffff;
-  border-right: 1px solid var(--navy-200);
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border-right: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 4px 0 24px -10px rgba(22, 70, 214, 0.16);
   display: flex;
   flex-direction: column;
   z-index: 900;
@@ -21,8 +24,8 @@
 }
 
 .sidebar-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--navy-200);
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(22, 70, 214, 0.08);
 }
 
 .sidebar-logo {
@@ -34,89 +37,96 @@
 }
 
 .logo-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--primary-700);
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4C86FF, #1646D6);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 0.8125rem;
+  box-shadow: 0 6px 14px -4px rgba(22, 70, 214, 0.45);
 }
 
 .sidebar-logo .logo-text {
-  font-size: 1.1rem;
+  font-family: Outfit, sans-serif;
+  font-size: 1.12rem;
   font-weight: 700;
-  color: var(--navy-900);
+  color: var(--ink);
 }
 
 .sidebar-panel-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
-  background: var(--navy-50);
-  border: 1px solid var(--navy-200);
-  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 14px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--navy-700);
+  color: var(--ink2);
+  box-shadow: inset 0 1px 0 #fff, 0 4px 12px -6px rgba(22, 70, 214, 0.2);
 }
 
 .panel-badge-abbr {
-  background: var(--primary-100);
-  color: var(--primary-700);
+  background: rgba(22, 70, 214, 0.1);
+  color: var(--blue);
   font-weight: 700;
-  padding: 2px 5px;
-  border-radius: var(--radius-xs);
+  padding: 2px 6px;
+  border-radius: 8px;
   font-size: 0.6875rem;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 10px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--navy-700);
+  color: var(--ink);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  transition: transform 0.35s var(--ease, cubic-bezier(0.22, 1, 0.36, 1)), box-shadow 0.35s, background 0.35s, color 0.25s;
 }
 
 .sidebar-link:hover {
-  background: var(--navy-100);
-  color: var(--navy-900);
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 10px 22px -10px rgba(22, 70, 214, 0.3), inset 0 1px 0 #fff;
+  color: var(--blue);
 }
 
 .sidebar-link-active {
-  background: var(--primary-50) !important;
-  color: var(--primary-700) !important;
-  font-weight: 600;
-  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  color: var(--blue) !important;
+  font-weight: 700;
+  box-shadow: 0 12px 26px -10px rgba(22, 70, 214, 0.45), inset 0 1px 0 #fff !important;
 }
 
 .sidebar-link-icon {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: var(--navy-500);
+  color: var(--ink2);
 }
 
 .sidebar-link-active .sidebar-link-icon {
-  color: var(--primary-700);
+  color: var(--blue);
 }
 
 .sidebar-footer {
@@ -132,8 +142,11 @@
   min-width: 290px !important;
   max-width: 290px !important;
   height: 100% !important;
-  background: #ffffff;
-  border-right: 1px solid var(--navy-200, #E2E8F0);
+  background: rgba(255, 255, 255, 0.62) !important;
+  backdrop-filter: blur(18px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 14px 32px -14px rgba(22, 70, 214, 0.18) !important;
   flex-shrink: 0;
   z-index: 10;
   display: flex;
@@ -143,9 +156,9 @@
 }
 
 .sidebar--category .sidebar-header {
-  padding: 20px 22px;
-  border-bottom: 1px solid var(--navy-200, #E2E8F0);
-  background: #ffffff;
+  padding: 22px 20px;
+  border-bottom: 1px solid rgba(22, 70, 214, 0.08);
+  background: transparent;
 }
 
 .category-sidebar-title {
@@ -155,63 +168,84 @@
 }
 
 .category-sidebar-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--sc-surface-secondary, #EFF6FF);
-  color: var(--sc-dark-accent, #1E40AF);
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  background: rgba(22, 70, 214, 0.08);
+  color: var(--blue);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(22, 70, 214, 0.16);
 }
 
 .category-sidebar-heading {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--sc-text-main, #0F172A);
+  font-family: Outfit, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
   letter-spacing: -0.01em;
 }
 
 .category-sidebar-sub {
-  font-size: 0.78rem;
-  color: var(--sc-text-secondary, #475569);
+  font-size: 0.8rem;
+  color: var(--ink2);
   margin-top: 2px;
 }
 
 .category-nav-label {
   font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--sc-text-muted, #64748B);
+  font-weight: 700;
+  color: var(--ink3);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  padding: 10px 16px 4px;
+  letter-spacing: 0.06em;
+  padding: 12px 14px 6px;
   margin-top: 6px;
 }
 
 .category-sidebar-link {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
-  border-radius: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
   font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--sc-text-main, #0F172A);
+  font-weight: 500;
+  color: var(--ink);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), background 0.45s var(--ease), color 0.3s;
+}
+
+.category-sidebar-active-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 12px 26px -10px rgba(22, 70, 214, 0.45), inset 0 1px 0 #fff;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .category-sidebar-link:hover {
-  background: var(--sc-bg-primary, #FAF9F6);
-  color: var(--sc-dark-accent, #1E40AF);
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 10px 22px -10px rgba(22, 70, 214, 0.3), inset 0 1px 0 #fff;
+  color: var(--blue);
 }
 
 .category-sidebar-link--active {
-  background: #EFF6FF !important;
-  color: #1E40AF !important;
-  font-weight: 700;
+  color: var(--blue) !important;
+  font-weight: 700 !important;
 }
 
 .category-sidebar-link-icon {
@@ -228,13 +262,35 @@
 
 .category-coming-soon-badge {
   margin-left: auto;
-  font-size: 0.625rem;
-  font-weight: 700;
-  background: var(--navy-100);
-  color: var(--navy-500);
-  padding: 1px 5px;
-  border-radius: var(--radius-xs);
-  text-transform: uppercase;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(222, 159, 62, 0.14);
+  color: #98691F;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 0 0 1px rgba(222, 159, 62, 0.2);
+}
+
+.category-back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--ink2);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px -4px rgba(22, 70, 214, 0.15);
+  transition: transform 0.3s var(--ease), color 0.2s ease, background 0.3s ease;
+}
+
+.category-back-link:hover {
+  transform: scale(1.04);
+  color: var(--blue);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .category-back-link {

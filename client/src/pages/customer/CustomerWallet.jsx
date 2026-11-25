@@ -19,11 +19,11 @@ const mockTransactions = [
 ];
 
 const typeConfig = {
-  topup: { icon: <HiOutlineArrowUpCircle />, color: '#3b7dc1', label: 'Top-up' },
-  payment: { icon: <HiOutlineArrowDownCircle />, color: '#ef4444', label: 'Payment' },
-  bonus: { icon: <HiOutlineGift />, color: '#8b5cf6', label: 'Bonus' },
-  refund: { icon: <HiOutlineBanknotes />, color: '#3b82f6', label: 'Refund' },
-  points_redeem: { icon: <HiOutlineSparkles />, color: '#f59e0b', label: 'Points Redeemed' }
+  topup: { icon: <HiOutlineArrowUpCircle />, color: 'var(--blue)', label: 'Top-up' },
+  payment: { icon: <HiOutlineArrowDownCircle />, color: 'var(--status-danger-text)', label: 'Payment' },
+  bonus: { icon: <HiOutlineGift />, color: 'var(--accent-violet-text)', label: 'Bonus' },
+  refund: { icon: <HiOutlineBanknotes />, color: 'var(--blue)', label: 'Refund' },
+  points_redeem: { icon: <HiOutlineSparkles />, color: 'var(--status-warning-text)', label: 'Points Redeemed' }
 };
 
 const CustomerWallet = () => {
@@ -153,10 +153,10 @@ const CustomerWallet = () => {
 
   // Determine loyalty tier badge
   const getTierDetails = (points) => {
-    if (points >= 1000) return { name: 'Diamond Pro', color: '#60a5fa', bg: 'rgba(96, 165, 250, 0.1)', nextTier: 'Max Tier Achieved' };
-    if (points >= 500) return { name: 'Gold Tier', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', nextTier: `${1000 - points} points to Diamond Pro` };
-    if (points >= 200) return { name: 'Silver Tier', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)', nextTier: `${500 - points} points to Gold` };
-    return { name: 'Bronze Tier', color: '#b45309', bg: 'rgba(180, 83, 9, 0.1)', nextTier: `${200 - points} points to Silver` };
+    if (points >= 1000) return { name: 'Diamond Pro', color: 'var(--blue-hi)', bg: 'rgba(96, 165, 250, 0.1)', nextTier: 'Max Tier Achieved' };
+    if (points >= 500) return { name: 'Gold Tier', color: 'var(--status-warning-text)', bg: 'rgba(245, 158, 11, 0.1)', nextTier: `${1000 - points} points to Diamond Pro` };
+    if (points >= 200) return { name: 'Silver Tier', color: '#94A3B8', bg: 'rgba(148, 163, 184, 0.15)', nextTier: `${500 - points} points to Gold` };
+    return { name: 'Bronze Tier', color: 'var(--status-warning-text)', bg: 'rgba(180, 83, 9, 0.1)', nextTier: `${200 - points} points to Silver` };
   };
 
   const tier = getTierDetails(servePoints);
@@ -190,8 +190,8 @@ const CustomerWallet = () => {
                   borderRadius: '12px',
                   fontWeight: 700,
                   background: isLiveSource ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
-                  color: isLiveSource ? '#16a34a' : '#ca8a04',
-                  border: `1px solid ${isLiveSource ? '#bbf7d0' : '#fef08a'}`
+                  color: isLiveSource ? 'var(--status-success-text)' : 'var(--status-warning-text)',
+                  border: `1px solid ${isLiveSource ? 'var(--status-success-ring)' : 'var(--status-warning-tint)'}`
                 }}>
                   {isLiveSource ? '● Live Backend' : '○ Demo Balance'}
                 </span>
@@ -225,8 +225,8 @@ const CustomerWallet = () => {
         }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <HiOutlineSparkles style={{ color: '#f59e0b' }} /> Loyalty Rewards
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.85)', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <HiOutlineSparkles style={{ color: 'var(--status-warning-text)' }} /> Loyalty Rewards
               </span>
               <span style={{
                 background: tier.bg,
@@ -243,11 +243,11 @@ const CustomerWallet = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '14px', alignItems: 'baseline', marginBottom: '6px' }}>
-              <span style={{ fontSize: '3rem', fontWeight: 950, color: '#f8fafc', lineHeight: 1 }}>{servePoints}</span>
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 700 }}>ServePoints</span>
+              <span style={{ fontSize: '3rem', fontWeight: 950, color: 'var(--bg-page)', lineHeight: 1 }}>{servePoints}</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--ink-3)', fontWeight: 700 }}>ServePoints</span>
             </div>
 
-            <span style={{ fontSize: '0.72rem', color: '#64748b', display: 'block', marginBottom: '16px' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', display: 'block', marginBottom: '16px' }}>
               {tier.nextTier}
             </span>
 
@@ -258,11 +258,11 @@ const CustomerWallet = () => {
               borderRadius: '12px',
               padding: '12px 14px',
               fontSize: '0.75rem',
-              color: '#cbd5e1',
+              color: 'var(--glass-edge)',
               lineHeight: 1.4,
               marginBottom: '20px'
             }}>
-              ⭐ <strong>Earn 50 Points</strong> on every booking completed!<br />
+              <strong>Earn 50 Points</strong> on every booking completed!<br />
               <strong>Instant Cash Redeem</strong>: 1 Point = ₹1 directly into Wallet balance.
             </div>
           </div>
@@ -275,8 +275,8 @@ const CustomerWallet = () => {
               className="btn"
               style={{
                 width: '100%',
-                background: servePoints >= 100 ? 'linear-gradient(90deg, #f59e0b, #d97706)' : 'rgba(255,255,255,0.05)',
-                color: servePoints >= 100 ? '#0f172a' : '#64748b',
+                background: servePoints >= 100 ? 'linear-gradient(90deg, var(--status-warning-text), var(--status-warning-text))' : 'rgba(255,255,255,0.05)',
+                color: servePoints >= 100 ? 'var(--ink)' : 'rgba(255, 255, 255, 0.4)',
                 border: 'none',
                 fontWeight: 900,
                 borderRadius: '12px',
@@ -292,7 +292,7 @@ const CustomerWallet = () => {
               Redeem 100 Points for ₹100 Cashback
             </button>
             {servePoints < 100 && (
-              <span style={{ display: 'block', textAlign: 'center', fontSize: '0.68rem', color: '#64748b', marginTop: '6px' }}>
+              <span style={{ display: 'block', textAlign: 'center', fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.6)', marginTop: '6px' }}>
                 Need at least 100 points to redeem.
               </span>
             )}
@@ -302,7 +302,7 @@ const CustomerWallet = () => {
 
       {/* Top-up Section */}
       {showTopup && (
-        <div className="dash-section topup-section animate-fade-in-up" style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-xl)', padding: '24px', marginBottom: '32px' }}>
+        <div className="dash-section topup-section animate-fade-in-up" style={{ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', border: '1px solid var(--glass-edge)', borderRadius: '26px', boxShadow: 'var(--sh-card)', padding: '24px', marginBottom: '32px' }}>
           <h3 className="dash-section-title" style={{ fontSize: '1.15rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>Add Money to Wallet</h3>
           <div className="topup-card" style={{ background: 'transparent', border: 'none', padding: 0 }}>
             <div className="quick-amounts" style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
@@ -315,7 +315,7 @@ const CustomerWallet = () => {
                     flex: 1,
                     padding: '10px',
                     borderRadius: '10px',
-                    border: '1px solid var(--gray-200)',
+                    border: '1px solid var(--glass-edge)',
                     background: topupAmount === String(amt) ? 'var(--primary-600)' : 'white',
                     color: topupAmount === String(amt) ? 'white' : 'var(--gray-700)',
                     fontWeight: 700,
@@ -337,7 +337,7 @@ const CustomerWallet = () => {
                 style={{
                   flex: 1,
                   padding: '12px',
-                  border: '1px solid var(--gray-200)',
+                  border: '1px solid var(--glass-edge)',
                   borderRadius: '10px',
                   outline: 'none',
                   fontSize: '1rem'
@@ -357,11 +357,11 @@ const CustomerWallet = () => {
       )}
 
       {/* Transaction History */}
-      <div className="dash-section" style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-xl)', padding: '24px' }}>
+      <div className="dash-section" style={{ background: 'var(--glass)', border: '1px solid var(--glass-edge)', borderRadius: '26px', padding: '24px' }}>
         <h3 className="dash-section-title" style={{ fontSize: '1.15rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>Transaction History</h3>
         <div className="transactions-list" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {transactions.map((txn) => {
-            const config = typeConfig[txn.type] || { icon: <HiOutlineGift />, color: '#8b5cf6', label: 'Bonus' };
+            const config = typeConfig[txn.type] || { icon: <HiOutlineGift />, color: 'var(--accent-violet-text)', label: 'Bonus' };
             return (
               <div key={txn.id} className="transaction-item" style={{
                 display: 'flex',
@@ -370,7 +370,7 @@ const CustomerWallet = () => {
                 padding: '14px',
                 border: '1px solid var(--gray-100)',
                 borderRadius: '12px',
-                background: 'white'
+                background: 'var(--glass)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                   <div className="txn-icon" style={{
@@ -395,7 +395,7 @@ const CustomerWallet = () => {
                   <span className={`txn-amount ${txn.amount >= 0 ? 'plus' : 'minus'}`} style={{
                     fontSize: '1rem',
                     fontWeight: 900,
-                    color: txn.amount >= 0 ? '#3b7dc1' : '#ef4444'
+                    color: txn.amount >= 0 ? 'var(--blue)' : 'var(--status-danger-text)'
                   }}>
                     {txn.amount >= 0 ? '+' : ''}₹{Math.abs(txn.amount)}
                   </span>

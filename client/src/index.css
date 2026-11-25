@@ -4,8 +4,71 @@
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+@import './styles/design-system.css';
 
+/* ==========================================================================
+   DESIGN SYSTEM v4
+   Soft Blue Glass & Clay-Smooth Surfaces
+   ========================================================================== */
 :root {
+  --bg-page: #E3EBFA;
+  --ink: #0B1E4F;
+  --ink-2: #4E5F85;
+  --ink-3: #7C8AAB;
+  --blue: #1646D6;
+  --blue-hi: #4C86FF;
+  --blue-deep: #0F36B0;
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-hover: rgba(255, 255, 255, 0.78);
+  --glass-edge: rgba(255, 255, 255, 0.92);
+  --sh-card: 0 14px 32px -14px rgba(22, 70, 214, 0.3), 0 2px 6px rgba(11, 30, 79, 0.05), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(22, 70, 214, 0.05);
+  --sh-card-hover: 0 22px 40px -16px rgba(22, 70, 214, 0.38), 0 3px 8px rgba(11, 30, 79, 0.06), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(22, 70, 214, 0.06);
+  --sh-small: 0 10px 22px -10px rgba(22, 70, 214, 0.3), 0 2px 5px rgba(11, 30, 79, 0.05), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(22, 70, 214, 0.05);
+  --sh-inset: inset 2px 3px 7px rgba(120, 142, 190, 0.28), inset -1px -2px 4px rgba(255, 255, 255, 0.9);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Status + accent colors (muted, never bold, never neon) */
+  --status-success-tint: rgba(54, 160, 122, 0.11);
+  --status-success-soft: #7CC3A5;
+  --status-success-text: #2B8663;
+  --status-success-ring: rgba(54, 160, 122, 0.16);
+
+  --status-warning-tint: rgba(222, 159, 62, 0.14);
+  --status-warning-soft: #E5BC72;
+  --status-warning-text: #98691F;
+  --status-warning-ring: rgba(222, 159, 62, 0.20);
+
+  --status-danger-tint: rgba(214, 94, 88, 0.11);
+  --status-danger-soft: #E59A94;
+  --status-danger-text: #B64D47;
+  --status-danger-ring: rgba(214, 94, 88, 0.18);
+
+  --status-info-tint: rgba(22, 70, 214, 0.08);
+  --status-info-soft: #85A3F2;
+  --status-info-text: #2F5FE0;
+  --status-info-ring: rgba(22, 70, 214, 0.16);
+
+  --accent-teal-tint: rgba(42, 140, 154, 0.11);
+  --accent-teal-soft: #78B5BF;
+  --accent-teal-text: #2B8190;
+  --accent-teal-ring: rgba(42, 140, 154, 0.16);
+
+  --accent-violet-tint: rgba(112, 96, 214, 0.10);
+  --accent-violet-soft: #A196E3;
+  --accent-violet-text: #6455C6;
+  --accent-violet-ring: rgba(112, 96, 214, 0.16);
+
+  --accent-rose-tint: rgba(196, 94, 134, 0.10);
+  --accent-rose-soft: #D79AB5;
+  --accent-rose-text: #B24F79;
+  --accent-rose-ring: rgba(196, 94, 134, 0.16);
+
+  --accent-slate-tint: rgba(91, 107, 140, 0.10);
+  --accent-slate-soft: #93A0BB;
+  --accent-slate-text: #56668B;
+  --accent-slate-ring: rgba(91, 107, 140, 0.16);
+
   --sidebar-width: 260px;
   --navbar-height: 64px;
 
@@ -19,21 +82,21 @@
   --bottom-nav-height: 64px;
 
   /* ==========================================================================
-     Professional Blue & Warm Off-White Design Tokens
+     Professional Blue & Warm Off-White Design Tokens (re-pointed to v4)
      ========================================================================== */
-  --sc-bg-primary:         #FAF9F6;
-  --sc-surface-card:        #FFFFFF;
-  --sc-surface-secondary:   #E2E8F0;
-  --sc-surface-tertiary:    #CBD5E1;
-  --sc-primary-blue:        #1E40AF;
-  --sc-primary-hover:       #1D4ED8;
-  --sc-primary-accent:      #1E40AF;
-  --sc-dark-accent:         #1E40AF;
-  --sc-dark-surface:        #0F172A;
-  --sc-forest-deep:         #1E3A8A;
-  --sc-text-main:           #0F172A;
-  --sc-text-secondary:      #475569;
-  --sc-text-muted:          #64748B;
+  --sc-bg-primary:         var(--bg-page);
+  --sc-surface-card:       var(--glass);
+  --sc-surface-secondary:  rgba(22, 70, 214, 0.10);
+  --sc-surface-tertiary:   rgba(22, 70, 214, 0.18);
+  --sc-primary-blue:       var(--blue);
+  --sc-primary-hover:      var(--blue-hi);
+  --sc-primary-accent:     var(--blue);
+  --sc-dark-accent:        var(--blue-deep);
+  --sc-dark-surface:       var(--ink);
+  --sc-forest-deep:        var(--blue-deep);
+  --sc-text-main:          var(--ink);
+  --sc-text-secondary:     var(--ink-2);
+  --sc-text-muted:         var(--ink-3);
 
   /* Brand Palette: Professional Corporate Blue Scale */
   --primary-50:  #eff6ff;
@@ -100,16 +163,16 @@
   --radius-full: 9999px;
 
   /* High-Contrast Text Tokens */
-  --text-primary:   #0f172a;
-  --text-secondary: #334155;
-  --text-muted:     #64748b;
-  --text-faint:     #94a3b8;
+  --text-primary:   var(--ink);
+  --text-secondary: var(--ink-2);
+  --text-muted:     var(--ink-3);
+  --text-faint:     var(--ink-3);
 
   /* Card Surface & Elevation */
-  --card-bg:           #ffffff;
-  --card-border:       #e2e8f0;
-  --card-shadow:       0 2px 10px rgba(15, 23, 42, 0.04);
-  --card-shadow-hover: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --card-bg:           var(--glass);
+  --card-border:       var(--glass-edge);
+  --card-shadow:       var(--sh-card);
+  --card-shadow-hover: var(--sh-card-hover);
 
   /* Modern Corporate Elevation System */
   --shadow-xs:    0 1px 2px rgba(15, 23, 42, 0.03);
@@ -602,5 +665,7 @@ textarea:focus {
     right: 16px !important;
     left: auto !important;
     transform: none !important;
+    width: 48px !important;
+    height: 48px !important;
   }
 }

@@ -167,12 +167,12 @@ const BookingHistory = () => {
                   {['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status) && (
                     <div className="booking-actions">
                       <Link to={`/customer/live-tracking?bookingId=${encodeURIComponent(booking.id)}&service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-outline">Track Live</Link>
-                      <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: '#fecaca' }}>Cancel</button>
+                      <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: 'var(--status-danger-soft)' }}>Cancel</button>
                     </div>
                   )}
                   {booking.status === 'completed' && !booking.rating && (
                     <div className="booking-actions">
-                      <Link to={`/customer/review/${encodeURIComponent(booking.id)}?service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-primary">Leave Review ⭐</Link>
+                      <Link to={`/customer/review/${encodeURIComponent(booking.id)}?service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-primary">Leave Review</Link>
                     </div>
                   )}
                 </div>

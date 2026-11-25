@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import {
   HiOutlineHome,
   HiOutlineBriefcase,
@@ -23,6 +24,7 @@ import {
   HiOutlineCalendarDays,
   HiOutlineChatBubbleLeftRight,
   HiOutlineSparkles,
+  HiOutlineArrowLeft,
   HiOutlineTruck,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
@@ -127,11 +129,22 @@ const GeneralServicesSidebar = () => {
             `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
           }
         >
-          <span className="category-sidebar-link-icon" style={{ color: '#2563eb' }}>
-            <HiOutlineHome size={18} />
-          </span>
-          <span className="category-sidebar-link-text">My Home Cockpit</span>
-          <span className="category-coming-soon-badge" style={{ background: '#e0f2fe', color: '#0369a1' }}>Hub</span>
+          {({ isActive: navActive }) => (
+            <>
+              {navActive && (
+                <motion.span
+                  layoutId="category-sidebar-active-pill"
+                  className="category-sidebar-active-pill"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
+              <span className="category-sidebar-link-icon" style={{ color: 'var(--blue)' }}>
+                <HiOutlineHome size={18} />
+              </span>
+              <span className="category-sidebar-link-text">My Home Cockpit</span>
+              <span className="pill s-info" style={{ marginLeft: 'auto', fontSize: '0.65rem' }}>Hub</span>
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/customer/ordered-services"
@@ -140,10 +153,21 @@ const GeneralServicesSidebar = () => {
             `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
           }
         >
-          <span className="category-sidebar-link-icon" style={{ color: '#d97706' }}>
-            <HiOutlineSparkles size={18} />
-          </span>
-          <span className="category-sidebar-link-text">Ordered Services (Live)</span>
+          {({ isActive: navActive }) => (
+            <>
+              {navActive && (
+                <motion.span
+                  layoutId="category-sidebar-active-pill"
+                  className="category-sidebar-active-pill"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
+              <span className="category-sidebar-link-icon" style={{ color: 'var(--blue)' }}>
+                <HiOutlineSparkles size={18} />
+              </span>
+              <span className="category-sidebar-link-text">Ordered Services (Live)</span>
+            </>
+          )}
         </NavLink>
 
         <div className="category-nav-label" style={{ marginTop: '14px' }}>Categories</div>
@@ -155,7 +179,7 @@ const GeneralServicesSidebar = () => {
                 className="category-sidebar-link category-sidebar-link--disabled"
                 title="Coming Soon"
               >
-                <span className="category-sidebar-link-icon" style={{ color: cat.color }}>
+                <span className="category-sidebar-link-icon" style={{ color: 'var(--ink3)' }}>
                   {cat.icon}
                 </span>
                 <span className="category-sidebar-link-text">{cat.label}</span>
@@ -173,18 +197,30 @@ const GeneralServicesSidebar = () => {
                 `category-sidebar-link${navActive ? ' category-sidebar-link--active' : ''}`
               }
             >
-              <span className="category-sidebar-link-icon" style={{ color: cat.color }}>
-                {cat.icon}
-              </span>
-              <span className="category-sidebar-link-text">{cat.label}</span>
+              {({ isActive: navActive }) => (
+                <>
+                  {navActive && (
+                    <motion.span
+                      layoutId="category-sidebar-active-pill"
+                      className="category-sidebar-active-pill"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span className="category-sidebar-link-icon" style={{ color: 'var(--blue)' }}>
+                    {cat.icon}
+                  </span>
+                  <span className="category-sidebar-link-text">{cat.label}</span>
+                </>
+              )}
             </NavLink>
           );
         })}
       </nav>
 
-      <div className="sidebar-footer">
+      <div className="sidebar-footer" style={{ borderTop: '1px solid rgba(22, 70, 214, 0.08)', padding: '14px 12px' }}>
         <NavLink to="/customer/general-services" className="category-back-link">
-          ← Back to All Categories
+          <HiOutlineArrowLeft size={16} />
+          <span>Back to All Categories</span>
         </NavLink>
       </div>
     </aside>
@@ -196,7 +232,6 @@ const GeneralServicesSidebar = () => {
    ===================================================== */
 const Sidebar = ({ panel }) => {
   const { t } = useTranslation();
-  const location = useLocation();
   const rawLinks = sidebarConfig[panel] || [];
   const panelInfo = panelLabels[panel];
 

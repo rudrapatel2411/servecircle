@@ -30,22 +30,22 @@ const SmartInventoryScanner = ({ onNext }) => {
  };
 
  return (
- <div className="card" style={{ padding: '32px', maxWidth: '600px', margin: '0 auto', background: '#0f172a', color: 'white', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
- <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}><span style={{color: '#38bdf8'}}>AI</span> {t('packersFlow.title1', 'Smart Inventory Scanner')}</h2>
- <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '24px' }}>{t('packersFlow.desc1', 'Point your camera at your room. Our AI will auto-calculate volume and quote instantly.')}</p>
+ <div className="card" style={{ padding: '32px', maxWidth: '600px', margin: '0 auto', background: 'var(--ink)', color: 'white', borderRadius: '24px', position: 'relative', overflow: 'hidden' }}>
+ <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}><span style={{color: 'var(--blue-hi)'}}>AI</span> {t('packersFlow.title1', 'Smart Inventory Scanner')}</h2>
+ <p style={{ color: 'var(--ink-3)', fontSize: '0.9rem', marginBottom: '24px' }}>{t('packersFlow.desc1', 'Point your camera at your room. Our AI will auto-calculate volume and quote instantly.')}</p>
  
  {!scanning && !done && (
- <button className="btn btn-primary" onClick={startScan} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #38bdf8, #2563eb)', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800 }}>
+ <button className="btn btn-primary" onClick={startScan} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--blue-hi), var(--blue))', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800 }}>
  <HiOutlineCamera style={{ fontSize: '1.4rem' }} /> {t('packersFlow.btnScan', 'Start AI Scan')}
  </button>
  )}
 
  {scanning && (
- <div style={{ position: 'relative', height: '250px', background: '#1e293b', borderRadius: '16px', border: '2px solid #38bdf8', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+ <div style={{ position: 'relative', height: '250px', background: 'var(--ink)', borderRadius: '16px', border: '2px solid var(--blue-hi)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
  <motion.div 
  animate={{ top: ['0%', '100%', '0%'] }} 
  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
- style={{ position: 'absolute', left: 0, width: '100%', height: '4px', background: '#38bdf8', boxShadow: '0 0 20px #38bdf8', zIndex: 10 }}
+ style={{ position: 'absolute', left: 0, width: '100%', height: '4px', background: 'var(--blue-hi)', boxShadow: '0 0 20px var(--blue-hi)', zIndex: 10 }}
  />
  <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', padding: '20px' }}>
  <AnimatePresence>
@@ -53,7 +53,7 @@ const SmartInventoryScanner = ({ onNext }) => {
  <motion.div key={idx} initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ background: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(56, 189, 248, 0.4)', backdropFilter: 'blur(4px)' }}>
  <div style={{ fontSize: '2rem', textAlign: 'center' }}>{item.icon}</div>
  <div style={{ fontSize: '0.75rem', fontWeight: 700, marginTop: '8px' }}>{item.name}</div>
- <div style={{ fontSize: '0.65rem', color: '#38bdf8' }}>{item.cft} {t('packersFlow.itemsDetected', 'CFT detected')}</div>
+ <div style={{ fontSize: '0.65rem', color: 'var(--blue-hi)' }}>{item.cft} {t('packersFlow.itemsDetected', 'CFT detected')}</div>
  </motion.div>
  ))}
  </AnimatePresence>
@@ -62,20 +62,20 @@ const SmartInventoryScanner = ({ onNext }) => {
  )}
 
  {done && (
- <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#1e293b', padding: '24px', borderRadius: '16px', border: '1px solid #334155' }}>
+ <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--ink)', padding: '24px', borderRadius: '16px', border: '1px solid var(--ink)' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
- <span style={{ color: '#94a3b8' }}>{t('packersFlow.totalItems', 'Total Items Scanned')}</span>
+ <span style={{ color: 'var(--ink-3)' }}>{t('packersFlow.totalItems', 'Total Items Scanned')}</span>
  <span style={{ fontWeight: 800 }}>{items.length} Items</span>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
- <span style={{ color: '#94a3b8' }}>{t('packersFlow.totalVolume', 'Total Volume (Intercity Move)')}</span>
- <span style={{ fontWeight: 800, color: '#38bdf8' }}>130 CFT</span>
+ <span style={{ color: 'var(--ink-3)' }}>{t('packersFlow.totalVolume', 'Total Volume (Intercity Move)')}</span>
+ <span style={{ fontWeight: 800, color: 'var(--blue-hi)' }}>130 CFT</span>
  </div>
- <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', paddingTop: '16px', borderTop: '1px dashed #334155' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', paddingTop: '16px', borderTop: '1px dashed var(--ink)' }}>
  <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>{t('packersFlow.finalPrice', 'Instant Final Price')}</span>
- <span style={{ fontWeight: 900, fontSize: '1.4rem', color: '#3b7dc1' }}>₹18,000</span>
+ <span style={{ fontWeight: 900, fontSize: '1.4rem', color: 'var(--blue)' }}>₹18,000</span>
  </div>
- <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '16px', background: '#3b7dc1', border: 'none', borderRadius: '12px', fontSize: '1.1rem' }}>
+ <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '16px', background: 'var(--blue)', border: 'none', borderRadius: '12px', fontSize: '1.1rem' }}>
  {t('packersFlow.confirmProceed', 'Confirm & Proceed')} <HiOutlineChevronRight />
  </button>
  </motion.div>
@@ -119,17 +119,17 @@ const SharedLoadMatcher = ({ onNext }) => {
  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--primary-700)' }}>{t('packersFlow.userVerified', 'Verified Corporate User ')}</p>
  </div>
  </div>
- <div style={{ background: 'white', padding: '8px 12px', borderRadius: '20px', fontWeight: 800, color: 'var(--success)', border: '1px solid var(--gray-200)', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+ <div style={{ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', padding: '8px 12px', borderRadius: '20px', fontWeight: 800, color: 'var(--success)', border: '1px solid var(--glass-edge)', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
  {t('packersFlow.discount', '- 40% OFF')}
  </div>
  </div>
  
  <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
- <div style={{ flex: 1, background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid var(--gray-200)', textDecoration: 'line-through', color: 'var(--gray-500)' }}>
+ <div style={{ flex: 1, background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', padding: '16px', borderRadius: '12px', border: '1px solid var(--glass-edge)', textDecoration: 'line-through', color: 'var(--gray-500)' }}>
  <span style={{ fontSize: '0.75rem', display: 'block' }}>{t('packersFlow.dedicatedTruck', 'Dedicated Truck')}</span>
  <span style={{ fontSize: '1.2rem', fontWeight: 700 }}>₹18,000</span>
  </div>
- <div style={{ flex: 1, background: 'white', padding: '16px', borderRadius: '12px', border: '2px solid var(--primary-500)', color: 'var(--navy-900)', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.2)' }}>
+ <div style={{ flex: 1, background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', padding: '16px', borderRadius: '12px', border: '2px solid var(--primary-500)', color: 'var(--navy-900)', boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.2)' }}>
  <span style={{ fontSize: '0.75rem', display: 'block', color: 'var(--primary-600)', fontWeight: 700 }}>{t('packersFlow.sharedTruck', 'Shared Truck (You Pay)')}</span>
  <span style={{ fontSize: '1.4rem', fontWeight: 900 }}>₹10,500</span>
  </div>
@@ -157,13 +157,13 @@ const DigitalInventoryQR = ({ onNext }) => {
  <div style={{ textAlign: 'center', padding: '40px', background: 'var(--gray-50)', borderRadius: '16px', border: '2px dashed var(--gray-300)', cursor: 'pointer' }} onClick={() => setScanned(true)}>
  <HiOutlineQrCode style={{ fontSize: '4rem', color: 'var(--navy-400)', margin: '0 auto 16px' }} />
  <h4 style={{ fontWeight: 800, color: 'var(--navy-800)' }}>{t('packersFlow.simulateScan', 'Tap to Simulate QR Scan')}</h4>
- <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)' }}>{t('packersFlow.scanningBox', 'Scanning Box #104...')}</p>
+ <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)' }}>{t('packersFlow.scanningBox', 'Scanning Box var(--ink)...')}</p>
  </div>
  ) : (
- <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)' }}>
+ <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', border: '1px solid var(--glass-edge)', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)' }}>
  <div style={{ background: 'var(--navy-900)', color: 'white', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <div>
- <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>{t('packersFlow.boxHeader', ' Box #104')}</h3>
+ <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>{t('packersFlow.boxHeader', ' Box var(--ink)')}</h3>
  <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{t('packersFlow.boxSub', 'Fragile • Kitchen Room')}</span>
  </div>
  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>
@@ -207,7 +207,7 @@ const DamageClaimAI = ({ onNext }) => {
 
  return (
  <div className="card" style={{ padding: '32px', maxWidth: '600px', margin: '0 auto', borderRadius: '24px', textAlign: 'center' }}>
- <div style={{ background: '#fef3c7', color: '#b45309', padding: '8px 16px', borderRadius: '20px', display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, marginBottom: '16px' }}>
+ <div style={{ background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '8px 16px', borderRadius: '20px', display: 'inline-block', fontSize: '0.75rem', fontWeight: 800, marginBottom: '16px' }}>
  <HiOutlineExclamationCircle style={{ display: 'inline', marginBottom: '-2px', fontSize: '1rem' }} /> {t('packersFlow.warningScenario', 'SCENARIO: WHAT IF A SCRATCH HAPPENS?')}
  </div>
  <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>{t('packersFlow.title4', 'Zero-Hassle AI Claim')}</h2>
@@ -219,7 +219,7 @@ const DamageClaimAI = ({ onNext }) => {
  <HiOutlineCamera style={{ fontSize: '3rem', color: 'var(--navy-400)', margin: '0 auto 16px' }} />
  <h4 style={{ fontWeight: 800, color: 'var(--navy-800)' }}>{t('packersFlow.simulateDamage', 'Simulate Damage Upload')}</h4>
  </div>
- <button className="btn btn-outline" onClick={onNext} style={{ width: '100%', padding: '14px', border: '1px solid var(--gray-300)', color: 'var(--gray-600)', background: 'transparent', fontWeight: 700, borderRadius: '12px' }}>
+ <button className="btn btn-outline" onClick={onNext} style={{ width: '100%', padding: '14px', border: '1px solid var(--glass-edge)', color: 'var(--gray-600)', background: 'transparent', fontWeight: 700, borderRadius: '12px' }}>
  {t('packersFlow.skipDamage', 'Skip this (No damage occurred)')}
  </button>
  </>
@@ -230,7 +230,7 @@ const DamageClaimAI = ({ onNext }) => {
  <motion.div 
  animate={{ rotate: 360 }} 
  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
- style={{ width: '64px', height: '64px', border: '4px solid var(--gray-200)', borderTop: '4px solid var(--primary-500)', borderRadius: '50%', margin: '0 auto 24px' }}
+ style={{ width: '64px', height: '64px', border: '4px solid rgba(22, 70, 214, 0.12)', borderTop: '4px solid var(--primary-500)', borderRadius: '50%', margin: '0 auto 24px' }}
  />
  <h4 style={{ fontWeight: 800, color: 'var(--navy-800)' }}>{t('packersFlow.aiVerifying', 'AI Verifying...')}</h4>
  <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>{t('packersFlow.comparingLogs', 'Comparing with pre-move inspection logs')}</p>
@@ -238,17 +238,17 @@ const DamageClaimAI = ({ onNext }) => {
  )}
 
  {status === 'approved' && (
- <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', padding: '32px' }}>
- <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#3b7dc1', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 16px', boxShadow: '0 10px 20px rgba(59, 125, 193, 0.3)' }}>
+ <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-ring)', borderRadius: '16px', padding: '32px' }}>
+ <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--blue)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 16px', boxShadow: '0 10px 20px rgba(59, 125, 193, 0.3)' }}>
  <HiOutlineShieldCheck />
  </div>
- <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#166534', marginBottom: '8px' }}>{t('packersFlow.claimApproved', 'Claim Approved Instantly!')}</h3>
- <p style={{ color: '#15803d', fontSize: '0.9rem', marginBottom: '24px' }}>{t('packersFlow.aiVerifiedMsg', 'AI verified a new minor scratch on the Sofa edge.')}</p>
- <div style={{ background: 'white', padding: '16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', border: '1px dashed #86efac' }}>
- <span style={{ fontWeight: 800, color: '#166534' }}>{t('packersFlow.compensationCredited', 'Compensation Credited')}</span>
- <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#3b7dc1' }}>+ ₹850</span>
+ <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--status-success-text)', marginBottom: '8px' }}>{t('packersFlow.claimApproved', 'Claim Approved Instantly!')}</h3>
+ <p style={{ color: 'var(--status-success-text)', fontSize: '0.9rem', marginBottom: '24px' }}>{t('packersFlow.aiVerifiedMsg', 'AI verified a new minor scratch on the Sofa edge.')}</p>
+ <div style={{ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', padding: '16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', border: '1px dashed var(--status-success-soft)' }}>
+ <span style={{ fontWeight: 800, color: 'var(--status-success-text)' }}>{t('packersFlow.compensationCredited', 'Compensation Credited')}</span>
+ <span style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--blue)' }}>+ ₹850</span>
  </div>
- <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '14px', background: '#166534', border: 'none' }}>
+ <button className="btn btn-primary" onClick={onNext} style={{ width: '100%', padding: '14px', background: 'var(--status-success-text)', border: 'none' }}>
  {t('packersFlow.awesomeProceed', 'Awesome, Proceed')} <HiOutlineChevronRight />
  </button>
  </motion.div>
@@ -279,8 +279,8 @@ const PostMoveConcierge = ({ onNext }) => {
 
  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
  {services.map(s => (
- <div key={s.id} style={{ background: 'rgba(255,255,255,0.05)', border: added[s.id] ? '2px solid #38bdf8' : '1px solid rgba(255,255,255,0.1)', padding: '16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', transition: 'all 0.2s' }}>
- <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#38bdf8' }}>
+ <div key={s.id} style={{ background: 'rgba(255,255,255,0.05)', border: added[s.id] ? '2px solid var(--blue-hi)' : '1px solid rgba(255,255,255,0.1)', padding: '16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', transition: 'all 0.2s' }}>
+ <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'var(--blue-hi)' }}>
  {s.icon}
  </div>
  <div style={{ flex: 1 }}>
@@ -292,9 +292,9 @@ const PostMoveConcierge = ({ onNext }) => {
  <button 
  onClick={() => toggleAdd(s.id)}
  style={{ 
- background: added[s.id] ? '#38bdf8' : 'transparent', 
- color: added[s.id] ? 'var(--navy-900)' : '#38bdf8', 
- border: '1px solid #38bdf8', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s' 
+ background: added[s.id] ? 'var(--blue-hi)' : 'transparent', 
+ color: added[s.id] ? 'var(--navy-900)' : 'var(--blue-hi)', 
+ border: '1px solid var(--blue-hi)', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s' 
  }}
  >
  {added[s.id] ? t('packersFlow.addedText', ' Added') : t('packersFlow.addText', '+ Add')}
@@ -304,7 +304,7 @@ const PostMoveConcierge = ({ onNext }) => {
  ))}
  </div>
 
- <button className="btn btn-primary" onClick={() => navigate('/customer/relocation')} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, #38bdf8, #2563eb)', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+ <button className="btn btn-primary" onClick={() => navigate('/customer/relocation')} style={{ width: '100%', padding: '16px', background: 'linear-gradient(135deg, var(--blue-hi), var(--blue))', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 800, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
  {t('packersFlow.completeBooking', 'Proceed to Relocation Hub')} <HiOutlineChevronRight />
  </button>
  </div>
@@ -329,7 +329,7 @@ const PackersDemo = () => {
  return (
  <div className="page-content" style={{ minHeight: '92vh', background: 'var(--gray-50)', padding: '40px 20px' }}>
  <div style={{ textAlign: 'center', marginBottom: '40px' }}>
- <div style={{ display: 'inline-flex', background: 'white', padding: '8px 16px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: '16px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary-600)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+ <div style={{ display: 'inline-flex', background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', padding: '8px 16px', borderRadius: '30px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', marginBottom: '16px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary-600)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
  {t('packersFlow.badgeMsg', ' Premium Feature Showcase')}
  </div>
  <h1 className="page-title" style={{ fontSize: '2rem', marginBottom: '8px' }}>{t('packersFlow.pageTitle', 'Packers & Movers 2.0')}</h1>

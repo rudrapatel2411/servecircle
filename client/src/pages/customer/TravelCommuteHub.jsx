@@ -36,11 +36,11 @@ const PriceBreakdown = ({ breakdown }) => {
   const items = getPriceBreakdownItems(breakdown);
   if (!items || items.length <= 1) return null;
   return (
-    <div style={{ marginTop: '10px', borderTop: '1px dashed #e2e8f0', paddingTop: '8px' }}>
+    <div style={{ marginTop: '10px', borderTop: '1px dashed var(--glass-edge)', paddingTop: '8px' }}>
       {items.map((item, i) => (
-        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b', marginBottom: '3px' }}>
+        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--ink-3)', marginBottom: '3px' }}>
           <span>{item.label}</span>
-          <span style={{ fontWeight: 700, color: item.amount < 0 ? '#16a34a' : '#374151' }}>
+          <span style={{ fontWeight: 700, color: item.amount < 0 ? 'var(--status-success-text)' : 'var(--ink)' }}>
             {item.amount < 0 ? '−' : ''}₹{Math.abs(item.amount).toLocaleString('en-IN')}
           </span>
         </div>
@@ -58,10 +58,10 @@ const QUICK_ROUTES = [
 ];
 
 const PICKUP_MODE_TABS = [
-  { id: 'airport', label: '✈️ Airport', refLabel: 'Flight No (Optional)', refPlaceholder: 'e.g. 6E-204' },
-  { id: 'railway', label: '🚆 Railway', refLabel: 'Train / PNR (Optional)', refPlaceholder: 'e.g. 12934 / Coach B2' },
-  { id: 'bus',     label: '🚌 Bus Stand', refLabel: 'Bus Operator (Optional)', refPlaceholder: 'e.g. GSRTC Volvo' },
-  { id: 'custom',  label: '📍 Any Place', refLabel: 'Landmark Note (Optional)', refPlaceholder: 'e.g. Gate No. 2' },
+  { id: 'airport', label: ' Airport', refLabel: 'Flight No (Optional)', refPlaceholder: 'e.g. 6E-204' },
+  { id: 'railway', label: ' Railway', refLabel: 'Train / PNR (Optional)', refPlaceholder: 'e.g. 12934 / Coach B2' },
+  { id: 'bus',     label: ' Bus Stand', refLabel: 'Bus Operator (Optional)', refPlaceholder: 'e.g. GSRTC Volvo' },
+  { id: 'custom',  label: ' Any Place', refLabel: 'Landmark Note (Optional)', refPlaceholder: 'e.g. Gate No. 2' },
 ];
 
 const TravelCommuteHub = () => {
@@ -301,19 +301,17 @@ const TravelCommuteHub = () => {
       }}>
 
         {/* ── 1. City, Station & Airport Pick & Drop Card ── */}
-        <div style={{
-          background: 'white',
-          border: '1px solid var(--gray-200)',
-          borderRadius: 'var(--radius-xl)',
+        <div className="glass" style={{
+          borderRadius: '26px',
           padding: '28px',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: 'var(--sh-card)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between'
         }}>
           <div>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <HiOutlineMapPin style={{ color: '#0f766e' }} /> City, Station &amp; Airport Pick &amp; Drop
+              <HiOutlineMapPin style={{ color: 'var(--accent-teal-text)' }} /> City, Station &amp; Airport Pick &amp; Drop
             </h3>
             <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '14px' }}>
               Pick up from <strong>Airport, Railway Station, Bus Stand, or Any Address</strong> to any drop destination — priced transparently by km with live route tracking.
@@ -331,9 +329,9 @@ const TravelCommuteHub = () => {
                     style={{
                       padding: '8px 4px',
                       borderRadius: '10px',
-                      border: `1.5px solid ${isSelected ? '#0f766e' : '#e2e8f0'}`,
-                      background: isSelected ? '#f0fdfa' : 'white',
-                      color: isSelected ? '#0f766e' : '#334155',
+                      border: `1.5px solid ${isSelected ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                      background: isSelected ? 'var(--accent-teal-tint)' : 'white',
+                      color: isSelected ? 'var(--accent-teal-text)' : 'var(--ink)',
                       fontWeight: 800,
                       fontSize: '0.72rem',
                       cursor: 'pointer',
@@ -361,16 +359,16 @@ const TravelCommuteHub = () => {
                     style={{
                       padding: '8px 10px',
                       borderRadius: '10px',
-                      border: `1.5px solid ${isSelected ? '#0f766e' : '#e2e8f0'}`,
-                      background: isSelected ? '#f0fdfa' : 'white',
+                      border: `1.5px solid ${isSelected ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                      background: isSelected ? 'var(--accent-teal-tint)' : 'white',
                       cursor: 'pointer',
                       textAlign: 'left',
                     }}
                   >
-                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isSelected ? '#0f766e' : '#1e293b' }}>
+                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isSelected ? 'var(--accent-teal-text)' : 'var(--ink)' }}>
                       {car.name}
                     </div>
-                    <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.65rem', color: 'var(--ink-3)', fontWeight: 600 }}>
                       {car.seats} • {car.sub}
                     </div>
                   </button>
@@ -388,7 +386,7 @@ const TravelCommuteHub = () => {
                   type="button"
                   onClick={handleSwapLocations}
                   style={{
-                    background: 'none', border: 'none', color: '#0f766e', fontSize: '0.72rem',
+                    background: 'none', border: 'none', color: 'var(--accent-teal-text)', fontSize: '0.72rem',
                     fontWeight: 800, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: '4px'
                   }}
                 >
@@ -401,7 +399,7 @@ const TravelCommuteHub = () => {
                   onChange={(e) => setSelectedHubCode(e.target.value)}
                   style={{
                     width: '100%', padding: '9px 10px', borderRadius: '8px',
-                    border: '1.5px solid #cbd5e1', fontSize: '0.82rem', fontWeight: 700, background: '#f8fafc',
+                    border: '1.5px solid var(--glass-edge)', fontSize: '0.82rem', fontWeight: 700, background: 'var(--bg-page)',
                   }}
                 >
                   {activeHubList.map((hub) => (
@@ -416,7 +414,7 @@ const TravelCommuteHub = () => {
                   value={customPickupAddress}
                   onChange={(e) => setCustomPickupAddress(e.target.value)}
                   placeholder="Enter any home, office, mall, or street..."
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1.5px solid #0f766e', fontSize: '0.82rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1.5px solid var(--accent-teal-text)', fontSize: '0.82rem', boxSizing: 'border-box' }}
                 />
               )}
             </div>
@@ -431,7 +429,7 @@ const TravelCommuteHub = () => {
                 value={dropDestination}
                 onChange={(e) => setDropDestination(e.target.value)}
                 placeholder="Enter home, hotel, railway station, bus stand, or area..."
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--gray-300)', fontSize: '0.82rem', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--glass-edge)', fontSize: '0.82rem', boxSizing: 'border-box' }}
               />
               {/* Quick Destination Distance Presets */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '6px' }}>
@@ -448,9 +446,9 @@ const TravelCommuteHub = () => {
                       fontSize: '0.68rem',
                       padding: '3px 8px',
                       borderRadius: '999px',
-                      border: `1px solid ${transferDistanceKm === preset.km ? '#0f766e' : '#cbd5e1'}`,
-                      background: transferDistanceKm === preset.km ? '#f0fdfa' : 'white',
-                      color: transferDistanceKm === preset.km ? '#0f766e' : '#475569',
+                      border: `1px solid ${transferDistanceKm === preset.km ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                      background: transferDistanceKm === preset.km ? 'var(--accent-teal-tint)' : 'white',
+                      color: transferDistanceKm === preset.km ? 'var(--accent-teal-text)' : 'var(--ink-2)',
                       fontWeight: 700,
                       cursor: 'pointer',
                     }}
@@ -462,7 +460,7 @@ const TravelCommuteHub = () => {
             </div>
 
             {/* Distance Slider & Number Input */}
-            <div style={{ marginBottom: '14px', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ marginBottom: '14px', background: 'var(--bg-page)', padding: '12px', borderRadius: '10px', border: '1px solid var(--glass-edge)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <label style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--navy-800)', margin: 0 }}>
                   Route Distance (Pickup → Drop):
@@ -474,9 +472,9 @@ const TravelCommuteHub = () => {
                     max="250"
                     value={transferDistanceKm}
                     onChange={(e) => setTransferDistanceKm(Math.max(2, Math.min(250, Number(e.target.value) || 2)))}
-                    style={{ width: '64px', padding: '4px 6px', borderRadius: '6px', border: '1.5px solid #0f766e', textAlign: 'center', fontWeight: 900, color: '#0f766e', fontSize: '0.85rem' }}
+                    style={{ width: '64px', padding: '4px 6px', borderRadius: '6px', border: '1.5px solid var(--accent-teal-text)', textAlign: 'center', fontWeight: 900, color: 'var(--accent-teal-text)', fontSize: '0.85rem' }}
                   />
-                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0f766e' }}>km</span>
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--accent-teal-text)' }}>km</span>
                 </div>
               </div>
               <input
@@ -486,22 +484,22 @@ const TravelCommuteHub = () => {
                 step="1"
                 value={Math.min(150, transferDistanceKm)}
                 onChange={(e) => setTransferDistanceKm(parseInt(e.target.value, 10))}
-                style={{ width: '100%', accentColor: '#0f766e', cursor: 'pointer' }}
+                style={{ width: '100%', accentColor: 'var(--accent-teal-text)', cursor: 'pointer' }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: '#94a3b8' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: 'var(--ink-3)' }}>
                 <span>2 km</span><span>75 km</span><span>150+ km</span>
               </div>
             </div>
 
             {/* Surcharges & Options */}
             <div style={{ display: 'flex', gap: '12px', marginBottom: '14px', flexWrap: 'wrap' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: 'var(--ink)' }}>
                 <input type="checkbox" checked={isNight} onChange={(e) => setIsNight(e.target.checked)} />
-                <HiOutlineMoon style={{ color: '#6366f1' }} /> Night Pickup (+25%)
+                <HiOutlineMoon style={{ color: 'var(--accent-violet-text)' }} /> Night Pickup (+25%)
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, color: 'var(--ink)' }}>
                 <input type="checkbox" checked={extraLuggage} onChange={(e) => setExtraLuggage(e.target.checked)} />
-                <HiOutlineArchiveBox style={{ color: '#f59e0b' }} /> Extra Luggage (+₹200)
+                <HiOutlineArchiveBox style={{ color: 'var(--status-warning-text)' }} /> Extra Luggage (+₹200)
               </label>
             </div>
 
@@ -516,7 +514,7 @@ const TravelCommuteHub = () => {
                   placeholder={activeTabMeta.refPlaceholder}
                   value={flightNo}
                   onChange={(e) => setFlightNo(e.target.value)}
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem', boxSizing: 'border-box' }}
                 />
               </div>
               <div>
@@ -527,7 +525,7 @@ const TravelCommuteHub = () => {
                   type="datetime-local"
                   value={transferDate}
                   onChange={(e) => setTransferDate(e.target.value)}
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem', boxSizing: 'border-box' }}
                 />
               </div>
             </div>
@@ -546,12 +544,12 @@ const TravelCommuteHub = () => {
                 <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>
                   {resolvedPickupShort} → {dropDestination || 'Destination'} ({transferDistanceKm} km)
                 </span>
-                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f766e' }}>₹{fmt(transferResult.total)}</span>
+                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--accent-teal-text)' }}>₹{fmt(transferResult.total)}</span>
               </div>
               <Link
                 to={`/customer/book?service=${encodeURIComponent(`Airport / Station Transfer (${resolvedPickupShort} → ${dropDestination || 'City'} • ${transferDistanceKm} km)`)}&serviceId=airport-transfer&category=Travel%20%26%20Commute&price=${transferResult.total}&pricingParams=${encodeURIComponent(JSON.stringify(transferPricingParams))}&pickupLocation=${encodeURIComponent(resolvedPickupLabel)}&destination=${encodeURIComponent(dropDestination)}&fleetType=${transferCarType}&distanceKm=${transferDistanceKm}&flightNo=${encodeURIComponent(flightNo || '')}`}
-                className="btn btn-primary btn-sm"
-                style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e', fontWeight: 800 }}
+                className="btn-primary"
+                style={{ padding: '8px 16px', background: 'var(--accent-teal-text)', borderColor: 'var(--accent-teal-text)', fontWeight: 800 }}
               >
                 Book Ride
               </Link>
@@ -561,12 +559,10 @@ const TravelCommuteHub = () => {
         </div>
 
         {/* ── 2. Multi-Day Outstation Card (With Driver / Self Drive + All Cars + Intermediate Stops) ── */}
-        <div style={{
-          background: 'white',
-          border: '1px solid var(--gray-200)',
-          borderRadius: 'var(--radius-xl)',
+        <div className="glass" style={{
+          borderRadius: '26px',
           padding: '28px',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: 'var(--sh-card)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between'
@@ -587,9 +583,9 @@ const TravelCommuteHub = () => {
                 style={{
                   padding: '10px 8px',
                   borderRadius: '10px',
-                  border: `1.5px solid ${driveMode === 'with-driver' ? '#0f766e' : '#e2e8f0'}`,
-                  background: driveMode === 'with-driver' ? '#f0fdfa' : 'white',
-                  color: driveMode === 'with-driver' ? '#0f766e' : '#334155',
+                  border: `1.5px solid ${driveMode === 'with-driver' ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                  background: driveMode === 'with-driver' ? 'var(--accent-teal-tint)' : 'white',
+                  color: driveMode === 'with-driver' ? 'var(--accent-teal-text)' : 'var(--ink)',
                   fontWeight: 800,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
@@ -607,9 +603,9 @@ const TravelCommuteHub = () => {
                 style={{
                   padding: '10px 8px',
                   borderRadius: '10px',
-                  border: `1.5px solid ${driveMode === 'self-drive' ? '#2563eb' : '#e2e8f0'}`,
-                  background: driveMode === 'self-drive' ? '#eff6ff' : 'white',
-                  color: driveMode === 'self-drive' ? '#1d4ed8' : '#334155',
+                  border: `1.5px solid ${driveMode === 'self-drive' ? 'var(--blue)' : 'var(--glass-edge)'}`,
+                  background: driveMode === 'self-drive' ? 'var(--status-info-tint)' : 'white',
+                  color: driveMode === 'self-drive' ? 'var(--blue)' : 'var(--ink)',
                   fontWeight: 800,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
@@ -641,8 +637,8 @@ const TravelCommuteHub = () => {
                     style={{
                       padding: '9px 10px',
                       borderRadius: '10px',
-                      border: `1.5px solid ${isSelected ? '#0f766e' : '#e2e8f0'}`,
-                      background: disabledSelfDrive ? '#f8fafc' : isSelected ? '#f0fdfa' : 'white',
+                      border: `1.5px solid ${isSelected ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                      background: disabledSelfDrive ? 'var(--bg-page)' : isSelected ? 'var(--accent-teal-tint)' : 'white',
                       cursor: disabledSelfDrive ? 'not-allowed' : 'pointer',
                       opacity: disabledSelfDrive ? 0.55 : 1,
                       textAlign: 'left',
@@ -651,12 +647,12 @@ const TravelCommuteHub = () => {
                       gap: '8px',
                     }}
                   >
-                    <span style={{ fontSize: '1.3rem' }}>{c.icon || '🚗'}</span>
+                    <span style={{ fontSize: '1.3rem' }}>{c.icon || ''}</span>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: isSelected ? '#0f766e' : '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: isSelected ? 'var(--accent-teal-text)' : 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {c.name.split(' (')[0]}
                       </div>
-                      <div style={{ fontSize: '0.64rem', color: '#64748b', fontWeight: 600 }}>
+                      <div style={{ fontSize: '0.64rem', color: 'var(--ink-3)', fontWeight: 600 }}>
                         {disabledSelfDrive ? 'Chauffeur only' : `${c.seats} • ₹${activeRate}/km`}
                       </div>
                     </div>
@@ -676,7 +672,7 @@ const TravelCommuteHub = () => {
                   value={outPickupCity}
                   onChange={(e) => handleOutstationRouteChange(e.target.value, destination)}
                   placeholder="e.g. Bhavnagar, Ahmedabad"
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem', boxSizing: 'border-box' }}
                 />
               </div>
               <div>
@@ -688,7 +684,7 @@ const TravelCommuteHub = () => {
                   value={destination}
                   onChange={(e) => handleOutstationRouteChange(outPickupCity, e.target.value)}
                   placeholder="e.g. Udaipur, Mount Abu"
-                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem', boxSizing: 'border-box' }}
                 />
               </div>
             </div>
@@ -710,9 +706,9 @@ const TravelCommuteHub = () => {
                     onClick={() => handleOutstationRouteChange(rt.from, rt.to)}
                     style={{
                       fontSize: '0.68rem', padding: '3px 8px', borderRadius: '999px',
-                      border: `1px solid ${isActiveRoute ? '#0f766e' : '#cbd5e1'}`,
-                      background: isActiveRoute ? '#f0fdfa' : 'white',
-                      color: isActiveRoute ? '#0f766e' : '#475569',
+                      border: `1px solid ${isActiveRoute ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                      background: isActiveRoute ? 'var(--accent-teal-tint)' : 'white',
+                      color: isActiveRoute ? 'var(--accent-teal-text)' : 'var(--ink-2)',
                       fontWeight: 700, cursor: 'pointer',
                     }}
                   >
@@ -729,9 +725,9 @@ const TravelCommuteHub = () => {
                 onClick={() => setIsRoundTrip(false)}
                 style={{
                   flex: 1, padding: '6px 8px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
-                  border: `1.5px solid ${!isRoundTrip ? '#0f766e' : '#e2e8f0'}`,
-                  background: !isRoundTrip ? '#f0fdfa' : 'white',
-                  color: !isRoundTrip ? '#0f766e' : '#64748b',
+                  border: `1.5px solid ${!isRoundTrip ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                  background: !isRoundTrip ? 'var(--accent-teal-tint)' : 'white',
+                  color: !isRoundTrip ? 'var(--accent-teal-text)' : 'var(--ink-3)',
                 }}
               >
                 One-Way Drop ({distanceKm} km)
@@ -741,9 +737,9 @@ const TravelCommuteHub = () => {
                 onClick={() => setIsRoundTrip(true)}
                 style={{
                   flex: 1, padding: '6px 8px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
-                  border: `1.5px solid ${isRoundTrip ? '#0f766e' : '#e2e8f0'}`,
-                  background: isRoundTrip ? '#f0fdfa' : 'white',
-                  color: isRoundTrip ? '#0f766e' : '#64748b',
+                  border: `1.5px solid ${isRoundTrip ? 'var(--accent-teal-text)' : 'var(--glass-edge)'}`,
+                  background: isRoundTrip ? 'var(--accent-teal-tint)' : 'white',
+                  color: isRoundTrip ? 'var(--accent-teal-text)' : 'var(--ink-3)',
                 }}
               >
                 Round Trip (×2 = {distanceKm * 2} km)
@@ -761,7 +757,7 @@ const TravelCommuteHub = () => {
                     type="button"
                     onClick={handleAddStop}
                     style={{
-                      background: 'none', border: 'none', color: '#0f766e', fontSize: '0.72rem',
+                      background: 'none', border: 'none', color: 'var(--accent-teal-text)', fontSize: '0.72rem',
                       fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0
                     }}
                   >
@@ -771,7 +767,7 @@ const TravelCommuteHub = () => {
               </div>
               {stops.map((stop, idx) => (
                 <div key={stop.id} style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '6px' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0f766e', minWidth: '45px' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-teal-text)', minWidth: '45px' }}>
                     Stop {idx + 1}:
                   </span>
                   <input
@@ -779,12 +775,12 @@ const TravelCommuteHub = () => {
                     value={stop.address}
                     onChange={(e) => handleUpdateStop(stop.id, e.target.value)}
                     placeholder="e.g. Shamlaji Temple, Highway Dhaba..."
-                    style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.78rem' }}
+                    style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid var(--glass-edge)', fontSize: '0.78rem' }}
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveStop(stop.id)}
-                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--status-danger-text)', cursor: 'pointer', padding: '4px' }}
                     title="Remove Stop"
                   >
                     <HiOutlineTrash size={16} />
@@ -794,10 +790,10 @@ const TravelCommuteHub = () => {
             </div>
 
             {/* Estimated Distance & Days */}
-            <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+            <div style={{ background: 'var(--bg-page)', padding: '12px', borderRadius: '10px', border: '1px solid var(--glass-edge)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--navy-800)' }}>
-                  Estimated Distance {isAutoEstimated ? '⚡(Auto Calculated)' : ''}
+                  Estimated Distance {isAutoEstimated ? '(Auto Calculated)' : ''}
                 </span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <input
@@ -807,9 +803,9 @@ const TravelCommuteHub = () => {
                       setIsAutoEstimated(false);
                       setDistanceKm(Math.max(20, Math.min(2500, Number(e.target.value) || 20)));
                     }}
-                    style={{ width: '68px', padding: '3px 6px', borderRadius: '6px', border: '1px solid #0f766e', textAlign: 'center', fontWeight: 900, color: '#0f766e', fontSize: '0.82rem' }}
+                    style={{ width: '68px', padding: '3px 6px', borderRadius: '6px', border: '1px solid var(--accent-teal-text)', textAlign: 'center', fontWeight: 900, color: 'var(--accent-teal-text)', fontSize: '0.82rem' }}
                   />
-                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0f766e' }}>km</span>
+                  <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--accent-teal-text)' }}>km</span>
                 </div>
               </div>
               <input
@@ -819,18 +815,18 @@ const TravelCommuteHub = () => {
                   setIsAutoEstimated(false);
                   setDistanceKm(parseInt(e.target.value, 10));
                 }}
-                style={{ width: '100%', accentColor: '#0f766e', cursor: 'pointer', marginBottom: '8px' }}
+                style={{ width: '100%', accentColor: 'var(--accent-teal-text)', cursor: 'pointer', marginBottom: '8px' }}
               />
 
               <label style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                 <span>Estimated Trip Days {isAutoEstimated ? '(Recommended)' : ''}</span>
-                <span style={{ color: '#0f766e', fontWeight: 900 }}>{travelDays} day{travelDays > 1 ? 's' : ''}</span>
+                <span style={{ color: 'var(--accent-teal-text)', fontWeight: 900 }}>{travelDays} day{travelDays > 1 ? 's' : ''}</span>
               </label>
               <input
                 type="range" min="1" max="15"
                 value={travelDays}
                 onChange={(e) => setTravelDays(parseInt(e.target.value, 10))}
-                style={{ width: '100%', accentColor: '#0f766e', cursor: 'pointer' }}
+                style={{ width: '100%', cursor: 'pointer' }}
               />
             </div>
           </div>
@@ -848,21 +844,21 @@ const TravelCommuteHub = () => {
                 <span style={{ fontSize: '0.72rem', color: 'var(--gray-400)', display: 'block' }}>
                   {outPickupCity || 'Pickup'} → {destination || 'Drop'} • {baseOutstationResult.car.name.split(' (')[0]} ({baseOutstationResult.effectiveMode === 'self-drive' ? 'Self Drive' : 'With Driver'} • {travelDays}d)
                 </span>
-                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f766e' }}>₹{fmt(totalOutstationPrice)}</span>
+                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--accent-teal-text)' }}>₹{fmt(totalOutstationPrice)}</span>
               </div>
               <Link
                 to={`/customer/book?service=${encodeURIComponent(`Outstation ${baseOutstationResult.car.name} (${outPickupCity} → ${destination} • ${baseOutstationResult.effectiveMode === 'self-drive' ? 'Self Drive' : 'With Driver'} • ${baseOutstationResult.billedKm} km / ${travelDays}d)`)}&serviceId=outstation-chauffeur&category=Travel%20%26%20Commute&price=${totalOutstationPrice}&pricingParams=${encodeURIComponent(JSON.stringify(outstationPricingParams))}&pickupLocation=${encodeURIComponent(outPickupCity)}&destination=${encodeURIComponent(destination)}&days=${travelDays}&fleetType=${outCarType}&distanceKm=${baseOutstationResult.billedKm}&stops=${stopsQueryVal}&stopsCount=${validStops.length}`}
-                className="btn btn-primary btn-sm"
-                style={{ padding: '8px 16px', background: '#0f766e', borderColor: '#0f766e', fontWeight: 800 }}
+                className="btn-primary"
+                style={{ padding: '8px 16px', background: 'var(--accent-teal-text)', borderColor: 'var(--accent-teal-text)', fontWeight: 800 }}
               >
                 {baseOutstationResult.effectiveMode === 'self-drive' ? 'Book Self-Drive' : t('travelCommute.bookChauffeur', 'Book Chauffeur')}
               </Link>
             </div>
             <PriceBreakdown breakdown={baseOutstationResult.breakdown} />
             {validStops.length > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b', marginTop: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--ink-3)', marginTop: '4px' }}>
                 <span>Detour Sightseeing ({validStops.length} intermediate stops)</span>
-                <span style={{ fontWeight: 700, color: '#374151' }}>+₹{detourStopsCharge}</span>
+                <span style={{ fontWeight: 700, color: 'var(--ink)' }}>+₹{detourStopsCharge}</span>
               </div>
             )}
           </div>
@@ -871,7 +867,7 @@ const TravelCommuteHub = () => {
 
       {/* ── 3. Premium Commute & Rentals Cards ── */}
       <div style={{ marginBottom: '40px' }}>
-        <h2 style={{ fontSize: '1.3rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '20px', paddingLeft: '8px', borderLeft: '4px solid #0f766e' }}>
+        <h2 style={{ fontSize: '1.3rem', color: 'var(--navy-900)', fontWeight: 800, marginBottom: '20px', paddingLeft: '8px', borderLeft: '4px solid var(--accent-teal-text)' }}>
           Premium Commute &amp; Rentals
         </h2>
         <div style={{
@@ -885,11 +881,11 @@ const TravelCommuteHub = () => {
             { title: t('travelCommuteExt.corporateCarpool', 'Corporate Carpool'), desc: t('travelCommuteExt.corporateDesc', 'Verified corporate co-riders for daily tech-park commute. Slash fuel costs.'), link: '/customer/travel-flow?type=corporate-carpool', label: 'Find Co-riders', price: '₹1,299/month onwards' },
           ].map((item, i) => (
             <div key={i} style={{
-              background: 'white',
-              border: '1px solid var(--gray-200)',
-              borderRadius: 'var(--radius-xl)',
+              background: 'var(--glass)',
+              border: '1px solid var(--glass-edge)',
+              borderRadius: '26px',
               padding: '28px',
-              boxShadow: 'var(--shadow-sm)',
+              boxShadow: 'var(--sh-card)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -897,14 +893,14 @@ const TravelCommuteHub = () => {
               <div>
                 <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>{item.title}</h3>
                 <p style={{ fontSize: '0.78rem', color: 'var(--gray-500)', marginBottom: '12px' }}>{item.desc}</p>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f766e', background: '#f0fdfa', padding: '4px 10px', borderRadius: '8px', display: 'inline-block', marginBottom: '16px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-teal-text)', background: 'var(--accent-teal-tint)', padding: '4px 10px', borderRadius: '8px', display: 'inline-block', marginBottom: '16px' }}>
                   {item.price}
                 </span>
               </div>
               <Link
                 to={item.link}
-                className="btn btn-primary btn-sm"
-                style={{ padding: '12px 16px', background: '#0f766e', borderColor: '#0f766e', fontWeight: 800, textAlign: 'center' }}
+                className="btn-primary"
+                style={{ padding: '12px 16px', background: 'var(--accent-teal-text)', borderColor: 'var(--accent-teal-text)', fontWeight: 800, textAlign: 'center' }}
               >
                 {item.label}
               </Link>
@@ -914,24 +910,24 @@ const TravelCommuteHub = () => {
       </div>
 
       {/* ── 4. Ride Safety Shield & Emergency Desk ── */}
-      <div className="card" style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+      <div className="glass" style={{
+        background: 'linear-gradient(135deg, var(--ink) 0%, var(--ink) 100%)',
         color: '#ffffff', padding: '30px',
-        borderRadius: 'var(--radius-xl)',
+        borderRadius: '26px',
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)',
         marginBottom: '40px'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px', color: '#ffffff' }}>
-              <span style={{ background: '#3b7dc1', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
+              <span style={{ background: 'var(--blue)', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex' }}>
                 <HiOutlineShieldCheck size={24} />
               </span>
               <span style={{ color: '#ffffff', letterSpacing: '-0.01em' }}>
                 {t('travelCommuteExt.safetyShield', 'ServeCircle Safety Shield™')}
               </span>
             </h3>
-            <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
+            <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: 'var(--glass-edge)' }}>
               {t('travelCommuteExt.safetyDesc', '24/7 Rapid Response emergency desk, police SOS bridge, encrypted location sharing, and background-verified chauffeurs.')}
             </p>
           </div>
@@ -939,7 +935,7 @@ const TravelCommuteHub = () => {
             type="button"
             className="btn"
             style={{
-              background: '#ef4444',
+              background: 'var(--status-danger-text)',
               color: '#ffffff',
               fontWeight: 900,
               border: 'none',
@@ -955,7 +951,7 @@ const TravelCommuteHub = () => {
             }}
             onClick={handleTriggerSos}
           >
-            🚨 {t('travelCommuteExt.sosAlert', 'SOS Alert')}
+             {t('travelCommuteExt.sosAlert', 'SOS Alert')}
           </button>
         </div>
 
@@ -964,7 +960,7 @@ const TravelCommuteHub = () => {
             <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800 }}>
               <HiOutlineMapPin /> {t('travelCommuteExt.liveGps', 'Live GPS Monitored')}
             </h4>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--glass-edge)', lineHeight: 1.5 }}>
               Every trip is actively monitored from our central control room to ensure you stay on route.
             </p>
           </div>
@@ -972,7 +968,7 @@ const TravelCommuteHub = () => {
             <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800 }}>
               <HiOutlinePaperAirplane /> {t('travelCommuteExt.shareTrip', 'Share Live Trip')}
             </h4>
-            <p style={{ margin: 0, fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--glass-edge)', lineHeight: 1.5 }}>
               Share a live tracking link with your family via WhatsApp so they know exactly where you are.
             </p>
           </div>
@@ -996,20 +992,21 @@ const TravelCommuteHub = () => {
           padding: '16px'
         }}>
           <div style={{
-            background: 'white',
-            borderRadius: '20px',
+            background: '#FFFFFF',
+            borderRadius: '26px',
             maxWidth: '500px',
             width: '100%',
             padding: '28px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
-            borderTop: '6px solid #ef4444'
+            border: '1px solid rgba(22, 70, 214, 0.1)',
+            boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35)',
+            borderTop: '6px solid var(--status-danger-text)'
           }}>
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{
-                  background: '#fee2e2',
-                  color: '#ef4444',
+                  background: 'var(--status-danger-tint)',
+                  color: 'var(--status-danger-text)',
                   padding: '10px',
                   borderRadius: '50%',
                   display: 'flex',
@@ -1018,10 +1015,10 @@ const TravelCommuteHub = () => {
                   <HiOutlineExclamationTriangle size={26} />
                 </span>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#991b1b', fontWeight: 900 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--status-danger-text)', fontWeight: 900 }}>
                     Emergency SOS Safety Desk
                   </h3>
-                  <span style={{ fontSize: '0.74rem', color: '#ef4444', fontWeight: 800 }}>
+                  <span style={{ fontSize: '0.74rem', color: 'var(--status-danger-text)', fontWeight: 800 }}>
                     ● 24/7 Rapid Response Protocol Active
                   </span>
                 </div>
@@ -1029,7 +1026,7 @@ const TravelCommuteHub = () => {
               <button 
                 type="button" 
                 onClick={() => setShowSosModal(false)}
-                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--ink-3)', cursor: 'pointer', padding: '4px' }}
               >
                 <HiOutlineXMark size={24} />
               </button>
@@ -1037,8 +1034,8 @@ const TravelCommuteHub = () => {
 
             {/* Broadcast Status Card */}
             <div style={{
-              background: sosDispatched ? '#f0fdf4' : '#fffbeb',
-              border: `1px solid ${sosDispatched ? '#86efac' : '#fde68a'}`,
+              background: sosDispatched ? 'var(--status-success-tint)' : 'var(--status-warning-tint)',
+              border: `1px solid ${sosDispatched ? 'var(--status-success-soft)' : 'var(--status-warning-ring)'}`,
               borderRadius: '12px',
               padding: '12px 16px',
               marginBottom: '16px'
@@ -1048,10 +1045,10 @@ const TravelCommuteHub = () => {
                   width: '10px',
                   height: '10px',
                   borderRadius: '50%',
-                  background: sosDispatched ? '#16a34a' : '#f59e0b',
+                  background: sosDispatched ? 'var(--status-success-text)' : 'var(--status-warning-text)',
                   display: 'inline-block'
                 }} />
-                <strong style={{ fontSize: '0.82rem', color: sosDispatched ? '#166534' : '#92400e' }}>
+                <strong style={{ fontSize: '0.82rem', color: sosDispatched ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
                   {sosDispatched
                     ? `Emergency Incident Dispatched (#${sosIncidentId || 'SC-EMG-911'})`
                     : isLocatingGps
@@ -1059,28 +1056,28 @@ const TravelCommuteHub = () => {
                     : 'Broadcasting telemetry to central support desk...'}
                 </strong>
               </div>
-              <p style={{ margin: '4px 0 0 18px', fontSize: '0.74rem', color: sosDispatched ? '#15803d' : '#b45309' }}>
+              <p style={{ margin: '4px 0 0 18px', fontSize: '0.74rem', color: sosDispatched ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
                 ServeCircle emergency coordinators have received this incident alert with live coordinates.
               </p>
             </div>
 
             {/* Telemetry Coordinates Box */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px', fontSize: '0.82rem', color: '#334155' }}>
+            <div style={{ background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', borderRadius: '12px', padding: '14px 16px', marginBottom: '20px', fontSize: '0.82rem', color: 'var(--ink)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ fontWeight: 600 }}>GPS Latitude:</span>
-                <span style={{ fontWeight: 800, color: '#0f766e' }}>
+                <span style={{ fontWeight: 800, color: 'var(--accent-teal-text)' }}>
                   {realCoords.lat.toFixed(4)}° N {realCoords.isReal ? '(Live)' : '(City Center)'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <span style={{ fontWeight: 600 }}>GPS Longitude:</span>
-                <span style={{ fontWeight: 800, color: '#0f766e' }}>
+                <span style={{ fontWeight: 800, color: 'var(--accent-teal-text)' }}>
                   {realCoords.lng.toFixed(4)}° E {realCoords.isReal ? `(±${realCoords.accuracy}m)` : '(Verified Telemetry)'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 600 }}>Dispatch Status:</span>
-                <span style={{ fontWeight: 800, color: '#16a34a' }}>
+                <span style={{ fontWeight: 800, color: 'var(--status-success-text)' }}>
                   ● Rapid Assistance Desk Connected
                 </span>
               </div>
@@ -1096,7 +1093,7 @@ const TravelCommuteHub = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  background: '#ef4444',
+                  background: 'var(--status-danger-text)',
                   color: 'white',
                   textDecoration: 'none',
                   padding: '12px',
@@ -1117,7 +1114,7 @@ const TravelCommuteHub = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  background: '#0f766e',
+                  background: 'var(--accent-teal-text)',
                   color: 'white',
                   textDecoration: 'none',
                   padding: '12px',
@@ -1134,7 +1131,7 @@ const TravelCommuteHub = () => {
                 type="button"
                 onClick={() => {
                   const msg = encodeURIComponent(
-                    `🚨 EMERGENCY ALERT! I have triggered an emergency SOS from ServeCircle Ride Safety Shield.\n\nMy live location: https://maps.google.com/?q=${realCoords.lat},${realCoords.lng}\nSecurity Status: Rapid Response Alert Active. Please track and assist immediately!`
+                    ` EMERGENCY ALERT! I have triggered an emergency SOS from ServeCircle Ride Safety Shield.\n\nMy live location: https://maps.google.com/?q=${realCoords.lat},${realCoords.lng}\nSecurity Status: Rapid Response Alert Active. Please track and assist immediately!`
                   );
                   window.open(`https://wa.me/?text=${msg}`, '_blank', 'noopener,noreferrer');
                 }}
@@ -1143,7 +1140,7 @@ const TravelCommuteHub = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  background: '#22c55e',
+                  background: 'var(--status-success-text)',
                   color: 'white',
                   border: 'none',
                   padding: '12px',
@@ -1178,15 +1175,15 @@ const TravelCommuteHub = () => {
                   padding: '10px', 
                   fontSize: '0.82rem', 
                   fontWeight: 700,
-                  backgroundColor: copiedSosLink ? '#ecfdf5' : '#f8fafc',
-                  borderColor: copiedSosLink ? '#10b981' : '#cbd5e1',
-                  color: copiedSosLink ? '#059669' : '#475569',
+                  backgroundColor: copiedSosLink ? 'var(--status-success-tint)' : 'var(--bg-page)',
+                  borderColor: copiedSosLink ? 'var(--status-success-text)' : 'var(--glass-edge)',
+                  color: copiedSosLink ? 'var(--status-success-text)' : 'var(--ink-2)',
                   borderRadius: '10px',
                   transition: 'all 0.2s ease',
                   cursor: 'pointer'
                 }}
               >
-                {copiedSosLink ? '✓ Live GPS Link Copied to Clipboard!' : '📋 Copy Encrypted Live Tracking Link'}
+                {copiedSosLink ? ' Live GPS Link Copied to Clipboard!' : ' Copy Encrypted Live Tracking Link'}
               </button>
             </div>
           </div>

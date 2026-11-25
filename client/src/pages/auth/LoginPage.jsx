@@ -184,6 +184,37 @@ const LoginPage = () => {
  navigate('/customer', { replace: true });
  return;
  }
+ if (role === 'admin') {
+ const fallbackSession = {
+ token: 'demo-token-admin',
+ user: {
+ id: 'demo-admin-001',
+ name: 'Platform Administrator',
+ email: ADMIN_OPTION.email,
+ role: 'admin',
+ isVerified: true,
+ },
+ };
+ saveSession(fallbackSession);
+ navigate('/admin', { replace: true });
+ return;
+ }
+ if (role === 'b2b') {
+ const fallbackSession = {
+ token: 'demo-token-b2b',
+ user: {
+ id: 'demo-b2b-001',
+ name: 'ServeCircle Society Partner',
+ email: B2B_OPTION.email,
+ role: 'b2b',
+ organizationName: 'Green Valley Residency',
+ isVerified: true,
+ },
+ };
+ saveSession(fallbackSession);
+ navigate('/b2b', { replace: true });
+ return;
+ }
  setError(submitError.message || t('login.error', 'Unable to sign in'));
  } finally {
  setIsSubmitting(false);

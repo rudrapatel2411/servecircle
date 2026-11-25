@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import LanguageToggle from './LanguageToggle';
+import ServeCircleLogo from './ServeCircleLogo';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -18,15 +19,8 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''} ${isLanding ? 'navbar-landing' : ''}`}>
       <div className="navbar-inner container">
-        <Link to="/" className="navbar-logo" aria-label="ServeCircle Home">
-          <div className="navbar-logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 7v10" />
-              <path d="M8 12h8" />
-            </svg>
-          </div>
-          <span className="logo-text">ServeCircle</span>
+        <Link to="/" className="navbar-logo" aria-label="ServeCircle Home" style={{ textDecoration: 'none' }}>
+          <ServeCircleLogo size={36} showText={true} />
         </Link>
 
         {/* Smart & Clean: No cluttering home/services links */}

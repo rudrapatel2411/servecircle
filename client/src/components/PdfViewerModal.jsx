@@ -13,7 +13,6 @@ const PdfViewerModal = ({ isOpen, onClose, fileName, pdfContent }) => {
       setIsDownloading(false);
       // Trigger a mock download success
       const link = document.createElement('a');
-      // Using a dummy blob for demonstration, in a real app this would be a real file URL
       const blob = new Blob(['Simulated PDF content for ' + fileName], { type: 'application/pdf' });
       link.href = URL.createObjectURL(blob);
       link.download = fileName || 'document.pdf';
@@ -24,61 +23,142 @@ const PdfViewerModal = ({ isOpen, onClose, fileName, pdfContent }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-      background: 'rgba(15, 23, 42, 0.75)', zIndex: 9999,
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
-    }}>
-      <div className="card animate-scale-up" style={{
-        width: '100%', maxWidth: '800px', height: '80vh', background: 'white',
-        borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-xl)', display: 'flex', flexDirection: 'column'
-      }}>
+    <div
+      className="modal-glass-overlay"
+      onClick={onClose}
+    >
+      <div
+        className="glass animate-scale-up"
+        style={{
+          width: '100%',
+          maxWidth: '820px',
+          height: '82vh',
+          borderRadius: '28px',
+          boxShadow: 'var(--sh-card)',
+          border: '1px solid var(--glass-edge)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div style={{
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          padding: '16px 24px', borderBottom: '1px solid var(--gray-200)',
-          background: 'var(--gray-50)', borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)'
-        }}>
-          <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-900)', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <HiOutlineDocumentText style={{ color: 'var(--primary-500)', fontSize: '1.4rem' }} />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '16px 24px',
+            borderBottom: '1px solid var(--glass-edge)',
+            background: 'rgba(255, 255, 255, 0.7)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '1.15rem',
+              color: 'var(--ink)',
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 700,
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            <div className="tile tile-blue" style={{ width: '36px', height: '36px', borderRadius: '10px' }}>
+              <HiOutlineDocumentText style={{ fontSize: '1.3rem' }} />
+            </div>
             {fileName || 'Document Preview'}
           </h3>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button 
-              className="btn btn-primary" 
+              className="btn-primary" 
               onClick={handleDownload}
               disabled={isDownloading}
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', fontSize: '0.85rem' }}
+              style={{
+                padding: '8px 20px',
+                fontSize: '0.85rem',
+              }}
             >
-              <HiOutlineDocumentArrowDown style={{ fontSize: '1.2rem' }} />
+              <HiOutlineDocumentArrowDown style={{ fontSize: '1.15rem' }} />
               {isDownloading ? 'Downloading...' : 'Download PDF'}
             </button>
             <button 
               onClick={onClose}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-500)', display: 'flex', alignItems: 'center', padding: '4px' }}
+              className="glass-sm"
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid var(--glass-edge)',
+                cursor: 'pointer',
+                color: 'var(--ink)',
+              }}
             >
-              <HiOutlineXMark style={{ fontSize: '1.5rem' }} />
+              <HiOutlineXMark style={{ fontSize: '1.25rem' }} />
             </button>
           </div>
         </div>
 
         {/* PDF Preview Body */}
-        <div style={{ flex: 1, background: '#525659', padding: '24px', overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
+        <div
+          style={{
+            flex: 1,
+            background: 'rgba(11, 30, 79, 0.08)',
+            padding: '24px',
+            overflowY: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           {/* Simulated PDF Page */}
-          <div style={{
-            width: '100%', maxWidth: '600px', minHeight: '800px', background: 'white',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)', padding: '40px',
-            position: 'relative', color: '#333'
-          }}>
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              minHeight: '800px',
+              background: '#ffffff',
+              borderRadius: '16px',
+              boxShadow: '0 8px 32px rgba(11, 30, 79, 0.12)',
+              padding: '40px',
+              position: 'relative',
+              color: 'var(--ink)',
+            }}
+          >
             {pdfContent ? (
               <div style={{ position: 'relative', zIndex: 2 }}>
                 {/* Header for actual content */}
-                <div style={{ borderBottom: '2px solid var(--gray-200)', paddingBottom: '20px', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <div
+                  style={{
+                    borderBottom: '2px solid rgba(22, 70, 214, 0.12)',
+                    paddingBottom: '20px',
+                    marginBottom: '30px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                  }}
+                >
                   <div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--primary-700)', margin: 0 }}>ServeCircle</h2>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--gray-500)' }}>Official Document</p>
+                    <h2
+                      style={{
+                        fontSize: '1.8rem',
+                        fontWeight: 800,
+                        color: 'var(--blue)',
+                        fontFamily: 'var(--font-heading)',
+                        margin: 0,
+                      }}
+                    >
+                      ServeCircle
+                    </h2>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--ink-3)' }}>
+                      Official Document
+                    </p>
                   </div>
-                  <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--gray-500)' }}>
+                  <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--ink-2)' }}>
                     <div>Date: {new Date().toLocaleDateString('en-IN')}</div>
                     <div>Ref: SC-{Math.floor(Math.random() * 10000)}</div>
                   </div>
@@ -91,38 +171,25 @@ const PdfViewerModal = ({ isOpen, onClose, fileName, pdfContent }) => {
             ) : (
               /* Skeleton/Placeholder Content */
               <>
-                <div style={{ borderBottom: '2px solid var(--gray-200)', paddingBottom: '20px', marginBottom: '30px' }}>
-                  <div style={{ width: '40%', height: '32px', background: 'var(--gray-200)', borderRadius: '4px', marginBottom: '16px' }}></div>
-                  <div style={{ width: '25%', height: '16px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
+                <div style={{ borderBottom: '2px solid rgba(22, 70, 214, 0.12)', paddingBottom: '20px', marginBottom: '30px' }}>
+                  <div className="skeleton-shimmer" style={{ width: '40%', height: '32px', marginBottom: '16px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '25%', height: '16px' }} />
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '40px' }}>
-                  <div style={{ width: '100%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                  <div style={{ width: '100%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                  <div style={{ width: '90%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                  <div style={{ width: '95%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                  <div style={{ width: '80%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '40px' }}>
-                  <div style={{ height: '120px', background: 'var(--primary-50)', border: '1px solid var(--primary-100)', borderRadius: '8px' }}></div>
-                  <div style={{ height: '120px', background: 'var(--primary-50)', border: '1px solid var(--primary-100)', borderRadius: '8px' }}></div>
+                  <div className="skeleton-shimmer" style={{ width: '100%', height: '14px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '90%', height: '14px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '95%', height: '14px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '70%', height: '14px' }} />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ width: '100%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
-                  <div style={{ width: '85%', height: '12px', background: 'var(--gray-100)', borderRadius: '4px' }}></div>
+                  <div className="skeleton-shimmer" style={{ width: '85%', height: '14px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '92%', height: '14px' }} />
+                  <div className="skeleton-shimmer" style={{ width: '60%', height: '14px' }} />
                 </div>
               </>
             )}
-
-            {/* Simulated Watermark */}
-            <div style={{
-              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-45deg)',
-              fontSize: '4rem', fontWeight: 900, color: 'rgba(0,0,0,0.03)', pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 1
-            }}>
-              ServeCircle Preview
-            </div>
           </div>
         </div>
       </div>

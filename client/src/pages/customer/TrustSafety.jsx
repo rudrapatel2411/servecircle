@@ -47,17 +47,17 @@ const TrustSafety = () => {
     {
       title: 'Call Masking / Number Privacy',
       desc: 'Your actual phone number is never shared. The app uses masked calls so workers only see a temporary virtual routing number.',
-      icon: <HiOutlineLockClosed style={{ color: '#8b5cf6' }} />
+      icon: <HiOutlineLockClosed style={{ color: 'var(--accent-violet-text)' }} />
     },
     {
       title: '₹10,000 Damage Insurance',
       desc: 'Any accidental home damage caused during service execution is fully covered up to ₹10,000 by ServeCircle insurance partners.',
-      icon: <HiOutlineBuildingLibrary style={{ color: '#3b7dc1' }} />
+      icon: <HiOutlineBuildingLibrary style={{ color: 'var(--blue)' }} />
     },
     {
       title: '100% Satisfaction SLA',
       desc: 'Not satisfied with the service quality? We will dispatch another professional completely free or offer a full 100% refund.',
-      icon: <HiOutlineShieldCheck style={{ color: '#3b82f6' }} />
+      icon: <HiOutlineShieldCheck style={{ color: 'var(--blue)' }} />
     }
   ];
 
@@ -77,7 +77,7 @@ const TrustSafety = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
           {/* Background Check Verification Steps */}
-          <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
+          <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)' }}>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px' }}>
               The 5-Tier Background Check Process
             </h3>
@@ -129,11 +129,11 @@ const TrustSafety = () => {
                         </p>
                       </div>
 
-                      <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.2rem' }} />
+                      <HiOutlineCheckCircle style={{ color: 'var(--blue)', fontSize: '1.2rem' }} />
                     </div>
 
                     {isActive && (
-                      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--gray-200)', fontSize: '0.75rem', color: 'var(--gray-600)', lineHeight: 1.5, background: 'white', padding: '10px', borderRadius: '4px' }}>
+                      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(22, 70, 214, 0.08)', fontSize: '0.75rem', color: 'var(--gray-600)', lineHeight: 1.5, background: 'var(--glass)', padding: '10px', borderRadius: '4px' }}>
                         <strong>Implementation Detail:</strong> {step.details}
                       </div>
                     )}
@@ -144,7 +144,7 @@ const TrustSafety = () => {
           </div>
 
           {/* Customer Protection SLA Guarantee */}
-          <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
+          <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)' }}>
             <h3 style={{ fontSize: '1.15rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>
               Three-Tier Protection Guarantee
             </h3>
@@ -174,7 +174,7 @@ const TrustSafety = () => {
 
 
           {/* Helpdesk Support Panel */}
-          <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
+          <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)' }}>
             <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>
               Need Help With a Booking?
             </h3>
@@ -192,7 +192,7 @@ const TrustSafety = () => {
                   alignItems: 'center',
                   gap: '12px',
                   padding: '12px',
-                  border: '1.5px solid var(--gray-200)',
+                  border: '1px solid var(--glass-edge)',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
                   textDecoration: 'none'
@@ -212,7 +212,7 @@ const TrustSafety = () => {
                   alignItems: 'center',
                   gap: '12px',
                   padding: '12px',
-                  border: '1.5px solid var(--gray-200)',
+                  border: '1px solid var(--glass-edge)',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
                   textDecoration: 'none'

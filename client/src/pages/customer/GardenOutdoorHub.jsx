@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Link , useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { servicesRegistry } from '../../data/servicesRegistry';
 import ServiceImage from '../../components/ServiceImage';
-import { HiOutlineArrowLeft, HiOutlineSparkles, HiOutlineStar, HiOutlineClock, HiOutlineCurrencyRupee } from 'react-icons/hi2';
+import { HiOutlineArrowLeft, HiOutlineSun, HiOutlineStar, HiOutlineClock } from 'react-icons/hi2';
+import { IconTile } from '../../components/ui';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -14,32 +14,59 @@ const GardenOutdoorHub = () => {
 
   return (
     <div className="page-content" style={{ minHeight: '92vh' }}>
-      <Link to="/customer/services" className="sidebar-link" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--navy-600)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', marginBottom: '20px' }}>
+      <Link to="/customer/services" className="back-btn">
         <HiOutlineArrowLeft /> {t('common.viewAll', 'Back to Directory')}
       </Link>
 
+      <div style={{ marginBottom: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
+          <IconTile icon={HiOutlineSun} tone="teal" />
+          <div>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.6rem', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
+              Garden & Outdoor
+            </h2>
+            <p style={{ fontSize: '0.88rem', color: 'var(--ink2)', margin: 0, marginTop: '2px' }}>
+              Lawn maintenance, landscape pruning, balcony greening &amp; garden care
+            </p>
+          </div>
+        </div>
+      </div>
 
-
-      <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+      <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '22px' }}>
         {categoryServices.map((service) => (
-          <Link key={service.id} to={`/customer/services/garden-outdoor/${service.id}`} className="service-card hover-lift" style={{ cursor: 'pointer', '--card-accent': '#22c55e', display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', background: 'white', borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1px solid var(--gray-200)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ height: '220px', width: '100%', position: 'relative' }}>
+          <Link
+            key={service.id}
+            to={`/customer/services/garden-outdoor/${service.id}`}
+            className="glass is-clickable"
+            style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none', borderRadius: '26px', overflow: 'hidden' }}
+          >
+            <div style={{ height: '200px', width: '100%', position: 'relative' }}>
               <ServiceImage serviceId={service.id} alt={t(service.nameKey)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', padding: '6px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-900)', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                <HiOutlineStar style={{ color: '#f59e0b' }} /> {service.rating}
-              </div>
+              <span className="pill s-info" style={{ position: 'absolute', top: '12px', right: '12px', backdropFilter: 'blur(12px)', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <HiOutlineStar size={13} /> {service.rating}
+              </span>
             </div>
-            <div className="service-card-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '22px' }}>
               <div>
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-900)', marginBottom: '8px' }}>{t(service.nameKey)}</h4>
-                <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, minHeight: '40px' }}>{t(service.descKey)}</p>
-                <div style={{ marginTop: '16px', display: 'flex', gap: '12px', fontSize: '0.8rem', color: 'var(--gray-600)' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--gray-50)', color: 'var(--gray-600)', padding: '6px 10px', borderRadius: '8px', fontWeight: 600 }}><HiOutlineClock style={{ color: 'var(--gray-400)' }} /> {service.jobsDone}+ jobs done</span>
+                <h4 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.1rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '6px' }}>
+                  {t(service.nameKey)}
+                </h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--ink2)', lineHeight: 1.5, minHeight: '38px', margin: 0 }}>
+                  {t(service.descKey)}
+                </p>
+                <div style={{ marginTop: '14px', display: 'flex', gap: '8px' }}>
+                  <span className="pill s-teal" style={{ fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <HiOutlineClock size={12} /> {service.jobsDone}+ jobs done
+                  </span>
                 </div>
               </div>
-              <div style={{ borderTop: '1px dashed var(--gray-200)', paddingTop: '16px', marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ display: 'flex', alignItems: 'center', fontSize: '1.25rem', fontWeight: 900, color: 'var(--navy-900)' }}><HiOutlineCurrencyRupee style={{ marginRight: '2px', color: 'var(--gray-500)' }} />{service.basePrice}</span>
-                <span style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: 800, color: 'white', background: 'var(--card-accent)', padding: '10px 18px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', transition: 'all 0.2s' }}>Book now →</span>
+              <div style={{ borderTop: '1px solid rgba(22, 70, 214, 0.08)', paddingTop: '16px', marginTop: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ display: 'flex', alignItems: 'center', fontSize: '1.25rem', fontWeight: 800, color: 'var(--ink)', fontFamily: 'Outfit, sans-serif' }}>
+                  ₹{service.basePrice}
+                </span>
+                <span className="btn-primary" style={{ padding: '9px 20px', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  Book Now
+                </span>
               </div>
             </div>
           </Link>

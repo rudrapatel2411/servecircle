@@ -115,14 +115,11 @@ export default function WorkerDutySwitch({
 
   return (
     <div
-      className="worker-duty-switch-card"
+      className="worker-duty-switch-card glass"
       style={{
-        background: '#ffffff',
-        border: `1.5px solid ${currentCfg.border}`,
-        borderRadius: 'var(--radius-lg, 18px)',
-        padding: '16px 20px',
+        borderRadius: '26px',
+        padding: '18px 22px',
         marginBottom: '20px',
-        boxShadow: '0 2px 10px rgba(15, 23, 42, 0.04)',
       }}
     >
       <div

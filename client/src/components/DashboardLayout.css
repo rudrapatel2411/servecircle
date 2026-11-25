@@ -90,6 +90,7 @@
     opacity: 0.65;
     transform: translateY(6px);
   }
+
   100% {
     opacity: 1;
     transform: none;

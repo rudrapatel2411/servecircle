@@ -13,6 +13,7 @@ import {
   HiOutlineArrowPath,
   HiOutlineWrench,
   HiOutlineBuildingOffice2,
+  HiOutlineStar,
 } from 'react-icons/hi2';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -400,10 +401,10 @@ const LiveTracking = () => {
         const isWorker = type === 'worker';
         const isCustomer = type === 'customer';
         const bg = isWorker
-          ? 'linear-gradient(135deg, #536D57, #364335)'
+          ? 'linear-gradient(135deg, var(--blue), var(--ink))'
           : isCustomer
-          ? 'linear-gradient(135deg, #1E40AF, #172554)'
-          : 'linear-gradient(135deg, #CBD5E1, #B5AEA3)';
+          ? 'linear-gradient(135deg, var(--blue), var(--blue-deep))'
+          : 'linear-gradient(135deg, var(--glass-edge), var(--ink-3))';
 
         const svgIcon = isWorker
           ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
@@ -429,7 +430,7 @@ const LiveTracking = () => {
             <span style="
               font-size: 0.72rem; font-weight: 800; background: rgba(255,255,255,0.95);
               backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 20px;
-              border: 1px solid #E2E8F0; color: #0F172A; display: inline-block;
+              border: 1px solid var(--glass-edge); color: var(--ink); display: inline-block;
               margin-top: 5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(15, 23, 42,0.08);
               position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
             ">${label}</span>
@@ -470,7 +471,7 @@ const LiveTracking = () => {
 
       // Draw initial polyline
       polylineRef.current = L.polyline(routePoints, {
-        color: '#364335',
+        color: 'var(--ink)',
         weight: 4,
         opacity: 0.85,
         dashArray: '6, 8',
@@ -529,9 +530,9 @@ const LiveTracking = () => {
           style={{
             maxWidth: '540px',
             width: '100%',
-            background: '#ffffff',
+            background: 'rgba(255, 255, 255, 0.5)',
             borderRadius: '20px',
-            border: '1.5px solid #E2E8F0',
+            border: '1.5px solid var(--glass-edge)',
             boxShadow: '0 12px 36px rgba(15, 23, 42, 0.1)',
             padding: '36px 28px',
             textAlign: 'center',
@@ -543,7 +544,7 @@ const LiveTracking = () => {
               height: '64px',
               borderRadius: '50%',
               background: 'rgba(239, 68, 68, 0.1)',
-              color: '#dc2626',
+              color: 'var(--status-danger-text)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -554,10 +555,10 @@ const LiveTracking = () => {
           >
             <HiOutlineShieldExclamation />
           </div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E40AF', margin: '0 0 10px 0' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--blue)', margin: '0 0 10px 0' }}>
             Worker Not Available
           </h2>
-          <p style={{ fontSize: '0.88rem', color: '#6B665C', lineHeight: 1.55, margin: '0 0 24px 0' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--ink-2)', lineHeight: 1.55, margin: '0 0 24px 0' }}>
             Currently, all certified professionals for <strong>{serviceName}</strong> are engaged on other active jobs in your area. Our operations center has been alerted.
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -600,8 +601,8 @@ const LiveTracking = () => {
                 borderRadius: '12px',
                 fontWeight: 700,
                 background: gpsStatus === 'granted' ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
-                color: gpsStatus === 'granted' ? '#16a34a' : '#ca8a04',
-                border: `1px solid ${gpsStatus === 'granted' ? '#bbf7d0' : '#fef08a'}`,
+                color: gpsStatus === 'granted' ? 'var(--status-success-text)' : 'var(--status-warning-text)',
+                border: `1px solid ${gpsStatus === 'granted' ? 'var(--status-success-ring)' : 'var(--status-warning-tint)'}`,
               }}
             >
               {gpsStatus === 'granted' ? '● Real GPS Location' : '○ Detecting Customer Location...'}
@@ -624,8 +625,8 @@ const LiveTracking = () => {
       {gpsStatus === 'denied' && (
         <div
           style={{
-            background: '#FFFBEB',
-            border: '1px solid #FDE68A',
+            background: 'var(--status-warning-tint)',
+            border: '1px solid var(--status-warning-ring)',
             padding: '10px 16px',
             borderRadius: '12px',
             display: 'flex',
@@ -634,11 +635,11 @@ const LiveTracking = () => {
             gap: '12px',
             marginBottom: '16px',
             fontSize: '0.82rem',
-            color: '#92400E',
+            color: 'var(--status-warning-text)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <HiOutlineMapPin style={{ fontSize: '1.2rem', color: '#D97706' }} />
+            <HiOutlineMapPin style={{ fontSize: '1.2rem', color: 'var(--status-warning-text)' }} />
             <span>Location permission was denied. Enable GPS location to track your technician directly to your exact doorstep.</span>
           </div>
           <button
@@ -664,7 +665,7 @@ const LiveTracking = () => {
               minHeight: '360px',
               border: '2px solid rgba(255,255,255,0.4)',
               position: 'relative',
-              background: '#e2e8f0',
+              background: 'var(--glass-edge)',
               overflow: 'hidden',
               borderRadius: 'var(--radius-xl)',
               boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)',
@@ -698,7 +699,7 @@ const LiveTracking = () => {
                 WebkitBackdropFilter: 'blur(12px)',
                 borderRadius: 'var(--radius-lg)',
                 padding: '12px 20px',
-                border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
+                border: '1px solid var(--sc-surface-secondary, var(--glass-edge))',
                 boxShadow: '0 8px 24px rgba(15, 23, 42, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
@@ -706,14 +707,14 @@ const LiveTracking = () => {
                 zIndex: 30,
               }}
             >
-              <div style={{ background: 'var(--sc-bg-primary, #FAF9F6)', padding: '8px', borderRadius: '50%', display: 'flex' }}>
-                <HiOutlineClock style={{ fontSize: '1.5rem', color: 'var(--sc-primary-accent, #536D57)' }} />
+              <div style={{ background: 'var(--sc-bg-primary, var(--bg-page))', padding: '8px', borderRadius: '50%', display: 'flex' }}>
+                <HiOutlineClock style={{ fontSize: '1.5rem', color: 'var(--sc-primary-accent, var(--blue))' }} />
               </div>
               <div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--sc-text-muted, #948E82)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 800 }}>
+                <span style={{ fontSize: '0.65rem', color: 'var(--sc-text-muted, var(--ink-3))', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 800 }}>
                   Live Status
                 </span>
-                <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--sc-dark-accent, #1E40AF)', display: 'block', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--sc-dark-accent, var(--blue))', display: 'block', letterSpacing: '-0.02em' }}>
                   {eta === 0 ? 'Arrived at Doorstep' : `Arriving in ~${eta} min (1.8 km)`}
                 </span>
               </div>
@@ -731,7 +732,7 @@ const LiveTracking = () => {
                   backdropFilter: 'blur(10px)',
                   padding: '10px 16px',
                   borderRadius: '12px',
-                  border: '1.5px solid #86efac',
+                  border: '1.5px solid var(--status-success-soft)',
                   boxShadow: '0 4px 18px rgba(34, 197, 94, 0.18)',
                   display: 'flex',
                   alignItems: 'center',
@@ -739,8 +740,8 @@ const LiveTracking = () => {
                   zIndex: 30,
                 }}
               >
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
-                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#166534' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--status-success-text)', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--status-success-text)' }}>
                   {acceptanceNotice}
                 </span>
               </div>
@@ -748,16 +749,16 @@ const LiveTracking = () => {
           </div>
 
           {/* Service Progress tracker timeline */}
-          <div className="card" style={{ padding: '18px 22px', background: 'white', border: '1px solid var(--sc-surface-secondary, #E2E8F0)', borderRadius: 'var(--radius-lg)', flexShrink: 0 }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', marginBottom: '4px' }}>
+          <div className="card" style={{ padding: '18px 22px', background: 'var(--glass)', border: '1px solid var(--sc-surface-secondary, var(--glass-edge))', borderRadius: '26px', flexShrink: 0 }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, var(--blue))', marginBottom: '4px' }}>
               Service Status Updates
             </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--sc-text-secondary, #6B665C)', marginBottom: '16px', fontWeight: 600 }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--sc-text-secondary, var(--ink-2))', marginBottom: '16px', fontWeight: 600 }}>
               {currentStatusText}
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
-              <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '3px', background: 'var(--sc-surface-secondary, #E2E8F0)', zIndex: 0 }} />
+              <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '3px', background: 'var(--sc-surface-secondary, var(--glass-edge))', zIndex: 0 }} />
               <div
                 style={{
                   position: 'absolute',
@@ -765,7 +766,7 @@ const LiveTracking = () => {
                   left: '10%',
                   width: `${(activeStep / 4) * 80}%`,
                   height: '3px',
-                  background: 'var(--sc-primary-accent, #536D57)',
+                  background: 'var(--sc-primary-accent, var(--blue))',
                   zIndex: 1,
                   transition: 'width 0.8s ease',
                 }}
@@ -781,15 +782,15 @@ const LiveTracking = () => {
                         width: '28px',
                         height: '28px',
                         borderRadius: '50%',
-                        background: isPassed ? 'var(--sc-primary-accent, #536D57)' : 'var(--sc-surface-secondary, #E2E8F0)',
-                        color: isPassed ? 'white' : 'var(--sc-text-secondary, #6B665C)',
+                        background: isPassed ? 'var(--sc-primary-accent, var(--blue))' : 'var(--sc-surface-secondary, var(--glass-edge))',
+                        color: isPassed ? 'white' : 'var(--sc-text-secondary, var(--ink-2))',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 800,
                         fontSize: '0.75rem',
                         zIndex: 2,
-                        border: isActive ? '3px solid #CBD5E1' : 'none',
+                        border: isActive ? '3px solid var(--glass-edge)' : 'none',
                         boxShadow: isPassed ? '0 2px 6px rgba(83, 109, 87, 0.3)' : 'none',
                       }}
                     >
@@ -799,7 +800,7 @@ const LiveTracking = () => {
                       style={{
                         fontSize: '0.7rem',
                         fontWeight: isActive ? 800 : 600,
-                        color: isActive ? 'var(--sc-dark-accent, #1E40AF)' : 'var(--sc-text-muted, #948E82)',
+                        color: isActive ? 'var(--sc-dark-accent, var(--blue))' : 'var(--sc-text-muted, var(--ink-3))',
                         marginTop: '8px',
                       }}
                     >
@@ -819,10 +820,10 @@ const LiveTracking = () => {
                   style={{
                     marginTop: '12px',
                     padding: '10px 14px',
-                    background: '#ecfdf5',
-                    border: '1px solid #10b981',
+                    background: 'var(--status-success-tint)',
+                    border: '1px solid var(--status-success-text)',
                     borderRadius: '8px',
-                    color: '#065f46',
+                    color: 'var(--status-success-text)',
                     fontSize: '0.8rem',
                     fontWeight: 600,
                   }}
@@ -841,25 +842,25 @@ const LiveTracking = () => {
                   style={{
                     margin: '14px 0',
                     padding: '14px',
-                    background: '#fffbeb',
-                    border: '2px solid #f59e0b',
+                    background: 'var(--status-warning-tint)',
+                    border: '2px solid var(--status-warning-text)',
                     borderRadius: '10px',
                     boxShadow: '0 4px 12px rgba(245, 158, 11, 0.12)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <strong style={{ color: '#b45309', fontSize: '0.9rem' }}>Additional Work / Scope Revision Requested</strong>
-                    <span style={{ fontSize: '0.75rem', background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
+                    <strong style={{ color: 'var(--status-warning-text)', fontSize: '0.9rem' }}>Additional Work / Scope Revision Requested</strong>
+                    <span style={{ fontSize: '0.75rem', background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
                       ₹{rev.originalAmount} → ₹{rev.revisedAmount}
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.8rem', color: '#78350f', margin: '0 0 8px 0' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--status-warning-text)', margin: '0 0 8px 0' }}>
                     <strong>Technician Note:</strong> {rev.reason}
                   </p>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button
                       className="btn btn-primary"
-                      style={{ flex: 1, background: '#16a34a', padding: '8px', fontSize: '0.8rem' }}
+                      style={{ flex: 1, background: 'var(--status-success-text)', padding: '8px', fontSize: '0.8rem' }}
                       disabled={revisionActionLoading}
                       onClick={() => handleDecideRevision(rev.id, 'APPROVED')}
                     >
@@ -867,7 +868,7 @@ const LiveTracking = () => {
                     </button>
                     <button
                       className="btn btn-outline"
-                      style={{ flex: 1, borderColor: '#dc2626', color: '#dc2626', padding: '8px', fontSize: '0.8rem' }}
+                      style={{ flex: 1, borderColor: 'var(--status-danger-text)', color: 'var(--status-danger-text)', padding: '8px', fontSize: '0.8rem' }}
                       disabled={revisionActionLoading}
                       onClick={() => handleDecideRevision(rev.id, 'REJECTED')}
                     >
@@ -883,13 +884,13 @@ const LiveTracking = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '16px', padding: '14px', background: '#fef2f2', border: '1.5px dashed #ef4444', borderRadius: '12px', textAlign: 'center' }}
+                  style={{ marginTop: '16px', padding: '14px', background: 'var(--status-danger-tint)', border: '1.5px dashed var(--status-danger-text)', borderRadius: '12px', textAlign: 'center' }}
                 >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b91c1c' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--status-danger-text)' }}>
                     Job Start Verification Code
                   </span>
                   {displayedStartOtp ? (
-                    <div style={{ fontSize: '2rem', fontWeight: 900, color: '#991b1b', letterSpacing: '8px', margin: '8px 0' }}>
+                    <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--status-danger-text)', letterSpacing: '8px', margin: '8px 0' }}>
                       {displayedStartOtp}
                     </div>
                   ) : (
@@ -899,8 +900,8 @@ const LiveTracking = () => {
                       </button>
                     </div>
                   )}
-                  {otpError && <p role="alert" style={{ fontSize: '0.75rem', color: '#b91c1c', margin: '4px 0' }}>{otpError}</p>}
-                  <p style={{ fontSize: '0.72rem', color: '#7f1d1d', margin: 0 }}>
+                  {otpError && <p role="alert" style={{ fontSize: '0.75rem', color: 'var(--status-danger-text)', margin: '4px 0' }}>{otpError}</p>}
+                  <p style={{ fontSize: '0.72rem', color: 'var(--status-danger-text)', margin: 0 }}>
                     Share this code with the technician only when they arrive at your location to begin work.
                   </p>
                 </motion.div>
@@ -913,18 +914,18 @@ const LiveTracking = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '16px', padding: '16px', background: '#f0fdf4', border: '2px solid #22c55e', borderRadius: '12px', textAlign: 'center' }}
+                  style={{ marginTop: '16px', padding: '16px', background: 'var(--status-success-tint)', border: '2px solid var(--status-success-text)', borderRadius: '12px', textAlign: 'center' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: '#15803d', fontWeight: 800, fontSize: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: 'var(--status-success-text)', fontWeight: 800, fontSize: '0.85rem' }}>
                     <span>Job Completion Verification (End OTP)</span>
                   </div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#166534', letterSpacing: '8px', margin: '8px 0' }}>
+                  <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--status-success-text)', letterSpacing: '8px', margin: '8px 0' }}>
                     {displayedEndOtp || '9182'}
                   </div>
-                  <p style={{ fontSize: '0.78rem', color: '#14532d', margin: '0 0 10px 0', lineHeight: 1.4 }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--status-success-text)', margin: '0 0 10px 0', lineHeight: 1.4 }}>
                     <strong>Security Rule:</strong> Share this 4-digit End OTP with the technician only after you have inspected the job and are satisfied.
                   </p>
-                  <button type="button" className="btn btn-outline" onClick={requestEndOtp} style={{ fontSize: '0.75rem', padding: '4px 12px', background: 'white' }}>
+                  <button type="button" className="btn btn-outline" onClick={requestEndOtp} style={{ fontSize: '0.75rem', padding: '4px 12px', background: 'rgba(255, 255, 255, 0.5)' }}>
                     Refresh End Code
                   </button>
                 </motion.div>
@@ -933,34 +934,34 @@ const LiveTracking = () => {
 
             {/* Before & After Photo Evidence */}
             {(activeStep >= 2 || (proofs && proofs.length > 0)) && (
-              <div style={{ marginTop: '16px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <div style={{ marginTop: '16px', padding: '16px', background: 'var(--bg-page)', borderRadius: '12px', border: '1px solid var(--glass-edge)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <strong style={{ fontSize: '0.85rem', color: '#1e293b' }}>Verified Proof of Work (Audit Photos)</strong>
-                  <span style={{ fontSize: '0.7rem', color: '#16a34a', fontWeight: 700, background: '#dcfce7', padding: '2px 8px', borderRadius: '10px' }}>
+                  <strong style={{ fontSize: '0.85rem', color: 'var(--ink)' }}>Verified Proof of Work (Audit Photos)</strong>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--status-success-text)', fontWeight: 700, background: 'var(--status-success-tint)', padding: '2px 8px', borderRadius: '10px' }}>
                     Tamper Proof Watermark
                   </span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: 'white' }}>
-                    <div style={{ height: '90px', background: '#e2e8f0', overflow: 'hidden' }}>
+                  <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
+                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden' }}>
                       <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800" alt="Before work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
-                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>Before Work</span>
-                      <span style={{ color: '#16a34a' }}>Logged</span>
+                      <span style={{ color: 'var(--status-success-text)' }}>Logged</span>
                     </div>
                   </div>
-                  <div style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', background: 'white' }}>
-                    <div style={{ height: '90px', background: '#e2e8f0', overflow: 'hidden' }}>
+                  <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
+                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden' }}>
                       <img
                         src={activeStep >= 3 ? 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800' : 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800'}
                         alt="After work"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </div>
-                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>After Work</span>
-                      <span style={{ color: activeStep >= 3 ? '#16a34a' : '#ca8a04' }}>{activeStep >= 3 ? 'Complete' : 'In Progress'}</span>
+                      <span style={{ color: activeStep >= 3 ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>{activeStep >= 3 ? 'Complete' : 'In Progress'}</span>
                     </div>
                   </div>
                 </div>
@@ -990,17 +991,17 @@ const LiveTracking = () => {
             style={{
               padding: '24px 20px',
               textAlign: 'center',
-              background: 'white',
+              background: 'rgba(255, 255, 255, 0.5)',
               flex: 1.2,
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               minHeight: 0,
-              border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
+              border: '1px solid var(--sc-surface-secondary, var(--glass-edge))',
               borderRadius: 'var(--radius-lg)',
             }}
           >
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--sc-text-muted, #948E82)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--sc-text-muted, var(--ink-3))', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Assigned Professional
             </span>
 
@@ -1011,9 +1012,9 @@ const LiveTracking = () => {
                     width: '64px',
                     height: '64px',
                     borderRadius: '50%',
-                    background: 'var(--sc-dark-accent, #1E40AF)',
+                    background: 'var(--sc-dark-accent, var(--blue))',
                     color: 'white',
-                    border: '3px solid var(--sc-surface-secondary, #E2E8F0)',
+                    border: '3px solid var(--sc-surface-secondary, var(--glass-edge))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1024,13 +1025,13 @@ const LiveTracking = () => {
                 >
                   {getInitials(workerName)}
                 </div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', margin: '8px 0 2px' }}>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--sc-dark-accent, var(--blue))', margin: '8px 0 2px' }}>
                   {workerName}
                 </h4>
-                <div style={{ fontSize: '0.68rem', color: 'var(--sc-dark-accent, #1E40AF)', background: 'var(--sc-surface-secondary, #E2E8F0)', padding: '2px 10px', borderRadius: '12px', fontWeight: 700 }}>
-                  Verified Professional 4.9 ★
+                <div style={{ fontSize: '0.68rem', color: 'var(--blue)', background: 'var(--status-info-tint)', padding: '3px 10px', borderRadius: '999px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                  Verified Professional 4.9 <HiOutlineStar style={{ color: 'var(--status-warning-soft)', fontSize: '0.8rem' }} />
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--sc-text-secondary, var(--ink-2))', marginTop: '4px' }}>
                   2.4k jobs completed
                 </div>
               </div>
@@ -1059,17 +1060,17 @@ const LiveTracking = () => {
                 style={{
                   marginTop: '12px',
                   padding: '8px 12px',
-                  background: 'var(--sc-bg-primary, #FAF9F6)',
+                  background: 'var(--sc-bg-primary, var(--bg-page))',
                   borderRadius: '8px',
-                  border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
+                  border: '1px solid var(--sc-surface-secondary, var(--glass-edge))',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   wordBreak: 'break-word',
                   lineHeight: '1.4',
                 }}
               >
-                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>Specifications: </strong>
-                <span style={{ color: 'var(--sc-text-secondary, #6B665C)', fontWeight: 500 }}>
+                <strong style={{ color: 'var(--sc-dark-accent, var(--blue))' }}>Specifications: </strong>
+                <span style={{ color: 'var(--sc-text-secondary, var(--ink-2))', fontWeight: 500 }}>
                   {bookingData.description.split('Specs:')[1]?.replace(/[\[\]]/g, '').trim()}
                 </span>
               </div>
@@ -1080,9 +1081,9 @@ const LiveTracking = () => {
             className="card"
             style={{
               padding: '16px 20px',
-              border: '1px solid var(--sc-surface-secondary, #E2E8F0)',
+              border: '1px solid var(--sc-surface-secondary, var(--glass-edge))',
               borderRadius: 'var(--radius-lg)',
-              background: 'white',
+              background: 'rgba(255, 255, 255, 0.5)',
               flex: 0.8,
               display: 'flex',
               flexDirection: 'column',
@@ -1090,18 +1091,18 @@ const LiveTracking = () => {
               minHeight: 0,
             }}
           >
-            <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--sc-dark-accent, #1E40AF)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <HiOutlineShieldCheck style={{ color: 'var(--sc-primary-accent, #536D57)', fontSize: '1.1rem' }} /> Safety Shield Active
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--sc-dark-accent, var(--blue))', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+              <HiOutlineShieldCheck style={{ color: 'var(--sc-primary-accent, var(--blue))', fontSize: '1.1rem' }} /> Safety Shield Active
             </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.72rem', color: 'var(--sc-text-secondary, #6B665C)' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.72rem', color: 'var(--sc-text-secondary, var(--ink-2))' }}>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>KYC Verification:</strong> 100% background-checked with Police & QR ID.
+                <strong style={{ color: 'var(--sc-dark-accent, var(--blue))' }}>KYC Verification:</strong> 100% background-checked with Police & QR ID.
               </li>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>Live Route Tracking:</strong> Encrypted GPS coordinates monitored by dispatch.
+                <strong style={{ color: 'var(--sc-dark-accent, var(--blue))' }}>Live Route Tracking:</strong> Encrypted GPS coordinates monitored by dispatch.
               </li>
               <li>
-                <strong style={{ color: 'var(--sc-dark-accent, #1E40AF)' }}>ServeCircle Guarantee:</strong> Service covered up to ₹10,000 for safety.
+                <strong style={{ color: 'var(--sc-dark-accent, var(--blue))' }}>ServeCircle Guarantee:</strong> Service covered up to ₹10,000 for safety.
               </li>
             </ul>
           </div>

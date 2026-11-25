@@ -671,39 +671,50 @@ const DashboardNavbar = ({ panel }) => {
 
       {/* ===== RIGHT ACTIONS ===== */}
       <div className="dash-navbar-actions">
-        {/* Worker Instant Duty Switch in Header */}
+        {/* Worker Instant Duty Switch in Header (Demo UI Spring Toggle) */}
         {panel === 'worker' && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginRight: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '8px' }}>
+            <span style={{
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              color: dutyStatus === 'online' ? '#2B8663' : 'var(--ink2)',
+              letterSpacing: '0.01em',
+              whiteSpace: 'nowrap',
+            }}>
+              {dutyLoading ? 'Updating...' : dutyStatus === 'online' ? 'Duty ON' : 'Duty OFF'}
+            </span>
             <button
               type="button"
+              role="switch"
+              aria-checked={dutyStatus === 'online'}
+              aria-label={dutyStatus === 'online' ? 'Turn duty off' : 'Turn duty on'}
+              className={`sunken toggle ${dutyStatus === 'online' ? 'on' : ''}`}
               onClick={() => handleDutyToggle(dutyStatus === 'online' ? 'offline' : 'online')}
               disabled={dutyLoading}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '6px 14px',
-                borderRadius: '20px',
-                border: `1.5px solid ${dutyStatus === 'online' ? '#86efac' : '#cbd5e1'}`,
-                background: dutyStatus === 'online' ? '#dcfce7' : '#f1f5f9',
-                color: dutyStatus === 'online' ? '#15803d' : '#475569',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
               title="Click to toggle Online/Offline duty"
+              style={{
+                width: '64px',
+                height: '34px',
+                opacity: dutyLoading ? 0.65 : 1,
+                background: dutyStatus === 'online' ? 'rgba(54, 160, 122, 0.16)' : 'rgba(255, 255, 255, 0.52)',
+              }}
             >
               <span
+                className="knob"
                 style={{
-                  width: '9px',
-                  height: '9px',
-                  borderRadius: '50%',
-                  background: dutyStatus === 'online' ? '#22c55e' : '#94a3b8',
-                  boxShadow: dutyStatus === 'online' ? '0 0 8px #22c55e' : 'none',
+                  width: '26px',
+                  height: '26px',
+                  top: '3px',
+                  left: '3px',
+                  transform: dutyStatus === 'online' ? 'translateX(30px)' : 'translateX(0)',
+                  background: dutyStatus === 'online'
+                    ? 'linear-gradient(135deg, #34d399, #059669)'
+                    : 'linear-gradient(135deg, #94a3b8, #64748b)',
+                  boxShadow: dutyStatus === 'online'
+                    ? '0 5px 12px rgba(5, 150, 105, 0.45), inset 0 1px 2px rgba(255,255,255,0.5)'
+                    : '0 4px 10px rgba(100, 116, 139, 0.35), inset 0 1px 2px rgba(255,255,255,0.5)',
                 }}
               />
-              <span>{dutyLoading ? 'Updating...' : dutyStatus === 'online' ? '🟢 Duty ON' : '🔴 Duty OFF'}</span>
             </button>
           </div>
         )}

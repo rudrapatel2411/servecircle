@@ -102,7 +102,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
 
     const callPayload = {
       id: `notif_call_${Date.now()}`,
-      title: `📞 New Call Request: ${chosenService}`,
+      title: `New Call Request: ${chosenService}`,
       message: `${customerName} (+91 ${cleanDigits}) requested an immediate callback for ${chosenService}.`,
       type: 'call_request',
       requestId: generatedId,
@@ -198,27 +198,27 @@ const CallMeBackWidget = ({ hasSidebar }) => {
         onClick={() => setIsOpen(true)}
         className="call-me-back-float"
         style={{
-          background: 'linear-gradient(135deg, #2D5A3C 0%, #1E3D29 100%)',
-          color: '#FAF9F6',
-          width: '50px',
-          height: '50px',
+          background: 'linear-gradient(135deg, var(--blue-hi) 0%, var(--blue) 100%)',
+          color: '#ffffff',
+          width: '54px',
+          height: '54px',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(45, 90, 60, 0.4), 0 2px 6px rgba(0,0,0,0.2)',
+          boxShadow: '0 12px 24px -6px rgba(22, 70, 214, 0.45)',
           cursor: 'pointer',
           userSelect: 'none',
-          border: '1.5px solid rgba(226, 232, 240, 0.5)',
-          transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s',
+          border: '1px solid var(--glass-edge)',
+          transition: 'transform 0.3s var(--ease), box-shadow 0.3s var(--ease)',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'scale(1.06)';
-          e.currentTarget.style.boxShadow = '0 12px 28px rgba(45, 90, 60, 0.48), 0 3px 8px rgba(0,0,0,0.24)';
+          e.currentTarget.style.transform = 'scale(1.08)';
+          e.currentTarget.style.boxShadow = '0 16px 30px -6px rgba(22, 70, 214, 0.55)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'none';
-          e.currentTarget.style.boxShadow = '0 8px 24px rgba(45, 90, 60, 0.4), 0 2px 6px rgba(0,0,0,0.2)';
+          e.currentTarget.style.boxShadow = '0 12px 24px -6px rgba(22, 70, 214, 0.45)';
         }}
         title="Need Help? Request Instant Call Back"
         role="button"
@@ -229,40 +229,29 @@ const CallMeBackWidget = ({ hasSidebar }) => {
             position: 'absolute',
             inset: '-4px',
             borderRadius: '50%',
-            border: '2px solid rgba(83, 109, 87, 0.45)',
+            border: '2px solid rgba(76, 134, 255, 0.45)',
             animation: 'pulse 2s infinite',
             pointerEvents: 'none',
           }}
         />
-        <HiOutlinePhone size={22} style={{ color: '#FAF9F6' }} />
+        <HiOutlinePhone size={24} style={{ color: '#ffffff' }} />
       </div>
 
       {/* Modal Popup */}
       {isOpen && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.55)',
-            backdropFilter: 'blur(5px)',
-            zIndex: 99999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
-            animation: 'fadeIn 0.2s ease-out',
-          }}
+          className="modal-glass-overlay"
           onClick={handleClose}
         >
           <div
+            className="glass"
             style={{
-              background: '#FFFFFF',
-              borderRadius: '20px',
-              maxWidth: '440px',
+              maxWidth: '460px',
               width: '100%',
               padding: '28px',
-              boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.25)',
-              border: '1px solid #E2E8F0',
+              borderRadius: '28px',
+              boxShadow: 'var(--sh-card)',
+              border: '1px solid var(--glass-edge)',
               position: 'relative',
               animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
@@ -271,61 +260,51 @@ const CallMeBackWidget = ({ hasSidebar }) => {
             {/* Close button */}
             <button
               onClick={handleClose}
+              className="glass-sm"
               style={{
                 position: 'absolute',
-                top: '16px',
-                right: '16px',
-                background: '#FAF9F6',
-                border: '1px solid #E2E8F0',
+                top: '18px',
+                right: '18px',
                 borderRadius: '50%',
-                width: '32px',
-                height: '32px',
+                width: '36px',
+                height: '36px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                color: '#0F172A',
-                transition: 'all 0.2s',
+                color: 'var(--ink)',
+                border: '1px solid var(--glass-edge)',
               }}
               title="Close"
             >
-              <HiOutlineXMark size={18} />
+              <HiOutlineXMark size={20} />
             </button>
 
             {!requestSent ? (
               <>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
                   <div
-                    style={{
-                      width: '44px',
-                      height: '44px',
-                      borderRadius: '12px',
-                      background: 'rgba(30, 64, 175, 0.12)',
-                      color: '#1E40AF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '1px solid rgba(30, 64, 175, 0.2)',
-                    }}
+                    className="tile tile-blue"
                   >
-                    <HiOutlinePhone size={24} />
+                    <HiOutlinePhone size={22} />
                   </div>
                   <div>
                     <h3
                       style={{
                         margin: 0,
-                        fontSize: '1.18rem',
-                        fontWeight: 800,
-                        color: '#0F172A',
+                        fontSize: '1.2rem',
+                        fontWeight: 700,
+                        color: 'var(--ink)',
+                        fontFamily: 'var(--font-heading)',
                       }}
                     >
                       {t('callMeBack.title', 'Need Instant Help?')}
                     </h3>
                     <p
                       style={{
-                        margin: 0,
-                        fontSize: '0.8rem',
-                        color: '#475569',
+                        margin: '2px 0 0',
+                        fontSize: '0.82rem',
+                        color: 'var(--ink-2)',
                       }}
                     >
                       Enter number &amp; service — specialist will call you back!
@@ -334,36 +313,34 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-                  <div style={{ marginBottom: '14px' }}>
+                  <div style={{ marginBottom: '16px' }}>
                     <label
                       style={{
                         display: 'block',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        color: '#0F172A',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        color: 'var(--ink-2)',
                         marginBottom: '6px',
                       }}
                     >
                       {t('callMeBack.phoneLabel', 'Your Mobile Number')} *
                     </label>
                     <div
+                      className="sunken"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        border: '1.5px solid #E2E8F0',
-                        borderRadius: '12px',
                         overflow: 'hidden',
-                        background: '#FAF9F6',
+                        height: '48px',
                       }}
                     >
                       <span
                         style={{
-                          padding: '10px 14px',
-                          background: '#F1F5F9',
-                          fontSize: '0.85rem',
+                          padding: '0 14px',
+                          fontSize: '0.88rem',
                           fontWeight: 700,
-                          color: '#0F172A',
-                          borderRight: '1px solid #CBD5E1',
+                          color: 'var(--ink)',
+                          borderRight: '1px solid var(--glass-edge)',
                         }}
                       >
                         +91
@@ -375,26 +352,26 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         placeholder="98765 43210"
                         style={{
                           flex: 1,
-                          padding: '10px 12px',
+                          padding: '0 14px',
                           border: 'none',
                           outline: 'none',
                           fontSize: '0.92rem',
                           fontWeight: 600,
                           background: 'transparent',
-                          color: '#0F172A',
+                          color: 'var(--ink)',
                         }}
                         autoFocus
                       />
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: '18px' }}>
                     <label
                       style={{
                         display: 'block',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        color: '#0F172A',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        color: 'var(--ink-2)',
                         marginBottom: '6px',
                       }}
                     >
@@ -403,16 +380,15 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     <select
                       value={serviceType}
                       onChange={(e) => setServiceType(e.target.value)}
+                      className="sunken"
                       style={{
                         width: '100%',
-                        padding: '10px 12px',
-                        border: '1.5px solid #E2E8F0',
-                        borderRadius: '12px',
-                        fontSize: '0.82rem',
+                        height: '48px',
+                        padding: '0 14px',
+                        fontSize: '0.85rem',
                         fontWeight: 600,
                         outline: 'none',
-                        background: '#FAF9F6',
-                        color: '#0F172A',
+                        color: 'var(--ink)',
                       }}
                     >
                       {SERVICE_TYPES.map((s) => (
@@ -421,7 +397,7 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                         </option>
                       ))}
                     </select>
-                    <span style={{ fontSize: '0.72rem', color: '#1E40AF', marginTop: '5px', display: 'block', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--blue)', marginTop: '6px', display: 'block', fontWeight: 500 }}>
                       Notification will be dispatched to <strong>{serviceType}</strong> verified specialists &amp; Admin.
                     </span>
                   </div>
@@ -429,8 +405,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                   {error && (
                     <p
                       style={{
-                        fontSize: '0.8rem',
-                        color: '#dc2626',
+                        fontSize: '0.82rem',
+                        color: 'var(--status-danger-text)',
                         marginBottom: '14px',
                         fontWeight: 600,
                       }}
@@ -442,26 +418,12 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                   <button
                     type="submit"
                     disabled={loading}
+                    className="btn-primary"
                     style={{
                       width: '100%',
-                      padding: '12px',
-                      background: 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '12px',
-                      fontWeight: 800,
-                      fontSize: '0.95rem',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      opacity: loading ? 0.75 : 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      boxShadow: '0 4px 15px rgba(30, 64, 175, 0.35)',
-                      transition: 'all 0.2s',
                     }}
                   >
-                    <HiOutlinePhone />
+                    <HiOutlinePhone size={18} />
                     {loading ? t('common.sending', 'Sending Request...') : 'Request Instant Call Back'}
                   </button>
                 </form>
@@ -473,8 +435,8 @@ const CallMeBackWidget = ({ hasSidebar }) => {
                     justifyContent: 'center',
                     gap: '6px',
                     marginTop: '16px',
-                    fontSize: '0.75rem',
-                    color: '#64748B',
+                    fontSize: '0.78rem',
+                    color: 'var(--ink-3)',
                   }}
                 >
                   <HiOutlineClock />
@@ -485,17 +447,12 @@ const CallMeBackWidget = ({ hasSidebar }) => {
               /* Success Screen */
               <div style={{ textAlign: 'center', padding: '12px 0 6px' }}>
                 <div
+                  className="tile tile-green"
                   style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    background: 'rgba(30, 64, 175, 0.12)',
-                    color: '#1E40AF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '20px',
                     margin: '0 auto 16px',
-                    border: '1.5px solid rgba(30, 64, 175, 0.25)',
                   }}
                 >
                   <HiOutlineCheckCircle size={36} />
@@ -503,9 +460,10 @@ const CallMeBackWidget = ({ hasSidebar }) => {
 
                 <h3
                   style={{
-                    fontSize: '1.25rem',
-                    fontWeight: 800,
-                    color: '#0F172A',
+                    fontSize: '1.3rem',
+                    fontWeight: 700,
+                    color: 'var(--ink)',
+                    fontFamily: 'var(--font-heading)',
                     marginBottom: '8px',
                   }}
                 >
@@ -514,62 +472,49 @@ const CallMeBackWidget = ({ hasSidebar }) => {
 
                 <p
                   style={{
-                    fontSize: '0.85rem',
-                    color: '#475569',
+                    fontSize: '0.88rem',
+                    color: 'var(--ink-2)',
                     lineHeight: 1.5,
                     marginBottom: '16px',
                   }}
                 >
                   Your callback request for <strong>{serviceType}</strong> has been dispatched to online specialists and Admin. A verified specialist will call you on{' '}
-                  <strong style={{ color: '#0F172A' }}>+91 {phone}</strong> shortly.
+                  <strong style={{ color: 'var(--ink)' }}>+91 {phone}</strong> shortly.
                 </p>
 
                 {requestId && (
                   <div
                     style={{
-                      background: '#FAF9F6',
-                      border: '1px solid #E2E8F0',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
+                      background: 'rgba(255, 255, 255, 0.65)',
+                      border: '1px solid var(--glass-edge)',
+                      padding: '8px 18px',
+                      borderRadius: '999px',
                       display: 'inline-block',
-                      fontSize: '0.75rem',
-                      color: '#475569',
+                      fontSize: '0.78rem',
+                      color: 'var(--ink-2)',
                       marginBottom: '20px',
+                      boxShadow: 'var(--sh-small)',
                     }}
                   >
-                    Request ID: <strong style={{ color: '#0F172A' }}>{requestId}</strong>
+                    Request ID: <strong style={{ color: 'var(--ink)' }}>{requestId}</strong>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
                   <button
                     onClick={handleNewRequest}
+                    className="btn-glass"
                     style={{
                       flex: 1,
-                      padding: '10px',
-                      background: '#FAF9F6',
-                      color: '#0F172A',
-                      border: '1px solid #E2E8F0',
-                      borderRadius: '10px',
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
                     }}
                   >
                     New Request
                   </button>
                   <button
                     onClick={handleClose}
+                    className="btn-primary"
                     style={{
                       flex: 1,
-                      padding: '10px',
-                      background: '#1E40AF',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      borderRadius: '10px',
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
                     }}
                   >
                     Done

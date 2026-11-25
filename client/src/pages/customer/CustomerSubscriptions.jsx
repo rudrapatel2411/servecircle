@@ -10,25 +10,25 @@ import './CustomerPages.css';
 
 const plans = [
  {
- key: 'basic', name: 'Basic', price: 'FREE', priceNum: 0, color: '#6b7280',
+ key: 'basic', name: 'Basic', price: 'FREE', priceNum: 0, color: 'var(--ink-2)',
  icon: <HiOutlineCheckCircle />,
  features: ['Browse all services', 'Book any service', 'Standard support', 'Basic worker matching'],
  notIncluded: ['No discounts', 'No priority booking', 'No dedicated manager'],
  },
  {
- key: 'silver', name: 'Silver', price: '₹199', priceNum: 199, color: '#94a3b8',
+ key: 'silver', name: 'Silver', price: '₹199', priceNum: 199, color: 'var(--ink-3)',
  icon: <HiOutlineStar />,
  features: ['Everything in Basic', '10% discount on all bookings', 'Priority booking queue', 'Exclusive coupons monthly', 'Email support'],
  notIncluded: ['No VIP emergency', 'No dedicated manager'],
  },
  {
- key: 'gold', name: 'Gold', price: '₹1499', priceNum: 1499, color: '#f59e0b', popular: true,
+ key: 'gold', name: 'Gold', price: '₹1499', priceNum: 1499, color: 'var(--status-warning-text)', popular: true,
  icon: <HiOutlineRocketLaunch />,
  features: ['Everything in Silver', '20% discount on all bookings', 'Free video consultation (2/month)', 'Smart warranty tracker', 'VIP emergency response (30 min)', 'Priority chat support'],
  notIncluded: ['No dedicated manager'],
  },
  {
- key: 'platinum', name: 'Platinum', price: '₹1999', priceNum: 1999, color: '#8b5cf6',
+ key: 'platinum', name: 'Platinum', price: '₹1999', priceNum: 1999, color: 'var(--accent-violet-text)',
  icon: <HiOutlineShieldCheck />,
  features: ['Everything in Gold', '30% discount on all bookings', 'Dedicated personal manager', 'Unlimited video consultations', 'Free annual home health audit', 'VIP emergency (15 min response)', 'B2B pricing access'],
  notIncluded: [],
@@ -66,14 +66,14 @@ const CustomerSubscriptions = () => {
  {/* Toast Notification */}
  {toastMessage && (
  <div className="sc-toast success">
- <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: '#22c55e' }} />
+ <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: 'var(--status-success-text)' }} />
  <span>{toastMessage}</span>
  </div>
  )}
 
  <div className="page-header">
  <div>
- <h1 className="page-title">{t('customer.subscriptions')} ⭐</h1>
+ <h1 className="page-title">{t('customer.subscriptions')}</h1>
  <p className="page-subtitle">Choose the perfect plan for priority technician dispatches, discounts, and home audits.</p>
  </div>
  </div>
@@ -81,7 +81,7 @@ const CustomerSubscriptions = () => {
  {/* Current Plan Banner */}
  <div className="current-plan-banner" style={{ borderRadius: '16px', padding: '18px 24px' }}>
  <div className="current-plan-info">
- <HiOutlineSparkles style={{ fontSize: '1.4rem', color: '#f59e0b' }} />
+ <HiOutlineSparkles style={{ fontSize: '1.4rem', color: 'var(--status-warning-text)' }} />
  <span>You are currently enjoying the <strong>{currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} Tier</strong> benefits</span>
  </div>
  <span className="current-plan-badge">Active Status</span>
@@ -95,7 +95,7 @@ const CustomerSubscriptions = () => {
  <div
  key={plan.key}
  className={`plan-card ${isCurrent ? 'current' : ''} ${plan.popular ? 'popular' : ''}`}
- style={{ borderRadius: '18px', border: isCurrent ? '2px solid #2563eb' : '1px solid #e2e8f0' }}
+ style={{ borderRadius: '18px', border: isCurrent ? '2px solid var(--blue)' : '1px solid var(--glass-edge)' }}
  >
  {plan.popular && <div className="popular-badge">{t('pricing.popular')}</div>}
  {isCurrent && <div className="current-badge">{t('pricing.currentPlan')}</div>}
@@ -143,23 +143,22 @@ const CustomerSubscriptions = () => {
  display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, padding: '20px'
  }}>
  <div style={{
- background: 'white', borderRadius: '20px', maxWidth: '440px', width: '100%',
- padding: '28px', textAlign: 'center', boxShadow: '0 25px 60px rgba(0,0,0,0.25)', position: 'relative'
+ background: '#FFFFFF', border: '1px solid rgba(22, 70, 214, 0.1)', borderRadius: '26px', boxShadow: 'var(--sh-card)', maxWidth: '440px', width: '100%', padding: '28px', textAlign: 'center', position: 'relative'
  }}>
  <button
  type="button"
  onClick={() => setPendingPlan(null)}
- style={{ position: 'absolute', top: '16px', right: '16px', border: 'none', background: 'none', fontSize: '1.3rem', cursor: 'pointer', color: '#64748b' }}
+ style={{ position: 'absolute', top: '16px', right: '16px', border: 'none', background: 'none', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--ink-3)' }}
  >
  <HiOutlineXMark />
  </button>
- <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.8rem' }}>
+ <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--status-info-tint)', color: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '1.8rem' }}>
  <HiOutlineStar />
  </div>
- <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', marginBottom: '8px' }}>
+ <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--ink)', marginBottom: '8px' }}>
  Upgrade to {pendingPlan.name} Plan
  </h3>
- <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '18px' }}>
+ <p style={{ fontSize: '0.88rem', color: 'var(--ink-3)', marginBottom: '18px' }}>
  Enjoy {pendingPlan.features[1] || 'exclusive discounts'} and priority technician dispatches for <strong>{pendingPlan.price}/month</strong>.
  </p>
  <div style={{ display: 'flex', gap: '10px' }}>

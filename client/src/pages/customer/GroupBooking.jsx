@@ -72,7 +72,7 @@ const GroupBooking = () => {
  <div className="success-row"><HiOutlineSparkles /> <span>Service: {selectedService.name}</span></div>
  <div className="success-row"><HiOutlineCurrencyRupee /> <span>Coordinated Price: ₹{pricePerFlat}/flat (Total: ₹{totalAmount})</span></div>
  <div className="success-row" style={{ color: 'var(--success)', fontWeight: 700 }}><HiOutlineCheckCircle /> <span>Group Savings: ₹{totalSavings} ({discountPercent}% off!)</span></div>
- <div className="success-row" style={{ color: '#2960a0' }}><HiOutlineGlobeAmericas /> <span>Eco-Impact: Saves ~{travelKmSaved}km of worker commuting!</span></div>
+ <div className="success-row" style={{ color: 'var(--blue)' }}><HiOutlineGlobeAmericas /> <span>Eco-Impact: Saves ~{travelKmSaved}km of worker commuting!</span></div>
  </div>
 
  <p className="success-note">Group Request ID: <strong>#SC-GRP-{Math.floor(1000 + Math.random() * 9000)}</strong></p>
@@ -103,7 +103,7 @@ const GroupBooking = () => {
  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
  
  {/* Discount Calculator Card */}
- <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)' }}>
  <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>Interactive Coordinated Group Calculator</h3>
  
  <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
@@ -138,10 +138,10 @@ const GroupBooking = () => {
 
  {/* Calculations display */}
  <div style={{
- background: 'var(--gray-50)',
+ background: 'rgba(255, 255, 255, 0.45)',
  borderRadius: 'var(--radius-lg)',
  padding: '24px',
- border: '1.5px dashed var(--gray-200)'
+ border: '1px dashed var(--glass-edge)'
  }}>
  <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', marginBottom: '12px', fontSize: '0.9rem' }}>
  <span style={{ color: 'var(--gray-500)' }}>Standard Price per Flat:</span>
@@ -158,7 +158,7 @@ const GroupBooking = () => {
  <span style={{ color: 'var(--primary-700)', fontWeight: 800, fontSize: '1.15rem' }}>₹{pricePerFlat}</span>
  </div>
 
- <hr style={{ border: 'none', borderTop: '1px solid var(--gray-200)', margin: '14px 0' }} />
+ <hr style={{ border: 'none', borderTop: '1px solid rgba(22, 70, 214, 0.08)', margin: '14px 0' }} />
 
  <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', marginBottom: '10px' }}>
  <span style={{ fontWeight: 800, color: 'var(--navy-800)' }}>Total Coordinated Cost:</span>
@@ -182,7 +182,7 @@ const GroupBooking = () => {
  background: 'rgba(16,185,129,0.06)',
  border: '1px solid rgba(16,185,129,0.15)',
  borderRadius: 'var(--radius-md)',
- color: '#224c82',
+ color: 'var(--blue-deep)',
  fontSize: '0.8rem'
  }}>
  <HiOutlineGlobeAmericas style={{ fontSize: '1.6rem', flexShrink: 0 }} />
@@ -194,7 +194,7 @@ const GroupBooking = () => {
  </div>
 
  {/* Group booking request form */}
- <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)' }}>
  <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>Request a Group Booking Slots</h3>
 
  {errorMessage && (
@@ -278,10 +278,10 @@ const GroupBooking = () => {
  {/* Right Side: Informational blocks */}
  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
  
- <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)' }}>
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>Progressive Discounts</h3>
  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
- <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', padding: '8px 12px', background: 'white', border: '1px solid var(--gray-100)', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}>
+ <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(255, 255, 255, 0.45)', border: '1px solid rgba(22, 70, 214, 0.08)', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem' }}>
  <span>1 Flat (Solo Booking)</span>
  <span style={{ fontWeight: 700, color: 'var(--gray-500)' }}>Standard pricing</span>
  </div>
@@ -300,7 +300,7 @@ const GroupBooking = () => {
  </div>
  </div>
 
- <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)', background: 'var(--gray-50)' }}>
+ <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)', background: 'var(--gray-50)' }}>
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '12px' }}>How does it work?</h3>
  <ol style={{ paddingLeft: '20px', fontSize: '0.8rem', color: 'var(--gray-600)', display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: 1.5 }}>
  <li><strong>Gather Interest</strong>: Discuss with neighbors in your WhatsApp group or society meet.</li>

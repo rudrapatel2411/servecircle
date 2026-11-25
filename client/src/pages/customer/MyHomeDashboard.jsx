@@ -337,11 +337,11 @@ const MyHomeDashboard = () => {
  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
  if (diffDays < 0) {
- return { label: 'Warranty Expired', color: '#ef4444', isExpiring: false, daysRemaining: 0, expired: true, expireDate: expire.toLocaleDateString('en-IN') };
+ return { label: 'Warranty Expired', color: 'var(--status-danger-text)', isExpiring: false, daysRemaining: 0, expired: true, expireDate: expire.toLocaleDateString('en-IN') };
  } else if (diffDays <= 90) {
- return { label: `Expiring Soon (${diffDays}d)`, color: '#f59e0b', isExpiring: true, daysRemaining: diffDays, expired: false, expireDate: expire.toLocaleDateString('en-IN') };
+ return { label: `Expiring Soon (${diffDays}d)`, color: 'var(--status-warning-text)', isExpiring: true, daysRemaining: diffDays, expired: false, expireDate: expire.toLocaleDateString('en-IN') };
  } else {
- return { label: `Active (${Math.round(diffDays / 30)} mos)`, color: '#16a34a', isExpiring: false, daysRemaining: diffDays, expired: false, expireDate: expire.toLocaleDateString('en-IN') };
+ return { label: `Active (${Math.round(diffDays / 30)} mos)`, color: 'var(--status-success-text)', isExpiring: false, daysRemaining: diffDays, expired: false, expireDate: expire.toLocaleDateString('en-IN') };
  }
  };
 
@@ -720,8 +720,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  key={app.id}
  style={{
  padding: '16px 20px',
- background: 'white',
- border: '1px solid var(--gray-200)',
+ background: 'var(--glass)',
+ border: '1px solid var(--glass-edge)',
  borderRadius: '14px',
  display: 'flex',
  alignItems: 'center',
@@ -737,12 +737,12 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  width: '46px',
  height: '46px',
  borderRadius: '12px',
- background: '#f1f5f9',
+ background: 'var(--bg-page)',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
  fontSize: '1.4rem',
- color: '#2563eb'
+ color: 'var(--blue)'
  }}>
  {app.type === 'AC' ? <HiOutlineBolt /> : 
  app.type === 'TV' ? <HiOutlineTv /> : 
@@ -757,7 +757,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {app.name}
  </h4>
  {wStatus.isExpiring && (
- <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: '4px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+ <span style={{ fontSize: '0.65rem', background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '1px 6px', borderRadius: '4px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
  <HiOutlineExclamationTriangle /> Expiring Soon
  </span>
  )}
@@ -768,7 +768,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </p>
 
  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '6px' }}>
- <span style={{ fontSize: '0.7rem', color: '#0369a1', background: '#e0f2fe', padding: '2px 8px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}>
+ <span style={{ fontSize: '0.7rem', color: 'var(--blue-deep)', background: 'var(--status-info-tint)', padding: '2px 8px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700 }}>
  <HiOutlineDocumentText /> {app.fileName || 'invoice.pdf'}
  </span>
  <span style={{ fontSize: '0.7rem', color: 'var(--gray-400)' }}>
@@ -800,7 +800,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </button>
 
  <button
- style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '1.15rem', padding: '4px' }}
+ style={{ background: 'none', border: 'none', color: 'var(--status-danger-text)', cursor: 'pointer', fontSize: '1.15rem', padding: '4px' }}
  onClick={() => setDeleteCandidate(app)}
  title="Remove Appliance"
  >
@@ -821,7 +821,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  position: 'fixed',
  bottom: '24px',
  right: '24px',
- background: toast.type === 'success' ? '#064e3b' : toast.type === 'warning' ? '#78350f' : '#1e293b',
+ background: toast.type === 'success' ? 'var(--status-success-text)' : toast.type === 'warning' ? 'var(--status-warning-text)' : 'var(--ink)',
  color: 'white',
  padding: '14px 20px',
  borderRadius: '12px',
@@ -830,23 +830,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  display: 'flex',
  alignItems: 'center',
  gap: '12px',
- border: `1px solid ${toast.type === 'success' ? '#059669' : toast.type === 'warning' ? '#d97706' : '#475569'}`,
+ border: `1px solid ${toast.type === 'success' ? 'var(--status-success-text)' : toast.type === 'warning' ? 'var(--status-warning-text)' : 'var(--ink-2)'}`,
  maxWidth: '460px',
  fontSize: '0.9rem',
  animation: 'slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
  }}>
  <div style={{ fontSize: '1.2rem', display: 'flex' }}>
- {toast.type === 'success' ? <HiOutlineCheckCircle style={{ color: '#34d399' }} /> : 
- toast.type === 'warning' ? <HiOutlineExclamationTriangle style={{ color: '#fbbf24' }} /> : 
- <HiOutlineSparkles style={{ color: '#60a5fa' }} />}
+ {toast.type === 'success' ? <HiOutlineCheckCircle style={{ color: 'var(--status-success-soft)' }} /> : 
+ toast.type === 'warning' ? <HiOutlineExclamationTriangle style={{ color: 'var(--status-warning-soft)' }} /> : 
+ <HiOutlineSparkles style={{ color: 'var(--blue-hi)' }} />}
  </div>
  <div style={{ flex: 1, lineHeight: 1.4 }}>{toast.message}</div>
  {toast.actionLabel && toast.onAction && (
  <button
  onClick={() => { toast.onAction(); setToast(null); }}
  style={{
- background: 'white',
- color: '#0f172a',
+ background: 'var(--glass)',
+ color: 'var(--ink)',
  border: 'none',
  padding: '4px 10px',
  borderRadius: '6px',
@@ -860,7 +860,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  )}
  <button
  onClick={() => setToast(null)}
- style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1.1rem', display: 'flex' }}
+ style={{ background: 'none', border: 'none', color: 'var(--ink-3)', cursor: 'pointer', fontSize: '1.1rem', display: 'flex' }}
  >
  <HiOutlineXMark />
  </button>
@@ -877,11 +877,11 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  display: 'inline-flex', 
  alignItems: 'center', 
  gap: '8px', 
- color: 'var(--sc-dark-accent, #1E40AF)', 
+ color: 'var(--sc-dark-accent, var(--blue))', 
  fontWeight: 700, 
  fontSize: '0.85rem', 
  background: 'rgba(226, 232, 240, 0.45)', 
- border: '1px solid var(--sc-surface-secondary, #E2E8F0)', 
+ border: '1px solid var(--sc-surface-secondary, var(--glass-edge))', 
  borderRadius: '20px', 
  padding: '6px 14px', 
  cursor: 'pointer', 
@@ -896,11 +896,11 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
  <div>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
- <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.75rem', fontWeight: 800, padding: '3px 10px', borderRadius: '12px' }}>
+ <span style={{ background: 'var(--status-info-tint)', color: 'var(--blue-deep)', fontSize: '0.75rem', fontWeight: 800, padding: '3px 10px', borderRadius: '12px' }}>
  SMART HOME COCKPIT
  </span>
  {primeInfo?.active && (
- <span style={{ background: '#fef3c7', color: '#b45309', fontSize: '0.75rem', fontWeight: 800, padding: '3px 10px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+ <span style={{ background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', fontSize: '0.75rem', fontWeight: 800, padding: '3px 10px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
  <HiOutlineTrophy /> PRIME MEMBER
  </span>
  )}
@@ -934,7 +934,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {/* Onboarding Guide Card */}
  <div className="card" style={{
  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.07) 0%, rgba(59, 130, 246, 0.04) 100%)',
- border: '1.5px solid #c7d2fe',
+ border: '1.5px solid var(--accent-violet-ring)',
  borderRadius: '16px',
  padding: '18px 24px',
  marginBottom: '24px',
@@ -945,23 +945,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  gap: '16px'
  }}>
  <div style={{ flex: 1, minWidth: '280px' }}>
- <h4 style={{ fontSize: '0.95rem', color: '#3730a3', fontWeight: 800, margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
- <HiOutlineSparkles style={{ color: '#4f46e5' }} /> How Your Smart Home Cockpit Works
+ <h4 style={{ fontSize: '0.95rem', color: 'var(--ink)', fontWeight: 800, margin: '0 0 6px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <HiOutlineSparkles style={{ color: 'var(--accent-violet-text)' }} /> How Your Smart Home Cockpit Works
  </h4>
- <p style={{ fontSize: '0.825rem', color: '#4338ca', margin: 0, lineHeight: 1.4 }}>
+ <p style={{ fontSize: '0.825rem', color: 'var(--ink-2)', margin: 0, lineHeight: 1.4 }}>
  Keep your household protected and boost your Home Health Index in 3 simple steps:
  </p>
  <div style={{ display: 'flex', gap: '20px', marginTop: '10px', flexWrap: 'wrap' }}>
- <div style={{ fontSize: '0.8rem', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '6px' }}>
- <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#4f46e5', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>1</span>
+ <div style={{ fontSize: '0.8rem', color: 'var(--ink)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--accent-violet-text)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>1</span>
  Complete routine safety items
  </div>
- <div style={{ fontSize: '0.8rem', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '6px' }}>
- <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#4f46e5', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>2</span>
+ <div style={{ fontSize: '0.8rem', color: 'var(--ink)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--accent-violet-text)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>2</span>
  Upload bills to auto-scan warranties
  </div>
- <div style={{ fontSize: '0.8rem', color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '6px' }}>
- <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#4f46e5', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>3</span>
+ <div style={{ fontSize: '0.8rem', color: 'var(--ink)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--accent-violet-text)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.7rem' }}>3</span>
  1-click claim repairs & verified doorstep visits
  </div>
  </div>
@@ -971,8 +971,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {/* Active Live Booking Doorstep Banner */}
  {activeBooking && (
  <div className="card animate-fade-in-up" style={{
- background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 100%)',
- border: '1px solid #334155',
+ background: 'linear-gradient(90deg, var(--ink) 0%, var(--ink) 100%)',
+ border: '1px solid var(--ink)',
  borderRadius: '16px',
  padding: '20px 24px',
  marginBottom: '24px',
@@ -984,22 +984,22 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)'
  }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
- <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #3b82f6', color: '#60a5fa', fontSize: '1.6rem' }}>
+ <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--blue)', color: 'var(--blue-hi)', fontSize: '1.6rem' }}>
  <HiOutlineTruck />
  </div>
  <div>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
- <span style={{ background: '#3b82f6', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+ <span style={{ background: 'var(--blue)', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
  Live Doorstep Order
  </span>
- <span style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600 }}>{activeBooking.displayId || `#${activeBooking.id}`}</span>
- <span style={{ color: '#22c55e', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
- <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} /> {activeBooking.status || 'In Progress'}
+ <span style={{ color: 'var(--ink-3)', fontSize: '0.8rem', fontWeight: 600 }}>{activeBooking.displayId || `#${activeBooking.id}`}</span>
+ <span style={{ color: 'var(--status-success-text)', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+ <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--status-success-text)', display: 'inline-block' }} /> {activeBooking.status || 'In Progress'}
  </span>
  </div>
  <h4 style={{ color: 'white', margin: 0, fontSize: '1.15rem', fontWeight: 800 }}>{activeBooking.serviceName}</h4>
- <p style={{ color: '#cbd5e1', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
- Assigned Expert: <strong style={{ color: 'white' }}>{activeBooking.workerName || 'Rajesh Kumar'}</strong> • Doorstep Start OTP: <strong style={{ color: '#38bdf8', letterSpacing: '2px', fontSize: '1.15rem', fontWeight: 900, background: 'rgba(56, 189, 248, 0.15)', padding: '2px 8px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.3)' }}>{activeBooking.startOtp || '4821'}</strong>
+ <p style={{ color: 'var(--glass-edge)', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
+ Assigned Expert: <strong style={{ color: 'white' }}>{activeBooking.workerName || 'Rajesh Kumar'}</strong> • Doorstep Start OTP: <strong style={{ color: 'var(--blue-hi)', letterSpacing: '2px', fontSize: '1.15rem', fontWeight: 900, background: 'rgba(56, 189, 248, 0.15)', padding: '2px 8px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.3)' }}>{activeBooking.startOtp || '4821'}</strong>
  </p>
  </div>
  </div>
@@ -1022,7 +1022,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <Link 
  to={`/customer/live-tracking?bookingId=${encodeURIComponent(activeBooking.id)}&startOtp=${encodeURIComponent(activeBooking.startOtp || '4821')}`}
  className="btn btn-primary" 
- style={{ background: '#2563eb', color: 'white', border: 'none', padding: '8px 18px', fontSize: '0.85rem', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
+ style={{ background: 'var(--blue)', color: 'white', border: 'none', padding: '8px 18px', fontSize: '0.85rem', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)' }}
  >
  Track Partner Live 
  </Link>
@@ -1033,9 +1033,9 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {/* ServeCircle Prime AMC Subscription Banner */}
  <div className="card" style={{
  background: primeInfo?.active 
- ? 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' 
- : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
- border: `1.5px solid ${primeInfo?.active ? '#a7f3d0' : '#fde68a'}`,
+ ? 'linear-gradient(135deg, var(--status-success-tint) 0%, var(--status-success-tint) 100%)' 
+ : 'linear-gradient(135deg, var(--status-warning-tint) 0%, var(--status-warning-tint) 100%)',
+ border: `1.5px solid ${primeInfo?.active ? 'var(--status-success-ring)' : 'var(--status-warning-ring)'}`,
  borderRadius: '16px',
  padding: '18px 24px',
  marginBottom: '24px',
@@ -1046,19 +1046,19 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  gap: '16px'
  }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
- <div style={{ fontSize: '2.2rem', color: primeInfo?.active ? '#059669' : '#d97706', display: 'flex', alignItems: 'center' }}>
+ <div style={{ fontSize: '2.2rem', color: primeInfo?.active ? 'var(--status-success-text)' : 'var(--status-warning-text)', display: 'flex', alignItems: 'center' }}>
  <HiOutlineTrophy />
  </div>
  <div>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
- <h4 style={{ color: primeInfo?.active ? '#065f46' : '#92400e', margin: 0, fontSize: '1.05rem', fontWeight: 900 }}>
+ <h4 style={{ color: 'var(--ink)', margin: 0, fontSize: '1.05rem', fontWeight: 900 }}>
  {primeInfo?.active ? 'ServeCircle Prime™ AMC Active' : 'ServeCircle Prime™ Home AMC Pass'}
  </h4>
- <span style={{ fontSize: '0.7rem', background: primeInfo?.active ? '#059669' : '#d97706', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+ <span style={{ fontSize: '0.7rem', background: primeInfo?.active ? 'var(--status-success-text)' : 'var(--status-warning-text)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
  {primeInfo?.active ? 'COVERED' : 'RECOMMENDED'}
  </span>
  </div>
- <p style={{ color: primeInfo?.active ? '#047857' : '#78350f', margin: '4px 0 0 0', fontSize: '0.85rem', fontWeight: 600 }}>
+ <p style={{ color: 'var(--ink-2)', margin: '4px 0 0 0', fontSize: '0.85rem', fontWeight: 500 }}>
  {primeInfo?.active 
  ? `Plan: ${primeInfo.plan} • Valid until ${primeInfo.expiry} • 2 Free servicing visits & 0% convenience fees.`
  : 'Get 2 Free Appliance Servicing Visits, ₹0 Platform Fees & Priority 30-min Emergency Response for 1 Year.'}
@@ -1070,7 +1070,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  className="btn" 
  onClick={() => setShowPrimeModal(true)}
  style={{ 
- background: primeInfo?.active ? '#059669' : '#f59e0b', 
+ background: primeInfo?.active ? 'var(--status-success-text)' : 'var(--status-warning-text)', 
  color: 'white', 
  border: 'none', 
  padding: '10px 22px', 
@@ -1099,70 +1099,70 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  onClick={() => setShowHealthModal(true)}
  style={{ 
  padding: '28px', 
- borderRadius: '20px',
- border: '1px solid rgba(255,255,255,0.1)', 
+ borderRadius: '26px',
+ border: '1px solid rgba(22, 70, 214, 0.14)', 
  textAlign: 'center', 
- background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', 
- color: 'white', 
+ background: '#FFFFFF', 
+ color: 'var(--ink)', 
  position: 'relative', 
  overflow: 'hidden', 
  cursor: 'pointer',
- boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)'
+ boxShadow: '0 14px 32px -14px rgba(22, 70, 214, 0.25), 0 2px 6px rgba(11, 30, 79, 0.05)'
  }}
  >
- <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '130px', height: '130px', background: 'rgba(255, 255, 255, 0.04)', borderRadius: '50%' }} />
+ <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '130px', height: '130px', background: 'rgba(22, 70, 214, 0.04)', borderRadius: '50%' }} />
  
- <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px' }}>
- <HiOutlineHeart style={{ color: '#f43f5e' }} /> Home Health Index
+ <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--status-danger-tint)', border: '1px solid var(--status-danger-ring)', color: 'var(--status-danger-text)', padding: '4px 14px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px' }}>
+ <HiOutlineHeart style={{ color: 'var(--status-danger-text)' }} /> Home Health Index
  </div>
  
  {/* Circular Gauge */}
  <div style={{ position: 'relative', width: '160px', height: '160px', margin: '0 auto 18px' }}>
  <div style={{
  width: '100%', height: '100%', borderRadius: '50%',
- border: '14px solid rgba(255, 255, 255, 0.1)',
- borderTopColor: currentScore >= 80 ? '#22c55e' : currentScore >= 65 ? '#f59e0b' : '#ef4444',
- borderRightColor: currentScore >= 80 ? '#22c55e' : currentScore >= 65 ? '#f59e0b' : 'rgba(255,255,255,0.1)',
+ border: '14px solid rgba(22, 70, 214, 0.1)',
+ borderTopColor: currentScore >= 80 ? 'var(--status-success-text)' : currentScore >= 65 ? 'var(--status-warning-text)' : 'var(--status-danger-text)',
+ borderRightColor: currentScore >= 80 ? 'var(--status-success-text)' : currentScore >= 65 ? 'var(--status-warning-text)' : 'rgba(22, 70, 214, 0.1)',
  display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
  position: 'relative', transition: 'all 0.6s ease'
  }}>
- <span style={{ fontSize: '3.4rem', fontWeight: 950, lineHeight: 1, fontFamily: 'var(--font-heading)' }}>{currentScore}</span>
- <span style={{ fontSize: '0.8rem', opacity: 0.75, textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginTop: '4px' }}>Out of 100</span>
+ <span style={{ fontSize: '3.4rem', fontWeight: 950, lineHeight: 1, fontFamily: 'var(--font-heading)', color: 'var(--ink)' }}>{currentScore}</span>
+ <span style={{ fontSize: '0.8rem', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginTop: '4px' }}>Out of 100</span>
  </div>
  </div>
 
- <h4 style={{ margin: '0 0 6px 0', fontSize: '1.2rem', fontWeight: 800, color: currentScore >= 80 ? '#4ade80' : currentScore >= 65 ? '#fbbf24' : '#f87171' }}>
+ <h4 style={{ margin: '0 0 6px 0', fontSize: '1.2rem', fontWeight: 800, color: currentScore >= 80 ? 'var(--status-success-text)' : currentScore >= 65 ? 'var(--status-warning-text)' : 'var(--status-danger-text)' }}>
  {currentScore >= 80 ? 'Excellent Protection' : currentScore >= 65 ? 'Good & Stable' : 'Maintenance Overdue'}
  </h4>
 
- <p style={{ fontSize: '0.85rem', lineHeight: 1.5, opacity: 0.85, margin: '0 auto 18px', maxWidth: '320px' }}>
+ <p style={{ fontSize: '0.85rem', lineHeight: 1.5, color: 'var(--ink-2)', margin: '0 auto 18px', maxWidth: '320px' }}>
  {currentScore >= 80 
  ? 'Your property complies with certified electrical, HVAC, and hydraulic safety guidelines.' 
  : 'Tackle upcoming timeline maintenance tasks to achieve 100% safety certification.'}
  </p>
 
- <div style={{ padding: '12px 14px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', fontSize: '0.8rem', textAlign: 'left', border: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '16px' }}>
- <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 800, color: '#fbbf24' }}>
+ <div style={{ padding: '12px 14px', background: 'var(--status-warning-tint)', borderRadius: '14px', fontSize: '0.8rem', textAlign: 'left', border: '1px solid var(--status-warning-ring)', marginBottom: '16px' }}>
+ <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 800, color: 'var(--status-warning-text)' }}>
  <HiOutlineLightBulb /> Quick Score Boosts:
  </span>
- <div style={{ marginTop: '4px', opacity: 0.9, lineHeight: 1.4 }}>
+ <div style={{ marginTop: '4px', color: 'var(--ink)', fontWeight: 500, lineHeight: 1.4 }}>
  Complete AC Servicing (+10 pts) or register new appliances in your digital vault (+4 pts each).
  </div>
  </div>
  
  <button 
- className="btn btn-outline btn-sm" 
+ className="btn btn-primary" 
  onClick={(e) => { e.stopPropagation(); setShowHealthModal(true); }}
- style={{ width: '100%', padding: '10px', fontSize: '0.85rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 700, borderRadius: '10px' }}
+ style={{ width: '100%', padding: '12px', fontSize: '0.85rem', background: 'var(--blue)', border: 'none', color: '#FFFFFF', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 700, borderRadius: '12px', boxShadow: '0 4px 14px rgba(22, 70, 214, 0.3)' }}
  >
  View Detailed Health Audit
  </button>
  </div>
 
  {/* Predictive Seasonal Maintenance Alerts */}
- <div className="card" style={{ padding: '24px', borderRadius: '20px', border: '1px solid var(--gray-200)' }}>
+ <div className="glass card" style={{ padding: '24px', borderRadius: '26px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
- <HiOutlineCloud style={{ color: '#2563eb', fontSize: '1.25rem' }} />
+ <HiOutlineCloud style={{ color: 'var(--blue)', fontSize: '1.25rem' }} />
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, margin: 0 }}>Predictive Seasonal Advisories</h3>
  </div>
  <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: '0 0 16px 0' }}>Proactive maintenance recommended based on local climate and monsoon cycles.</p>
@@ -1170,23 +1170,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
  
  {/* Seasonal Card 1: Monsoon Waterproofing */}
- <div style={{ padding: '16px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+ <div style={{ padding: '16px', background: 'var(--status-info-tint)', border: '1px solid var(--status-info-ring)', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
  <div>
- <span style={{ fontSize: '0.65rem', background: '#0284c7', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase' }}>Monsoon Alert</span>
- <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0369a1', margin: '4px 0 0 0' }}>Monsoon Roof & External Leak Proofing</h4>
+ <span style={{ fontSize: '0.65rem', background: 'var(--blue)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase' }}>Monsoon Alert</span>
+ <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--ink)', margin: '4px 0 0 0' }}>Monsoon Roof & External Leak Proofing</h4>
  </div>
- <span style={{ fontSize: '1.4rem', color: '#0284c7' }}><HiOutlineCloud /></span>
+ <span style={{ fontSize: '1.4rem', color: 'var(--blue)' }}><HiOutlineCloud /></span>
  </div>
- <p style={{ fontSize: '0.775rem', color: '#075985', margin: 0, lineHeight: 1.4 }}>
+ <p style={{ fontSize: '0.775rem', color: 'var(--ink-2)', margin: 0, lineHeight: 1.4 }}>
  Prevent AC water dripping and wall dampness. Includes structural check of external compressor bracket and balcony drain seals.
  </p>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
- <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0369a1' }}>Starting @ ₹1,299</span>
+ <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--ink)' }}>Starting @ ₹1,299</span>
  <Link 
  to="/customer/book?service=Monsoon%20Leak%20Proofing&serviceId=waterproofing&category=home-repairs" 
  className="btn btn-sm" 
- style={{ background: '#0284c7', color: 'white', textDecoration: 'none', padding: '6px 14px', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px' }}
+ style={{ background: 'var(--blue)', color: 'white', textDecoration: 'none', padding: '6px 14px', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px' }}
  >
  Book Monsoon Prep
  </Link>
@@ -1194,23 +1194,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Seasonal Card 2: Water Tank Sanitization */}
- <div style={{ padding: '16px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+ <div style={{ padding: '16px', background: 'var(--status-warning-tint)', border: '1px solid var(--status-warning-ring)', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
  <div>
- <span style={{ fontSize: '0.65rem', background: '#d97706', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase' }}>Hydraulic Hygiene</span>
- <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#92400e', margin: '4px 0 0 0' }}>Overhead Water Tank Sanitization</h4>
+ <span style={{ fontSize: '0.65rem', background: 'var(--status-warning-text)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase' }}>Hydraulic Hygiene</span>
+ <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--ink)', margin: '4px 0 0 0' }}>Overhead Water Tank Sanitization</h4>
  </div>
- <span style={{ fontSize: '1.4rem', color: '#d97706' }}><HiOutlineSparkles /></span>
+ <span style={{ fontSize: '1.4rem', color: 'var(--status-warning-text)' }}><HiOutlineSparkles /></span>
  </div>
- <p style={{ fontSize: '0.775rem', color: '#78350f', margin: 0, lineHeight: 1.4 }}>
+ <p style={{ fontSize: '0.775rem', color: 'var(--ink-2)', margin: 0, lineHeight: 1.4 }}>
  Regular tank cleaning every 6 months prevents algae build-up and bacterial growth. 4-step UV sterilize process.
  </p>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
- <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#92400e' }}>Starting @ ₹799</span>
+ <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--ink)' }}>Starting @ ₹799</span>
  <Link 
  to="/customer/book?service=Water%20Tank%20Sanitization&serviceId=water-tank-clean&category=cleaning" 
  className="btn btn-sm" 
- style={{ background: '#d97706', color: 'white', textDecoration: 'none', padding: '6px 14px', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px' }}
+ style={{ background: 'var(--status-warning-text)', color: 'white', textDecoration: 'none', padding: '6px 14px', fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px' }}
  >
  Schedule Cleaning
  </Link>
@@ -1221,30 +1221,30 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Smart Utility & Energy Health Monitor */}
- <div className="card" style={{ padding: '24px', borderRadius: '20px', border: '1px solid var(--gray-200)' }}>
+ <div className="glass card" style={{ padding: '24px', borderRadius: '26px' }}>
  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
- <HiOutlineBolt style={{ color: '#eab308', fontSize: '1.3rem' }} />
+ <HiOutlineBolt style={{ color: 'var(--status-warning-soft)', fontSize: '1.3rem' }} />
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, margin: 0 }}>Smart Energy & Power Draw</h3>
  </div>
- <span style={{ fontSize: '0.7rem', background: '#ecfdf5', color: '#059669', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+ <span style={{ fontSize: '0.7rem', background: 'var(--status-success-tint)', color: 'var(--status-success-text)', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
  ECO STABLE
  </span>
  </div>
  <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', margin: '0 0 16px 0' }}>Estimated real-time power consumption of your registered smart appliances.</p>
 
- <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '14px' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '14px 16px', borderRadius: '12px', border: '1px solid var(--glass-edge)', marginBottom: '14px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
  <span style={{ fontSize: '0.8rem', color: 'var(--gray-600)', fontWeight: 600 }}>Estimated Power Draw</span>
  <strong style={{ fontSize: '0.95rem', color: 'var(--navy-900)' }}>~8.4 kWh / day</strong>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <span style={{ fontSize: '0.8rem', color: 'var(--gray-600)', fontWeight: 600 }}>Est. Monthly Cost</span>
- <strong style={{ fontSize: '0.95rem', color: '#059669' }}>₹1,640 / month</strong>
+ <strong style={{ fontSize: '0.95rem', color: 'var(--status-success-text)' }}>₹1,640 / month</strong>
  </div>
  </div>
 
- <div style={{ fontSize: '0.775rem', color: 'var(--gray-600)', background: '#fffbeb', border: '1px solid #fde68a', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', lineHeight: 1.4 }}>
+ <div style={{ fontSize: '0.775rem', color: 'var(--gray-600)', background: 'var(--status-warning-tint)', border: '1px solid var(--status-warning-ring)', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', lineHeight: 1.4 }}>
  <strong>Eco Tip:</strong> Servicing your Daikin AC filter this month reduces compressor load by ~18% and saves ~₹320 on electricity.
  </div>
 
@@ -1265,7 +1265,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
  
  {/* Card 1: Interactive Maintenance Timeline */}
- <div className="card" style={{ padding: '28px', borderRadius: '20px', border: '1px solid var(--gray-200)' }}>
+ <div className="glass card" style={{ padding: '28px', borderRadius: '26px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
  <div>
  <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, margin: 0 }}>Interactive Maintenance Timeline</h3>
@@ -1313,16 +1313,16 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  let circleColor = 'var(--gray-300)';
 
  if (item.completed) {
- badgeColor = '#16a34a';
- badgeBg = '#dcfce7';
- circleColor = '#22c55e';
+ badgeColor = 'var(--status-success-text)';
+ badgeBg = 'var(--status-success-tint)';
+ circleColor = 'var(--status-success-text)';
  } else if (item.urgency === 'warning') {
- badgeColor = '#d97706';
- badgeBg = '#fef3c7';
- circleColor = '#fbbf24';
+ badgeColor = 'var(--status-warning-text)';
+ badgeBg = 'var(--status-warning-tint)';
+ circleColor = 'var(--status-warning-soft)';
  } else {
  badgeColor = 'var(--primary-700)';
- badgeBg = '#e0f2fe';
+ badgeBg = 'var(--status-info-tint)';
  circleColor = 'var(--primary-400)';
  }
 
@@ -1340,8 +1340,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  width: '20px',
  height: '20px',
  borderRadius: '50%',
- background: item.completed ? '#22c55e' : 'white',
- border: `3px solid ${item.completed ? '#22c55e' : circleColor}`,
+ background: item.completed ? 'var(--status-success-text)' : 'white',
+ border: `3px solid ${item.completed ? 'var(--status-success-text)' : circleColor}`,
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -1378,7 +1378,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {item.dueDate}
  </span>
  <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
- Est. {item.costEstimate} • Health Boost: <strong style={{ color: '#059669' }}>+{item.points} pts</strong>
+ Est. {item.costEstimate} • Health Boost: <strong style={{ color: 'var(--status-success-text)' }}>+{item.points} pts</strong>
  </span>
  </div>
  </div>
@@ -1406,7 +1406,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </button>
  </div>
  ) : (
- <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#16a34a', fontSize: '0.825rem', fontWeight: 800 }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--status-success-text)', fontSize: '0.825rem', fontWeight: 800 }}>
  <HiOutlineCheckCircle style={{ fontSize: '1.1rem' }} /> Verified Safe ({item.completedDate || 'Recent'})
  </div>
  )}
@@ -1415,8 +1415,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {/* Inline Quick Schedule Module */}
  {bookingItem?.id === item.id && (
  <div style={{
- background: '#f8fafc',
- border: '1.5px solid #93c5fd',
+ background: 'var(--bg-page)',
+ border: '1.5px solid var(--blue-hi)',
  borderRadius: '14px',
  padding: '16px',
  marginTop: '12px',
@@ -1427,7 +1427,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <h5 style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--navy-800)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
  <HiOutlineCalendarDays style={{ color: 'var(--primary-600)' }} /> Schedule Doorstep Visit: {item.title}
  </h5>
- <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800 }}>Fee: {item.costEstimate}</span>
+ <span style={{ fontSize: '0.75rem', color: 'var(--blue)', fontWeight: 800 }}>Fee: {item.costEstimate}</span>
  </div>
 
  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
@@ -1460,7 +1460,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
  <Link 
  to={item.targetPath} 
- style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700, textDecoration: 'underline', marginRight: 'auto' }}
+ style={{ fontSize: '0.75rem', color: 'var(--blue)', fontWeight: 700, textDecoration: 'underline', marginRight: 'auto' }}
  >
  Or open full customization flow →
  </Link>
@@ -1469,7 +1469,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </button>
  <button 
  className="btn btn-primary btn-sm" 
- style={{ padding: '6px 16px', fontSize: '0.75rem', fontWeight: 800, background: '#2563eb' }} 
+ style={{ padding: '6px 16px', fontSize: '0.75rem', fontWeight: 800, background: 'var(--blue)' }} 
  onClick={() => handleConfirmInlineBooking(item)}
  >
  Confirm Booking
@@ -1485,14 +1485,14 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Card 2: Digital Appliance Warranty Vault */}
- <div className="card" style={{ padding: '28px', borderRadius: '20px', border: '1px solid var(--gray-200)' }}>
+ <div className="glass card" style={{ padding: '28px', borderRadius: '26px' }}>
  
  {/* Header & Controls */}
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '20px' }}>
  <div>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
  <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, margin: 0 }}>Digital Appliance Warranty Vault</h3>
- <span style={{ fontSize: '0.7rem', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+ <span style={{ fontSize: '0.7rem', background: 'var(--status-info-tint)', color: 'var(--blue-deep)', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
  {appliances.length} Devices
  </span>
  </div>
@@ -1515,11 +1515,11 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <form
  onSubmit={handleRegisterAppliance}
  style={{
- background: '#f8fafc',
+ background: 'var(--bg-page)',
  padding: '24px',
  borderRadius: '16px',
  marginBottom: '24px',
- border: '1.5px solid #cbd5e1',
+ border: '1.5px solid var(--glass-edge)',
  transition: 'all 0.3s ease'
  }}
  >
@@ -1531,7 +1531,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
  
  {formError && (
- <div style={{ background: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '14px', fontWeight: 600 }}>
+ <div style={{ background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', border: '1px solid var(--status-danger-soft)', padding: '10px 14px', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '14px', fontWeight: 600 }}>
  {formError}
  </div>
  )}
@@ -1540,7 +1540,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  {isScanning ? (
  <div style={{
  background: 'rgba(99, 102, 241, 0.06)',
- border: '2px dashed #818cf8',
+ border: '2px dashed var(--accent-violet-soft)',
  borderRadius: '14px',
  padding: '32px 20px',
  textAlign: 'center',
@@ -1548,22 +1548,22 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  position: 'relative',
  overflow: 'hidden'
  }}>
- <HiOutlineSparkles style={{ fontSize: '2.5rem', color: '#4f46e5', margin: '0 auto', display: 'block' }} />
- <h5 style={{ fontWeight: 800, color: '#3730a3', fontSize: '1rem', marginTop: '12px', marginBottom: '4px' }}>
+ <HiOutlineSparkles style={{ fontSize: '2.5rem', color: 'var(--accent-violet-text)', margin: '0 auto', display: 'block' }} />
+ <h5 style={{ fontWeight: 800, color: 'var(--accent-violet-text)', fontSize: '1rem', marginTop: '12px', marginBottom: '4px' }}>
  AI Smart Receipt Scan Active
  </h5>
- <p style={{ fontSize: '0.85rem', color: '#4338ca', margin: 0, fontWeight: 700 }}>{scanStage}</p>
+ <p style={{ fontSize: '0.85rem', color: 'var(--accent-violet-text)', margin: 0, fontWeight: 700 }}>{scanStage}</p>
  <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)', display: 'block', marginTop: '10px' }}>Extracting metadata, serial number, and warranty terms...</span>
  </div>
  ) : (
  <>
  {/* Invoice Upload Box */}
- <div style={{ background: 'white', padding: '24px', borderRadius: '14px', border: '2px dashed #93c5fd', textAlign: 'center', marginBottom: '16px' }}>
+ <div style={{ background: 'rgba(255, 255, 255, 0.45)', padding: '24px', borderRadius: '20px', border: '2px dashed var(--blue-hi)', textAlign: 'center', marginBottom: '16px' }}>
  <input type="file" id="invoice-upload" style={{ display: 'none' }} accept=".pdf,.png,.jpg,.jpeg" onChange={handleFileUpload} />
  <label htmlFor="invoice-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
- <HiOutlineArrowUpOnSquare style={{ fontSize: '2.4rem', color: '#2563eb' }} />
+ <HiOutlineArrowUpOnSquare style={{ fontSize: '2.4rem', color: 'var(--blue)' }} />
  <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--navy-800)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
- {uploadedFile ? `Attached: ${uploadedFile}` : <><HiOutlineCamera style={{ color: '#2563eb' }} /> Scan Invoice Bill / Guarantee Card</>}
+ {uploadedFile ? `Attached: ${uploadedFile}` : <><HiOutlineCamera style={{ color: 'var(--blue)' }} /> Scan Invoice Bill / Guarantee Card</>}
  </span>
  <span style={{ fontSize: '0.8rem', color: 'var(--gray-500)', maxWidth: '320px', lineHeight: 1.4 }}>
  Upload your bill. Our AI will automatically parse the brand, serial number, and warranty terms instantly!
@@ -1572,8 +1572,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
 
  {uploadProgress > 0 && uploadProgress < 100 && (
  <div style={{ marginTop: '14px', maxWidth: '300px', margin: '14px auto 0' }}>
- <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
- <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#2563eb', transition: 'width 0.15s ease' }} />
+ <div style={{ width: '100%', height: '6px', background: 'var(--glass-edge)', borderRadius: '3px', overflow: 'hidden' }}>
+ <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'var(--blue)', transition: 'width 0.15s ease' }} />
  </div>
  <span style={{ fontSize: '0.75rem', color: 'var(--gray-500)', marginTop: '4px', display: 'inline-block' }}>Uploading: {uploadProgress}%</span>
  </div>
@@ -1585,7 +1585,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <button
  type="button"
  onClick={() => setShowManualFields(!showManualFields)}
- style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '0.825rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
+ style={{ background: 'none', border: 'none', color: 'var(--blue)', fontSize: '0.825rem', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
  >
  {showManualFields ? 'Hide manual details form' : 'Or fill appliance details manually'}
  </button>
@@ -1593,7 +1593,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
 
  {/* Collapsible Fields */}
  {showManualFields && (
- <div className="animate-fade-in" style={{ background: 'white', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+ <div className="animate-fade-in" style={{ background: 'rgba(255, 255, 255, 0.45)', padding: '16px', borderRadius: '18px', border: '1px solid var(--glass-edge)', marginBottom: '16px' }}>
  <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px', marginBottom: '14px' }}>
  <div className="input-group" style={{ marginBottom: 0 }}>
  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-800)' }}>Appliance Name *</label>
@@ -1651,7 +1651,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowAddForm(false)}>
  Cancel
  </button>
- <button type="submit" className="btn btn-primary btn-sm" style={{ padding: '8px 20px', fontWeight: 800, background: '#2563eb' }}>
+ <button type="submit" className="btn btn-primary btn-sm" style={{ padding: '8px 20px', fontWeight: 800, background: 'var(--blue)' }}>
  Save to Digital Vault
  </button>
  </div>
@@ -1690,7 +1690,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* View Mode Toggle */}
- <div style={{ display: 'flex', background: '#f1f5f9', padding: '2px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+ <div style={{ display: 'flex', background: 'var(--bg-page)', padding: '2px', borderRadius: '8px', border: '1px solid var(--glass-edge)' }}>
  <button
  onClick={() => setApplianceViewMode('LIST')}
  style={{
@@ -1701,7 +1701,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  fontWeight: 800,
  cursor: 'pointer',
  background: applianceViewMode === 'LIST' ? 'white' : 'transparent',
- color: applianceViewMode === 'LIST' ? '#0f172a' : '#64748b',
+ color: applianceViewMode === 'LIST' ? 'var(--ink)' : 'var(--ink-3)',
  boxShadow: applianceViewMode === 'LIST' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
  }}
  >
@@ -1717,7 +1717,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  fontWeight: 800,
  cursor: 'pointer',
  background: applianceViewMode === 'ROOM' ? 'white' : 'transparent',
- color: applianceViewMode === 'ROOM' ? '#0f172a' : '#64748b',
+ color: applianceViewMode === 'ROOM' ? 'var(--ink)' : 'var(--ink-3)',
  boxShadow: applianceViewMode === 'ROOM' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
  }}
  >
@@ -1734,7 +1734,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  placeholder="Search appliance / brand..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- style={{ width: '100%', padding: '6px 12px 6px 32px', borderRadius: '20px', border: '1px solid var(--gray-300)', fontSize: '0.8rem', outline: 'none' }}
+ style={{ width: '100%', padding: '6px 12px 6px 32px', borderRadius: '20px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem', outline: 'none' }}
  />
  </div>
 
@@ -1751,10 +1751,10 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  ) : applianceViewMode === 'ROOM' ? (
  Object.entries(roomGroups).map(([roomName, roomApps]) => (
  <div key={roomName} style={{ marginBottom: '14px' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', padding: '6px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
- <HiOutlineHome style={{ color: '#2563eb' }} />
+ <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', padding: '6px 12px', background: 'var(--bg-page)', borderRadius: '10px', border: '1px solid var(--glass-edge)' }}>
+ <HiOutlineHome style={{ color: 'var(--blue)' }} />
  <span style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--navy-900)' }}>{roomName}</span>
- <span style={{ fontSize: '0.7rem', color: 'var(--gray-500)', background: 'white', padding: '1px 8px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+ <span style={{ fontSize: '0.7rem', color: 'var(--gray-500)', background: 'var(--glass)', padding: '1px 8px', borderRadius: '10px', border: '1px solid var(--glass-edge)' }}>
  {roomApps.length} {roomApps.length === 1 ? 'Device' : 'Devices'}
  </span>
  </div>
@@ -1781,30 +1781,30 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{
  position: 'fixed',
  top: 0, left: 0, width: '100vw', height: '100vh',
- background: 'rgba(15, 23, 42, 0.6)',
- backdropFilter: 'blur(8px)',
+ background: 'rgba(11, 30, 79, 0.55)',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  zIndex: 99999, padding: '20px'
  }} onClick={() => setShowHealthModal(false)}>
  <div style={{
- background: 'white',
- borderRadius: '20px',
+ background: '#FFFFFF',
+ borderRadius: '24px',
  width: '100%', maxWidth: '620px',
  padding: '32px',
  position: 'relative',
  maxHeight: '90vh', overflowY: 'auto',
- boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35), 0 4px 12px rgba(11, 30, 79, 0.1)',
+ border: '1px solid rgba(22, 70, 214, 0.1)'
  }} onClick={(e) => e.stopPropagation()}>
  
  <button 
  onClick={() => setShowHealthModal(false)}
- style={{ position: 'absolute', top: '20px', right: '20px', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+ style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--bg-page)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
  >
  
  </button>
 
  <div style={{ textAlign: 'center', marginBottom: '24px' }}>
- <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#fee2e2', color: '#e11d48', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', fontSize: '1.8rem' }}>
+ <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', fontSize: '1.8rem' }}>
  <HiOutlineHeart />
  </div>
  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--navy-900)', margin: 0 }}>
@@ -1816,15 +1816,15 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Score Bar */}
- <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '14px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '18px', borderRadius: '14px', border: '1px solid var(--glass-edge)', marginBottom: '24px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
  <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)' }}>Overall Safety Compliance</span>
- <span style={{ fontSize: '1.25rem', fontWeight: 950, color: currentScore >= 80 ? '#16a34a' : currentScore >= 65 ? '#d97706' : '#dc2626' }}>
+ <span style={{ fontSize: '1.25rem', fontWeight: 950, color: currentScore >= 80 ? 'var(--status-success-text)' : currentScore >= 65 ? 'var(--status-warning-text)' : 'var(--status-danger-text)' }}>
  {currentScore} %
  </span>
  </div>
- <div style={{ width: '100%', height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
- <div style={{ width: `${currentScore}%`, height: '100%', background: currentScore >= 80 ? '#16a34a' : currentScore >= 65 ? '#d97706' : '#dc2626', transition: 'width 0.5s ease' }} />
+ <div style={{ width: '100%', height: '10px', background: 'var(--glass-edge)', borderRadius: '5px', overflow: 'hidden' }}>
+ <div style={{ width: `${currentScore}%`, height: '100%', background: currentScore >= 80 ? 'var(--status-success-text)' : currentScore >= 65 ? 'var(--status-warning-text)' : 'var(--status-danger-text)', transition: 'width 0.5s ease' }} />
  </div>
  </div>
 
@@ -1834,47 +1834,47 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  Safety Pillars Breakdown
  </h4>
 
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--bg-page)', paddingBottom: '10px' }}>
  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--navy-800)', fontWeight: 600 }}>
- <HiOutlineBolt style={{ color: '#2563eb' }} /> HVAC & Air Filtration
+ <HiOutlineBolt style={{ color: 'var(--blue)' }} /> HVAC & Air Filtration
  </span>
- <strong style={{ color: timelineItems.find(i => i.id === 1)?.completed ? '#16a34a' : '#d97706' }}>
+ <strong style={{ color: timelineItems.find(i => i.id === 1)?.completed ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
  {timelineItems.find(i => i.id === 1)?.completed ? ' Safe & Clean' : 'Servicing Due'}
  </strong>
  </div>
 
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--bg-page)', paddingBottom: '10px' }}>
  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--navy-800)', fontWeight: 600 }}>
- <HiOutlineSparkles style={{ color: '#0ea5e9' }} /> Water Hydraulics & Tanks
+ <HiOutlineSparkles style={{ color: 'var(--blue-hi)' }} /> Water Hydraulics & Tanks
  </span>
- <strong style={{ color: timelineItems.find(i => i.id === 2)?.completed ? '#16a34a' : '#d97706' }}>
+ <strong style={{ color: timelineItems.find(i => i.id === 2)?.completed ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
  {timelineItems.find(i => i.id === 2)?.completed ? ' Sanitized' : 'Cleaning Overdue'}
  </strong>
  </div>
 
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--bg-page)', paddingBottom: '10px' }}>
  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--navy-800)', fontWeight: 600 }}>
- <HiOutlineBolt style={{ color: '#f59e0b' }} /> Electrical & Earthing Safety
+ <HiOutlineBolt style={{ color: 'var(--status-warning-text)' }} /> Electrical & Earthing Safety
  </span>
- <strong style={{ color: timelineItems.find(i => i.id === 3)?.completed ? '#16a34a' : '#d97706' }}>
+ <strong style={{ color: timelineItems.find(i => i.id === 3)?.completed ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
  {timelineItems.find(i => i.id === 3)?.completed ? ' Certified Inspected' : 'Inspection Required'}
  </strong>
  </div>
 
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--bg-page)', paddingBottom: '10px' }}>
  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--navy-800)', fontWeight: 600 }}>
- <HiOutlineShieldCheck style={{ color: '#10b981' }} /> Pest & Hygiene Barrier
+ <HiOutlineShieldCheck style={{ color: 'var(--status-success-text)' }} /> Pest & Hygiene Barrier
  </span>
- <strong style={{ color: timelineItems.find(i => i.id === 4)?.completed ? '#16a34a' : '#d97706' }}>
+ <strong style={{ color: timelineItems.find(i => i.id === 4)?.completed ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
  {timelineItems.find(i => i.id === 4)?.completed ? ' Shield Active' : 'Treatment Due'}
  </strong>
  </div>
 
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid var(--bg-page)', paddingBottom: '10px' }}>
  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--navy-800)', fontWeight: 600 }}>
- <HiOutlineCube style={{ color: '#8b5cf6' }} /> Digital Warranty Protection
+ <HiOutlineCube style={{ color: 'var(--accent-violet-text)' }} /> Digital Warranty Protection
  </span>
- <strong style={{ color: appliances.length >= 3 ? '#16a34a' : '#d97706' }}>
+ <strong style={{ color: appliances.length >= 3 ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>
  {appliances.length} Registered Devices
  </strong>
  </div>
@@ -1884,7 +1884,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
  <button
  className="btn btn-primary"
- style={{ width: '100%', padding: '12px', fontWeight: 800, background: '#2563eb' }}
+ style={{ width: '100%', padding: '12px', fontWeight: 800, background: 'var(--blue)' }}
  onClick={() => {
  setShowHealthModal(false);
  navigate('/customer/book?service=Complete%20Home%20Safety%20Audit&serviceId=electrical-safety&category=home-repairs');
@@ -1913,33 +1913,33 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{
  position: 'fixed',
  top: 0, left: 0, width: '100vw', height: '100vh',
- background: 'rgba(15, 23, 42, 0.6)',
- backdropFilter: 'blur(8px)',
+ background: 'rgba(11, 30, 79, 0.55)',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  zIndex: 99999, padding: '20px'
  }} onClick={() => setSelectedWarrantyAppliance(null)}>
  <div style={{
- background: 'white',
+ background: '#FFFFFF',
  borderRadius: '20px',
  width: '100%', maxWidth: '540px',
  padding: '28px',
  position: 'relative',
- boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+ border: '1px solid rgba(22, 70, 214, 0.1)',
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35)'
  }} onClick={(e) => e.stopPropagation()}>
  
  <button 
  onClick={() => setSelectedWarrantyAppliance(null)}
- style={{ position: 'absolute', top: '18px', right: '18px', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+ style={{ position: 'absolute', top: '18px', right: '18px', background: 'var(--bg-page)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
  >
  <HiOutlineXMark />
  </button>
 
  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
- <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#e0f2fe', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
+ <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--status-info-tint)', color: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
  <HiOutlineShieldCheck />
  </div>
  <div>
- <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+ <span style={{ fontSize: '0.7rem', background: 'var(--status-success-tint)', color: 'var(--status-success-text)', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
  SERVECIRCLE VERIFIED WARRANTY
  </span>
  <h3 style={{ margin: '2px 0 0 0', fontSize: '1.2rem', fontWeight: 900, color: 'var(--navy-900)' }}>
@@ -1949,7 +1949,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Spec Sheet */}
- <div style={{ background: '#f8fafc', padding: '18px', borderRadius: '14px', border: '1px solid #e2e8f0', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '18px', borderRadius: '14px', border: '1px solid var(--glass-edge)', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <span style={{ color: 'var(--gray-500)' }}>Brand & Manufacturer:</span>
  <strong style={{ color: 'var(--navy-800)' }}>{selectedWarrantyAppliance.brand}</strong>
@@ -1960,7 +1960,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <span style={{ color: 'var(--gray-500)' }}>Serial Number:</span>
- <code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 700 }}>
+ <code style={{ background: 'var(--glass-edge)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 700 }}>
  {selectedWarrantyAppliance.serialNumber}
  </code>
  </div>
@@ -1970,11 +1970,11 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <span style={{ color: 'var(--gray-500)' }}>Warranty Expiry:</span>
- <strong style={{ color: '#16a34a' }}>{getWarrantyStatus(selectedWarrantyAppliance).expireDate}</strong>
+ <strong style={{ color: 'var(--status-success-text)' }}>{getWarrantyStatus(selectedWarrantyAppliance).expireDate}</strong>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <span style={{ color: 'var(--gray-500)' }}>Attached Invoice:</span>
- <span style={{ color: '#2563eb', fontWeight: 700 }}>{selectedWarrantyAppliance.fileName}</span>
+ <span style={{ color: 'var(--blue)', fontWeight: 700 }}>{selectedWarrantyAppliance.fileName}</span>
  </div>
  </div>
 
@@ -1988,7 +1988,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </button>
  <button
  className="btn btn-primary"
- style={{ flex: 1, padding: '10px', fontWeight: 800, fontSize: '0.85rem', background: '#2563eb' }}
+ style={{ flex: 1, padding: '10px', fontWeight: 800, fontSize: '0.85rem', background: 'var(--blue)' }}
  onClick={() => {
  setSelectedWarrantyAppliance(null);
  navigate(`/customer/book?service=${encodeURIComponent(selectedWarrantyAppliance.name + ' Servicing')}&appliance=${encodeURIComponent(selectedWarrantyAppliance.name)}&warrantyClaim=true`);
@@ -2009,29 +2009,29 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{
  position: 'fixed',
  top: 0, left: 0, width: '100vw', height: '100vh',
- background: 'rgba(15, 23, 42, 0.65)',
- backdropFilter: 'blur(8px)',
+ background: 'rgba(11, 30, 79, 0.55)',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  zIndex: 99999, padding: '20px'
  }} onClick={() => setShowPrimeModal(false)}>
  <div style={{
- background: 'white',
+ background: '#FFFFFF',
  borderRadius: '24px',
  width: '100%', maxWidth: '580px',
  padding: '32px',
  position: 'relative',
- boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35), 0 4px 12px rgba(11, 30, 79, 0.1)',
+ border: '1px solid rgba(22, 70, 214, 0.1)'
  }} onClick={(e) => e.stopPropagation()}>
  
  <button 
  onClick={() => setShowPrimeModal(false)}
- style={{ position: 'absolute', top: '18px', right: '18px', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+ style={{ position: 'absolute', top: '18px', right: '18px', background: 'var(--bg-page)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
  >
  <HiOutlineXMark />
  </button>
 
  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
- <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', fontSize: '2rem' }}>
+ <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', fontSize: '2rem' }}>
  <HiOutlineTrophy />
  </div>
  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--navy-900)', margin: 0 }}>
@@ -2043,21 +2043,21 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Perks List */}
- <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '16px', padding: '18px', marginBottom: '22px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: '#78350f' }}>
- <HiOutlineCheckCircle style={{ color: '#d97706', fontSize: '1.25rem', flexShrink: 0 }} />
+ <div style={{ background: 'var(--status-warning-tint)', border: '1px solid var(--status-warning-ring)', borderRadius: '16px', padding: '18px', marginBottom: '22px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: 'var(--ink)' }}>
+ <HiOutlineCheckCircle style={{ color: 'var(--status-warning-text)', fontSize: '1.25rem', flexShrink: 0 }} />
  <span><strong>2 Free Routine Servicing Visits</strong> every year for AC, Fridge, or Washing Machine.</span>
  </div>
- <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: '#78350f' }}>
- <HiOutlineCheckCircle style={{ color: '#d97706', fontSize: '1.25rem', flexShrink: 0 }} />
+ <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: 'var(--ink)' }}>
+ <HiOutlineCheckCircle style={{ color: 'var(--status-warning-text)', fontSize: '1.25rem', flexShrink: 0 }} />
  <span><strong>₹0 Platform & Convenience Fees</strong> on all emergency, electrical, and plumbing repairs.</span>
  </div>
- <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: '#78350f' }}>
- <HiOutlineCheckCircle style={{ color: '#d97706', fontSize: '1.25rem', flexShrink: 0 }} />
+ <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: 'var(--ink)' }}>
+ <HiOutlineCheckCircle style={{ color: 'var(--status-warning-text)', fontSize: '1.25rem', flexShrink: 0 }} />
  <span><strong>Priority 30-Minute Dispatch Guarantee</strong> with top-rated verified master technicians.</span>
  </div>
- <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: '#78350f' }}>
- <HiOutlineCheckCircle style={{ color: '#d97706', fontSize: '1.25rem', flexShrink: 0 }} />
+ <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.875rem', color: 'var(--ink)' }}>
+ <HiOutlineCheckCircle style={{ color: 'var(--status-warning-text)', fontSize: '1.25rem', flexShrink: 0 }} />
  <span><strong>Flat 15% Savings</strong> on genuine spare parts, capacitors, and refrigerant refills.</span>
  </div>
  </div>
@@ -2067,19 +2067,19 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div 
  onClick={() => handleActivatePrime('1-Year Prime Pass', 999)}
  style={{
- border: '2px solid #f59e0b',
+ border: '2px solid var(--status-warning-text)',
  borderRadius: '14px',
  padding: '16px',
  textAlign: 'center',
  cursor: 'pointer',
- background: '#fffdf5',
+ background: 'var(--status-warning-tint)',
  transition: 'all 0.2s ease'
  }}
  >
- <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b45309', textTransform: 'uppercase' }}>1-Year Unlimited</div>
+ <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--status-warning-text)', textTransform: 'uppercase' }}>1-Year Unlimited</div>
  <div style={{ fontSize: '1.5rem', fontWeight: 950, color: 'var(--navy-900)', margin: '4px 0' }}>₹999</div>
  <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>Billed annually • Save ₹1,800+</div>
- <button className="btn btn-sm" style={{ background: '#f59e0b', color: 'white', width: '100%', marginTop: '10px', fontWeight: 800 }}>
+ <button className="btn btn-sm" style={{ background: 'var(--status-warning-text)', color: 'white', width: '100%', marginTop: '10px', fontWeight: 800 }}>
  Select 1-Year
  </button>
  </div>
@@ -2087,23 +2087,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div 
  onClick={() => handleActivatePrime('2-Year VIP Prime Pass', 1799)}
  style={{
- border: '2px solid #2563eb',
+ border: '2px solid var(--blue)',
  borderRadius: '14px',
  padding: '16px',
  textAlign: 'center',
  cursor: 'pointer',
- background: '#f8fafc',
+ background: 'var(--bg-page)',
  transition: 'all 0.2s ease',
  position: 'relative'
  }}
  >
- <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#2563eb', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
+ <span style={{ position: 'absolute', top: '-10px', right: '12px', background: 'var(--blue)', color: 'white', fontSize: '0.65rem', padding: '2px 8px', borderRadius: '10px', fontWeight: 800 }}>
  BEST VALUE
  </span>
- <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase' }}>2-Year VIP Pass</div>
+ <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--blue)', textTransform: 'uppercase' }}>2-Year VIP Pass</div>
  <div style={{ fontSize: '1.5rem', fontWeight: 950, color: 'var(--navy-900)', margin: '4px 0' }}>₹1,799</div>
  <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>₹899/yr equivalent • Save ₹4,200+</div>
- <button className="btn btn-sm" style={{ background: '#2563eb', color: 'white', width: '100%', marginTop: '10px', fontWeight: 800 }}>
+ <button className="btn btn-sm" style={{ background: 'var(--blue)', color: 'white', width: '100%', marginTop: '10px', fontWeight: 800 }}>
  Select 2-Year
  </button>
  </div>
@@ -2124,28 +2124,28 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <div style={{
  position: 'fixed',
  top: 0, left: 0, right: 0, bottom: 0,
- background: 'rgba(15, 23, 42, 0.75)',
- backdropFilter: 'blur(8px)',
+ background: 'rgba(11, 30, 79, 0.65)',
  zIndex: 99999,
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  padding: '20px'
  }} onClick={() => setShowTrackingMap(false)}>
  <div style={{
- background: 'white',
+ background: '#FFFFFF',
  width: '100%', maxWidth: '780px',
  borderRadius: '20px',
  overflow: 'hidden',
  position: 'relative',
- boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+ border: '1px solid rgba(22, 70, 214, 0.1)',
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.4)'
  }} onClick={(e) => e.stopPropagation()}>
  
  <div style={{ background: 'var(--navy-900)', padding: '18px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <div>
  <h3 style={{ color: 'white', margin: 0, fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
- <HiOutlineMapPin style={{ color: '#60a5fa' }} /> Live Partner Doorstep Tracking
+ <HiOutlineMapPin style={{ color: 'var(--blue-hi)' }} /> Live Partner Doorstep Tracking
  </h3>
  <p style={{ color: 'var(--gray-400)', margin: '2px 0 0 0', fontSize: '0.8rem' }}>
- Order {activeBooking?.displayId || '#SC-89241'} • Doorstep Start OTP: <strong style={{ color: '#38bdf8' }}>{activeBooking?.startOtp || '4821'}</strong>
+ Order {activeBooking?.displayId || '#SC-89241'} • Doorstep Start OTP: <strong style={{ color: 'var(--blue-hi)' }}>{activeBooking?.startOtp || '4821'}</strong>
  </p>
  </div>
  <button 
@@ -2157,7 +2157,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  </div>
 
  {/* Simulated Live Map */}
- <div style={{ width: '100%', height: '380px', background: '#e2e8f0', position: 'relative' }}>
+ <div style={{ width: '100%', height: '380px', background: 'var(--glass-edge)', position: 'relative' }}>
  <iframe
  src="https://maps.google.com/maps?q=Koramangala,Bangalore&t=&z=14&ie=UTF8&iwloc=&output=embed"
  width="100%"
@@ -2174,7 +2174,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  bottom: '16px',
  left: '16px',
  right: '16px',
- background: 'white',
+ background: 'var(--glass)',
  padding: '16px 20px',
  borderRadius: '14px',
  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
@@ -2183,23 +2183,23 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  gap: '14px',
  flexWrap: 'wrap'
  }}>
- <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#2563eb', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1.2rem' }}>
+ <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--blue)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1.2rem' }}>
  RK
  </div>
  <div style={{ flex: 1, minWidth: '180px' }}>
  <h4 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
- {activeBooking?.workerName || 'Rajesh Kumar'} <HiOutlineCheckCircle style={{ color: '#2563eb' }} />
+ {activeBooking?.workerName || 'Rajesh Kumar'} <HiOutlineCheckCircle style={{ color: 'var(--blue)' }} />
  </h4>
  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--gray-500)' }}>
- Certified Specialist • 4.9 <HiOutlineStar style={{ color: '#eab308' }} /> (180+ Jobs)
+ Certified Specialist • 4.9 <HiOutlineStar style={{ color: 'var(--status-warning-soft)' }} /> (180+ Jobs)
  </p>
- <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>
+ <p style={{ margin: '2px 0 0 0', fontSize: '0.75rem', color: 'var(--status-success-text)', fontWeight: 700 }}>
  Current Distance: 1.2 km away (Reaching in 6 mins)
  </p>
  </div>
  <button 
  className="btn btn-primary" 
- style={{ background: '#2563eb', padding: '8px 18px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}
+ style={{ background: 'var(--blue)', padding: '8px 18px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700 }}
  onClick={() => setIsCallingPartner(true)}
  >
  <HiOutlinePhone /> Call Partner
@@ -2225,8 +2225,8 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  padding: '20px'
  }}>
  <div style={{
- background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)',
- border: '1px solid #334155',
+ background: 'linear-gradient(180deg, var(--ink) 0%, var(--ink) 100%)',
+ border: '1px solid var(--ink)',
  borderRadius: '24px',
  width: '100%', maxWidth: '380px',
  padding: '36px 28px',
@@ -2234,22 +2234,22 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  color: 'white',
  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)'
  }}>
- <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(37, 99, 235, 0.2)', border: '2px solid #3b82f6', color: '#60a5fa', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '2.4rem' }}>
+ <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(37, 99, 235, 0.2)', border: '2px solid var(--blue)', color: 'var(--blue-hi)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '2.4rem' }}>
  <HiOutlinePhone />
  </div>
 
- <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', color: '#94a3b8', padding: '3px 10px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+ <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', color: 'var(--ink-3)', padding: '3px 10px', borderRadius: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
  Encrypted Voice Call
  </span>
 
  <h3 style={{ margin: '12px 0 4px 0', fontSize: '1.4rem', fontWeight: 900 }}>
  {activeBooking?.workerName || 'Rajesh Kumar'}
  </h3>
- <p style={{ margin: '0 0 16px 0', color: '#94a3b8', fontSize: '0.85rem' }}>
+ <p style={{ margin: '0 0 16px 0', color: 'var(--ink-3)', fontSize: '0.85rem' }}>
  Masked Number: +91 ••••• 43210
  </p>
 
- <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#38bdf8', fontFamily: 'monospace', marginBottom: '28px' }}>
+ <div style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--blue-hi)', fontFamily: 'monospace', marginBottom: '28px' }}>
  {Math.floor(callTimer / 60).toString().padStart(2, '0')}:{(callTimer % 60).toString().padStart(2, '0')}
  </div>
 
@@ -2259,7 +2259,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  onClick={() => setIsMuted(!isMuted)}
  style={{
  width: '50px', height: '50px', borderRadius: '50%',
- background: isMuted ? '#ef4444' : 'rgba(255,255,255,0.1)',
+ background: isMuted ? 'var(--status-danger-text)' : 'rgba(255,255,255,0.1)',
  border: 'none', color: 'white', fontSize: '1.2rem',
  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
  }}
@@ -2271,7 +2271,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  onClick={() => setIsSpeaker(!isSpeaker)}
  style={{
  width: '50px', height: '50px', borderRadius: '50%',
- background: isSpeaker ? '#2563eb' : 'rgba(255,255,255,0.1)',
+ background: isSpeaker ? 'var(--blue)' : 'rgba(255,255,255,0.1)',
  border: 'none', color: 'white', fontSize: '1.2rem',
  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
  }}
@@ -2284,7 +2284,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <button
  onClick={() => setIsCallingPartner(false)}
  style={{
- background: '#dc2626', color: 'white', border: 'none',
+ background: 'var(--status-danger-text)', color: 'white', border: 'none',
  padding: '12px 32px', borderRadius: '30px', fontSize: '0.95rem',
  fontWeight: 800, cursor: 'pointer', width: '100%',
  boxShadow: '0 4px 15px rgba(220, 38, 38, 0.4)'
@@ -2309,14 +2309,15 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  zIndex: 99999, padding: '20px'
  }} onClick={() => setDeleteCandidate(null)}>
  <div style={{
- background: 'white',
+ background: '#FFFFFF',
  borderRadius: '20px',
  width: '100%', maxWidth: '420px',
  padding: '28px',
  textAlign: 'center',
- boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+ border: '1px solid rgba(22, 70, 214, 0.1)',
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35)'
  }} onClick={(e) => e.stopPropagation()}>
- <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: '1.8rem' }}>
+ <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: '1.8rem' }}>
  <HiOutlineTrash />
  </div>
  <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 900, color: 'var(--navy-900)' }}>
@@ -2329,7 +2330,7 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  <button className="btn btn-outline" style={{ flex: 1, padding: '10px' }} onClick={() => setDeleteCandidate(null)}>
  Cancel
  </button>
- <button className="btn btn-danger" style={{ flex: 1, padding: '10px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 800 }} onClick={handleConfirmDelete}>
+ <button className="btn btn-danger" style={{ flex: 1, padding: '10px', background: 'var(--status-danger-text)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 800 }} onClick={handleConfirmDelete}>
  Yes, Remove
  </button>
  </div>
@@ -2350,14 +2351,15 @@ Doorstep Claim Helpline: 1800-SERVE-CIRCLE
  zIndex: 99999, padding: '20px'
  }} onClick={() => setShowResetConfirmModal(false)}>
  <div style={{
- background: 'white',
+ background: '#FFFFFF',
  borderRadius: '20px',
  width: '100%', maxWidth: '420px',
  padding: '28px',
  textAlign: 'center',
- boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+ border: '1px solid rgba(22, 70, 214, 0.1)',
+ boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35)'
  }} onClick={(e) => e.stopPropagation()}>
- <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: '1.8rem' }}>
+ <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: '1.8rem' }}>
  <HiOutlineArrowPath />
  </div>
  <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 900, color: 'var(--navy-900)' }}>

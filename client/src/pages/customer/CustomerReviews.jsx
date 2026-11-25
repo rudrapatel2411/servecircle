@@ -95,7 +95,7 @@ const CustomerReviews = () => {
       prev.map((r) => (r.id === id ? { ...r, comment: editComment, rating: editRating } : r))
     );
     setEditingId(null);
-    showToast('Review updated successfully! ⭐');
+    showToast('Review updated successfully!');
   };
 
   const handleDelete = (id) => {
@@ -109,14 +109,14 @@ const CustomerReviews = () => {
       {/* Toast Notification */}
       {toastMessage && (
         <div className="sc-toast success">
-          <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: '#22c55e' }} />
+          <HiOutlineCheckCircle style={{ fontSize: '1.3rem', color: 'var(--status-success-text)' }} />
           <span>{toastMessage}</span>
         </div>
       )}
 
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="page-title">{t('customer.reviews')} ⭐</h1>
+          <h1 className="page-title">{t('customer.reviews')}</h1>
           <p className="page-subtitle">Your verified ratings and feedback for completed doorstep service visits.</p>
         </div>
         <Link to="/customer/bookings" className="btn btn-primary" style={{ fontSize: '0.85rem' }}>
@@ -148,20 +148,20 @@ const CustomerReviews = () => {
         {loading && <div className="chart-placeholder">Loading your reviews...</div>}
 
         {!loading && reviews.length === 0 && (
-          <div className="card" style={{ padding: '32px', textAlign: 'center', color: '#64748b' }}>
+          <div className="card" style={{ padding: '32px', textAlign: 'center', color: 'var(--ink-3)' }}>
             You haven't reviewed any services yet. After your technician completes a job, your rating and reviews will appear here.
           </div>
         )}
 
         <div className="reviews-list">
           {reviews.map((review) => (
-            <div key={review.id} className="review-card" style={{ borderRadius: '16px', border: '1px solid #e2e8f0', padding: '20px' }}>
+            <div key={review.id} className="review-card" style={{ borderRadius: '16px', border: '1px solid var(--glass-edge)', padding: '20px' }}>
               <div className="review-card-top">
                 <div className="review-worker">
-                  <div className="worker-avatar" style={{ background: '#2563eb', color: 'white', fontWeight: 800 }}>{review.workerAvatar}</div>
+                  <div className="worker-avatar" style={{ background: 'var(--blue)', color: 'white', fontWeight: 800 }}>{review.workerAvatar}</div>
                   <div>
                     <h4 className="review-service-name" style={{ fontSize: '1.05rem', fontWeight: 800 }}>{review.service}</h4>
-                    <span className="review-worker-name" style={{ color: '#64748b', fontSize: '0.82rem' }}>
+                    <span className="review-worker-name" style={{ color: 'var(--ink-3)', fontSize: '0.82rem' }}>
                       {review.worker} • <strong>#{review.bookingId}</strong>
                     </span>
                   </div>
@@ -172,7 +172,7 @@ const CustomerReviews = () => {
                     interactive={editingId === review.id}
                     onChange={setEditRating}
                   />
-                  <span className="review-date" style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{review.date}</span>
+                  <span className="review-date" style={{ fontSize: '0.75rem', color: 'var(--ink-3)' }}>{review.date}</span>
                 </div>
               </div>
 
@@ -191,13 +191,13 @@ const CustomerReviews = () => {
                   </div>
                 </div>
               ) : (
-                <p className="review-comment" style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, margin: '14px 0 10px 0' }}>
+                <p className="review-comment" style={{ fontSize: '0.9rem', color: 'var(--ink)', lineHeight: 1.5, margin: '14px 0 10px 0' }}>
                   "{review.comment}"
                 </p>
               )}
 
               {editingId !== review.id && (
-                <div className="review-actions" style={{ display: 'flex', gap: '12px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                <div className="review-actions" style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--bg-page)', paddingTop: '10px' }}>
                   <button className="review-action-btn" onClick={() => startEdit(review)}>
                     <HiOutlinePencilSquare /> Edit Feedback
                   </button>

@@ -32,10 +32,10 @@ const EventsHub = () => {
  },
  {
  id: 'seasonal',
- name: t('eventsHub.themes.seasonal.name', 'Festive Lights & Diwali 🪔'),
+ name: t('eventsHub.themes.seasonal.name', 'Festive Lights & Diwali '),
  description: t('eventsHub.themes.seasonal.desc', 'High-altitude fairy light cascading, door latkan hangings, and brass pots set.'),
  baseDecorPrice: 3000,
- icon: '🪔'
+ icon: ''
  },
  {
  id: 'corporate',
@@ -125,7 +125,7 @@ const EventsHub = () => {
  included: []
  },
  magicshow: {
- title: t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator 🪄'),
+ title: t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator '),
  rating: '4.8 (85+ Events)',
  expert: 'Jadugar Samrat & PlayZone Team',
  experience: t('eventsHub.magicShowProfileExp', '7+ years conducting kids birthdays and carnival-themed society functions.'),
@@ -414,7 +414,7 @@ const EventsHub = () => {
  width: 100% !important;
  position: static !important;
  box-shadow: none !important;
- border: 1px solid #ccc !important;
+ border: 1px solid var(--glass-edge) !important;
  }
  /* Ensure backgrounds print correctly */
  body {
@@ -451,7 +451,7 @@ const EventsHub = () => {
  padding: '4px',
  borderRadius: 'var(--radius-lg)',
  marginBottom: '24px',
- border: '1px solid var(--gray-200)',
+ border: '1px solid var(--glass-edge)',
  maxWidth: '500px'
  }}>
  <button
@@ -509,7 +509,7 @@ const EventsHub = () => {
  {activeTab === 'theme' ? (
  <div className="animate-fade-in-up">
  {/* Theme Selector */}
- <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)', background: 'white', marginBottom: '24px' }}>
+ <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)', background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', marginBottom: '24px' }}>
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '14px' }}>
  {t('eventsHub.step1Title', 'Step 1: Venue & Occasion Theme')}
  </h3>
@@ -574,7 +574,7 @@ const EventsHub = () => {
  </div>
 
  {/* Permanent Theme Styling & Customization Form */}
- <div className="card animate-fade-in-up" style={{ marginTop: '20px', padding: '20px', background: 'var(--gray-5)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)' }}>
+ <div className="card animate-fade-in-up" style={{ marginTop: '20px', padding: '20px', background: 'var(--gray-5)', border: '1px solid var(--glass-edge)', borderRadius: 'var(--radius-md)' }}>
  <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
  {t('eventsHub.customizeThemeTitle', ' Customize Selected Theme & Decor Styling')}
  </h4>
@@ -611,7 +611,7 @@ const EventsHub = () => {
  ) : (
  <div className="animate-fade-in-up">
  {/* Configuration Checklists */}
- <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)', background: 'white' }}>
+ <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)', background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)' }}>
  <h3 style={{ fontSize: '1.05rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '18px' }}>
  {t('eventsHub.step2Title', 'Step 2: Customize Vendor Checklist')}
  </h3>
@@ -806,7 +806,7 @@ const EventsHub = () => {
  <div>
  <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
  <input type="checkbox" checked={includeMagicShow} onChange={(e) => setIncludeMagicShow(e.target.checked)} />
- {t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator 🪄')}
+ {t('eventsHub.magicShowTitle', 'Magic Show & Kids Activities Coordinator ')}
  <button 
  type="button" 
  onClick={() => setActiveVendorKey('magicshow')}
@@ -924,7 +924,7 @@ const EventsHub = () => {
  <button 
  type="button" 
  onClick={() => setCustomNeeds(prev => prev.filter(item => item.id !== need.id))}
- style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.95rem', padding: '4px' }}
+ style={{ background: 'none', border: 'none', color: 'var(--status-danger-text)', cursor: 'pointer', fontSize: '0.95rem', padding: '4px' }}
  title={t('eventsHub.removeCustomRequirement', 'Remove custom requirement')}
  >
  
@@ -949,7 +949,7 @@ const EventsHub = () => {
  onChange={(e) => setNewNeedText(e.target.value)}
  style={{ flex: 2, minWidth: '180px', padding: '8px 12px', fontSize: '0.8rem', marginBottom: 0 }}
  />
- <div style={{ display: 'flex', alignItems: 'center', background: 'white', border: '1px solid var(--gray-300)', borderRadius: 'var(--radius-md)', padding: '0 8px', flex: 1, minWidth: '90px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', background: 'var(--glass)', border: '1px solid var(--glass-edge)', borderRadius: 'var(--radius-md)', padding: '0 8px', flex: 1, minWidth: '90px' }}>
  <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>₹</span>
  <input 
  type="number" 
@@ -977,7 +977,7 @@ const EventsHub = () => {
 
  {/* RIGHT PANEL: Budget calculations & submit (Desktop Only) */}
  <div className="cost-summary-desktop">
- <div className="card" style={{ padding: '28px', border: '1.5px solid var(--primary-200)', background: 'white', position: 'sticky', top: '24px' }}>
+ <div className="card" style={{ padding: '28px', border: '1.5px solid var(--primary-200)', background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', position: 'sticky', top: '24px' }}>
  <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 850, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
  <HiOutlineCalculator style={{ color: 'var(--primary-600)' }} /> {t('eventsHub.costSummaryTitle', 'Event Cost Summary')}
  </h3>
@@ -1084,7 +1084,7 @@ const EventsHub = () => {
  <HiOutlineCurrencyRupee style={{ fontSize: '1.6rem' }} /> {totalEstimate}
  </div>
  </div>
- <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#fef3c7', color: '#d97706', padding: '3px 8px', borderRadius: '4px' }}>
+ <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '3px 8px', borderRadius: '4px' }}>
  {t('eventsHub.societyDiscount', 'Society: up to 20% off')}
  </span>
  </div>
@@ -1112,7 +1112,7 @@ const EventsHub = () => {
  <button
  type="button"
  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`Hey, check out my event quote from ServeCircle!\n\nTheme: ${selectedTheme.name}\nTotal Estimate: ₹${totalEstimate}`)}`, '_blank')}
- style={{ flex: 1, padding: '10px', fontSize: '0.8rem', background: '#25D366', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
+ style={{ flex: 1, padding: '10px', fontSize: '0.8rem', background: 'var(--status-success-text)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
  >
  Share on WhatsApp
  </button>
@@ -1168,7 +1168,7 @@ const EventsHub = () => {
  type="button"
  onClick={() => setShowMobileSummary(true)}
  className="btn btn-primary"
- style={{ padding: '10px 22px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--gradient-primary, linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%))' }}
+ style={{ padding: '10px 22px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--gradient-primary, linear-gradient(135deg, var(--accent-violet-text) 0%, var(--accent-violet-text) 100%))' }}
  >
  {t('eventsHub.reviewAndBook', 'Review & Book ')}
  </button>
@@ -1195,7 +1195,7 @@ const EventsHub = () => {
  
  <div className="animate-slide-up" style={{
  width: '100%',
- background: 'white',
+ background: 'var(--glass)',
  borderTopLeftRadius: '24px',
  borderTopRightRadius: '24px',
  padding: '24px 20px 36px 20px',
@@ -1307,7 +1307,7 @@ const EventsHub = () => {
  <HiOutlineCurrencyRupee style={{ fontSize: '1.4rem' }} /> {totalEstimate}
  </div>
  </div>
- <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#fef3c7', color: '#d97706', padding: '3px 8px', borderRadius: '4px' }}>
+ <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '3px 8px', borderRadius: '4px' }}>
  {t('eventsHub.societyDiscountApplied', 'Up to 20% Society Discount Applied')}
  </span>
  </div>
@@ -1316,7 +1316,7 @@ const EventsHub = () => {
  <button
  type="submit"
  className="btn btn-primary"
- style={{ width: '100%', padding: '14px', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--gradient-primary, linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%))' }}
+ style={{ width: '100%', padding: '14px', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--gradient-primary, linear-gradient(135deg, var(--accent-violet-text) 0%, var(--accent-violet-text) 100%))' }}
  >
  <HiOutlineCheckCircle /> {t('eventsHub.bookCompleteEvent', 'Book Complete Event Package')}
  </button>
@@ -1344,8 +1344,8 @@ const EventsHub = () => {
  <div className="card animate-scale-in" style={{
  width: '100%',
  maxWidth: '540px',
- background: 'white',
- border: '1.5px solid var(--primary-200)',
+ background: '#FFFFFF',
+ border: '1px solid rgba(22, 70, 214, 0.14)',
  borderRadius: 'var(--radius-xl)',
  padding: '30px',
  boxShadow: 'var(--shadow-xl)',
@@ -1394,7 +1394,7 @@ const EventsHub = () => {
  {activeVendorDetail.title}
  </h3>
  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--gray-500)', flexWrap: 'wrap' }}>
- <span style={{ color: '#eab308', fontWeight: 800 }}>{activeVendorDetail.rating}</span>
+ <span style={{ color: 'var(--status-warning-soft)', fontWeight: 800 }}>{activeVendorDetail.rating}</span>
  <span>•</span>
  <span>Partner: <strong>{activeVendorDetail.expert}</strong></span>
  </div>
@@ -1403,7 +1403,7 @@ const EventsHub = () => {
  {/* Content */}
  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
  {/* Dynamic Action / Scale Indicator */}
- <div style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-200)', fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 700 }}>
+ <div style={{ background: 'linear-gradient(135deg, var(--accent-violet-tint) 0%, var(--accent-violet-tint) 100%)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary-200)', fontSize: '0.75rem', color: 'var(--primary-800)', fontWeight: 700 }}>
  {t('eventsHub.autoScaledConfig', ' Auto-Scaled to your Configuration')}: <strong>{guestsCount} {t('eventsHub.expectedGuests', 'Expected Guests')}</strong>
  </div>
 
@@ -1463,44 +1463,44 @@ const EventsHub = () => {
  onClose={() => setPdfModalOpen(false)} 
  fileName="Event_Quote.pdf" 
  pdfContent={
- <div style={{ padding: '20px', background: '#fafafa', border: '1px solid #ddd', borderRadius: '8px' }}>
- <h3 style={{ borderBottom: '2px solid #ccc', paddingBottom: '10px' }}>Official Event Quote</h3>
+ <div style={{ padding: '20px', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', borderRadius: '8px' }}>
+ <h3 style={{ borderBottom: '2px solid var(--glass-edge)', paddingBottom: '10px' }}>Official Event Quote</h3>
  <p><strong>Prepared for:</strong> Valued Customer</p>
  <p><strong>Occasion / Theme:</strong> {selectedTheme?.name || 'Custom Theme'}</p>
  <p><strong>Expected Guests:</strong> {guestsCount}</p>
  
  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
  <thead>
- <tr style={{ background: '#eee', textAlign: 'left' }}>
- <th style={{ padding: '8px', border: '1px solid #ccc' }}>Service / Component</th>
- <th style={{ padding: '8px', border: '1px solid #ccc' }}>Cost Estimate</th>
+ <tr style={{ background: 'var(--glass-edge)', textAlign: 'left' }}>
+ <th style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Service / Component</th>
+ <th style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Cost Estimate</th>
  </tr>
  </thead>
  <tbody>
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Base Theme Decor</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{decorPrice}</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Base Theme Decor</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>₹{decorPrice}</td>
  </tr>
  {includeCatering && (
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Premium Catering</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{cateringCost}</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Premium Catering</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>₹{cateringCost}</td>
  </tr>
  )}
  {includeDJ && (
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>DJ Sound System</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{djCost}</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>DJ Sound System</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>₹{djCost}</td>
  </tr>
  )}
  <tr style={{ fontWeight: 'bold' }}>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Total Estimated Cost</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>₹{totalEstimate}</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Total Estimated Cost</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>₹{totalEstimate}</td>
  </tr>
  </tbody>
  </table>
  
- <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#666' }}>
+ <p style={{ marginTop: '20px', fontSize: '0.8rem', color: 'var(--ink-2)' }}>
  * This quote is valid for 15 days from the date of issue. Actual costs may vary slightly based on specific venue requirements.
  </p>
  </div>

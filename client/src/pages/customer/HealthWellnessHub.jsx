@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HiOutlineArrowLeft, HiOutlineShieldCheck, HiOutlineStar, HiOutlineUserCircle, HiOutlineClock, HiOutlineDocumentText } from 'react-icons/hi2';
+import { IconTile, StatusPill } from '../../components/ui';
+import { HiOutlineArrowLeft, HiOutlineSparkles, HiOutlineHeart, HiOutlineBeaker, HiOutlineShieldCheck, HiOutlineStar, HiOutlineUserCircle, HiOutlineClock, HiOutlineDocumentText } from 'react-icons/hi2';
 import '../Dashboard.css';
 import './CustomerPages.css';
 import PdfViewerModal from '../../components/PdfViewerModal';
@@ -67,11 +68,11 @@ const HealthWellnessHub = () => {
  };
 
  const labPackagesData = [
- { id: 'full-body', name: 'Full Body Checkup', tests: '60+ Tests included', price: 599, color: '#fef2f2', border: '#fecaca', icon: '🩸' },
- { id: 'diabetes', name: 'Diabetes Care', tests: 'HbA1c, FBS, PPBS', price: 399, color: '#f0fdf4', border: '#bbf7d0', icon: '🩺' },
- { id: 'vitamins', name: 'Vitamin D & B12', tests: 'Bone & Nerve Health', price: 799, color: '#fffbeb', border: '#fde68a', icon: '' },
- { id: 'women', name: 'Women\'s Wellness', tests: 'Thyroid, Iron, CBC', price: 999, color: '#fdf4ff', border: '#fbcfe8', icon: '' },
- { id: 'thyroid', name: 'Thyroid Profile', tests: 'T3, T4, TSH', price: 299, color: '#f0f9ff', border: '#bae6fd', icon: '' },
+ { id: 'full-body', name: 'Full Body Checkup', tests: '60+ Tests included', price: 599, color: 'var(--status-danger-tint)', border: 'var(--status-danger-soft)', icon: '' },
+ { id: 'diabetes', name: 'Diabetes Care', tests: 'HbA1c, FBS, PPBS', price: 399, color: 'var(--status-success-tint)', border: 'var(--status-success-ring)', icon: '' },
+ { id: 'vitamins', name: 'Vitamin D & B12', tests: 'Bone & Nerve Health', price: 799, color: 'var(--status-warning-tint)', border: 'var(--status-warning-ring)', icon: '' },
+ { id: 'women', name: 'Women\'s Wellness', tests: 'Thyroid, Iron, CBC', price: 999, color: 'var(--accent-violet-tint)', border: 'var(--accent-rose-tint)', icon: '' },
+ { id: 'thyroid', name: 'Thyroid Profile', tests: 'T3, T4, TSH', price: 299, color: 'var(--status-info-tint)', border: 'var(--status-info-ring)', icon: '' },
  ];
 
  const stepsList = [
@@ -104,21 +105,21 @@ const HealthWellnessHub = () => {
  }}>
  {/* Roster of Medical Specialists */}
  <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ background: 'var(--glass)',
+ border: '1px solid var(--glass-edge)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)'
+ boxShadow: 'var(--sh-card)'
  }}>
  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
  <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
- <HiOutlineUserCircle style={{ color: '#3b82f6' }} /> 
+ <HiOutlineUserCircle style={{ color: 'var(--blue)' }} /> 
  {selectedSpecialist ? 'Available Specialists' : 'Select a Category'}
  </h3>
  {selectedSpecialist && (
  <button 
  onClick={() => setSelectedSpecialist(null)}
- style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}
+ style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}
  >
  &larr; Back to Categories
  </button>
@@ -129,7 +130,7 @@ const HealthWellnessHub = () => {
  /* Category Grid View */
  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '16px', marginBottom: '10px' }}>
  {[
- { id: 'physician', label: 'General Physician', icon: '🩺' },
+ { id: 'physician', label: 'General Physician', icon: '' },
  { id: 'physio', label: 'Physiotherapist', icon: '' },
  { id: 'dietitian', label: 'Dietitian', icon: '' },
  { id: 'mental', label: 'Mental Health', icon: '' },
@@ -145,8 +146,8 @@ const HealthWellnessHub = () => {
  style={{
  padding: '20px 12px',
  borderRadius: '16px',
- border: '1.5px solid var(--gray-200)',
- background: 'white',
+ border: '1px solid var(--glass-edge)',
+ background: 'var(--glass)',
  color: 'var(--navy-800)',
  fontWeight: 700,
  cursor: 'pointer',
@@ -160,7 +161,7 @@ const HealthWellnessHub = () => {
  transition: 'all 0.2s ease',
  textAlign: 'center'
  }}
- onMouseOver={(e) => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+ onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--blue)'; e.currentTarget.style.background = 'var(--status-info-tint)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--gray-200)'; e.currentTarget.style.background = 'white'; e.currentTarget.style.transform = 'translateY(0)'; }}
  >
  <span style={{ fontSize: '2rem' }}>{cat.icon}</span>
@@ -175,13 +176,13 @@ const HealthWellnessHub = () => {
  <div
  key={sp.id}
  style={{
- border: '1px solid var(--gray-200)',
+ border: '1px solid var(--glass-edge)',
  borderRadius: '14px',
  padding: '16px',
  display: 'flex',
  gap: '12px',
  alignItems: 'center',
- background: 'linear-gradient(to right, #ffffff, #f8fafc)'
+ background: 'linear-gradient(to right, #ffffff, var(--bg-page))'
  }}
  >
  <img
@@ -191,16 +192,16 @@ const HealthWellnessHub = () => {
  />
  <div style={{ flex: 1 }}>
  <h4 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}>
- {sp.name} <HiOutlineShieldCheck style={{ color: '#3b7dc1', fontSize: '1.1rem' }} title="Verified Medical License" />
+ {sp.name} <HiOutlineShieldCheck style={{ color: 'var(--blue)', fontSize: '1.1rem' }} title="Verified Medical License" />
  </h4>
- <span style={{ fontSize: '0.72rem', color: '#3b82f6', fontWeight: 650, display: 'block', marginTop: '2px' }}>
+ <span style={{ fontSize: '0.72rem', color: 'var(--blue)', fontWeight: 650, display: 'block', marginTop: '2px' }}>
  {sp.degree}
  </span>
  <p style={{ fontSize: '0.72rem', color: 'var(--gray-500)', margin: '4px 0 0 0' }}>
  {sp.experience} • {sp.clinic}
  </p>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', flexWrap: 'wrap', gap: '8px' }}>
- <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '0.78rem', color: '#f59e0b', fontWeight: 700 }}>
+ <span style={{ display: 'flex', alignItems: 'center', gap: '2px', fontSize: '0.78rem', color: 'var(--status-warning-text)', fontWeight: 700 }}>
  <HiOutlineStar /> {sp.rating}
  </span>
  <div style={{ display: 'flex', gap: '6px' }}>
@@ -208,7 +209,7 @@ const HealthWellnessHub = () => {
  <Link
  to={`/customer/book?service=${encodeURIComponent('Video Consultation')}&serviceId=video-consult&category=health-wellness&price=299`}
  className="btn btn-outline btn-sm"
- style={{ padding: '6px 10px', fontSize: '0.75rem', borderColor: '#3b82f6', color: '#3b82f6' }}
+ style={{ padding: '6px 10px', fontSize: '0.75rem', borderColor: 'var(--blue)', color: 'var(--blue)' }}
  >
  Video (₹299)
  </Link>
@@ -216,7 +217,7 @@ const HealthWellnessHub = () => {
  <Link
  to={`/customer/book?service=${encodeURIComponent(selectedSpecialist === 'physician' ? 'Doctor Home Visit' : selectedSpecialist + ' Session')}&serviceId=${selectedSpecialist === 'physician' ? 'doctor-visit' : 'health-session'}&category=health-wellness&price=${sp.price}`}
  className="btn btn-primary btn-sm"
- style={{ padding: '6px 10px', fontSize: '0.75rem', background: '#3b82f6', borderColor: '#3b82f6' }}
+ style={{ padding: '6px 10px', fontSize: '0.75rem', background: 'var(--blue)', borderColor: 'var(--blue)' }}
  >
  Visit (₹{sp.price})
  </Link>
@@ -231,18 +232,18 @@ const HealthWellnessHub = () => {
 
  {/* Diagnostics & Lab Sample Tracker */}
  <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ background: 'var(--glass)',
+ border: '1px solid var(--glass-edge)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)',
+ boxShadow: 'var(--sh-card)',
  display: 'flex',
  flexDirection: 'column',
  justifyContent: 'space-between'
  }}>
  <div>
  <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- <HiOutlineDocumentText style={{ color: '#3b82f6' }} /> {t('healthWellness.homeLab')}
+ <HiOutlineDocumentText style={{ color: 'var(--blue)' }} /> {t('healthWellness.homeLab')}
  </h3>
 
  {/* Diagnostics choice */}
@@ -257,7 +258,7 @@ const HealthWellnessHub = () => {
  padding: '16px',
  borderRadius: '16px',
  border: '2px solid',
- borderColor: labPackage === pkg.id ? '#3b82f6' : 'var(--gray-200)',
+ borderColor: labPackage === pkg.id ? 'var(--blue)' : 'var(--gray-200)',
  background: labPackage === pkg.id ? 'rgba(59, 130, 246, 0.05)' : 'white',
  cursor: 'pointer',
  display: 'flex',
@@ -273,7 +274,7 @@ const HealthWellnessHub = () => {
  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: pkg.color, border: `1px solid ${pkg.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
  {pkg.icon}
  </div>
- {labPackage === pkg.id && <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#3b82f6', border: '3px solid white', boxShadow: '0 0 0 1px #3b82f6' }}></div>}
+ {labPackage === pkg.id && <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'var(--blue)', border: '3px solid white', boxShadow: '0 0 0 1px var(--blue)' }}></div>}
  </div>
  
  <div>
@@ -281,7 +282,7 @@ const HealthWellnessHub = () => {
  <span style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{pkg.tests}</span>
  </div>
  
- <div style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-700)', width: 'fit-content' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800, color: 'var(--navy-700)', width: 'fit-content' }}>
  ₹{pkg.price}
  </div>
  </button>
@@ -291,7 +292,7 @@ const HealthWellnessHub = () => {
  {/* Interactive Lab step simulator */}
  <div style={{
  background: 'var(--gray-50)',
- border: '1px solid var(--gray-200)',
+ border: '1px solid var(--glass-edge)',
  borderRadius: '12px',
  padding: '16px',
  marginBottom: '20px'
@@ -313,8 +314,8 @@ const HealthWellnessHub = () => {
  width: '10px',
  height: '10px',
  borderRadius: '50%',
- background: isActive ? '#3b7dc1' : 'var(--gray-300)',
- boxShadow: isActive ? '0 0 6px #3b7dc1' : 'none'
+ background: isActive ? 'var(--blue)' : 'var(--gray-300)',
+ boxShadow: isActive ? '0 0 6px var(--blue)' : 'none'
  }} />
  <div style={{ fontSize: '0.78rem', fontWeight: isActive ? 800 : 500, color: isActive ? 'var(--navy-800)' : 'var(--gray-400)' }}>
  {step.label}
@@ -333,8 +334,8 @@ const HealthWellnessHub = () => {
  style={{
  width: '100%',
  marginTop: '16px',
- background: 'white',
- border: '1px solid var(--gray-300)',
+ background: 'var(--glass)',
+ border: '1px solid var(--glass-edge)',
  borderRadius: '8px',
  padding: '6px 12px',
  fontSize: '0.72rem',
@@ -351,9 +352,9 @@ const HealthWellnessHub = () => {
 
  {/* Dynamic PDF Report Download */}
  {labStep >= 3 && (
- <div className="animate-fade-in-up" style={{ marginTop: '16px', background: '#e0f2fe', padding: '12px', borderRadius: '8px', border: '1px dashed #7dd3fc', textAlign: 'center' }}>
- <span style={{ display: 'block', fontSize: '0.75rem', color: '#0369a1', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.resultsReady')}</span>
- <button className="btn btn-primary btn-sm" style={{ background: '#0284c7', borderColor: '#0284c7', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => setPdfModalOpen(true)}>
+ <div className="animate-fade-in-up" style={{ marginTop: '16px', background: 'var(--status-info-tint)', padding: '12px', borderRadius: '8px', border: '1px dashed var(--blue-hi)', textAlign: 'center' }}>
+ <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--blue-deep)', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.resultsReady')}</span>
+ <button className="btn btn-primary btn-sm" style={{ background: 'var(--blue)', borderColor: 'var(--blue)', padding: '6px 16px', fontSize: '0.8rem', width: '100%', cursor: 'pointer' }} onClick={() => setPdfModalOpen(true)}>
  Download PDF Report
  </button>
  </div>
@@ -361,12 +362,12 @@ const HealthWellnessHub = () => {
  
  {/* Doctor Review Call-to-Action */}
  {labStep === 4 && (
- <div className="animate-fade-in-up" style={{ marginTop: '12px', background: '#f0f5fa', padding: '12px', borderRadius: '8px', border: '1px solid #94bce0', textAlign: 'center' }}>
- <span style={{ display: 'block', fontSize: '0.75rem', color: '#224c82', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
+ <div className="animate-fade-in-up" style={{ marginTop: '12px', background: 'var(--bg-page)', padding: '12px', borderRadius: '8px', border: '1px solid var(--blue-hi)', textAlign: 'center' }}>
+ <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--blue-deep)', fontWeight: 700, marginBottom: '8px' }}>{t('healthWellnessExt.needHelp')}</span>
  <Link 
  to="/customer/video-consultation?specialty=doctor" 
  className="btn btn-primary btn-sm" 
- style={{ background: '#3b7dc1', borderColor: '#3b7dc1', padding: '8px 16px', fontSize: '0.8rem', width: '100%', display: 'inline-block', textDecoration: 'none' }}
+ style={{ background: 'var(--blue)', borderColor: 'var(--blue)', padding: '8px 16px', fontSize: '0.8rem', width: '100%', display: 'inline-block', textDecoration: 'none' }}
  >
  Connect with Review Doctor Live
  </Link>
@@ -393,7 +394,7 @@ const HealthWellnessHub = () => {
  <Link
  to={`/customer/book?service=${encodeURIComponent(labPackagesData.find(p => p.id === labPackage)?.name + ' at Home')}&serviceId=lab-diagnostics&category=health-wellness&price=${labPackagesData.find(p => p.id === labPackage)?.price}&packageCode=${encodeURIComponent(labPackage)}`}
  className="btn btn-primary btn-sm"
- style={{ padding: '8px 16px', background: '#3b82f6', borderColor: '#3b82f6' }}
+ style={{ padding: '8px 16px', background: 'var(--blue)', borderColor: 'var(--blue)' }}
  >
  {t('healthWellness.bookHomeCollection', 'Book Home Collection')}
  </Link>
@@ -402,16 +403,16 @@ const HealthWellnessHub = () => {
 
  {/* 3. Online Pharmacy & Prescription Upload */}
  <div style={{
- background: 'white',
- border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ background: 'var(--glass)',
+ border: '1px solid var(--glass-edge)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)',
+ boxShadow: 'var(--sh-card)',
  display: 'flex',
  flexDirection: 'column'
  }}>
  <h3 style={{ fontSize: '1.2rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
- <span style={{ color: '#3b7dc1', fontSize: '1.4rem' }}></span> Express Pharmacy
+ <span style={{ color: 'var(--blue)', fontSize: '1.4rem' }}></span> Express Pharmacy
  </h3>
  <p style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginBottom: '16px' }}>
  Upload doctor's prescription for 30-minute verified doorstep medicine delivery.
@@ -422,7 +423,7 @@ const HealthWellnessHub = () => {
  {/* Upload File Option */}
  <label style={{
  flex: 1,
- background: '#f8fafc',
+ background: 'var(--bg-page)',
  border: '2px dashed var(--gray-300)',
  borderRadius: '12px',
  display: 'flex',
@@ -434,7 +435,7 @@ const HealthWellnessHub = () => {
  cursor: 'pointer',
  transition: 'all 0.2s',
  }}>
- <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', marginBottom: '8px' }}>
+ <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'var(--glass-edge)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', marginBottom: '8px' }}>
  
  </div>
  <h4 style={{ margin: '0 0 2px 0', fontSize: '0.82rem', color: 'var(--navy-800)', fontWeight: 800 }}>Upload File</h4>
@@ -450,7 +451,7 @@ const HealthWellnessHub = () => {
  {/* Direct Camera Option */}
  <label style={{
  flex: 1,
- background: '#f8fafc',
+ background: 'var(--bg-page)',
  border: '2px dashed var(--gray-300)',
  borderRadius: '12px',
  display: 'flex',
@@ -462,7 +463,7 @@ const HealthWellnessHub = () => {
  cursor: 'pointer',
  transition: 'all 0.2s',
  }}>
- <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', marginBottom: '8px' }}>
+ <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'var(--glass-edge)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', marginBottom: '8px' }}>
  
  </div>
  <h4 style={{ margin: '0 0 2px 0', fontSize: '0.82rem', color: 'var(--navy-800)', fontWeight: 800 }}>Take Photo</h4>
@@ -477,19 +478,19 @@ const HealthWellnessHub = () => {
  </label>
  </div>
  ) : (
- <div style={{ background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+ <div style={{ background: 'var(--status-success-tint)', border: '1.5px solid var(--status-success-soft)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
  <span style={{ fontSize: '1.4rem' }}></span>
  <div>
- <h5 style={{ margin: 0, fontSize: '0.82rem', fontWeight: 800, color: '#166534' }}>{prescriptionFile.name}</h5>
- <span style={{ fontSize: '0.68rem', color: '#15803d' }}>{(prescriptionFile.size / 1024).toFixed(1)} KB • Prescription Attached</span>
+ <h5 style={{ margin: 0, fontSize: '0.82rem', fontWeight: 800, color: 'var(--status-success-text)' }}>{prescriptionFile.name}</h5>
+ <span style={{ fontSize: '0.68rem', color: 'var(--status-success-text)' }}>{(prescriptionFile.size / 1024).toFixed(1)} KB • Prescription Attached</span>
  </div>
  </div>
  <button 
  type="button" 
  onClick={() => { setPrescriptionFile(null); setPrescriptionPreview(null); }}
- style={{ background: 'none', border: 'none', color: '#dc2626', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}
+ style={{ background: 'none', border: 'none', color: 'var(--status-danger-text)', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}
  >
  Remove
  </button>
@@ -497,25 +498,25 @@ const HealthWellnessHub = () => {
 
  {prescriptionPreview && (
  <div style={{ textAlign: 'center', marginBottom: '10px' }}>
- <img src={prescriptionPreview} alt="Prescription preview" style={{ maxHeight: '100px', borderRadius: '6px', border: '1px solid #bbf7d0' }} />
+ <img src={prescriptionPreview} alt="Prescription preview" style={{ maxHeight: '100px', borderRadius: '6px', border: '1px solid var(--status-success-ring)' }} />
  </div>
  )}
 
  <Link
  to={`/customer/book?service=${encodeURIComponent('Express Prescription Medicine Delivery')}&serviceId=pharmacy-delivery&category=health-wellness&price=199&prescriptionAttached=true&prescriptionName=${encodeURIComponent(prescriptionFile.name)}`}
  className="btn btn-primary"
- style={{ display: 'block', width: '100%', padding: '10px', background: '#16a34a', borderColor: '#16a34a', fontWeight: 800, textAlign: 'center', textDecoration: 'none' }}
+ style={{ display: 'block', width: '100%', padding: '10px', background: 'var(--status-success-text)', borderColor: 'var(--status-success-text)', fontWeight: 800, textAlign: 'center', textDecoration: 'none' }}
  >
  Order Medicines Now (₹199 Delivery) →
  </Link>
  </div>
  )}
 
- <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fffbeb', padding: '12px', borderRadius: '8px', border: '1px solid #fde68a' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--status-warning-tint)', padding: '12px', borderRadius: '8px', border: '1px solid var(--status-warning-ring)' }}>
  <span style={{ fontSize: '1.5rem' }}></span>
  <div>
- <span style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#92400e' }}>10% FLAT OFF</span>
- <span style={{ display: 'block', fontSize: '0.7rem', color: '#b45309' }}>{t('healthWellnessExt.medicinesToday')}</span>
+ <span style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--status-warning-text)' }}>10% FLAT OFF</span>
+ <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--status-warning-text)' }}>{t('healthWellnessExt.medicinesToday')}</span>
  </div>
  </div>
  </div>
@@ -530,58 +531,88 @@ const HealthWellnessHub = () => {
           marginBottom: '40px'
         }}>
           {/* IV Drip Therapy */}
-          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <div style={{ fontSize: '2.5rem' }}>💧</div>
-              <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>BSc Nurse Administered</span>
+          <div 
+            className="glass is-clickable" 
+            style={{ 
+              borderRadius: '26px', 
+              padding: '26px', 
+              boxShadow: 'var(--sh-card)', 
+              display: 'flex', 
+              flexDirection: 'column',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <IconTile icon={HiOutlineBeaker} tone="blue" size={44} />
+              <StatusPill status="Assigned" label="Nurse Administered" />
             </div>
-            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.ivDrip')}</h4>
-            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0ea5e9', marginBottom: '8px' }}>₹1,999<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> onwards</span></span>
-            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.ivDripDesc')}</p>
+            <h4 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--ink)', marginBottom: '6px' }}>{t('healthWellnessExt.ivDrip')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--blue)', marginBottom: '8px' }}>₹1,999<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink-3)'}}> onwards</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-3)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.ivDripDesc')}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Sterile Single-Use Kit</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Doctor Tele-Signoff</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ 45-Min Home Infusion</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Sterile Single-Use Kit</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Doctor Tele-Signoff</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>45-Min Home Infusion</span>
             </div>
-            <Link to="/customer/health-demo?type=iv" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#0ea5e9', background: '#0ea5e9', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+            <Link to="/customer/health-demo?type=iv" className="btn-primary" style={{ width: '100%', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}>
               Consult & Book
             </Link>
           </div>
 
           {/* Sports Recovery */}
-          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <div style={{ fontSize: '2.5rem' }}>⚡</div>
-              <span style={{ background: '#ffedd5', color: '#c2410c', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Theragun PRO & Cupping</span>
+          <div 
+            className="glass is-clickable" 
+            style={{ 
+              borderRadius: '26px', 
+              padding: '26px', 
+              boxShadow: 'var(--sh-card)', 
+              display: 'flex', 
+              flexDirection: 'column',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <IconTile icon={HiOutlineSparkles} tone="amber" size={44} />
+              <StatusPill status="Pending" label="Theragun PRO & Cupping" />
             </div>
-            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.sportsRecovery')}</h4>
-            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ea580c', marginBottom: '8px' }}>₹1,699<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> onwards</span></span>
-            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.sportsRecoveryDesc')}</p>
+            <h4 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--ink)', marginBottom: '6px' }}>{t('healthWellnessExt.sportsRecovery')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--status-warning-text)', marginBottom: '8px' }}>₹1,699<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink-3)'}}> onwards</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-3)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.sportsRecoveryDesc')}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Certified Sports Physio</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Myofascial Cupping</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Assisted PNF Stretch</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Certified Sports Physio</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Myofascial Cupping</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Assisted PNF Stretch</span>
             </div>
-            <Link to="/customer/health-demo?type=sports" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#ea580c', background: '#ea580c', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+            <Link to="/customer/health-demo?type=sports" className="btn-primary" style={{ width: '100%', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}>
               Consult & Book
             </Link>
           </div>
 
           {/* Elderly Physio */}
-          <div style={{ background: 'white', border: '1px solid var(--gray-200)', borderRadius: '16px', padding: '24px', boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <div style={{ fontSize: '2.5rem' }}>👵</div>
-              <span style={{ background: '#e1ebf5', color: '#1e40af', fontSize: '0.72rem', fontWeight: 800, padding: '4px 10px', borderRadius: '20px' }}>Geriatric Specialists</span>
+          <div 
+            className="glass is-clickable" 
+            style={{ 
+              borderRadius: '26px', 
+              padding: '26px', 
+              boxShadow: 'var(--sh-card)', 
+              display: 'flex', 
+              flexDirection: 'column',
+              transition: 'transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <IconTile icon={HiOutlineHeart} tone="rose" size={44} />
+              <StatusPill status="Confirmed" label="Geriatric Specialists" />
             </div>
-            <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy-800)', marginBottom: '6px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
-            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#1d4ed8', marginBottom: '8px' }}>₹799<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--gray-500)'}}> trial / ₹4,999/mo</span></span>
-            <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
+            <h4 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--ink)', marginBottom: '6px' }}>{t('healthWellnessExt.elderlyCare')}</h4>
+            <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--blue)', marginBottom: '8px' }}>₹799<span style={{fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink-3)'}}> trial / ₹4,999/mo</span></span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-3)', lineHeight: 1.5, marginBottom: '16px', flex: 1 }}>{t('healthWellnessExt.elderlyCareDesc')}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Consistent Physio</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ WhatsApp Video Reports</span>
-              <span style={{ fontSize: '0.72rem', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px' }}>✓ Fall Risk & TENS</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Consistent Physio</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>WhatsApp Video Reports</span>
+              <span style={{ fontSize: '0.72rem', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', color: 'var(--ink-2)', padding: '3px 8px', borderRadius: '6px' }}>Fall Risk & TENS</span>
             </div>
-            <Link to="/customer/health-demo?type=elderly" className="btn btn-outline" style={{ width: '100%', padding: '12px', fontSize: '0.9rem', color: 'white', borderColor: '#1d4ed8', background: '#1d4ed8', textAlign: 'center', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>
+            <Link to="/customer/health-demo?type=elderly" className="btn-primary" style={{ width: '100%', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}>
               Consult & Subscribe
             </Link>
           </div>
@@ -592,45 +623,45 @@ const HealthWellnessHub = () => {
  onClose={() => setPdfModalOpen(false)} 
  fileName="Lab_Report.pdf" 
  pdfContent={
- <div style={{ padding: '20px', background: '#fafafa', border: '1px solid #ddd', borderRadius: '8px' }}>
- <h3 style={{ borderBottom: '2px solid #ccc', paddingBottom: '10px' }}>Clinical Laboratory Report</h3>
+ <div style={{ padding: '20px', background: 'var(--bg-page)', border: '1px solid var(--glass-edge)', borderRadius: '8px' }}>
+ <h3 style={{ borderBottom: '2px solid var(--glass-edge)', paddingBottom: '10px' }}>Clinical Laboratory Report</h3>
  <p><strong>Patient Name:</strong> Guest User</p>
  <p><strong>Test Package:</strong> {labPackage === 'full-body' ? 'Comprehensive Full Body Checkup' : labPackage === 'diabetic' ? 'Advanced Diabetic Profile' : 'Cardiac Health Screening'}</p>
  <p><strong>Collection Mode:</strong> Home Sample Collection</p>
  
  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
  <thead>
- <tr style={{ background: '#eee', textAlign: 'left' }}>
- <th style={{ padding: '8px', border: '1px solid #ccc' }}>Test Parameter</th>
- <th style={{ padding: '8px', border: '1px solid #ccc' }}>Result</th>
- <th style={{ padding: '8px', border: '1px solid #ccc' }}>Normal Range</th>
+ <tr style={{ background: 'var(--glass-edge)', textAlign: 'left' }}>
+ <th style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Test Parameter</th>
+ <th style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Result</th>
+ <th style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Normal Range</th>
  </tr>
  </thead>
  <tbody>
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Fasting Blood Sugar</td>
- <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold' }}>98 mg/dL</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>70 - 100 mg/dL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Fasting Blood Sugar</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)', fontWeight: 'bold' }}>98 mg/dL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>70 - 100 mg/dL</td>
  </tr>
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Total Cholesterol</td>
- <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold', color: 'orange' }}>210 mg/dL</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>{"< 200 mg/dL"}</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Total Cholesterol</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)', fontWeight: 'bold', color: 'orange' }}>210 mg/dL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>{"< 200 mg/dL"}</td>
  </tr>
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Hemoglobin (Hb)</td>
- <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold' }}>14.2 g/dL</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>13.8 - 17.2 g/dL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Hemoglobin (Hb)</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)', fontWeight: 'bold' }}>14.2 g/dL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>13.8 - 17.2 g/dL</td>
  </tr>
  <tr>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>Vitamin D (25-OH)</td>
- <td style={{ padding: '8px', border: '1px solid #ccc', fontWeight: 'bold', color: 'red' }}>18 ng/mL</td>
- <td style={{ padding: '8px', border: '1px solid #ccc' }}>30 - 100 ng/mL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>Vitamin D (25-OH)</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)', fontWeight: 'bold', color: 'red' }}>18 ng/mL</td>
+ <td style={{ padding: '8px', border: '1px solid var(--glass-edge)' }}>30 - 100 ng/mL</td>
  </tr>
  </tbody>
  </table>
  
- <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#666' }}>
+ <p style={{ marginTop: '20px', fontSize: '0.8rem', color: 'var(--ink-2)' }}>
  * Please consult with your physician for clinical correlation and diagnosis. This report is electronically generated and requires no physical signature.
  </p>
  </div>

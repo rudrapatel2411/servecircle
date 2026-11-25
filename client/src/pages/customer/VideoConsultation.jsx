@@ -112,7 +112,7 @@ const VideoConsultation = () => {
 				setMicActive(true);
 				setCamActive(true);
 				setChatMessages([
-					{ sender: 'expert', text: `🚨 Live Emergency Vet: Dr. Rohit Sen (BVSc & AH) connected for ${petNameParam || 'your pet'}. I'm here right now. Please tell me what symptoms or distress you are observing.` }
+					{ sender: 'expert', text: ` Live Emergency Vet: Dr. Rohit Sen (BVSc & AH) connected for ${petNameParam || 'your pet'}. I'm here right now. Please tell me what symptoms or distress you are observing.` }
 				]);
 			} else if (petNameParam) {
 				setChatMessages([
@@ -128,7 +128,7 @@ const VideoConsultation = () => {
 				setMicActive(true);
 				setCamActive(true);
 				setChatMessages([
-					{ sender: 'expert', text: '🩺 Clinical Emergency Video: Dr. Meera Iyer connected. Please share your symptoms or urgent query.' }
+					{ sender: 'expert', text: ' Clinical Emergency Video: Dr. Meera Iyer connected. Please share your symptoms or urgent query.' }
 				]);
 			} else {
 				setChatMessages([
@@ -230,7 +230,7 @@ const VideoConsultation = () => {
 
  {/* Specialty / Referral Context Banner */}
  {specialtyParam === 'vet' && (
- <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#ecfdf5', borderRadius: '10px', border: '1.5px solid #a7f3d0', display: 'flex', alignItems: 'center', gap: '10px', color: '#065f46' }}>
+ <div style={{ marginBottom: '20px', padding: '12px 16px', background: 'var(--status-success-tint)', borderRadius: '10px', border: '1.5px solid var(--status-success-ring)', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--status-success-text)' }}>
  <span style={{ fontSize: '1.3rem' }}></span>
  <div>
  <strong>Emergency Veterinary Care Desk: </strong>
@@ -239,8 +239,8 @@ const VideoConsultation = () => {
  </div>
  )}
  {specialtyParam === 'doctor' && (
- <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#eff6ff', borderRadius: '10px', border: '1.5px solid #bfdbfe', display: 'flex', alignItems: 'center', gap: '10px', color: '#1e40af' }}>
- <span style={{ fontSize: '1.3rem' }}>🩺</span>
+ <div style={{ marginBottom: '20px', padding: '12px 16px', background: 'var(--status-info-tint)', borderRadius: '10px', border: '1.5px solid var(--status-info-ring)', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--blue)' }}>
+ <span style={{ fontSize: '1.3rem' }}></span>
  <div>
  <strong>Free Doctor Review Desk: </strong>
  <span>Connected for prescription verification and live medical consultation.</span>
@@ -249,7 +249,7 @@ const VideoConsultation = () => {
  )}
 
  {toastMessage && (
- <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #86efac', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+ <div style={{ marginBottom: '20px', padding: '12px 16px', background: 'var(--status-success-tint)', borderRadius: '10px', border: '1px solid var(--status-success-soft)', color: 'var(--status-success-text)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
  <span></span>
  <span>{toastMessage}</span>
  </div>
@@ -258,7 +258,7 @@ const VideoConsultation = () => {
  <div className="dashboard-grid" style={{ gridTemplateColumns: '1.4fr 0.8fr', gap: '24px' }}>
  
  {/* Consultant Booking Area */}
- <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)' }}>
  <h3 style={{ fontSize: '1.25rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '20px' }}>{t('videoConsultation.bookNewVirtual')}</h3>
  
  {/* Consultant Selector */}
@@ -293,7 +293,7 @@ const VideoConsultation = () => {
  </div>
  </div>
  <div style={{ display: 'flex', justifySpace: 'between', justifyContent: 'space-between', marginTop: '14px', fontSize: '0.75rem', borderTop: '1px solid var(--gray-100)', paddingTop: '10px' }}>
- <span style={{ fontWeight: 600 }}>⭐ {c.rating} ({c.jobs} {t('videoConsultation.jobs')})</span>
+ <span style={{ fontWeight: 600 }}>{c.rating} rating ({c.jobs} {t('videoConsultation.jobs')})</span>
  <span style={{ color: 'var(--primary-700)', fontWeight: 700 }}>₹{c.fee} {t('videoConsultation.callPrice')}</span>
  </div>
  </div>
@@ -338,7 +338,7 @@ const VideoConsultation = () => {
 
  {/* Consultation List */}
  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
- <div className="card" style={{ padding: '24px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '24px', border: '1px solid var(--glass-edge)' }}>
  <h3 style={{ fontSize: '1.1rem', color: 'var(--navy-800)', fontWeight: 800, marginBottom: '16px' }}>{t('videoConsultation.myConsultations')}</h3>
  
  {bookedConsultations.length === 0 ? (
@@ -398,7 +398,7 @@ const VideoConsultation = () => {
  gridTemplateColumns: '1.6fr 0.9fr',
  gap: '20px',
  height: '84vh',
- background: '#0f172a',
+ background: 'var(--ink)',
  borderRadius: 'var(--radius-xl)',
  overflow: 'hidden',
  padding: '16px'
@@ -411,7 +411,7 @@ const VideoConsultation = () => {
  
  {/* Consultant Main Stream */}
  <div style={{
- background: '#1e293b',
+ background: 'var(--ink)',
  borderRadius: 'var(--radius-lg)',
  overflow: 'hidden',
  position: 'relative',
@@ -444,7 +444,7 @@ const VideoConsultation = () => {
 
  {/* Customer Stream Preview */}
  <div style={{
- background: '#1e293b',
+ background: 'var(--ink)',
  borderRadius: 'var(--radius-lg)',
  overflow: 'hidden',
  position: 'relative',
@@ -457,14 +457,14 @@ const VideoConsultation = () => {
  <div style={{ textAlign: 'center' }}>
  <div style={{
  width: '80px', height: '80px', borderRadius: '50%',
- background: '#475569', color: 'white',
+ background: 'var(--ink-2)', color: 'white',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: '1.8rem', fontWeight: 700, marginBottom: '8px'
  }}>RU</div>
- <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{t('videoConsultation.localCameraPreview')}</p>
+ <p style={{ fontSize: '0.8rem', color: 'var(--ink-3)' }}>{t('videoConsultation.localCameraPreview')}</p>
  </div>
  ) : (
- <div style={{ textAlign: 'center', color: '#94a3b8' }}>
+ <div style={{ textAlign: 'center', color: 'var(--ink-3)' }}>
  <HiOutlineVideoCameraSlash style={{ fontSize: '2.5rem', marginBottom: '10px' }} />
  <p style={{ fontSize: '0.8rem' }}>{t('videoConsultation.cameraOff')}</p>
  </div>
@@ -479,7 +479,7 @@ const VideoConsultation = () => {
 
  {/* Call Controls Bar */}
  <div style={{
- background: '#1e293b',
+ background: 'var(--ink)',
  padding: '14px',
  borderRadius: 'var(--radius-lg)',
  display: 'flex',
@@ -491,7 +491,7 @@ const VideoConsultation = () => {
  onClick={() => setMicActive(!micActive)}
  style={{
  width: '46px', height: '46px', borderRadius: '50%',
- background: micActive ? '#334155' : 'var(--danger)',
+ background: micActive ? 'var(--ink)' : 'var(--danger)',
  color: 'white', border: 'none', cursor: 'pointer',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: '1.25rem', transition: 'all 0.2s'
@@ -505,7 +505,7 @@ const VideoConsultation = () => {
  onClick={() => setCamActive(!camActive)}
  style={{
  width: '46px', height: '46px', borderRadius: '50%',
- background: camActive ? '#334155' : 'var(--danger)',
+ background: camActive ? 'var(--ink)' : 'var(--danger)',
  color: 'white', border: 'none', cursor: 'pointer',
  display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: '1.25rem', transition: 'all 0.2s'
@@ -535,7 +535,7 @@ const VideoConsultation = () => {
 
  {/* Right: Immersive In-call Chat panel */}
  <div style={{
- background: '#1e293b',
+ background: 'var(--ink)',
  borderRadius: 'var(--radius-lg)',
  overflow: 'hidden',
  display: 'flex',
@@ -543,7 +543,7 @@ const VideoConsultation = () => {
  height: '100%',
  border: '1.5px solid rgba(255,255,255,0.08)'
  }}>
- <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#111827' }}>
+ <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'var(--ink)' }}>
  <h4 style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 800 }}>
  <HiOutlineChatBubbleBottomCenterText style={{ color: 'var(--primary-400)' }} /> {t('videoConsultation.inCallChat')}
  </h4>
@@ -556,7 +556,7 @@ const VideoConsultation = () => {
  key={i}
  style={{
  alignSelf: msg.sender === 'expert' ? 'flex-start' : 'flex-end',
- background: msg.sender === 'expert' ? '#334155' : 'var(--gradient-primary)',
+ background: msg.sender === 'expert' ? 'var(--ink)' : 'var(--gradient-primary)',
  color: 'white',
  padding: '10px 14px',
  borderRadius: msg.sender === 'expert' ? '0 12px 12px 12px' : '12px 12px 0 12px',
@@ -572,7 +572,7 @@ const VideoConsultation = () => {
  </div>
 
  {/* Chat Input form */}
- <form onSubmit={sendMessage} style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '8px', background: '#111827' }}>
+ <form onSubmit={sendMessage} style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '8px', background: 'var(--ink)' }}>
  <input
  type="text"
  placeholder={t('videoConsultation.chatPlaceholder')}
@@ -580,7 +580,7 @@ const VideoConsultation = () => {
  onChange={(e) => setInputText(e.target.value)}
  style={{
  flex: 1,
- background: '#1e293b',
+ background: 'var(--ink)',
  border: '1px solid rgba(255,255,255,0.1)',
  borderRadius: 'var(--radius-md)',
  padding: '10px 12px',

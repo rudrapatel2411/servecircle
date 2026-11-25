@@ -241,7 +241,7 @@ const AISmartDiagnosis = () => {
  <div className="dashboard-grid" style={{ gridTemplateColumns: result ? '1fr' : '1.2fr 0.8fr', gap: '24px' }}>
  
  {/* Main interactive area */}
- <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)', position: 'relative' }}>
+ <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)', position: 'relative' }}>
  
  <AnimatePresence mode="wait">
  {!diagnosing && !result && (
@@ -297,7 +297,7 @@ const AISmartDiagnosis = () => {
  value={customNotes}
  onChange={(e) => setCustomNotes(e.target.value)}
  style={{
- width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--gray-300)', fontSize: '0.88rem'
+ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--glass-edge)', fontSize: '0.88rem'
  }}
  />
  </div>
@@ -336,7 +336,7 @@ const AISmartDiagnosis = () => {
  <h4 style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--navy-800)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{preset.title}</h4>
  <div style={{ display: 'flex', gap: '8px', marginTop: '4px', fontSize: '0.72rem' }}>
  <span style={{ color: 'var(--primary-700)', fontWeight: 600 }}>{preset.service}</span>
- <span style={{ color: preset.severity === 'Critical' ? 'var(--danger)' : preset.severity === 'High' ? '#f59e0b' : 'var(--gray-500)', fontWeight: 700 }}>
+ <span style={{ color: preset.severity === 'Critical' ? 'var(--danger)' : preset.severity === 'High' ? 'var(--status-warning-text)' : 'var(--gray-500)', fontWeight: 700 }}>
  {preset.severity}
  </span>
  </div>
@@ -398,7 +398,7 @@ const AISmartDiagnosis = () => {
  key="diagnosis-results"
  >
  {apiError && (
- <div style={{ background: '#fff7f7', border: '1px solid #fecaca', color: '#b91c1c', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.8rem' }}>
+ <div style={{ background: 'var(--status-danger-tint)', border: '1px solid var(--status-danger-soft)', color: 'var(--status-danger-text)', padding: '10px 14px', borderRadius: '8px', marginBottom: '16px', fontSize: '0.8rem' }}>
  {apiError}
  </div>
  )}
@@ -480,7 +480,7 @@ const AISmartDiagnosis = () => {
  {/* Informational Sidebar */}
  {!result && (
  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
- <div className="card" style={{ padding: '20px', border: '1px solid var(--gray-200)' }}>
+ <div className="card" style={{ padding: '20px', border: '1px solid var(--glass-edge)' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-700)', marginBottom: '12px' }}>
  <HiOutlineSparkles style={{ fontSize: '1.3rem' }} />
  <h4 style={{ fontWeight: 800 }}>Why use AI Smart Diagnosis?</h4>
@@ -492,12 +492,12 @@ const AISmartDiagnosis = () => {
  </ul>
  </div>
 
- <div className="card" style={{ padding: '20px', border: '1px solid var(--gray-200)', background: 'linear-gradient(135deg, #fef3c7, #fffbef)', borderColor: '#fef3c7' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#b45309', marginBottom: '12px' }}>
+ <div className="card" style={{ padding: '20px', border: '1px solid var(--glass-edge)', background: 'linear-gradient(135deg, var(--status-warning-tint), var(--status-warning-tint))', borderColor: 'var(--status-warning-tint)' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--status-warning-text)', marginBottom: '12px' }}>
  <HiOutlineExclamationTriangle style={{ fontSize: '1.3rem' }} />
  <h4 style={{ fontWeight: 800 }}>Critical Emergency Note</h4>
  </div>
- <p style={{ fontSize: '0.8rem', color: '#78350f', lineHeight: 1.4 }}>
+ <p style={{ fontSize: '0.8rem', color: 'var(--status-warning-text)', lineHeight: 1.4 }}>
  For urgent emergencies like heavy active water flooding, gas leaks, or sparks, skip diagnosis and click <strong>Emergency 24/7</strong> for instant technician dispatch.
  </p>
  </div>

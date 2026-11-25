@@ -56,12 +56,12 @@ const VehicleRelocationDemo = () => {
  <div className="page-content" style={{ minHeight: '92vh', background: 'var(--gray-50)', paddingBottom: '100px' }}>
  
  {/* Header */}
- <div style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', padding: '40px 24px', borderRadius: '0 0 24px 24px', marginBottom: '24px', borderBottom: '1px solid #bfdbfe' }}>
+ <div style={{ background: 'linear-gradient(135deg, var(--status-info-tint) 0%, var(--status-info-tint) 100%)', padding: '40px 24px', borderRadius: '0 0 24px 24px', marginBottom: '24px', borderBottom: '1px solid var(--status-info-ring)' }}>
  <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
- <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#1e40af', marginBottom: '8px' }}>
+ <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--blue)', marginBottom: '8px' }}>
  VIP Vehicle Relocation
  </h1>
- <p style={{ color: '#1d4ed8', fontSize: '0.95rem', fontWeight: 600 }}>Insured and damage-free intercity transport for your vehicle.</p>
+ <p style={{ color: 'var(--blue)', fontSize: '0.95rem', fontWeight: 600 }}>Insured and damage-free intercity transport for your vehicle.</p>
  </div>
  </div>
 
@@ -70,7 +70,7 @@ const VehicleRelocationDemo = () => {
  {/* Progress Bar */}
  <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
  {[1, 2].map(s => (
- <div key={s} style={{ flex: 1, height: '6px', borderRadius: '3px', background: s <= step ? '#3b82f6' : 'var(--gray-200)', transition: 'all 0.3s' }} />
+ <div key={s} style={{ flex: 1, height: '6px', borderRadius: '3px', background: s <= step ? 'var(--blue)' : 'var(--gray-200)', transition: 'all 0.3s' }} />
  ))}
  </div>
 
@@ -78,7 +78,7 @@ const VehicleRelocationDemo = () => {
  {step === 1 && (
  <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
- <div style={{ width: '48px', height: '48px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#2563eb' }}>
+ <div style={{ width: '48px', height: '48px', background: 'var(--status-info-tint)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'var(--blue)' }}>
  
  </div>
  <div>
@@ -92,9 +92,9 @@ const VehicleRelocationDemo = () => {
  className="btn"
  onClick={() => setVehicleData({...vehicleData, type: 'Car'})}
  style={{ 
- background: vehicleData.type === 'Car' ? '#dbeafe' : 'white',
- border: `2px solid ${vehicleData.type === 'Car' ? '#3b82f6' : 'var(--gray-200)'}`,
- color: vehicleData.type === 'Car' ? '#1d4ed8' : 'var(--gray-600)',
+ background: vehicleData.type === 'Car' ? 'var(--status-info-tint)' : 'white',
+ border: `2px solid ${vehicleData.type === 'Car' ? 'var(--blue)' : 'var(--gray-200)'}`,
+ color: vehicleData.type === 'Car' ? 'var(--blue)' : 'var(--gray-600)',
  padding: '16px', fontSize: '1.2rem', fontWeight: 800
  }}
  >
@@ -104,9 +104,9 @@ const VehicleRelocationDemo = () => {
  className="btn"
  onClick={() => setVehicleData({...vehicleData, type: 'Bike'})}
  style={{ 
- background: vehicleData.type === 'Bike' ? '#dbeafe' : 'white',
- border: `2px solid ${vehicleData.type === 'Bike' ? '#3b82f6' : 'var(--gray-200)'}`,
- color: vehicleData.type === 'Bike' ? '#1d4ed8' : 'var(--gray-600)',
+ background: vehicleData.type === 'Bike' ? 'var(--status-info-tint)' : 'white',
+ border: `2px solid ${vehicleData.type === 'Bike' ? 'var(--blue)' : 'var(--gray-200)'}`,
+ color: vehicleData.type === 'Bike' ? 'var(--blue)' : 'var(--gray-600)',
  padding: '16px', fontSize: '1.2rem', fontWeight: 800
  }}
  >
@@ -126,7 +126,7 @@ const VehicleRelocationDemo = () => {
  </div>
 
  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
- <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+ <div style={{ background: 'var(--bg-page)', border: '1px dashed var(--ink-3)', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
  <div>
  <h4 style={{ color: 'var(--navy-800)', fontWeight: 800, margin: '0 0 4px 0' }}>Upload RC Copy</h4>
  <p style={{ color: 'var(--gray-500)', fontSize: '0.8rem', margin: 0 }}>Registration certificate is mandatory.</p>
@@ -134,13 +134,13 @@ const VehicleRelocationDemo = () => {
  <button 
  className="btn" 
  onClick={() => setVehicleData({...vehicleData, hasRC: true})}
- style={{ background: vehicleData.hasRC ? '#3b7dc1' : 'white', color: vehicleData.hasRC ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasRC ? '#3b7dc1' : 'var(--gray-300)'}` }}
+ style={{ background: vehicleData.hasRC ? 'var(--blue)' : 'white', color: vehicleData.hasRC ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasRC ? 'var(--blue)' : 'var(--gray-300)'}` }}
  >
  {vehicleData.hasRC ? <><HiOutlineCheckCircle /> Uploaded</> : <><HiOutlineDocumentText /> Upload</>}
  </button>
  </div>
 
- <div style={{ background: '#f8fafc', border: '1px dashed #94a3b8', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+ <div style={{ background: 'var(--bg-page)', border: '1px dashed var(--ink-3)', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
  <div>
  <h4 style={{ color: 'var(--navy-800)', fontWeight: 800, margin: '0 0 4px 0' }}>Upload 4-Side Photos</h4>
  <p style={{ color: 'var(--gray-500)', fontSize: '0.8rem', margin: 0 }}>To record pre-transit condition.</p>
@@ -148,7 +148,7 @@ const VehicleRelocationDemo = () => {
  <button 
  className="btn" 
  onClick={() => setVehicleData({...vehicleData, hasPhotos: true})}
- style={{ background: vehicleData.hasPhotos ? '#3b7dc1' : 'white', color: vehicleData.hasPhotos ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasPhotos ? '#3b7dc1' : 'var(--gray-300)'}` }}
+ style={{ background: vehicleData.hasPhotos ? 'var(--blue)' : 'white', color: vehicleData.hasPhotos ? 'white' : 'var(--gray-600)', border: `1px solid ${vehicleData.hasPhotos ? 'var(--blue)' : 'var(--gray-300)'}` }}
  >
  {vehicleData.hasPhotos ? <><HiOutlineCheckCircle /> Verified</> : <><HiOutlineCamera /> Click</>}
  </button>
@@ -161,7 +161,7 @@ const VehicleRelocationDemo = () => {
  {step === 2 && (
  <div className="card animate-fade-in-up" style={{ padding: '32px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
- <div style={{ width: '48px', height: '48px', background: '#dbeafe', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: '#2563eb' }}>
+ <div style={{ width: '48px', height: '48px', background: 'var(--status-info-tint)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'var(--blue)' }}>
  
  </div>
  <div>
@@ -180,8 +180,8 @@ const VehicleRelocationDemo = () => {
  key={mode.id}
  onClick={() => setTransportMode(mode.id)}
  style={{
- border: `2px solid ${transportMode === mode.id ? '#3b82f6' : 'var(--gray-200)'}`,
- background: transportMode === mode.id ? '#eff6ff' : 'white',
+ border: `2px solid ${transportMode === mode.id ? 'var(--blue)' : 'var(--gray-200)'}`,
+ background: transportMode === mode.id ? 'var(--status-info-tint)' : 'white',
  borderRadius: '12px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s',
  display: 'flex', alignItems: 'center', gap: '16px'
  }}
@@ -190,7 +190,7 @@ const VehicleRelocationDemo = () => {
  <div style={{ flex: 1 }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
  <h4 style={{ fontWeight: 800, color: 'var(--navy-900)', margin: 0 }}>{mode.title}</h4>
- <span style={{ fontWeight: 900, color: '#2563eb' }}>₹{mode.price}</span>
+ <span style={{ fontWeight: 900, color: 'var(--blue)' }}>₹{mode.price}</span>
  </div>
  <p style={{ fontSize: '0.8rem', color: 'var(--gray-600)', margin: 0 }}>{mode.desc}</p>
  </div>
@@ -203,13 +203,13 @@ const VehicleRelocationDemo = () => {
  </div>
 
  {/* Footer Navigation */}
- <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white', padding: '16px', borderTop: '1px solid var(--gray-200)', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+ <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(18px)', padding: '16px', borderTop: '1px solid rgba(22, 70, 214, 0.08)', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
  <div style={{ maxWidth: '800px', width: '100%', display: 'flex', flexDirection: 'column' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <button className="btn" onClick={() => step === 1 ? navigate(-1) : setStep(1)} style={{ padding: '12px 24px', fontWeight: 800, color: 'var(--gray-600)' }}>
  Back
  </button>
- <button className="btn btn-primary" onClick={handleNext} disabled={loading} style={{ padding: '12px 32px', fontWeight: 800, background: '#2563eb', borderColor: '#2563eb', display: 'flex', alignItems: 'center', gap: '8px' }}>
+ <button className="btn btn-primary" onClick={handleNext} disabled={loading} style={{ padding: '12px 32px', fontWeight: 800, background: 'var(--blue)', borderColor: 'var(--blue)', display: 'flex', alignItems: 'center', gap: '8px' }}>
  {loading ? 'Processing...' : (step === 2 ? `Pay & Confirm Booking` : `Next`)} 
  {!loading && <HiOutlineArrowRight />}
  </button>

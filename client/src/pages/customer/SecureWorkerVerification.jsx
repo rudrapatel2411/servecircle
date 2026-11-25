@@ -70,8 +70,8 @@ const SecureWorkerVerification = () => {
  if (loading) {
  return (
  <div style={{ padding: '60px 20px', textAlign: 'center', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
- <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid #e2e8f0', borderTopColor: '#2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '16px' }} />
- <h3 style={{ color: '#1e3a5f', fontWeight: 700 }}>Verifying Worker Identity...</h3>
+ <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid var(--glass-edge)', borderTopColor: 'var(--blue)', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '16px' }} />
+ <h3 style={{ color: 'var(--ink)', fontWeight: 700 }}>Verifying Worker Identity...</h3>
  <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
  </div>
  );
@@ -85,38 +85,37 @@ const SecureWorkerVerification = () => {
  initial={{ opacity: 0, scale: 0.95 }}
  animate={{ opacity: 1, scale: 1 }}
  style={{
- background: 'white', borderRadius: '24px', padding: '36px 28px', textAlign: 'center',
- boxShadow: '0 20px 40px rgba(220, 38, 38, 0.15)', border: '2px solid #fecaca',
+ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', borderRadius: '26px', padding: '36px 28px', textAlign: 'center', boxShadow: 'var(--sh-card)', border: '2px solid var(--status-danger-soft)',
  }}
  >
  <div style={{
- width: '80px', height: '80px', borderRadius: '50%', background: '#fef2f2',
- color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center',
- fontSize: '3rem', margin: '0 auto 20px', border: '3px solid #fca5a5',
+ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--status-danger-tint)',
+ color: 'var(--status-danger-text)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+ fontSize: '3rem', margin: '0 auto 20px', border: '3px solid var(--status-danger-soft)',
  }}>
  <HiOutlineXCircle />
  </div>
 
- <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#991b1b', marginBottom: '12px' }}>
+ <h2 style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--status-danger-text)', marginBottom: '12px' }}>
  Authorization Warning
  </h2>
 
  <div style={{
- background: '#fff5f5', border: '1.5px solid #fecaca', borderRadius: '14px',
- padding: '16px 20px', marginBottom: '24px', color: '#b91c1c', fontSize: '0.95rem',
+ background: 'var(--status-danger-tint)', border: '1.5px solid var(--status-danger-soft)', borderRadius: '14px',
+ padding: '16px 20px', marginBottom: '24px', color: 'var(--status-danger-text)', fontSize: '0.95rem',
  fontWeight: 800, lineHeight: 1.5,
  }}>
  Worker is NOT currently authorized by ServeCircle.
  </div>
 
- <p style={{ fontSize: '0.85rem', color: '#64748b', lineHeight: 1.6, marginBottom: '24px' }}>
+ <p style={{ fontSize: '0.85rem', color: 'var(--ink-3)', lineHeight: 1.6, marginBottom: '24px' }}>
  Do not allow this person entry. If anyone claiming to be a ServeCircle partner arrives with this ID, please contact emergency support immediately.
  </p>
 
  <button
  disabled
  style={{
- width: '100%', padding: '14px', background: '#cbd5e1', color: '#64748b',
+ width: '100%', padding: '14px', background: 'var(--glass-edge)', color: 'var(--ink-3)',
  border: 'none', borderRadius: '12px', fontWeight: 800, fontSize: '0.95rem',
  cursor: 'not-allowed',
  }}
@@ -138,48 +137,47 @@ const SecureWorkerVerification = () => {
  initial={{ opacity: 0, y: 15 }}
  animate={{ opacity: 1, y: 0 }}
  style={{
- background: 'white', borderRadius: '24px', padding: '32px 24px', textAlign: 'center',
- boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)', border: '1.5px solid #e2e8f0',
+ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', borderRadius: '26px', padding: '32px 24px', textAlign: 'center', boxShadow: 'var(--sh-card)', border: '1px solid var(--glass-edge)',
  }}
  >
  <div style={{
- width: '64px', height: '64px', borderRadius: '50%', background: '#dcfce7',
- color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center',
+ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--status-success-tint)',
+ color: 'var(--status-success-text)', display: 'flex', alignItems: 'center', justifyContent: 'center',
  fontSize: '2.4rem', margin: '0 auto 16px',
  }}>
  <HiOutlineCheckCircle />
  </div>
 
  <span style={{
- background: '#dcfce7', color: '#15803d', fontSize: '0.75rem', fontWeight: 800,
+ background: 'var(--status-success-tint)', color: 'var(--status-success-text)', fontSize: '0.75rem', fontWeight: 800,
  padding: '4px 12px', borderRadius: '100px', textTransform: 'uppercase', letterSpacing: '0.05em',
  }}>
  Verified by ServeCircle
  </span>
 
- <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0f172a', margin: '14px 0 4px' }}>
+ <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--ink)', margin: '14px 0 4px' }}>
  {profile?.name}
  </h2>
 
- <div style={{ fontSize: '0.9rem', color: '#3b82f6', fontWeight: 800, marginBottom: '20px' }}>
+ <div style={{ fontSize: '0.9rem', color: 'var(--blue)', fontWeight: 800, marginBottom: '20px' }}>
  Worker ID: {profile?.workerId}
  </div>
 
  <div style={{
- background: '#f8fafc', borderRadius: '14px', padding: '16px', border: '1px solid #e2e8f0',
- fontSize: '0.85rem', color: '#475569', textAlign: 'left', marginBottom: '20px',
+ background: 'var(--bg-page)', borderRadius: '14px', padding: '16px', border: '1px solid var(--glass-edge)',
+ fontSize: '0.85rem', color: 'var(--ink-2)', textAlign: 'left', marginBottom: '20px',
  }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
- <span style={{ fontWeight: 700, color: '#64748b' }}>Current Status:</span>
- <span style={{ fontWeight: 800, color: '#16a34a' }}>{profile?.currentStatus}</span>
+ <span style={{ fontWeight: 700, color: 'var(--ink-3)' }}>Current Status:</span>
+ <span style={{ fontWeight: 800, color: 'var(--status-success-text)' }}>{profile?.currentStatus}</span>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
- <span style={{ fontWeight: 700, color: '#64748b' }}>Verification Badge:</span>
- <span style={{ fontWeight: 800, color: '#1e3a5f' }}>{profile?.verificationBadge}</span>
+ <span style={{ fontWeight: 700, color: 'var(--ink-3)' }}>Verification Badge:</span>
+ <span style={{ fontWeight: 800, color: 'var(--ink)' }}>{profile?.verificationBadge}</span>
  </div>
  </div>
 
- <p style={{ fontSize: '0.78rem', color: '#94a3b8', fontStyle: 'italic', margin: 0 }}>
+ <p style={{ fontSize: '0.78rem', color: 'var(--ink-3)', fontStyle: 'italic', margin: 0 }}>
  Privacy Protection: Detailed worker profile and active job credentials are only visible to the customer linked to today's assigned booking.
  </p>
  </motion.div>
@@ -194,13 +192,12 @@ const SecureWorkerVerification = () => {
  initial={{ opacity: 0, y: 15 }}
  animate={{ opacity: 1, y: 0 }}
  style={{
- background: 'white', borderRadius: '24px', overflow: 'hidden',
- boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08)', border: '1.5px solid #e2e8f0',
+ background: 'var(--glass)', backdropFilter: 'blur(18px) saturate(150%)', borderRadius: '26px', overflow: 'hidden', boxShadow: 'var(--sh-card)', border: '1px solid var(--glass-edge)',
  }}
  >
  {/* Verification Banner */}
  <div style={{
- background: 'linear-gradient(135deg, #1e3a5f 0%, #16a34a 100%)',
+ background: 'linear-gradient(135deg, var(--ink) 0%, var(--status-success-text) 100%)',
  color: 'white', padding: '24px', textAlign: 'center', position: 'relative',
  }}>
  <div style={{
@@ -222,7 +219,7 @@ const SecureWorkerVerification = () => {
  }}
  />
  <div style={{
- position: 'absolute', bottom: '0', right: '0', background: '#22c55e', color: 'white',
+ position: 'absolute', bottom: '0', right: '0', background: 'var(--status-success-text)', color: 'white',
  width: '26px', height: '26px', borderRadius: '50%', display: 'flex', alignItems: 'center',
  justifyContent: 'center', fontSize: '0.9rem', border: '2px solid white',
  }}>
@@ -234,7 +231,7 @@ const SecureWorkerVerification = () => {
  {profile?.name}
  </h2>
  <div style={{ fontSize: '0.88rem', opacity: 0.9, fontWeight: 700 }}>
- ID: <span style={{ color: '#fef08a' }}>{profile?.workerId}</span> · {profile?.role}
+ ID: <span style={{ color: 'var(--status-warning-tint)' }}>{profile?.workerId}</span> · {profile?.role}
  </div>
  </div>
 
@@ -245,23 +242,23 @@ const SecureWorkerVerification = () => {
  display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px',
  marginBottom: '20px', textAlign: 'center',
  }}>
- <div style={{ background: '#f8fafc', padding: '12px 8px', borderRadius: '14px', border: '1px solid #f1f5f9' }}>
- <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Rating</span>
- <span style={{ fontSize: '1.1rem', fontWeight: 900, color: '#d97706' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '12px 8px', borderRadius: '14px', border: '1px solid var(--bg-page)' }}>
+ <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Rating</span>
+ <span style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--status-warning-text)' }}>
  <HiOutlineStar style={{ verticalAlign: 'middle', marginRight: '2px' }} />
  {profile?.rating}
  </span>
  </div>
- <div style={{ background: '#f8fafc', padding: '12px 8px', borderRadius: '14px', border: '1px solid #f1f5f9' }}>
- <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Completed Jobs</span>
- <span style={{ fontSize: '1.1rem', fontWeight: 900, color: '#1e3a5f' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '12px 8px', borderRadius: '14px', border: '1px solid var(--bg-page)' }}>
+ <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Completed Jobs</span>
+ <span style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--ink)' }}>
  <HiOutlineBriefcase style={{ verticalAlign: 'middle', marginRight: '2px' }} />
  {profile?.completedJobs}+
  </span>
  </div>
- <div style={{ background: '#f8fafc', padding: '12px 8px', borderRadius: '14px', border: '1px solid #f1f5f9' }}>
- <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Experience</span>
- <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#16a34a' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '12px 8px', borderRadius: '14px', border: '1px solid var(--bg-page)' }}>
+ <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: '2px' }}>Experience</span>
+ <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--status-success-text)' }}>
  {profile?.experience}
  </span>
  </div>
@@ -270,12 +267,12 @@ const SecureWorkerVerification = () => {
  {/* Details List */}
  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
  <div>
- <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
+ <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
  Skills & Specializations
  </span>
  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
  {profile?.skills.map((skill, idx) => (
- <span key={idx} style={{ background: '#eff6ff', color: '#1d4ed8', fontSize: '0.78rem', fontWeight: 700, padding: '4px 10px', borderRadius: '8px' }}>
+ <span key={idx} style={{ background: 'var(--status-info-tint)', color: 'var(--blue)', fontSize: '0.78rem', fontWeight: 700, padding: '4px 10px', borderRadius: '8px' }}>
  {skill}
  </span>
  ))}
@@ -283,33 +280,33 @@ const SecureWorkerVerification = () => {
  </div>
 
  <div>
- <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
+ <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
  Verified Certificates
  </span>
  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
  {profile?.certificates.map((cert, idx) => (
- <div key={idx} style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
- <HiOutlineAcademicCap style={{ color: '#16a34a', fontSize: '1rem' }} /> {cert}
+ <div key={idx} style={{ fontSize: '0.82rem', color: 'var(--ink)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <HiOutlineAcademicCap style={{ color: 'var(--status-success-text)', fontSize: '1rem' }} /> {cert}
  </div>
  ))}
  </div>
  </div>
 
  <div>
- <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
+ <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>
  Languages Spoken
  </span>
- <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
- <HiOutlineLanguage style={{ color: '#2563eb', fontSize: '1rem' }} /> {profile?.languages.join(', ')}
+ <div style={{ fontSize: '0.82rem', color: 'var(--ink)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+ <HiOutlineLanguage style={{ color: 'var(--blue)', fontSize: '1rem' }} /> {profile?.languages.join(', ')}
  </div>
  </div>
 
  {profile?.todaysBookingStatus && (
- <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 14px' }}>
- <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
+ <div style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-ring)', borderRadius: '12px', padding: '12px 14px' }}>
+ <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--status-success-text)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
  Today's Booking Linked
  </span>
- <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#14532d' }}>
+ <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--status-success-text)' }}>
  {profile.todaysBookingStatus.service} ({profile.todaysBookingStatus.bookingId})
  </div>
  </div>
@@ -320,7 +317,7 @@ const SecureWorkerVerification = () => {
  <button
  onClick={handleContinueToOtp}
  style={{
- width: '100%', padding: '14px', background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%)',
+ width: '100%', padding: '14px', background: 'linear-gradient(135deg, var(--ink) 0%, var(--blue) 100%)',
  color: 'white', border: 'none', borderRadius: '14px', fontWeight: 800, fontSize: '0.95rem',
  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
  boxShadow: '0 8px 20px rgba(37, 99, 235, 0.25)',

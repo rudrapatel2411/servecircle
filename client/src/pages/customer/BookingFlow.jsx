@@ -621,12 +621,12 @@ const BookingFlow = () => {
  {toastMessage && (
  <div style={{
  position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 100000,
- background: 'white', borderLeft: '4px solid var(--danger, #ef4444)',
+ background: '#FFFFFF', border: '1px solid rgba(22, 70, 214, 0.14)', borderLeft: '4px solid var(--status-danger-text)',
  padding: '16px 24px', borderRadius: 'var(--radius-md)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
  display: 'flex', alignItems: 'center', gap: '12px',
  animation: 'fadeInDown 0.3s ease-out'
  }}>
- <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#fee2e2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>!</div>
+ <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>!</div>
  <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--navy-900)' }}>{toastMessage}</span>
  </div>
  )}
@@ -638,7 +638,7 @@ const BookingFlow = () => {
  <HiOutlineArrowLeft /> {t('bookingFlow.back', 'Back')}
  </button>
  <h2 className="page-title" style={{ fontSize: '1.6rem', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
- {isExpressMode && <span style={{ background: '#fee2e2', color: '#ef4444', padding: '2px 6px', borderRadius: '6px', fontSize: '0.8rem' }}>Express</span>}
+ {isExpressMode && <span style={{ background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', padding: '2px 6px', borderRadius: '6px', fontSize: '0.8rem' }}>Express</span>}
  {t('bookingFlow.checkout', 'Secure Checkout')}
  </h2>
  </div>
@@ -660,14 +660,14 @@ const BookingFlow = () => {
  </p>
 
  {/* Address Preview */}
- <div style={{ background: 'var(--gray-50)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+ <div style={{ background: 'var(--gray-50)', padding: '14px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(22, 70, 214, 0.08)' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
  <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', gap: '6px' }}><HiOutlineMapPin /> Service Address</h4>
  <button 
  className="btn btn-outline" 
  onClick={handleAutoGPS}
  disabled={isLocating}
- style={{ padding: '4px 8px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', background: 'white' }}
+ style={{ padding: '4px 8px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--glass)', borderRadius: '999px' }}
  >
  {isLocating ? 'Locating...' : 'Auto GPS'}
  </button>
@@ -678,21 +678,21 @@ const BookingFlow = () => {
  value={formData.address}
  onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
  placeholder="Street Address / Flat No."
- style={{ width: '100%', padding: '10px', border: '1px solid var(--gray-300)', borderRadius: 'var(--radius-sm)', fontSize: '0.88rem', marginBottom: '8px', outline: 'none' }}
+ style={{ width: '100%', padding: '10px', border: '1px solid var(--glass-edge)', borderRadius: 'var(--radius-sm)', fontSize: '0.88rem', marginBottom: '8px', outline: 'none' }}
  />
  <input 
  type="text"
  value={formData.city}
  onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
  placeholder="City"
- style={{ width: '100%', padding: '10px', border: '1px solid var(--gray-300)', borderRadius: 'var(--radius-sm)', fontSize: '0.88rem', outline: 'none' }}
+ style={{ width: '100%', padding: '10px', border: '1px solid var(--glass-edge)', borderRadius: 'var(--radius-sm)', fontSize: '0.88rem', outline: 'none' }}
  />
  </div>
 
  <button 
  className="btn btn-primary animate-pulse" 
  onClick={handleConfirmBooking} 
- style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 800, background: '#ef4444' }}
+ style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 800, background: 'var(--status-danger-text)' }}
  >
  Confirm 1-Click Booking
  </button>
@@ -725,7 +725,7 @@ const BookingFlow = () => {
  </h3>
  
  {!editSchedule && formData.date && formData.time ? (
- <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--gray-50)', padding: '10px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--gray-200)' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--gray-50)', padding: '10px 16px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(22, 70, 214, 0.08)' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
  <HiOutlineCalendarDays style={{ color: 'var(--primary-500)', fontSize: '1.1rem' }} />
  <span style={{ fontSize: '0.88rem', fontWeight: 750, color: 'var(--navy-800)' }}>
@@ -741,14 +741,14 @@ const BookingFlow = () => {
  </button>
  </div>
  ) : (
- <div className="animate-fade-in-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'var(--gray-50)', padding: '12px', borderRadius: 'var(--radius-md)' }}>
+ <div className="animate-fade-in-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.45)', padding: '12px', borderRadius: 'var(--radius-md)' }}>
  <div>
  <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block', marginBottom: '4px' }}>Date</label>
  <input 
  type="date"
  value={formData.date} 
  onChange={(e) => setFormData(prev => ({...prev, date: e.target.value}))}
- style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--gray-300)', fontSize: '0.8rem' }}
+ style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem' }}
  />
  </div>
  <div>
@@ -756,7 +756,7 @@ const BookingFlow = () => {
  <select
  value={formData.time} 
  onChange={(e) => setFormData(prev => ({...prev, time: e.target.value}))}
- style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--gray-300)', fontSize: '0.8rem' }}
+ style={{ width: '100%', padding: '6px', borderRadius: '4px', border: '1px solid var(--glass-edge)', fontSize: '0.8rem' }}
  >
  <option value="" disabled>Select a slot</option>
  <option value="Morning (09:00 AM - 12:00 PM)">Morning (09:00 AM - 12:00 PM)</option>
@@ -783,17 +783,17 @@ const BookingFlow = () => {
  <div style={{ paddingBottom: '12px', borderBottom: '1px solid var(--gray-100)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <h3 style={{ fontSize: '0.95rem', color: 'var(--navy-900)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
- <span style={{ background: '#e0f2fe', color: '#0284c7', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem' }}></span>
+ <span style={{ background: 'var(--status-info-tint)', color: 'var(--blue)', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem' }}></span>
  {requirementsSchema.title}
  </h3>
  {reqImpact.tags.length > 0 && (
- <span style={{ fontSize: '0.68rem', color: '#0369a1', background: '#f0f9ff', border: '1px solid #bae6fd', padding: '2px 8px', borderRadius: '100px', fontWeight: 700 }}>
+ <span style={{ fontSize: '0.68rem', color: 'var(--blue-deep)', background: 'var(--status-info-tint)', border: '1px solid var(--status-info-ring)', padding: '2px 8px', borderRadius: '100px', fontWeight: 700 }}>
  {reqImpact.tags.length} specs applied
  </span>
  )}
  </div>
 
- <div style={{ background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+ <div style={{ background: 'var(--bg-page)', borderRadius: '10px', border: '1px solid var(--glass-edge)', padding: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
  {requirementsSchema.fields.map(field => {
  if (field.type === 'select') {
  return (
@@ -802,7 +802,7 @@ const BookingFlow = () => {
  <select
  value={requirements[field.key] ?? field.default}
  onChange={(e) => handleRequirementChange(field.key, e.target.value)}
- style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid var(--gray-300)', fontSize: '0.82rem', background: 'white' }}
+ style={{ width: '100%', padding: '10px 14px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.7)', fontSize: '0.85rem', background: 'rgba(255, 255, 255, 0.5)', boxShadow: 'var(--sh-inset)' }}
  >
  {field.options.map(opt => (
  <option key={opt.value} value={opt.value}>
@@ -820,17 +820,17 @@ const BookingFlow = () => {
  <div>
  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--navy-800)', display: 'block' }}>{field.label}</span>
  {field.multiplierPerUnit && count > 1 && (
- <span style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 700 }}>15% Combo Savings Applied</span>
+ <span style={{ fontSize: '0.65rem', color: 'var(--status-success-text)', fontWeight: 700 }}>15% Combo Savings Applied</span>
  )}
  {field.ratePerUnit && count > 0 && (
- <span style={{ fontSize: '0.65rem', color: '#2563eb', fontWeight: 700 }}>+₹{count * field.ratePerUnit}</span>
+ <span style={{ fontSize: '0.65rem', color: 'var(--blue)', fontWeight: 700 }}>+₹{count * field.ratePerUnit}</span>
  )}
  </div>
  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
  <button
  type="button"
  onClick={() => handleRequirementChange(field.key, Math.max(field.min ?? 0, count - 1))}
- style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer' }}
+ style={{ width: '32px', height: '32px', borderRadius: '10px', border: '1px solid var(--glass-edge)', background: 'var(--glass)', fontWeight: 800, cursor: 'pointer', boxShadow: 'var(--sh-small)' }}
  >
  -
  </button>
@@ -840,7 +840,7 @@ const BookingFlow = () => {
  <button
  type="button"
  onClick={() => handleRequirementChange(field.key, Math.min(field.max ?? 20, count + 1))}
- style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid var(--gray-300)', background: 'white', fontWeight: 800, cursor: 'pointer' }}
+ style={{ width: '32px', height: '32px', borderRadius: '10px', border: '1px solid var(--glass-edge)', background: 'var(--glass)', fontWeight: 800, cursor: 'pointer', boxShadow: 'var(--sh-small)' }}
  >
  +
  </button>
@@ -856,7 +856,7 @@ const BookingFlow = () => {
  type="checkbox"
  checked={isChecked}
  onChange={(e) => handleRequirementChange(field.key, e.target.checked)}
- style={{ width: '16px', height: '16px', accentColor: '#2563eb' }}
+ style={{ width: '16px', height: '16px', accentColor: 'var(--blue)' }}
  />
  <span style={{ fontSize: '0.78rem', fontWeight: 650, color: 'var(--navy-800)' }}>
  {field.labelCheck}
@@ -872,47 +872,47 @@ const BookingFlow = () => {
 
  {/* Custom Hub Specifications Details */}
  {hasCustomHubDetails && (
- <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: 800, fontSize: '0.8rem' }}>
+ <div style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-soft)', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--status-success-text)', fontWeight: 800, fontSize: '0.8rem' }}>
  <span></span> Custom Hub Specifications Attached
  </div>
  {routeParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Route Itinerary:</strong> {routeParam}
  </div>
  )}
  {terminalParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Airport:</strong> {terminalParam} {flightNoParam ? `• Flight: ${flightNoParam}` : ''}
  </div>
  )}
  {inventorySpecsParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Moving Inventory:</strong> {inventorySpecsParam}
  </div>
  )}
  {deliveryDaysParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Meal Delivery Days:</strong> {deliveryDaysParam} ({activeDaysCountParam || 5} days/week)
  </div>
  )}
  {cakeFlavorParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Cake Specs:</strong> {cakeWeightParam || 1}kg {cakeFlavorParam} {cakeMessageParam ? `• "${cakeMessageParam}"` : ''}
  </div>
  )}
  {petNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Pet Profile:</strong> {petNameParam} ({petTypeParam || 'Pet'}, {petBreedParam || 'Mixed'})
  </div>
  )}
  {prescriptionNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Prescription:</strong> {prescriptionNameParam} (Doorstep Verification Attached)
  </div>
  )}
  {vaultSpaceParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Vault Reservation:</strong> {vaultSpaceParam} Sq. Ft. Private Storage
  </div>
  )}
@@ -932,7 +932,7 @@ const BookingFlow = () => {
  onClick={handleAutoGPS}
  disabled={isLocating}
  style={{
- background: 'rgba(59, 130, 246, 0.08)', color: '#2563eb', border: 'none',
+ background: 'rgba(59, 130, 246, 0.08)', color: 'var(--blue)', border: 'none',
  borderRadius: '4px', padding: '4px 8px', fontSize: '0.72rem', fontWeight: 800,
  cursor: isLocating ? 'not-allowed' : 'pointer'
  }}
@@ -941,14 +941,14 @@ const BookingFlow = () => {
  </button>
  </div>
 
- <div style={{ background: 'white', borderRadius: '8px', border: '1px solid var(--gray-200)', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+ <div style={{ background: 'rgba(255,255,255,0.5)', borderRadius: '8px', border: '1px solid var(--glass-edge)', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
  <div>
  <input 
  type="text"
  value={formData.address || ''} 
  onChange={(e) => setFormData(prev => ({...prev, address: e.target.value}))} 
  placeholder={t('bookingFlow.addressPlaceholder', 'Flat / House No. & Building Name')}
- style={{ width: '100%', border: 'none', borderBottom: '1px solid var(--gray-200)', outline: 'none', fontSize: '0.85rem', color: 'var(--navy-900)', fontWeight: 600, padding: '4px 0' }}
+ style={{ width: '100%', border: 'none', borderBottom: '1px solid rgba(22, 70, 214, 0.08)', outline: 'none', fontSize: '0.85rem', color: 'var(--navy-900)', fontWeight: 600, padding: '4px 0' }}
  />
  </div>
 
@@ -958,20 +958,20 @@ const BookingFlow = () => {
  value={formData.landmark || ''} 
  onChange={(e) => setFormData(prev => ({...prev, landmark: e.target.value}))} 
  placeholder="Landmark (Optional)"
- style={{ width: '100%', border: 'none', borderBottom: '1px solid var(--gray-200)', outline: 'none', fontSize: '0.8rem', color: 'var(--navy-800)', padding: '4px 0' }}
+ style={{ width: '100%', border: 'none', borderBottom: '1px solid rgba(22, 70, 214, 0.08)', outline: 'none', fontSize: '0.8rem', color: 'var(--navy-800)', padding: '4px 0' }}
  />
  <input 
  type="text"
  value={formData.city || ''} 
  onChange={(e) => setFormData(prev => ({...prev, city: e.target.value}))} 
  placeholder="City"
- style={{ width: '100%', border: 'none', borderBottom: '1px solid var(--gray-200)', outline: 'none', fontSize: '0.8rem', color: 'var(--navy-800)', padding: '4px 0' }}
+ style={{ width: '100%', border: 'none', borderBottom: '1px solid rgba(22, 70, 214, 0.08)', outline: 'none', fontSize: '0.8rem', color: 'var(--navy-800)', padding: '4px 0' }}
  />
  </div>
- <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '8px', border: '1px solid #bbf7d0', marginTop: '4px', display: 'flex', gap: '10px', alignItems: 'flex-start', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
+ <div style={{ background: 'var(--status-success-tint)', padding: '12px', borderRadius: '8px', border: '1px solid var(--status-success-ring)', marginTop: '4px', display: 'flex', gap: '10px', alignItems: 'flex-start', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
  
  <div style={{ flex: 1 }}>
- <strong style={{ fontSize: '0.75rem', color: '#166534', display: 'block', marginBottom: '4px' }}>Special Instructions (Optional)</strong>
+ <strong style={{ fontSize: '0.75rem', color: 'var(--status-success-text)', display: 'block', marginBottom: '4px' }}>Special Instructions (Optional)</strong>
  <textarea 
  value={specialInstructions} 
  onChange={(e) => setSpecialInstructions(e.target.value)} 
@@ -993,10 +993,10 @@ const BookingFlow = () => {
 
  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
  {[
- { id: 'UPI', label: 'UPI', subtext: 'GPay, PhonePe, Paytm', icon: <HiOutlineDevicePhoneMobile />, color: '#8b5cf6' },
- { id: 'Card', label: 'Card', subtext: 'Credit or Debit', icon: <HiOutlineCreditCard />, color: '#3b82f6' },
- { id: 'Wallet', label: 'Wallet', subtext: 'ServeCircle Pay', icon: <HiOutlineWallet />, color: '#3b7dc1' },
- { id: 'Cash', label: 'Cash', subtext: 'Pay after service', icon: <HiOutlineBanknotes />, color: '#f59e0b' }
+ { id: 'UPI', label: 'UPI', subtext: 'GPay, PhonePe, Paytm', icon: <HiOutlineDevicePhoneMobile />, color: 'var(--accent-violet-text)' },
+ { id: 'Card', label: 'Card', subtext: 'Credit or Debit', icon: <HiOutlineCreditCard />, color: 'var(--blue)' },
+ { id: 'Wallet', label: 'Wallet', subtext: 'ServeCircle Pay', icon: <HiOutlineWallet />, color: 'var(--blue)' },
+ { id: 'Cash', label: 'Cash', subtext: 'Pay after service', icon: <HiOutlineBanknotes />, color: 'var(--status-warning-text)' }
  ].map(method => {
  const isSelected = paymentMethod === method.id;
  return (
@@ -1041,47 +1041,47 @@ const BookingFlow = () => {
 
  {/* Custom Hub Specifications Details */}
  {hasCustomHubDetails && (
- <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: 800, fontSize: '0.8rem' }}>
+ <div style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-soft)', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--status-success-text)', fontWeight: 800, fontSize: '0.8rem' }}>
  <span></span> Custom Hub Specifications Attached
  </div>
  {routeParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Route Itinerary:</strong> {routeParam}
  </div>
  )}
  {terminalParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Airport:</strong> {terminalParam} {flightNoParam ? `• Flight: ${flightNoParam}` : ''}
  </div>
  )}
  {inventorySpecsParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Moving Inventory:</strong> {inventorySpecsParam}
  </div>
  )}
  {deliveryDaysParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Meal Delivery Days:</strong> {deliveryDaysParam} ({activeDaysCountParam || 5} days/week)
  </div>
  )}
  {cakeFlavorParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Cake Specs:</strong> {cakeWeightParam || 1}kg {cakeFlavorParam} {cakeMessageParam ? `• "${cakeMessageParam}"` : ''}
  </div>
  )}
  {petNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Pet Profile:</strong> {petNameParam} ({petTypeParam || 'Pet'}, {petBreedParam || 'Mixed'})
  </div>
  )}
  {prescriptionNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Prescription:</strong> {prescriptionNameParam} (Doorstep Verification Attached)
  </div>
  )}
  {vaultSpaceParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Vault Reservation:</strong> {vaultSpaceParam} Sq. Ft. Private Storage
  </div>
  )}
@@ -1095,7 +1095,7 @@ const BookingFlow = () => {
 
  {/* RIGHT COLUMN: Order Summary */}
  <div>
- <div className="card" style={{ padding: '20px', border: '1.5px solid var(--primary-200)', background: 'white', boxShadow: 'var(--shadow-md)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+ <div className="card" style={{ padding: '20px', border: '1px solid var(--glass-edge)', background: 'var(--glass)', borderRadius: '26px', backdropFilter: 'blur(18px)', boxShadow: 'var(--shadow-md)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
  
  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
  <h3 style={{ fontSize: '0.95rem', color: 'var(--navy-900)', fontWeight: 800, margin: 0, paddingBottom: '8px', borderBottom: '1px solid var(--gray-100)' }}>
@@ -1121,7 +1121,7 @@ const BookingFlow = () => {
  {reqImpact.tags.length > 0 && (
  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '2px', marginBottom: '2px' }}>
  {reqImpact.tags.map((tag, i) => (
- <span key={i} style={{ fontSize: '0.65rem', background: '#f0f9ff', color: '#0284c7', border: '1px solid #bae6fd', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+ <span key={i} style={{ fontSize: '0.65rem', background: 'var(--status-info-tint)', color: 'var(--blue)', border: '1px solid var(--status-info-ring)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
  {tag}
  </span>
  ))}
@@ -1130,25 +1130,25 @@ const BookingFlow = () => {
  </div>
 
  {isSellingService ? (
- <div style={{ background: '#f0fdf4', padding: '14px', borderRadius: '8px', border: '1px dashed #22c55e', textAlign: 'center' }}>
+ <div style={{ background: 'var(--status-success-tint)', padding: '14px', borderRadius: '8px', border: '1px dashed var(--status-success-text)', textAlign: 'center' }}>
  <div style={{ fontSize: '1.5rem', marginBottom: '8px', color: 'var(--primary-600)' }}></div>
- <h4 style={{ color: '#166534', fontWeight: 800, margin: '0 0 8px 0' }}>Get Paid for Junk!</h4>
- <p style={{ color: '#15803d', fontSize: '0.85rem', margin: 0, lineHeight: 1.4 }}>Our expert will evaluate your items during the visit and pay you instantly via UPI or Cash before pickup.</p>
+ <h4 style={{ color: 'var(--status-success-text)', fontWeight: 800, margin: '0 0 8px 0' }}>Get Paid for Junk!</h4>
+ <p style={{ color: 'var(--status-success-text)', fontSize: '0.85rem', margin: 0, lineHeight: 1.4 }}>Our expert will evaluate your items during the visit and pay you instantly via UPI or Cash before pickup.</p>
  </div>
  ) : (
- <div style={{ background: 'var(--gray-50)', padding: '10px 14px', borderRadius: '6px' }}>
+ <div style={{ background: 'rgba(255, 255, 255, 0.45)', padding: '10px 14px', borderRadius: '6px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: 'var(--gray-600)' }}>
  <span>Base Service Labor</span>
  <span style={{ fontWeight: 600 }}>₹{initialBasePrice}</span>
  </div>
  {(reqImpact.laborDelta > 0 || reqImpact.unitMultiplier > 1) && (
- <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: '#2563eb' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: 'var(--blue)' }}>
  <span>Sizing & Custom Add-ons</span>
  <span style={{ fontWeight: 700 }}>+₹{reqImpact.laborDelta + (reqImpact.unitMultiplier > 1 ? Math.round(initialBasePrice * (reqImpact.unitMultiplier - 1)) : 0)}</span>
  </div>
  )}
  {passThroughAmount > 0 && (
- <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: '#047857' }}>
+ <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <span>Pass-Through (Parts / Stairs)</span>
  <span style={{ fontWeight: 700 }}>+₹{passThroughAmount}</span>
  </div>
@@ -1162,7 +1162,7 @@ const BookingFlow = () => {
  <span style={{ fontWeight: 600 }}>₹{trustSafetyFee}</span>
  </div>
  {appliedCoupon && (
- <div className="animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: '#3b7dc1', fontWeight: 700 }}>
+ <div className="animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.78rem', color: 'var(--blue)', fontWeight: 700 }}>
  <span>Coupon ({appliedCoupon.code})</span>
  <span>- ₹{discountAmount}</span>
  </div>
@@ -1173,7 +1173,7 @@ const BookingFlow = () => {
  <span>Total Amount</span>
  <span style={{ color: 'var(--primary-700)' }}>₹{totalAmount}</span>
  </div>
- <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px solid var(--gray-200)', fontSize: '0.7rem', color: '#047857', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+ <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px solid rgba(22, 70, 214, 0.08)', fontSize: '0.7rem', color: 'var(--status-success-text)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
  <span> Dynamic Fair Yield: Fuel, tolls & spares pass 100% to your professional.</span>
  </div>
  </div>
@@ -1181,47 +1181,47 @@ const BookingFlow = () => {
 
  {/* Custom Hub Specifications Details */}
  {hasCustomHubDetails && (
- <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
- <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: 800, fontSize: '0.8rem' }}>
+ <div style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-soft)', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--status-success-text)', fontWeight: 800, fontSize: '0.8rem' }}>
  <span></span> Custom Hub Specifications Attached
  </div>
  {routeParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Route Itinerary:</strong> {routeParam}
  </div>
  )}
  {terminalParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Airport:</strong> {terminalParam} {flightNoParam ? `• Flight: ${flightNoParam}` : ''}
  </div>
  )}
  {inventorySpecsParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Moving Inventory:</strong> {inventorySpecsParam}
  </div>
  )}
  {deliveryDaysParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Meal Delivery Days:</strong> {deliveryDaysParam} ({activeDaysCountParam || 5} days/week)
  </div>
  )}
  {cakeFlavorParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Cake Specs:</strong> {cakeWeightParam || 1}kg {cakeFlavorParam} {cakeMessageParam ? `• "${cakeMessageParam}"` : ''}
  </div>
  )}
  {petNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Pet Profile:</strong> {petNameParam} ({petTypeParam || 'Pet'}, {petBreedParam || 'Mixed'})
  </div>
  )}
  {prescriptionNameParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Prescription:</strong> {prescriptionNameParam} (Doorstep Verification Attached)
  </div>
  )}
  {vaultSpaceParam && (
- <div style={{ fontSize: '0.78rem', color: '#15803d' }}>
+ <div style={{ fontSize: '0.78rem', color: 'var(--status-success-text)' }}>
  <strong> Vault Reservation:</strong> {vaultSpaceParam} Sq. Ft. Private Storage
  </div>
  )}
@@ -1232,11 +1232,11 @@ const BookingFlow = () => {
  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
  
  {!isExpressMode && !isSellingService && (
- <div style={{ background: 'var(--gray-50)', padding: '12px', borderRadius: '8px', border: '1px dashed var(--gray-300)' }}>
+ <div style={{ background: 'rgba(255, 255, 255, 0.45)', padding: '12px', borderRadius: '8px', border: '1px dashed var(--gray-300)' }}>
  {appliedCoupon ? (
  <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
- <span style={{ background: '#3b7dc1', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
+ <span style={{ background: 'var(--blue)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>
  {appliedCoupon.code}
  </span>
  <span style={{ fontSize: '0.8rem', color: 'var(--gray-700)', fontWeight: 700 }}>Applied!</span>
@@ -1279,7 +1279,7 @@ const BookingFlow = () => {
  {AVAILABLE_COUPONS.map(coupon => {
  const isEligible = price >= coupon.minAmount;
  return (
- <div key={coupon.code} style={{ background: 'white', border: `1px solid ${isEligible ? 'var(--primary-200)' : 'var(--gray-200)'}`, borderRadius: '6px', padding: '10px', position: 'relative', opacity: isEligible ? 1 : 0.6 }}>
+ <div key={coupon.code} style={{ background: 'var(--glass)', border: `1px solid ${isEligible ? 'var(--primary-200)' : 'var(--gray-200)'}`, borderRadius: '6px', padding: '10px', position: 'relative', opacity: isEligible ? 1 : 0.6 }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
  <span style={{ fontWeight: 800, color: 'var(--navy-800)', fontSize: '0.85rem' }}>{coupon.code}</span>
  {isEligible ? (
@@ -1306,7 +1306,7 @@ const BookingFlow = () => {
  if (price === 0 || isSellingService) setPaymentMethod('Cash');
  handleConfirmBooking();
  }} 
- style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800, boxShadow: 'var(--shadow-md)', background: isSellingService ? '#3b7dc1' : undefined, borderColor: isSellingService ? '#3b7dc1' : undefined }}
+ style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800, boxShadow: 'var(--shadow-md)', background: isSellingService ? 'var(--blue)' : undefined, borderColor: isSellingService ? 'var(--blue)' : undefined }}
  >
  {isSellingService ? 'Schedule Evaluation Visit →' : (price === 0 ? 'Schedule Free Visit →' : 'Pay & Confirm Booking →')}
  </button>
@@ -1314,14 +1314,14 @@ const BookingFlow = () => {
 
  <div 
  onClick={() => navigate('/customer/trust-safety')}
- style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '10px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s', marginTop: '4px' }}
+ style={{ background: 'var(--status-success-tint)', border: '1px solid var(--status-success-ring)', borderRadius: '8px', padding: '10px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.2s', marginTop: '4px' }}
  onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
  >
- <HiOutlineShieldCheck style={{ color: '#16a34a', fontSize: '1.5rem', flexShrink: 0 }} />
+ <HiOutlineShieldCheck style={{ color: 'var(--status-success-text)', fontSize: '1.5rem', flexShrink: 0 }} />
  <div>
- <h4 style={{ margin: 0, fontSize: '0.75rem', color: '#166534', fontWeight: 800 }}>ServeCircle Trust & Safety Guarantee</h4>
- <p style={{ margin: 0, fontSize: '0.65rem', color: '#15803d' }}>Verified professionals, call masking & ₹10k insurance.</p>
+ <h4 style={{ margin: 0, fontSize: '0.75rem', color: 'var(--status-success-text)', fontWeight: 800 }}>ServeCircle Trust & Safety Guarantee</h4>
+ <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--status-success-text)' }}>Verified professionals, call masking & ₹10k insurance.</p>
  </div>
  </div>
 
@@ -1344,8 +1344,8 @@ const BookingFlow = () => {
  overflowY: 'auto'
  }}>
  <div className="card animate-scale-up" style={{
- width: '100%', maxWidth: '420px', background: 'white', padding: '24px',
- borderRadius: 'var(--radius-lg, 16px)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', position: 'relative',
+ width: '100%', maxWidth: '420px', background: '#FFFFFF', border: '1px solid rgba(22, 70, 214, 0.1)', borderRadius: '26px', padding: '24px',
+ boxShadow: 'var(--sh-card)', position: 'relative',
  margin: 'auto'
  }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -1354,13 +1354,13 @@ const BookingFlow = () => {
  {activePaymentModal === 'Card' && 'Demo Card Payment Simulator'}
  {activePaymentModal === 'Wallet' && 'ServeCircle Wallet (Demo)'}
  </h3>
- <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#dbeafe', color: '#1d4ed8', padding: '2px 8px', borderRadius: '12px' }}>
+ <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'var(--status-info-tint)', color: 'var(--blue)', padding: '2px 8px', borderRadius: '12px' }}>
  Testing Mode
  </span>
  </div>
 
  {modalError && (
- <div style={{ color: 'var(--danger, #ef4444)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px', background: '#fee2e2', padding: '8px 12px', borderRadius: '6px' }}>
+ <div style={{ color: 'var(--danger, var(--status-danger-text))', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px', background: 'var(--status-danger-tint)', padding: '8px 12px', borderRadius: '6px' }}>
  {modalError}
  </div>
  )}
@@ -1368,9 +1368,9 @@ const BookingFlow = () => {
  {/* UPI Modal Content */}
  {activePaymentModal === 'UPI' && (
  <div style={{ textAlign: 'center' }}>
- <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '10px', padding: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
- <span style={{ fontSize: '0.85rem', color: '#6b21a8', fontWeight: 700 }}>Total Payable</span>
- <span style={{ fontSize: '1.1rem', color: '#581c87', fontWeight: 900 }}>₹{totalAmount}</span>
+ <div style={{ background: 'var(--accent-violet-tint)', border: '1px solid var(--accent-violet-ring)', borderRadius: '10px', padding: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+ <span style={{ fontSize: '0.85rem', color: 'var(--accent-violet-text)', fontWeight: 700 }}>Total Payable</span>
+ <span style={{ fontSize: '1.1rem', color: 'var(--accent-violet-text)', fontWeight: 900 }}>₹{totalAmount}</span>
  </div>
 
  <p style={{ fontSize: '0.82rem', color: 'var(--gray-600)', margin: '0 0 14px 0', lineHeight: 1.4 }}>
@@ -1378,13 +1378,13 @@ const BookingFlow = () => {
  </p>
 
  <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
- <span style={{ fontSize: '0.78rem', background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', color: '#334155' }}>
+ <span style={{ fontSize: '0.78rem', background: 'var(--bg-page)', padding: '4px 10px', borderRadius: '6px', color: 'var(--ink)' }}>
  Demo VPA: <strong>{upiId}</strong>
  </span>
  </div>
 
- <div style={{ background: '#f8fafc', padding: '8px 16px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary-700)', marginBottom: '16px' }}>
- <span style={{ width: '12px', height: '12px', border: '2px solid #3b82f6', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }}></span>
+ <div style={{ background: 'var(--bg-page)', padding: '8px 16px', borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary-700)', marginBottom: '16px' }}>
+ <span style={{ width: '12px', height: '12px', border: '2px solid var(--blue)', borderTopColor: 'transparent', borderRadius: '50%', display: 'inline-block', animation: 'spin 1s linear infinite' }}></span>
  Auto-approving in 00:0{upiCountdown}
  </div>
 
@@ -1402,9 +1402,9 @@ const BookingFlow = () => {
  {/* Card Modal Content */}
  {activePaymentModal === 'Card' && (
  <div>
- <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '10px', padding: '12px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
- <span style={{ fontSize: '0.85rem', color: '#1e40af', fontWeight: 700 }}>Total Payable</span>
- <span style={{ fontSize: '1.1rem', color: '#1e3a8a', fontWeight: 900 }}>₹{totalAmount}</span>
+ <div style={{ background: 'var(--status-info-tint)', border: '1px solid var(--status-info-ring)', borderRadius: '10px', padding: '12px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+ <span style={{ fontSize: '0.85rem', color: 'var(--blue)', fontWeight: 700 }}>Total Payable</span>
+ <span style={{ fontSize: '1.1rem', color: 'var(--blue-deep)', fontWeight: 900 }}>₹{totalAmount}</span>
  </div>
 
  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
@@ -1472,7 +1472,7 @@ const BookingFlow = () => {
  {/* Wallet Modal Content */}
  {activePaymentModal === 'Wallet' && (
  <div>
- <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid var(--gray-200)', marginBottom: '16px' }}>
+ <div style={{ background: 'var(--bg-page)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(22, 70, 214, 0.08)', marginBottom: '16px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
  <span style={{ color: 'var(--gray-600)' }}>Current Balance:</span>
  <span style={{ fontWeight: 800, color: 'var(--navy-800)' }}>₹{walletBalance.toFixed(2)}</span>

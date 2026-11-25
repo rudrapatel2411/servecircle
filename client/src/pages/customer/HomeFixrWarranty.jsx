@@ -24,7 +24,7 @@ const DEFAULT_APPLIANCES = [
     warrantyYears: 5,
     type: 'AC',
     status: 'Filter Cleaning Due',
-    statusColor: '#f59e0b'
+    statusColor: 'var(--status-warning-text)'
   },
   {
     id: 2,
@@ -36,7 +36,7 @@ const DEFAULT_APPLIANCES = [
     warrantyYears: 2,
     type: 'TV',
     status: 'Healthy',
-    statusColor: '#16a34a'
+    statusColor: 'var(--status-success-text)'
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ const DEFAULT_APPLIANCES = [
     warrantyYears: 10,
     type: 'Refrigerator',
     status: 'Compressor check suggested',
-    statusColor: '#3b82f6'
+    statusColor: 'var(--blue)'
   }
 ];
 
@@ -127,7 +127,7 @@ const HomeFixrWarranty = () => {
       warrantyYears: parseInt(formData.warrantyYears) || 2,
       type: formData.type,
       status: 'Healthy',
-      statusColor: '#16a34a',
+      statusColor: 'var(--status-success-text)',
       fileName: 'warranty_invoice.pdf'
     };
 
@@ -180,11 +180,11 @@ Customer Care: 1800-SERVE-CIRCLE`;
     const now = new Date();
     
     if (now > expDate) {
-      return { label: 'Expired', color: '#ef4444' };
+      return { label: 'Expired', color: 'var(--status-danger-text)' };
     } else {
       const diffTime = Math.abs(expDate - now);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return { label: `Active (Expires in ${diffDays} days)`, color: '#16a34a' };
+      return { label: `Active (Expires in ${diffDays} days)`, color: 'var(--status-success-text)' };
     }
   };
 
@@ -197,7 +197,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          background: '#064e3b',
+          background: 'var(--status-success-text)',
           color: 'white',
           padding: '12px 20px',
           borderRadius: '10px',
@@ -208,9 +208,9 @@ Customer Care: 1800-SERVE-CIRCLE`;
           gap: '10px',
           fontSize: '0.875rem'
         }}>
-          <HiOutlineCheckCircle style={{ color: '#34d399', fontSize: '1.2rem' }} />
+          <HiOutlineCheckCircle style={{ color: 'var(--status-success-soft)', fontSize: '1.2rem' }} />
           <span>{toast}</span>
-          <button onClick={() => setToast(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
+          <button onClick={() => setToast(null)} style={{ background: 'none', border: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}>
             <HiOutlineXMark />
           </button>
         </div>
@@ -219,7 +219,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px', marginBottom: '24px' }}>
         <div>
           <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-            {t('customer.homefixr', 'HomeFixr™ Smart Warranty Vault')} <HiOutlineHeart style={{ color: '#ef4444' }} />
+            {t('customer.homefixr', 'HomeFixr™ Smart Warranty Vault')} <HiOutlineHeart style={{ color: 'var(--status-danger-text)' }} />
           </h1>
           <p className="page-subtitle" style={{ margin: '4px 0 0 0', color: 'var(--gray-600)' }}>
             AI-powered home health intelligence and proactive warranty monitoring.
@@ -236,7 +236,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
         {/* Left Side: HomeFixr Score Dashboard */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          <div className="card" style={{ padding: '28px', border: '1px solid var(--gray-200)', textAlign: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: 'white', borderRadius: '18px' }}>
+          <div className="card" style={{ padding: '28px', border: '1px solid var(--glass-edge)', textAlign: 'center', background: 'linear-gradient(135deg, var(--ink) 0%, var(--ink) 100%)', color: 'white', borderRadius: '26px' }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '20px', opacity: 0.9 }}>Your HomeFixr Health Score</h3>
             
             {/* Health Score Circular Gauge */}
@@ -246,7 +246,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
                 height: '100%',
                 borderRadius: '50%',
                 border: '12px solid rgba(255, 255, 255, 0.1)',
-                borderTopColor: currentScore > 80 ? '#22c55e' : currentScore > 60 ? '#f59e0b' : '#ef4444',
+                borderTopColor: currentScore > 80 ? 'var(--status-success-text)' : currentScore > 60 ? 'var(--status-warning-text)' : 'var(--status-danger-text)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -266,7 +266,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
               <Link 
                 to="/customer/my-home"
                 className="btn" 
-                style={{ background: '#2563eb', color: 'white', textDecoration: 'none', padding: '10px', fontSize: '0.85rem', fontWeight: 800, borderRadius: '8px' }}
+                style={{ background: 'var(--blue)', color: 'white', textDecoration: 'none', padding: '10px', fontSize: '0.85rem', fontWeight: 800, borderRadius: '8px' }}
               >
                 Go to Full Home Cockpit →
               </Link>
@@ -278,7 +278,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
         {/* Right Side: Registered Appliance List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          <div className="card" style={{ padding: '24px', borderRadius: '18px', border: '1px solid var(--gray-200)' }}>
+          <div className="card" style={{ padding: '24px', borderRadius: '26px', border: '1px solid var(--glass-edge)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
               <div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--navy-800)', margin: 0 }}>Registered Home Appliances</h3>
@@ -302,16 +302,16 @@ Customer Care: 1800-SERVE-CIRCLE`;
                   exit={{ opacity: 0, height: 0 }}
                   onSubmit={handleRegister}
                   style={{
-                    background: '#f8fafc',
+                    background: 'var(--bg-page)',
                     padding: '20px',
                     borderRadius: '12px',
                     marginBottom: '20px',
-                    border: '1px solid #cbd5e1'
+                    border: '1px solid var(--glass-edge)'
                   }}
                 >
                   <h4 style={{ fontWeight: 800, marginBottom: '14px', color: 'var(--navy-800)', fontSize: '0.9rem' }}>Register Appliance</h4>
                   
-                  {alertMsg && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '10px', fontWeight: 700 }}>{alertMsg}</div>}
+                  {alertMsg && <div style={{ color: 'var(--status-danger-text)', fontSize: '0.85rem', marginBottom: '10px', fontWeight: 700 }}>{alertMsg}</div>}
 
                   <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
                     <div className="input-group" style={{ marginBottom: 0 }}>
@@ -345,7 +345,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
 
                   <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px' }}>
                     <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowAddForm(false)}>Cancel</button>
-                    <button type="submit" className="btn btn-primary btn-sm" style={{ fontWeight: 800, background: '#2563eb' }}>Confirm & Save</button>
+                    <button type="submit" className="btn btn-primary btn-sm" style={{ fontWeight: 800, background: 'var(--blue)' }}>Confirm & Save</button>
                   </div>
                 </motion.form>
               )}
@@ -353,7 +353,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
 
             {/* List of Registered items */}
             {appliances.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 0', border: '1.5px dashed var(--gray-200)', borderRadius: '12px' }}>
+              <div style={{ textAlign: 'center', padding: '40px 0', border: '1px solid var(--glass-edge)', borderRadius: '12px' }}>
                 <HiOutlineInbox style={{ fontSize: '3rem', color: 'var(--gray-300)', marginBottom: '10px' }} />
                 <h4 style={{ color: 'var(--gray-400)', margin: 0 }}>No appliances registered yet</h4>
               </div>
@@ -367,7 +367,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
                       className="card"
                       style={{
                         padding: '16px 20px',
-                        border: '1px solid var(--gray-200)',
+                        border: '1px solid var(--glass-edge)',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -377,7 +377,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
                       }}
                     >
                       <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                        <div style={{ fontSize: '1.6rem', padding: '10px', background: '#f1f5f9', borderRadius: '10px', display: 'flex', alignItems: 'center', color: '#2563eb' }}>
+                        <div style={{ fontSize: '1.6rem', padding: '10px', background: 'var(--bg-page)', borderRadius: '10px', display: 'flex', alignItems: 'center', color: 'var(--blue)' }}>
                           {app.type === 'AC' ? <HiOutlineBolt /> : app.type === 'TV' ? <HiOutlineTv /> : app.type === 'Refrigerator' ? <HiOutlineCube /> : <HiOutlineWrench />}
                         </div>
                         <div>
@@ -402,7 +402,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
                             <HiOutlineArrowDownTray /> Invoice
                           </button>
                           <button
-                            style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '1.1rem', padding: '4px' }}
+                            style={{ background: 'none', border: 'none', color: 'var(--status-danger-text)', cursor: 'pointer', fontSize: '1.1rem', padding: '4px' }}
                             onClick={() => setDeleteCandidate(app)}
                             title="Remove appliance"
                           >
@@ -433,14 +433,15 @@ Customer Care: 1800-SERVE-CIRCLE`;
           zIndex: 99999, padding: '20px'
         }} onClick={() => setDeleteCandidate(null)}>
           <div style={{
-            background: 'white',
+            background: '#FFFFFF',
             borderRadius: '20px',
             width: '100%', maxWidth: '400px',
             padding: '24px',
             textAlign: 'center',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)'
+            border: '1px solid rgba(22, 70, 214, 0.1)',
+            boxShadow: '0 25px 60px -12px rgba(11, 30, 79, 0.35)'
           }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.6rem' }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'var(--status-danger-tint)', color: 'var(--status-danger-text)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.6rem' }}>
               <HiOutlineTrash />
             </div>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '1.15rem', fontWeight: 900, color: 'var(--navy-900)' }}>
@@ -453,7 +454,7 @@ Customer Care: 1800-SERVE-CIRCLE`;
               <button className="btn btn-outline" style={{ flex: 1, padding: '8px' }} onClick={() => setDeleteCandidate(null)}>
                 Cancel
               </button>
-              <button className="btn btn-danger" style={{ flex: 1, padding: '8px', background: '#dc2626', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 800 }} onClick={handleConfirmDelete}>
+              <button className="btn btn-danger" style={{ flex: 1, padding: '8px', background: 'var(--status-danger-text)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 800 }} onClick={handleConfirmDelete}>
                 Remove
               </button>
             </div>

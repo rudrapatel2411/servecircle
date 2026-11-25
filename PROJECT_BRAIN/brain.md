@@ -1,5 +1,11 @@
 # ServeCircle Project Brain
 
+## Working plan — Diagnose server.js startup failure (done, verified 2026-11-25)
+
+- **Finding:** `npm run dev` fails with `EADDRINUSE` because another `node server.js` process already owns port 5000. The existing process responds `HTTP 200` at `/api/health`.
+- **Outcome:** No application code change was needed. Stopped the reproduction watcher and left the existing server process running.
+- **Validation:** Reproduced the failure, identified listener PID 23204, and confirmed the API health response with `curl.exe`.
+
 > **First read for every AI/operator session.** This is the canonical project handoff, file map, working agreement, current truth, active plan, and change journal. Read this file first; open only the linked module notes needed for the task. Search the wider repository only when the map does not answer the question or code contradicts it.
 
 Last reviewed: 2026-11-20.
@@ -18,6 +24,115 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > [!IMPORTANT]
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
+
+## Working plan — Brand Logo, Initial Loader, Hero Circle & Landing Page Overhaul (done, verified 2026-11-25)
+
+**User request:**
+"kya tum landing page ko attractive and mast bana sakte ho platform ke idea ke upar se kyuki abhi ke landing pag me bina zarurat ke details hai and vo cricle bhi kitna poor designed lag raha hai and logo bhi achha and profesional chiaye hai and jab web open ho tab jo loading ata hai vaha bhi logo banake change kardo"
+
+1. **Professional ServeCircle Logo & Favicon**:
+   - Create `client/public/favicon.svg` and `client/src/components/ServeCircleLogo.jsx` (geometric interlocking orbital S-circle mark with `#4C86FF` -> `#1646D6` gradient).
+   - Update `client/index.html` pre-hydration `.app-initial-loader` with the new SVG logo, `#E3EBFA` atmosphere, and smooth gradient loader bar.
+   - Use `ServeCircleLogo` in `Navbar.jsx` and `LandingPage.jsx` footer.
+2. **Hero Orbital Circle Redesign (`ServeCircleHeroVisual.jsx` & `ServeCircleHeroVisual.css`)**:
+   - Replace dark/cluttered circle with luminous frosted-glass orbital ecosystem, clean animated gradient SVG track, sapphire-glass center hub, 3 interactive pillar nodes (`Homes`, `Workers`, `Societies`), and 4 non-overlapping floating `.glass` service badges.
+3. **Streamlined Frosted-Glass Landing Page (`LandingPage.jsx` & `LandingPage.css`)**:
+   - Remove redundant sections ("Why Choose" duplication, fake "Watch Video" CTA, cluttered strips) and present the core 3-pillar ServeCircle idea (`Homes`, `Workers`, `Societies`), horizontal category bar, 3-step How It Works, Membership Plans, and clean footer in the `#E3EBFA` frosted glass design system.
+4. **Verification**:
+   - `npm --prefix client run build` passing with 0 errors.
+
+## Working plan — B2B & Admin Panel Frosted Glass UI Overhaul (done, verified 2026-11-25)
+
+**User request:**
+"ab b2b and admin panel ko bhi isi tarah perfectly ui change karke perfect bana do"
+
+1. **B2B Portal (`client/src/pages/b2b/B2BPages.css`)**:
+   - Upgrade `.b2b-kpi`, `.b2b-card`, `.b2b-contract-card`, `.b2b-location-card`, `.b2b-table-wrap`, `.confirm-summary`, `.stat-card`, `.card`, `.table-card`, and `.b2b-modal-content` to frosted glass (`26px` radius, `var(--sh-card)`, `backdrop-filter: blur(18px) saturate(150%)`, smooth hover scale).
+   - Upgrade `.b2b-table`, `.b2b-mini-btn`, `.b2b-check-item`, `.btn-primary`, `.btn-outline`, `.tabs-bar`, `.tab-btn`, `.stat-icon`, and `.b2b-stepper` to match Customer/Worker frosted glass system.
+2. **Admin Panel (`client/src/pages/admin/AdminPages.css`)**:
+   - Upgrade `.admin-form-card`, `.verification-card`, `.chart-card`, `.top-services-list`, `.status-breakdown`, `.coupon-card`, `.complaint-card`, `.partner-card`, `.notif-card`, `.admin-table-wrap`, `.stat-card`, `.card`, and `.table-card` to frosted glass (`26px` radius, `var(--sh-card)`, smooth hover lift).
+   - Upgrade `.toggle-switch` (AdminCoupons) to sunken glass spring-knob toggle, `.btn-primary`/`.btn-outline`/`.btn-icon-sm` to frosted/gradient pills, `.stat-icon` to squircle tiles, and toolbar/form inputs to sunken glass.
+3. **Verification**:
+   - Run `npm --prefix client run build` to verify 0 errors.
+
+## Working plan — Worker Role UI Frosted Glass Overhaul (done, verified 2026-11-25)
+
+**User request:**
+"ab hamne jis tarah customer ke ui ko change kiya tha usi tarah worker ka bhi kardo
+tokens bachane hai is liye save ho esa kuch karo"
+
+**Token-Efficient Master Strategy:**
+1. **CSS-First Global Transformation (`client/src/pages/worker/WorkerPages.css`)**:
+   - Upgrade all core worker UI classes (`.stat-card`, `.dashboard-card`, `.card`, `.job-card`, `.schedule-planner-card`, `.worker-stepper`, `.empowerment-card`, `.tabs-bar`, `.tab-btn`, `.btn-primary`, `.btn-outline`, `.badge`, `.day-toggle-btn`, `.job-meta`, `.worker-action-buttons`) to match the Customer UI frosted glass design system (`rgba(255,255,255,0.62)`, `backdrop-filter: blur(18px) saturate(150%)`, `border: 1px solid rgba(255,255,255,0.92)`, `26px` radius, `var(--sh-card)`, `1.03x` hover scale, squircle icon tiles, gradient pill CTAs, sunken inputs).
+   - Add targeted `.worker-page` frosted glass rules for all 7 specialized worker cockpits (`WorkerTravel`, `WorkerFood`, `WorkerPetServices`, `WorkerHealthWellness`, `WorkerSocietyManagement`, `WorkerRelocation`, `WorkerEvents`) so every hero banner, queue card, filter tab, detail panel, and input automatically renders in the frosted glass system without duplicating edits across 7 large JSX files.
+2. **Verification**:
+   - Run `npm --prefix client run build` to confirm 0 build/CSS errors.
+   - Keep changes 100% local (no git commit, no git push).
+
+## Working plan — My Home, Wallet, Profile Dropdown & Search Transparency Fixes (done, verified 2026-11-25)
+
+**User feedback & outcome:**
+User requested: "my home and wallet ka ui fix karo thode like my home me kuchh chijo ke color ek jese ho jane ki vajah se kuch dikh nahi raha hai text and all and profile pe click karne par jo menu bar ata hai vo tranceparent hai usko sahi karo and search bar pe bhi click karne par sab tranceparent hai uska isko kam token me complete karo bina mistake ke"
+
+Deliver complete visual fulfillment:
+1. **Profile Menu Bar Transparency:**
+   - In `DashboardNavbar.css`, `.dash-profile-dropdown` and `.notif-dropdown` changed from semi-transparent `rgba(255, 255, 255, 0.88)` to solid `#FFFFFF !important;` with border `1px solid rgba(22, 70, 214, 0.14)` and deep elevation shadow `0 16px 48px rgba(11, 30, 79, 0.16)`.
+   - Eliminated background blur seeing-through underlying page elements when opened.
+2. **Global Search Bar & Dropdown Transparency:**
+   - In `GlobalServiceSearch.css`, removed heavy viewport blur from `.global-search-backdrop` (now subtle dim overlay `rgba(11, 30, 79, 0.12)` without distorting blur).
+   - `.global-search-container` and `.global-search-container.focused` set to solid `#FFFFFF` with crisp blue focus ring.
+   - `.global-search-dropdown` results container changed from `var(--glass)` (62% transparent) to solid `#FFFFFF !important;` with crisp border and elevation shadow `0 16px 48px rgba(11, 30, 79, 0.16)`.
+3. **My Home Dashboard Typography & Color Hierarchy:**
+   - In `MyHomeDashboard.jsx`, fixed monochromatic color blending in Onboarding guide card (heading now `var(--ink)`, paragraph `var(--ink-2)`, step items `var(--ink)` with violet number squircles).
+   - Prime AMC subscription banner heading set to `var(--ink)` and description to `var(--ink-2)` (crisp contrast against soft background tint).
+   - Predictive seasonal maintenance cards (Monsoon leak proofing & Water tank sanitization) headings changed to `var(--ink)` and descriptions to `var(--ink-2)`.
+   - Prime modal perks checklist item text updated to readable `var(--ink)`.
+4. **Customer Wallet Contrast & Readability:**
+   - In `CustomerWallet.jsx`, fixed dark ServePoints Loyalty card on `var(--navy-900)`: converted dark `var(--ink-3)` labels to legible light silver (`rgba(255, 255, 255, 0.85)`), points counter to `#FFFFFF`, and next tier description to `rgba(255, 255, 255, 0.65)`.
+   - Perks box background made subtle white tint with legible `rgba(255, 255, 255, 0.85)` text.
+5. **Verification:**
+   - Client production build clean (`built in 4.07s`, 0 errors).
+   - 0 emojis across all touched files.
+
+## Working plan — General Services Cards & Line-Stretch Slider Animation Redesign (done, verified 2026-11-25)
+
+**User feedback & outcome:**
+User requested: "perfect yar par abhi bhi genral services me kuchh service ke card normal lakh rahe hai and jo vo line stretch karke changes hote hai usko bhi mene jo demo ui code diya tha usme tha us tarah ka banana hai"
+
+Deliver complete, zero-drift, end-to-end visual fulfillment:
+1. **Interactive Line-Stretch Range Slider ("jo vo line stretch karke changes hote hai")**:
+   - Add range slider styles (`input[type=range]`) directly from demo reference (`design-spec-reference.html` / `full_user_prompt.txt`) to `client/src/styles/design-system.css` and `client/src/pages/customer/CustomerPages.css`: recessed sunken track (`rgba(255, 255, 255, 0.55)`, `inset 2px 3px 6px rgba(120, 142, 190, 0.3)`), gradient knob (`#4C86FF` -> `#1646D6`, glow shadow), and smooth drag interaction.
+   - Add the interactive Budget line slider card in `GeneralServicesPage.jsx` and `CategoryHub.jsx` where stretching/sliding the line dynamically updates the budget counter (`₹2,500`) and live filters services.
+   - Enhance the navbar/tab sliding indicator (`DashboardNavbar.jsx` & `DashboardNavbar.css`) with fluid physics stretch-and-snap spring animation as active route switches.
+2. **General Services Service Cards Master Overhaul**:
+   - Sweep all General Services hubs (`SocietyManagementHub.jsx`, `RelocationHub.jsx`, `FoodKitchenHub.jsx`, `PetHub.jsx`, `HealthWellnessHub.jsx`, `TravelCommuteHub.jsx`, and `GeneralServicesPage.jsx`).
+   - Eliminate all legacy rectangular `card`, `borderRadius: '20px'`, `boxShadow: 'var(--shadow-sm)'`, and `.btn` styles.
+   - Transform all service cards into genuine frosted `.glass.is-clickable` with 26px radius, `var(--sh-card)` dual shadow, `1.03x` scale hover growth, squircle `<IconTile>`, text-only `<StatusPill>`, and 999px pill `.btn-primary` CTAs.
+3. **Verification**:
+   - 0 emoji across touched files.
+   - Passing client production build (`npm --prefix client run build`).
+
+## Working plan — Customer Role UI Overhaul: Services Cards, Menus & Submenus Full Fidelity Redesign (done, verified 2026-11-25)
+
+**User feedback & outcome:**
+User requested: "abhi tumne adhura kam kiya hai cutomer me services ke card plan and promt ke mutabik nahi banaye hai and sab menu me bhi ui pehle ke jesa hai bas tumne dash board hi banaya hai achha vo bhi adhura hai tumne needs full feel nahi ki hai"
+
+Deliver complete, zero-drift, end-to-end visual fulfillment for **`CURRENT ROLE: CUSTOMER`**:
+1. **Services Cards Master Overhaul**:
+   - CustomerDashboard: Express Booking cards, Quick Book cards, Upcoming Booking card, Live Tracking card, My Home Cockpit banner all converted to genuine `<GlassCard clickable={true}>` / `.glass.is-clickable` with 26px radius, soft blue glass elevation shadow (`0 14px 32px -14px rgba(22,70,214,.3)`), smooth 1.03x hover scale, and squircle `<IconTile>` with pastel tones.
+   - BrowseServices: AI Concierge & diagnostic cards, all 19 category directory cards, and combo bundle cards converted to frosted GlassCards with `<StatusPill>` badges and `<PrimaryButton>` actions.
+   - CategoryHub: Catalog service cards transformed to `<GlassCard clickable={true}>` with ServiceImage, rating pills, jobs done badges, price display, and Book Now CTA.
+   - GeneralServicesPage: All category cards refactored to frosted GlassCards with live/soon StatusPills and service tags.
+   - ServiceDetail: Service details, package tiers, trust & safety promises, date/time selectors, and sticky booking card refactored to frosted GlassCards.
+   - OrderedServices: Order cards with StatusPill, worker initials avatar, and PrimaryButton live tracking CTA.
+2. **Customer Menus & Sub-menus Overhaul**:
+   - `Sidebar.jsx` & `Sidebar.css` (`GeneralServicesSidebar`): Refactor category sidebar from stark white rectangular box into frosted glass panel (`rgba(255, 255, 255, 0.62)`, blur 18px, border 1px solid rgba(255,255,255,.92)), `.glass-sm` links with 1.03x hover scale, sliding/glass active pill, and squircle IconTiles.
+   - `DashboardNavbar.jsx` & `DashboardNavbar.css`: Frosted glass navbar, glass active sliding pill indicator (`rgba(255, 255, 255, 0.92)` with bevel), frosted glass Profile Dropdown and Notifications Dropdown with springy scale enter, rounded 24px corners, and clean typography.
+3. **Verification**:
+   - 0 emoji across touched files.
+   - 0 hardcoded out-of-system colors.
+   - Passing client build (`npm --prefix client run build`).
+   - Clean UI across all customer navigation, menus, and service cards.
 
 ## Working plan — Fix ReferenceError: notifTypeIcon is not defined in DashboardNavbar on Duty Toggle (done, uncommitted per user rule, 2026-11-25)
 
@@ -1560,6 +1675,14 @@ Ask only for a missing product decision that materially changes the outcome, mis
 No feature implementation task is in progress. The only unfinished cleanup is the OS-denied move/delete of the old `docs/` folder. Future AI sessions add their task plan above the change journal before editing.
 
 ## Change journal
+
+### 2026-11-25 — Diagnosed server.js startup failure
+
+- Running `npm run dev` in `server/` reproduced the reported restart message; the preceding exception was `EADDRINUSE` for `:::5000`.
+- PID 23204 (`node.exe`, command `node server.js`) already owned the listening port, and `http://127.0.0.1:5000/api/health` returned HTTP 200 with the ServeCircle API health payload.
+- On user request, stopped PID 23204 and restarted the backend with `npm run dev`; it now starts cleanly and serves HTTP 200 from `/api/health`.
+- On follow-up, found two additional stale `node --watch server.js` supervisors retrying against the active listener. Stopped those duplicate watchers, leaving one supervisor (PID 22640) and its server process (PID 8784); `/api/health` still returns HTTP 200.
+- No server source/config was changed.
 
 ### 2026-11-25 — 7 Dedicated Multi-Stage Worker Workflow Cockpits for Specialized & Advance Services
 

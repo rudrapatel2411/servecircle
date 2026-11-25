@@ -80,7 +80,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
  <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white', marginBottom: '8px' }}>
  {t('workerComparison.title')}
  </h2>
- <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+ <p style={{ color: 'var(--ink-3)', fontSize: '0.85rem' }}>
  {t('workerComparison.subtitle')} <strong style={{ color: 'white' }}>{service?.name ? t(service.name) : t('bookingFlow.selectedService', 'Selected Service')}</strong>
  </p>
  </div>
@@ -99,7 +99,7 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
  key={w.id}
  style={{
  background: isSelected ? 'rgba(59, 130, 246, 0.08)' : 'rgba(30, 41, 59, 0.5)',
- border: isSelected ? '2px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.05)',
+ border: isSelected ? '2px solid var(--blue)' : '1px solid rgba(255, 255, 255, 0.05)',
  borderRadius: '18px',
  padding: '24px',
  display: 'flex',
@@ -117,57 +117,57 @@ const WorkerComparison = ({ service, selectedWorkerId, onSelectWorker }) => {
  <div>
  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, color: 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
  {w.name}
- {w.verifiedBadge && <HiOutlineCheckBadge style={{ color: '#3b82f6', fontSize: '1.25rem' }} />}
+ {w.verifiedBadge && <HiOutlineCheckBadge style={{ color: 'var(--blue)', fontSize: '1.25rem' }} />}
  </h3>
- <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: '#fbbf24', marginTop: '2px' }}>
- <HiOutlineStar /> <span style={{ fontWeight: 700 }}>{w.rating}</span> <span style={{ color: '#94a3b8' }}>({w.reviews} {t('workerComparison.reviews')})</span>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: 'var(--status-warning-soft)', marginTop: '2px' }}>
+ <HiOutlineStar /> <span style={{ fontWeight: 700 }}>{w.rating}</span> <span style={{ color: 'var(--ink-3)' }}>({w.reviews} {t('workerComparison.reviews')})</span>
  </div>
  </div>
  </div>
  {w.id === 'w3' && (
- <span style={{ background: '#fbbf24', color: '#9a3412', fontSize: '0.65rem', fontWeight: 900, padding: '2px 8px', borderRadius: '12px', position: 'absolute', top: '12px', right: '12px' }}>
+ <span style={{ background: 'var(--status-warning-soft)', color: 'var(--status-warning-text)', fontSize: '0.65rem', fontWeight: 900, padding: '2px 8px', borderRadius: '12px', position: 'absolute', top: '12px', right: '12px' }}>
  {t('workerComparison.topChoice')}
  </span>
  )}
- {isSelected && <HiOutlineCheckCircle style={{ color: '#3b7dc1', fontSize: '1.2rem', position: 'absolute', top: '38px', right: '16px' }} />}
+ {isSelected && <HiOutlineCheckCircle style={{ color: 'var(--blue)', fontSize: '1.2rem', position: 'absolute', top: '38px', right: '16px' }} />}
 
- <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '20px' }}>
+ <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: 'var(--ink-3)', marginBottom: '20px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
  <span><HiOutlineBriefcase style={{ verticalAlign: 'text-bottom' }} /> {t('workerComparison.experience')}</span>
  <span style={{ color: 'white', fontWeight: 700 }}>{w.experience}</span>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
- <span><HiOutlineCheckCircle style={{ verticalAlign: 'text-bottom', color: '#ef4444' }} /> {t('workerComparison.completedJobs')}</span>
+ <span><HiOutlineCheckCircle style={{ verticalAlign: 'text-bottom', color: 'var(--status-danger-text)' }} /> {t('workerComparison.completedJobs')}</span>
  <span style={{ color: 'white', fontWeight: 700 }}>{w.completedJobs}</span>
  </div>
  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
- <span><HiOutlineClock style={{ verticalAlign: 'text-bottom', color: '#f97316' }} /> {t('workerComparison.responseTime')}</span>
- <span style={{ color: '#3b7dc1', fontWeight: 700 }}>{w.speed}</span>
+ <span><HiOutlineClock style={{ verticalAlign: 'text-bottom', color: 'var(--status-warning-text)' }} /> {t('workerComparison.responseTime')}</span>
+ <span style={{ color: 'var(--blue)', fontWeight: 700 }}>{w.speed}</span>
  </div>
  </div>
 
  <div style={{ marginBottom: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
- <span style={{ fontSize: '0.6rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 800, letterSpacing: '0.05em' }}>{t('workerComparison.signatureSpecialty')}</span>
+ <span style={{ fontSize: '0.6rem', textTransform: 'uppercase', color: 'var(--ink-3)', fontWeight: 800, letterSpacing: '0.05em' }}>{t('workerComparison.signatureSpecialty')}</span>
  <p style={{ color: 'white', fontSize: '0.85rem', fontWeight: 600, marginTop: '4px' }}>{w.specialty}</p>
  </div>
 
  <div style={{ background: 'rgba(0,0,0,0.15)', padding: '12px', borderRadius: '8px', marginBottom: '24px' }}>
- <span style={{ fontSize: '0.6rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}><HiOutlineSparkles /> {t('workerComparison.verifiedPortfolio')}</span>
- <p style={{ fontSize: '0.75rem', color: '#cbd5e1', fontStyle: 'italic' }}>"{w.recentJob}"</p>
+ <span style={{ fontSize: '0.6rem', color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}><HiOutlineSparkles /> {t('workerComparison.verifiedPortfolio')}</span>
+ <p style={{ fontSize: '0.75rem', color: 'var(--glass-edge)', fontStyle: 'italic' }}>"{w.recentJob}"</p>
  </div>
 
  <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
  <div style={{ display: 'flex', flexDirection: 'column' }}>
- <span style={{ fontSize: '0.65rem', color: '#64748b' }}>{t('workerComparison.serviceFee')}</span>
+ <span style={{ fontSize: '0.65rem', color: 'var(--ink-3)' }}>{t('workerComparison.serviceFee')}</span>
  <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white' }}>₹{finalPrice}</span>
  </div>
  <button
  type="button"
  onClick={() => onSelectWorker(w)}
  style={{
- background: isSelected ? '#3b7dc1' : 'transparent',
+ background: isSelected ? 'var(--blue)' : 'transparent',
  color: 'white',
- border: isSelected ? 'none' : '1px solid #3b82f6',
+ border: isSelected ? 'none' : '1px solid var(--blue)',
  borderRadius: '8px',
  padding: '8px 16px',
  fontWeight: 800,

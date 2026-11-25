@@ -150,11 +150,11 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
             {/* 3D Cranial Sphere Radial Gradient with Key Light & Ambient Occlusion */}
             <radialGradient id={`cranialSphere-${size}`} cx="38%" cy="28%" r="68%">
               <stop offset="0%" stopColor="#FFFFFF" />
-              <stop offset="12%" stopColor="#DBEAFE" />
-              <stop offset="38%" stopColor="#2563EB" />
-              <stop offset="70%" stopColor="#1D4ED8" />
-              <stop offset="88%" stopColor="#1E3A8A" />
-              <stop offset="100%" stopColor="#0B132B" />
+              <stop offset="12%" stopColor="var(--status-info-tint)" />
+              <stop offset="38%" stopColor="var(--blue)" />
+              <stop offset="70%" stopColor="var(--blue)" />
+              <stop offset="88%" stopColor="var(--blue-deep)" />
+              <stop offset="100%" stopColor="var(--ink)" />
             </radialGradient>
 
             {/* Bottom Environmental Bounce Rim Gradient */}
@@ -165,9 +165,9 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
 
             {/* Obsidian Glass Visor Chamber */}
             <radialGradient id={`visorChamber-${size}`} cx="50%" cy="38%" r="60%">
-              <stop offset="0%" stopColor="#0F172A" />
-              <stop offset="55%" stopColor="#090E1A" />
-              <stop offset="100%" stopColor="#020408" />
+              <stop offset="0%" stopColor="var(--ink)" />
+              <stop offset="55%" stopColor="var(--ink)" />
+              <stop offset="100%" stopColor="var(--ink)" />
             </radialGradient>
 
             {/* Upper Glass Specular Curved Glare */}
@@ -179,26 +179,26 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
 
             {/* Biometric Luminous Iris Radial Gradient */}
             <radialGradient id={`luminousIris-${size}`} cx="44%" cy="38%" r="58%">
-              <stop offset="0%" stopColor="#F0FDFA" />
-              <stop offset="25%" stopColor="#38BDF8" />
-              <stop offset="55%" stopColor="#0284C7" />
-              <stop offset="82%" stopColor="#0369A1" />
-              <stop offset="100%" stopColor="#082F49" />
+              <stop offset="0%" stopColor="var(--accent-teal-tint)" />
+              <stop offset="25%" stopColor="var(--blue-hi)" />
+              <stop offset="55%" stopColor="var(--blue)" />
+              <stop offset="82%" stopColor="var(--blue-deep)" />
+              <stop offset="100%" stopColor="var(--ink)" />
             </radialGradient>
 
             {/* Metallic Ear Bevel Gradient */}
             <linearGradient id={`earBevel-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#64748B" />
-              <stop offset="40%" stopColor="#E2E8F0" />
-              <stop offset="70%" stopColor="#334155" />
-              <stop offset="100%" stopColor="#0F172A" />
+              <stop offset="0%" stopColor="var(--ink-3)" />
+              <stop offset="40%" stopColor="var(--glass-edge)" />
+              <stop offset="70%" stopColor="var(--ink)" />
+              <stop offset="100%" stopColor="var(--ink)" />
             </linearGradient>
 
             {/* Mouth / HUD Glow Gradient */}
             <linearGradient id={`hudGlow-${size}`} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.4" />
-              <stop offset="50%" stopColor="#67E8F9" stopOpacity="1" />
-              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.4" />
+              <stop offset="0%" stopColor="var(--blue-hi)" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="var(--blue-hi)" stopOpacity="1" />
+              <stop offset="100%" stopColor="var(--blue-hi)" stopOpacity="0.4" />
             </linearGradient>
 
             {/* Neon Bloom Filter for Ocular Optics */}
@@ -248,21 +248,21 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
           {/* Side Cybernetic Ear-Pods with Metallic Bevels & Glowing Aperture */}
           <g>
             {/* Left Ear */}
-            <ellipse cx="9" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="#1E293B" strokeWidth="1" />
-            <ellipse cx="8" cy="50" rx="2" ry="7" fill="#0B132B" />
-            <circle cx="8" cy="50" r="1.6" fill={isThinking ? '#38BDF8' : '#60A5FA'} filter={`url(#bloomFilter-${size})`} />
+            <ellipse cx="9" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="var(--ink)" strokeWidth="1" />
+            <ellipse cx="8" cy="50" rx="2" ry="7" fill="var(--ink)" />
+            <circle cx="8" cy="50" r="1.6" fill={isThinking ? 'var(--blue-hi)' : 'var(--blue-hi)'} filter={`url(#bloomFilter-${size})`} />
 
             {/* Right Ear */}
-            <ellipse cx="91" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="#1E293B" strokeWidth="1" />
-            <ellipse cx="92" cy="50" rx="2" ry="7" fill="#0B132B" />
-            <circle cx="92" cy="50" r="1.6" fill={isThinking ? '#38BDF8' : '#60A5FA'} filter={`url(#bloomFilter-${size})`} />
+            <ellipse cx="91" cy="50" rx="4.5" ry="12" fill={`url(#earBevel-${size})`} stroke="var(--ink)" strokeWidth="1" />
+            <ellipse cx="92" cy="50" rx="2" ry="7" fill="var(--ink)" />
+            <circle cx="92" cy="50" r="1.6" fill={isThinking ? 'var(--blue-hi)' : 'var(--blue-hi)'} filter={`url(#bloomFilter-${size})`} />
           </g>
 
           {/* Main 3D Spherical Cranial Shell */}
           <path
             d="M 50 8 C 76 8, 91 22, 91 50 C 91 76, 75 92, 50 92 C 25 92, 9 76, 9 50 C 9 22, 24 8, 50 8 Z"
             fill={`url(#cranialSphere-${size})`}
-            stroke="#93C5FD"
+            stroke="var(--blue-hi)"
             strokeWidth="1.2"
           />
 
@@ -288,7 +288,7 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
             cx="50"
             cy="18"
             r="2.2"
-            fill={isThinking ? '#38BDF8' : '#60A5FA'}
+            fill={isThinking ? 'var(--blue-hi)' : 'var(--blue-hi)'}
             filter={`url(#bloomFilter-${size})`}
             className={isThinking ? 'ai-antenna-pulse' : ''}
           />
@@ -298,8 +298,8 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
             {/* Outer Visor Bezel / Rim with dark depth */}
             <path
               d="M 18 33 C 28 20, 72 20, 82 33 C 89 44, 88 64, 80 74 C 70 84, 30 84, 20 74 C 12 64, 11 44, 18 33 Z"
-              fill="#060A14"
-              stroke="#1E293B"
+              fill="var(--ink)"
+              stroke="var(--ink)"
               strokeWidth="1.6"
             />
 
@@ -317,8 +317,8 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
           {/* ─── Left Eye Ocular Sensor ─── */}
           <g transform="translate(36, 50)">
             {/* Recessed Eye Socket Shadow */}
-            <circle cx="0" cy="0" r="10.5" fill="#020617" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
-            <circle cx="0" cy="0" r="9.2" fill="#040812" />
+            <circle cx="0" cy="0" r="10.5" fill="var(--ink)" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
+            <circle cx="0" cy="0" r="9.2" fill="var(--ink)" />
 
             {/* Outer Aperture Tick Ring */}
             <circle cx="0" cy="0" r="8.2" fill="none" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="0.8" strokeDasharray="2 2" />
@@ -327,7 +327,7 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
               /* Realistic Curved Biometric Shutter Closed */
               <path
                 d="M -9 0 Q 0 4 9 0"
-                stroke="#38BDF8"
+                stroke="var(--blue-hi)"
                 strokeWidth="2.8"
                 strokeLinecap="round"
                 fill="none"
@@ -348,9 +348,9 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
                   {/* Concentric Internal Iris Ring */}
                   <circle cx="0" cy="0" r="4.6" fill="none" stroke="rgba(240, 253, 250, 0.45)" strokeWidth="0.6" />
                   {/* True Obsidian Pupil Core */}
-                  <circle cx="0" cy="0" r="3.2" fill="#020617" />
+                  <circle cx="0" cy="0" r="3.2" fill="var(--ink)" />
                   {/* Central Aperture Laser Dot */}
-                  <circle cx="0" cy="0" r="1.1" fill="#67E8F9" />
+                  <circle cx="0" cy="0" r="1.1" fill="var(--blue-hi)" />
                 </g>
 
                 {/* Primary Corneal Key-Light Specular Glint (Fixed at 10 o'clock for authentic 3D sphere look) */}
@@ -374,8 +374,8 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
           {/* ─── Right Eye Ocular Sensor ─── */}
           <g transform="translate(64, 50)">
             {/* Recessed Eye Socket Shadow */}
-            <circle cx="0" cy="0" r="10.5" fill="#020617" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
-            <circle cx="0" cy="0" r="9.2" fill="#040812" />
+            <circle cx="0" cy="0" r="10.5" fill="var(--ink)" stroke="rgba(30, 41, 59, 0.8)" strokeWidth="1" />
+            <circle cx="0" cy="0" r="9.2" fill="var(--ink)" />
 
             {/* Outer Aperture Tick Ring */}
             <circle cx="0" cy="0" r="8.2" fill="none" stroke="rgba(56, 189, 248, 0.35)" strokeWidth="0.8" strokeDasharray="2 2" />
@@ -384,7 +384,7 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
               /* Realistic Curved Biometric Shutter Closed */
               <path
                 d="M -9 0 Q 0 4 9 0"
-                stroke="#38BDF8"
+                stroke="var(--blue-hi)"
                 strokeWidth="2.8"
                 strokeLinecap="round"
                 fill="none"
@@ -405,9 +405,9 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
                   {/* Concentric Internal Iris Ring */}
                   <circle cx="0" cy="0" r="4.6" fill="none" stroke="rgba(240, 253, 250, 0.45)" strokeWidth="0.6" />
                   {/* True Obsidian Pupil Core */}
-                  <circle cx="0" cy="0" r="3.2" fill="#020617" />
+                  <circle cx="0" cy="0" r="3.2" fill="var(--ink)" />
                   {/* Central Aperture Laser Dot */}
-                  <circle cx="0" cy="0" r="1.1" fill="#67E8F9" />
+                  <circle cx="0" cy="0" r="1.1" fill="var(--blue-hi)" />
                 </g>
 
                 {/* Primary Corneal Key-Light Specular Glint */}
@@ -466,7 +466,7 @@ function AITrackingAvatar({ size = 44, isThinking = false, interactive = true })
               y1="51"
               x2="76"
               y2="51"
-              stroke="#38BDF8"
+              stroke="var(--blue-hi)"
               strokeWidth="1.5"
               strokeDasharray="12 20"
               className="ai-realistic-laser-scan"
@@ -561,7 +561,7 @@ function ctaLabel(analysis) {
  if (category.includes('travel') || skill.includes('driver')) icon = '';
  else if (category.includes('food') || skill.includes('cook') || skill.includes('chef')) icon = '';
  else if (category.includes('pet') || skill.includes('pet') || name.includes('dog')) icon = '';
- else if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor')) icon = '🩺';
+ else if (category.includes('health') || skill.includes('nurse') || skill.includes('doctor')) icon = '';
  else if (category.includes('event') || skill.includes('event')) icon = '';
  else if (category.includes('vehicle') || skill.includes('detailer') || skill.includes('mechanic')) icon = '';
  else if (category.includes('moving') || category.includes('relocation')) icon = '';
@@ -572,7 +572,7 @@ function ctaLabel(analysis) {
  else if (skill.includes('electric') || name.includes('electric') || name.includes('wire')) icon = '';
  else if (skill.includes('clean') || name.includes('clean') || name.includes('safai')) icon = '';
  else if (skill.includes('paint') || name.includes('paint')) icon = '';
- else if (skill.includes('carpent') || name.includes('carpent') || name.includes('lock')) icon = '🪚';
+ else if (skill.includes('carpent') || name.includes('carpent') || name.includes('lock')) icon = '';
  else if (skill.includes('pest') || name.includes('pest')) icon = '';
  else if (skill.includes('garden') || name.includes('garden')) icon = '';
 
@@ -621,7 +621,7 @@ const QUICK_SUGGESTIONS = [
  { label: ' Door Lock / Carpentry', prompt: 'Main door wooden lock is jammed, need carpenter' },
  { label: ' Home Cook / Chef', prompt: 'Need daily home cook service for family meals' },
  { label: ' CCTV & IT Setup', prompt: 'Need CCTV camera installation and WiFi setup' },
- { label: '🩺 Doctor / Physio', prompt: 'Need doctor consultation and physiotherapy at home' },
+ { label: ' Doctor / Physio', prompt: 'Need doctor consultation and physiotherapy at home' },
 ];
 
 const CustomerAIChat = () => {

@@ -89,9 +89,9 @@ const FoodKitchenHub = () => {
  <div style={{
  background: 'white',
  border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)',
+ boxShadow: 'var(--sh-card)',
  display: 'flex',
  flexDirection: 'column',
  justifyContent: 'space-between'
@@ -230,7 +230,7 @@ const FoodKitchenHub = () => {
  </div>
  <Link
  to={`/customer/book?service=${encodeURIComponent('Daily Tiffin Meal Plan Subscription')}&serviceId=tiffin-subscription&category=food-kitchen&price=${calculateTiffinPrice()}&dietType=${dietType}&duration=${duration}&activeDaysCount=${activeDaysCount}&deliveryDays=${encodeURIComponent(activeDaysList.join(','))}`}
- className="btn btn-primary btn-sm"
+ className="btn-primary"
  style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
  >
  {t('foodKitchen.subscribePlan')}
@@ -242,9 +242,9 @@ const FoodKitchenHub = () => {
  <div style={{
  background: 'white',
  border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)',
+ boxShadow: 'var(--sh-card)',
  display: 'flex',
  flexDirection: 'column',
  justifyContent: 'space-between'
@@ -354,7 +354,7 @@ const FoodKitchenHub = () => {
  </div>
  <Link
  to={`/customer/book?service=${encodeURIComponent('Gourmet Home Chef (Per Meal)')}&serviceId=home-chef&category=food-kitchen&price=${calculateChefPrice()}&cuisine=${cuisine}&guests=${chefGuests}&courses=${chefCourses}`}
- className="btn btn-primary btn-sm"
+ className="btn-primary"
  style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
  >
  {t('foodKitchen.bookChefSlot')}
@@ -366,9 +366,9 @@ const FoodKitchenHub = () => {
  <div style={{
  background: 'white',
  border: '1px solid var(--gray-200)',
- borderRadius: 'var(--radius-xl)',
+ borderRadius: '26px',
  padding: '28px',
- boxShadow: 'var(--shadow-sm)',
+ boxShadow: 'var(--sh-card)',
  display: 'flex',
  flexDirection: 'column',
  justifyContent: 'space-between'
@@ -498,7 +498,7 @@ const FoodKitchenHub = () => {
  </div>
  <Link
  to={`/customer/book?service=${encodeURIComponent('Celebration Custom Cake Designer')}&serviceId=custom-cake&category=food-kitchen&price=${calculateCakePrice()}&cakeStyle=${cakeStyle}&cakeWeight=${cakeWeight}&cakeFlavor=${encodeURIComponent(cakeFlavor)}&cakeMessage=${encodeURIComponent(cakeMessage)}`}
- className="btn btn-primary btn-sm"
+ className="btn-primary"
  style={{ padding: '8px 16px', background: '#ea580c', borderColor: '#ea580c' }}
  >
  {t('foodKitchen.orderCake')}
@@ -530,9 +530,9 @@ const FoodKitchenHub = () => {
 				<div style={{
 					background: 'white',
 					border: '1px solid var(--gray-200)',
-					borderRadius: 'var(--radius-xl)',
+					borderRadius: '26px',
 					padding: '28px',
-					boxShadow: 'var(--shadow-sm)',
+					boxShadow: 'var(--sh-card)',
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'space-between',
@@ -578,9 +578,9 @@ const FoodKitchenHub = () => {
 				<div style={{
 					background: 'white',
 					border: '1px solid var(--gray-200)',
-					borderRadius: 'var(--radius-xl)',
+					borderRadius: '26px',
 					padding: '28px',
-					boxShadow: 'var(--shadow-sm)',
+					boxShadow: 'var(--sh-card)',
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'space-between',
@@ -626,9 +626,9 @@ const FoodKitchenHub = () => {
 				<div style={{
 					background: 'white',
 					border: '1px solid var(--gray-200)',
-					borderRadius: 'var(--radius-xl)',
+					borderRadius: '26px',
 					padding: '28px',
-					boxShadow: 'var(--shadow-sm)',
+					boxShadow: 'var(--sh-card)',
 					display: 'flex',
 					flexDirection: 'column',
 					justifyContent: 'space-between',
