@@ -591,12 +591,25 @@ const DashboardNavbar = ({ panel }) => {
  default: '#6b7280',
  };
 
+ // Notification type → icon mapping
+ const notifTypeIcon = {
+ alert: '⚠️',
+ broadcast: '📢',
+ system: '⚙️',
+ booking_update: '📅',
+ call_request: '📞',
+ call_accepted: '✅',
+ promotion: '✨',
+ default: '🔔',
+ };
+
   const getNotifIcon = (type) => {
     switch (type) {
       case 'call_request': return <HiOutlinePhone size={18} />;
       case 'call_accepted': return <HiCheckCircle size={18} />;
       case 'booking_update': return <HiOutlineCalendarDays size={18} />;
       case 'promotion': return <HiOutlineSparkles size={18} />;
+      case 'system': return <HiOutlineBolt size={18} />;
       default: return <HiOutlineBell size={18} />;
     }
   };
@@ -1153,7 +1166,7 @@ const DashboardNavbar = ({ panel }) => {
  }}
  >
  <span style={{ fontSize: '1.4rem', marginTop: '2px' }}>
- {notifTypeIcon[latestToast.type] || ''}
+ {notifTypeIcon[latestToast.type] || notifTypeIcon.default || '🔔'}
  </span>
  <div style={{ flex: 1 }}>
  <h4 style={{ fontSize: '0.95rem', marginBottom: '4px', color: 'var(--navy-800)', fontWeight: 700 }}>

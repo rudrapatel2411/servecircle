@@ -567,6 +567,44 @@ const BookingFlow = () => {
 
  const bookingId = booking?._id || booking?.id || booking?.bookingId;
  const resolvedId = bookingId || `SC-${Date.now().toString().slice(-6)}`;
+
+ // Store in customer recent bookings for real-time worker cockpit sync
+ try {
+ const newRecord = {
+ _id: resolvedId,
+ id: resolvedId,
+ bookingId: resolvedId,
+ service: formData.service || 'Specialized Service',
+ category: finalCategory,
+ customer: { name: session?.user?.name || 'Customer', phone: session?.user?.phone || '9876543210' },
+ address: formData.address ? `${formData.address}, ${formData.city || 'Ahmedabad'}` : 'Ahmedabad',
+ scheduledDate: formData.date || new Date().toISOString(),
+ scheduledTime: formData.time || '10:00 AM - 12:00 PM',
+ amount: Math.max(0, totalAmount ?? subtotal ?? 499),
+ status: 'pending',
+ requirements: {
+ ...requirements,
+ pickupLocation: pickupParam,
+ destination: destParam,
+ stops: safeParsedStops,
+ flightNo: flightNoParam,
+ cakeWeight: cakeWeightParam,
+ cakeFlavor: cakeFlavorParam,
+ petName: petNameParam,
+ petBreed: petBreedParam,
+ inventorySpecs: inventorySpecsParam,
+ },
+ createdAt: new Date().toISOString(),
+ };
+ const rawPrev = localStorage.getItem('servecircle_customer_recent_bookings');
+ const prevList = rawPrev ? JSON.parse(rawPrev) : [];
+ const updatedList = [newRecord, ...prevList.filter(b => b.id !== resolvedId)].slice(0, 50);
+ localStorage.setItem('servecircle_customer_recent_bookings', JSON.stringify(updatedList));
+ window.dispatchEvent(new CustomEvent('servecircle:new-booking', { detail: newRecord }));
+ } catch (storageErr) {
+ console.warn('Booking local storage sync note:', storageErr);
+ }
+
  showToast('Booking confirmed successfully.');
  navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(resolvedId)}&service=${encodeURIComponent(formData.service || 'Service')}&worker=${encodeURIComponent(workerName || 'Service Pro')}&price=${totalAmount || price || 499}`);
  } catch (bookingError) {

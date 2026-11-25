@@ -26,14 +26,82 @@ import WorkerDutySwitch from '../../components/WorkerDutySwitch';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
+import { getWorkerCategory } from '../../utils/workerCategoryHelper';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
-
+const SPECIALIZED_DASHBOARD_CARDS = {
+  'Travel & Commute': {
+    title: 'Travel & Commute Operations Console',
+    path: '/worker/travel-commute',
+    desc: 'Manage student manifests, pre-trip vehicle audits, airport flight gates & outstation logs.',
+    color: '#0d9488',
+    btnColor: '#115e59',
+    icon: '🚖'
+  },
+  'Food Kitchen': {
+    title: 'Culinary & Kitchen Operations Console',
+    path: '/worker/food-kitchen',
+    desc: 'Manage chef recipes, BBQ live grill setups, designer cake cold deliveries & banquet chafing setups.',
+    color: '#ea580c',
+    btnColor: '#9a3412',
+    icon: '🍳'
+  },
+  'Pet Services': {
+    title: 'Pet Care Operations Console',
+    path: '/worker/pet-services',
+    desc: 'Execute pet grooming, vet visits, cage-free boarding 3x daily WhatsApp updates & training logs.',
+    color: '#db2777',
+    btnColor: '#831843',
+    icon: '🐾'
+  },
+  'Health & Wellness': {
+    title: 'Health & Wellness Clinical Console',
+    path: '/worker/health-wellness',
+    desc: 'Record patient pre-vitals, sterile IV drip therapy, sports Theragun physio & lab sample pickups.',
+    color: '#0284c7',
+    btnColor: '#0369a1',
+    icon: '🩺'
+  },
+  'Society Management': {
+    title: 'Society Management & Facility Console',
+    path: '/worker/society-management',
+    desc: 'Validate security gate PINs, waterless bay wash matrix, EV Wallbox installations & tank cleans.',
+    color: '#16a34a',
+    btnColor: '#065f46',
+    icon: '🏢'
+  },
+  'Property & Society': {
+    title: 'Society Management & Facility Console',
+    path: '/worker/society-management',
+    desc: 'Validate security gate PINs, waterless bay wash matrix, EV Wallbox installations & tank cleans.',
+    color: '#16a34a',
+    btnColor: '#065f46',
+    icon: '🏢'
+  },
+  'Packers & Movers': {
+    title: 'Relocation & Packers Operations Console',
+    path: '/worker/relocation',
+    desc: 'Track room inventory, enclosed vehicle carrier GPS transit, scrap digital scale weighing & broom-clean signoffs.',
+    color: '#2563eb',
+    btnColor: '#1e3a8a',
+    icon: '🚚'
+  },
+  'Events Hub': {
+    title: 'Events & AV Production Console',
+    path: '/worker/events',
+    desc: 'Coordinate run-of-show cues, JBL line-array frequency scans, birthday theme decor & drone photography.',
+    color: '#6366f1',
+    btnColor: '#312e81',
+    icon: '🎭'
+  }
+};
 
 const WorkerDashboard = () => {
  const { t } = useTranslation();
  const { token, user, isAuthenticated, workerStatus, dutyStatus, dutyStatusUpdatedAt, updateDuty, workerTier, signIn, authError, authLoading, isDemoMode } = useWorkerAuth();
+ const workerCategory = getWorkerCategory(user);
+ const specializedConsole = SPECIALIZED_DASHBOARD_CARDS[workerCategory];
 
  const [jobs, setJobs] = useState([]);
  const [loading, setLoading] = useState(false);
@@ -147,7 +215,9 @@ const WorkerDashboard = () => {
  <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setShowIdCardModal(true)}>
  View ID Card
  </button>
- <Link to="/worker/jobs" className="btn btn-primary">Open Job Queue</Link>
+ <Link to={specializedConsole?.path || '/worker/jobs'} className="btn btn-primary">
+ {specializedConsole ? 'Open Operations Console' : 'Open Job Queue'}
+ </Link>
  </div>
  </div>
 
@@ -266,140 +336,39 @@ const WorkerDashboard = () => {
  <HiOutlineHeart className="empowerment-icon-bg" />
  </div>
 
- {/* --- SPECIALIZED WORKER OPERATIONAL CONSOLES --- */}
- <div style={{
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 'var(--radius-lg)',
-  padding: '20px 22px',
-  marginBottom: '20px',
-  boxShadow: '0 4px 12px -2px rgba(0, 0, 0, 0.05)'
- }}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-   <div>
-    <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-     <HiOutlineSparkles style={{ color: '#0284c7' }} />
-     Specialized & Advance Booking Consoles
-    </h3>
-    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#64748b' }}>
-     Dedicated multi-stage operations cockpits for advance scheduled and specialized sector jobs.
-    </p>
+ {/* --- SPECIALIZED WORKER OPERATIONAL CONSOLE (CATEGORY SPECIFIC ONLY) --- */}
+ {specializedConsole && (
+  <div style={{
+   background: `linear-gradient(135deg, ${specializedConsole.color} 0%, ${specializedConsole.btnColor} 100%)`,
+   color: 'white',
+   borderRadius: 'var(--radius-lg)',
+   padding: '18px 22px',
+   marginBottom: '20px',
+   display: 'flex',
+   flexWrap: 'wrap',
+   alignItems: 'center',
+   justifyContent: 'space-between',
+   gap: '14px',
+   boxShadow: '0 4px 14px rgba(0,0,0,0.08)'
+  }}>
+   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+    <div style={{ fontSize: '2rem' }}>{specializedConsole.icon}</div>
+    <div>
+     <div style={{ fontWeight: 800, fontSize: '1rem', margin: 0 }}>{specializedConsole.title}</div>
+     <div style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: '2px' }}>
+      {specializedConsole.desc}
+     </div>
+    </div>
    </div>
-   <span style={{ fontSize: '0.75rem', fontWeight: 700, background: '#eff6ff', color: '#1d4ed8', padding: '4px 10px', borderRadius: '999px' }}>
-    7 Specialized Sectors Active
-   </span>
+   <Link
+    to={specializedConsole.path}
+    className="btn"
+    style={{ background: 'white', color: specializedConsole.btnColor, fontWeight: 800, padding: '8px 16px', borderRadius: '10px', whiteSpace: 'nowrap', textDecoration: 'none' }}
+   >
+    Open Operations Console →
+   </Link>
   </div>
-
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-   {[
-    {
-     title: 'Relocation & Packers',
-     path: '/worker/relocation',
-     desc: 'Vehicle ramps & scrap weigh audit',
-     color: '#2563eb',
-     bg: '#eff6ff',
-     icon: <HiOutlineTruck />
-    },
-    {
-     title: 'Travel & Commute',
-     path: '/worker/travel',
-     desc: 'Student manifest & vehicle safety',
-     color: '#0d9488',
-     bg: '#f0fdfa',
-     icon: <HiOutlineTruck />
-    },
-    {
-     title: 'Food & Culinary',
-     path: '/worker/food',
-     desc: 'Live charcoal BBQ & pastry masterclass',
-     color: '#ea580c',
-     bg: '#fff7ed',
-     icon: <HiOutlineSparkles />
-    },
-    {
-     title: 'Pet Care Operations',
-     path: '/worker/pet-services',
-     desc: '3x daily WhatsApp proof & pet boarding',
-     color: '#db2777',
-     bg: '#fdf2f8',
-     icon: <HiOutlineHeart />
-    },
-    {
-     title: 'Health & Wellness',
-     path: '/worker/health-wellness',
-     desc: 'Sterile IV drip therapy & sports physio',
-     color: '#0284c7',
-     bg: '#f0f9ff',
-     icon: <HiOutlineShieldCheck />
-    },
-    {
-     title: 'Society Management',
-     path: '/worker/society-management',
-     desc: 'Gate security pass & waterless wash',
-     color: '#16a34a',
-     bg: '#f0fdf4',
-     icon: <HiOutlineBuildingOffice2 />
-    },
-    {
-     title: 'Events & Production',
-     path: '/worker/events',
-     desc: 'AV sound checks & live stage cues',
-     color: '#6366f1',
-     bg: '#eef2ff',
-     icon: <HiOutlineSparkles />
-    }
-   ].map((c, i) => (
-    <Link
-     key={i}
-     to={c.path}
-     style={{
-      textDecoration: 'none',
-      background: '#f8fafc',
-      border: '1px solid #e2e8f0',
-      borderRadius: '12px',
-      padding: '12px 14px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      transition: 'all 0.2s ease',
-     }}
-     onMouseEnter={(e) => {
-      e.currentTarget.style.borderColor = c.color;
-      e.currentTarget.style.background = c.bg;
-      e.currentTarget.style.transform = 'translateY(-2px)';
-     }}
-     onMouseLeave={(e) => {
-      e.currentTarget.style.borderColor = '#e2e8f0';
-      e.currentTarget.style.background = '#f8fafc';
-      e.currentTarget.style.transform = 'none';
-     }}
-    >
-     <div style={{
-      width: '38px',
-      height: '38px',
-      borderRadius: '10px',
-      background: c.bg,
-      color: c.color,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '1.2rem',
-      flexShrink: 0
-     }}>
-      {c.icon}
-     </div>
-     <div style={{ minWidth: 0, flex: 1 }}>
-      <div style={{ fontWeight: 700, fontSize: '0.86rem', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-       {c.title}
-      </div>
-      <div style={{ fontSize: '0.74rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '2px' }}>
-       {c.desc}
-      </div>
-     </div>
-    </Link>
-   ))}
-  </div>
- </div>
+ )}
 
  {loading ? (
  <div className="chart-placeholder">Loading dashboard...</div>

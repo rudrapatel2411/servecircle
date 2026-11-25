@@ -19,48 +19,201 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
 
-## Working plan — Build Distinct Dedicated Multi-Stage Worker Workflow Pages for All 7 Specialized Services (done, verified 2026-11-25)
+## Working plan — Fix ReferenceError: notifTypeIcon is not defined in DashboardNavbar on Duty Toggle (done, uncommitted per user rule, 2026-11-25)
+
+**User outcome:**
+User reported:
+"Technical Error Details
+ReferenceError: notifTypeIcon is not defined
+it comes when i use button of duty on/off"
+
+**Root Cause:**
+In `client/src/components/DashboardNavbar.jsx`, line 1156 accessed `{notifTypeIcon[latestToast.type] || ''}` within the floating toast notification renderer (`showToast && latestToast`). However, `notifTypeIcon` was never defined in `DashboardNavbar.jsx` (only `notifTypeColor` and `getNotifIcon` existed). When a worker toggles duty status (Online ⟷ Offline), `handleDutyToggle` calls `addNotification(toastPayload)` with `type: 'system'` or `type: 'alert'`, setting `showToast(true)`. The component re-rendered and threw `ReferenceError: notifTypeIcon is not defined`.
+
+**Concrete Fix Steps:**
+1. In `client/src/components/DashboardNavbar.jsx`:
+   - Define `notifTypeIcon` mapping:
+     `{ alert: '⚠️', broadcast: '📢', system: '⚙️', booking_update: '📅', call_request: '📞', call_accepted: '✅', promotion: '✨', default: '🔔' }`
+   - In the toast component at line 1156, safely render `{notifTypeIcon[latestToast.type] || notifTypeIcon.default || '🔔'}`.
+   - Enhance `getNotifIcon` to also cover `'system'` and `'alert'`.
+2. Validate with client production build (`npm --prefix client run build`) and test suites.
+3. Keep 100% uncommitted locally (0 git commits, 0 git pushes).
+
+## Working plan — Restore & Upgrade "Become a Pro" Partner Hub and Workflow (done, uncommitted per user rule, 2026-11-25)
 
 **User outcome:**
 User requested:
-"are mujhe aise nahi ......
-mujhe inn sab servcies ke worker page hi alag lage aise banane hai kyuki yeh sab main services hi dekhn abhi, worker yeh sab servcies book karta hai to worker ke paas alag sa workflow aayega na aisi sab servcies ke liye kyuki isme sirf worker ko customer ke gahr pe jaa kar sirf or sirf kaam nhi karna hai na inn sab servcies me to bahut kuch karna hota hai unn ssab ke workflow accornding worker pannek ke specific servcies ke worker pages me workflow according chanegs karne padege and relocation and packers wali servcies baki reh gai thi use bhi add kar dena"
+"ek kaam karo become a pro wala feature hai voh vapis lao jesa tha vaise hai and uska workflow if adhura ya fir improve karne layak laeg to voh bhi kar dena"
 
-Building 7 distinct, fully-featured, specialized worker workflow pages with complete multi-stage operational lifecycles:
-1. **Relocation & Packers Operations (`WorkerRelocation.jsx` • `/worker/relocation`)**:
-   - Multi-stage: Pre-Move Inventory & 360° vehicle/dent audit ➔ Hydraulic container ramp loading & battery disconnect ➔ Transit GPS & highway halts ➔ Destination unloading, inventory checklist & broom-clean signoff.
-2. **Travel & Commute Operations (`WorkerTravel.jsx` • `/worker/travel`)**:
-   - Multi-stage: School van route & passenger manifest ➔ Pre-trip digital vehicle audit (tires, dashcam, battery/fuel) ➔ Boarded/Dropped attendance tracking ➔ Luxury car delivery odometer/scratch log & handover.
-3. **Food & Kitchen Operations (`WorkerFood.jsx` • `/worker/food`)**:
-   - Multi-stage: Event scale & skewer menu prep (Veg, Jain, Non-Veg) ➔ Hardware rig loading (Cast-iron grill, organic coal, palm plates, portable OTG) ➔ Live sizzle / baking masterclass ➔ Post-event zero-mess sweep audit.
-4. **Pet Care Operations (`WorkerPetServices.jsx` • `/worker/pet-services`)**:
-   - Multi-stage: Pet medical intake & feeding routine ➔ 3x daily WhatsApp photo/video proof center ➔ KCI behavioral training milestones tracker ➔ Check-out digital health signoff.
-5. **Health & Wellness Operations (`WorkerHealthWellness.jsx` • `/worker/health-wellness`)**:
-   - Multi-stage: Patient pre-vitals intake (BP, SpO2, Pulse, Doctor tele-signoff) ➔ Sterile cold-chain seal verification & IV cannula insertion ➔ 45-min drip rate monitoring / assisted PNF stretch ➔ Post-session clinical report.
-6. **Society & Community Operations (`WorkerSocietyManagement.jsx` • `/worker/society-management`)**:
-   - Multi-stage: Society security gate PIN pass ➔ Daily flat-by-flat waterless car wash matrix (plate scan, before/after photo) ➔ EV Charger load test & shock MCB breaker check ➔ RWA digital signoff.
-7. **Events & Production Operations (`WorkerEvents.jsx` • `/worker/events`)**:
-   - Multi-stage: Run-of-show timeline milestones (Load-in, Sound check, Showtime, Tear-down) ➔ AV hardware checklist (Mixers, mics, speakers, trussing) ➔ Client POC coordination & venue handover.
+1. **Restore Sidebar Menu (`Sidebar.jsx`)**:
+   - Re-introduce `{ path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro' }` at the bottom of `sidebarConfig.worker`.
+   - Ensure the menu renders cleanly with the amber cap icon matching the user's expected UI.
+2. **Comprehensive Workflow Upgrade in `BecomeAProHub.jsx`**:
+   - Fix broken CSS variable syntax (`var(--gray-5` -> `#f8fafc`).
+   - Expand Skill Upgrade Tracks to cover all 7 newly built specialized service sectors (Travel & Chauffeur, Gourmet Culinary, Pet Care & Grooming, Clinical Health & Physio, Society Facilities, Relocation Logistics, Events Production, plus Core Electrical/Salon).
+   - Implement interactive Track selection: clicking a track card auto-selects it in the registration form and scrolls into view.
+   - Add interactive monthly Earnings Potential Estimator widget (Part-time, Full-time, Top specialist tiers).
+   - Enhance form validations: 10-digit mobile, 6-digit pincode, shift preference, PMKVY certification toggle.
+   - Implement application persistence in `localStorage` (`servecircle_candidate_pro_app`) so candidate applications persist across reloads.
+   - Build a comprehensive Post-Registration Status Tracker card with:
+     * Unique Candidate ID (`SC-PRO-XXXXX`)
+     * 3-Stage Progress Pipeline: `Application Submitted ✓` -> `Telephonic Document Verification (In Progress)` -> `Starter Kit & Verified Badge (Scheduled)`
+     * Direct Support Hotline button and WhatsApp helper button.
+3. **Automated Verification**:
+   - Verify client build with `npm --prefix client run build`.
+   - Run verification test suites.
+   - Ensure 0 git commits and 0 git pushes.
 
-**Integration & Routing:**
-- Register all 7 routes in `App.jsx` under `/worker/...`.
-- Update `Sidebar.jsx` with distinct worker navigation links for specialized workflows.
-- Update `WorkerDashboard.jsx` with a dedicated "Specialized Service Hubs" grid launcher.
+## Working plan — Worker Operational Audit, Button Interactivity, Workflow Polish & Sidebar Menu Deduplication (done, uncommitted per user rule, 2026-11-25)
 
-**Constraint Compliance:**
-- STRICTLY NO `git push` (All work kept local).
+**User outcome:**
+User requested:
+1. Verify that all features, buttons, tabs, and stages across all worker operations pages work without getting stuck.
+2. Review the worker sidebar menus: eliminate duplicate/redundant menus (explain what was kept/removed) and evaluate if any extra features are required.
 
-**Tasks & Verification:**
-- [x] Create `WorkerRelocation.jsx`.
-- [x] Create `WorkerTravel.jsx`.
-- [x] Create `WorkerFood.jsx`.
-- [x] Create `WorkerPetServices.jsx`.
-- [x] Create `WorkerHealthWellness.jsx`.
-- [x] Create `WorkerSocietyManagement.jsx`.
-- [x] Create `WorkerEvents.jsx`.
-- [x] Register routes in `App.jsx` & update `Sidebar.jsx` and `WorkerDashboard.jsx`.
-- [x] Verify build with `npm --prefix client run build` and backend test suites.
-- [x] Update `PROJECT_BRAIN/brain.md` journal and save local commit.
+**Action & Accomplishments:**
+1. **Sidebar Menu Deduplication (`Sidebar.jsx` & `WorkerDashboard.jsx`)**:
+   - Replaced duplicate generic "Job Requests" (`/worker/jobs`) menu item with the assigned service's operational cockpit (`SPECIALIZED_NAV_MAP[workerCat]`), completely preventing specialized workers from seeing a disconnected generic AC/plumber repair queue.
+   - Removed obsolete "Become a Pro" link (`/worker/become-a-pro`) from `sidebarConfig.worker` (workers are already authenticated service pros).
+   - In `WorkerDashboard.jsx`, specialized pros are routed directly via "Open Operations Console" (`specializedConsole.path`).
+2. **Comprehensive 5-Point Workflow Audit across ALL 7 Specialized Cockpits**:
+   - `WorkerTravel.jsx` (`/worker/travel-commute`)
+   - `WorkerFood.jsx` (`/worker/food-kitchen`)
+   - `WorkerPetServices.jsx` (`/worker/pet-services`)
+   - `WorkerHealthWellness.jsx` (`/worker/health-wellness`)
+   - `WorkerSocietyManagement.jsx` (`/worker/society-management`)
+   - `WorkerRelocation.jsx` (`/worker/relocation`)
+   - `WorkerEvents.jsx` (`/worker/events`)
+   - **Applied Fixes Across All 7 Files**:
+     a) **Tab Selection Synchronisation**: `currentJob = filteredJobs.find(j => j.id === selectedJobId) || filteredJobs[0] || null` and tab `onClick` resets `selectedJobId` to the first item in the selected category, eliminating the category desync bug.
+     b) **Action State Lockdown for Declined Requests**: Handled `status === 'rejected'` explicitly with a disabled red button (`... Declined`) so rejected jobs can never accidentally trigger `advanceStage`.
+     c) **Status Queue Badges**: Clear badges: `Completed ✓` (green), `Declined ✗` (red), `Pending Action` (amber), `Stage X/3` (service accent).
+     d) **Sanitized Phone Dialers**: Phone links cleaned with `.replace(/[^0-9+]/g, '')` to ensure smooth one-tap mobile calling without broken whitespace characters.
+     e) **Empty State Fallbacks**: When a filter has zero jobs, an interactive card with category reset button (`View All ... Requests`) is displayed so the worker is never stuck on an empty screen.
+3. **Automated Verification**:
+   - `npm --prefix client run build`: PASSED (0 errors, 638 modules transformed).
+   - `node server/scripts/verify-specialized-services-workflow.mjs`: PASSED (19/19 checks).
+   - `node server/scripts/verify-services-hub-fixes.mjs`: PASSED (17/17 checks).
+   - `node server/scripts/verify-worker-ops-suite.mjs`: PASSED (30/30 checks).
+   - Total test checks: 66/66 PASSED.
+4. **Strict User Constraints Maintained**:
+   - ZERO git push.
+   - ZERO local git commit (all changes remain uncommitted in working tree).
+
+## Working plan — End-to-End Customer Order to Worker Cockpit Accept & Full Workflow Verification (done, uncommitted per user rule, 2026-11-25)
+
+**User outcome:**
+User requested:
+"abb ek kaam karo sabhi features and sabhi buttons sabhi ko working hai ya nahi voh dekh lo and sabhi ke workflow ko bhi dekh lo .
+
+hum service order kar rahe hai worker accept kar raha hai uska workflow pura ho aisa kar na. yeh jitni servcies ke worker page bana uska hi dekhna"
+
+1. **Booking Persistence & Dispatch Handshake (`BookingFlow.jsx`)**:
+   - Whenever a customer places an order for any of the 7 specialized services (Travel & Commute, Food & Kitchen, Pet Services, Health & Wellness, Society Management, Relocation & Packers, Events Hub), the booking is persisted in `servecircle_customer_recent_bookings` and dispatches `servecircle:new-booking`. Verified.
+2. **Unified Live Engine (`useSpecializedJobs.js`)**:
+   - Implemented dynamic normalization, category alias matching, real-time sync with `servecircle_customer_recent_bookings`, and backend fallback.
+   - Refined `advanceStage` state machine:
+     - Stage 1 (Audit/Prep) ➔ Stage 2 (`currentStage: 2`, `status: 'in-progress'`)
+     - Stage 2 (Execution) ➔ Stage 3 (`currentStage: 3`, `status: 'in-progress'`)
+     - Stage 3 (Handover) ➔ Finish & Complete (`currentStage: 3`, `status: 'completed'`)
+   - Interactive `toggleChecklist` supports boolean audits, array checklist toggles (done, packed, washed), and manifest stage progression (Pending ➔ Boarded ➔ Dropped / Safe).
+3. **All 7 Specialized Cockpits Refined & Verified**:
+   - `WorkerTravel.jsx` (`/worker/travel-commute`)
+   - `WorkerFood.jsx` (`/worker/food-kitchen`)
+   - `WorkerPetServices.jsx` (`/worker/pet-services`)
+   - `WorkerHealthWellness.jsx` (`/worker/health-wellness`)
+   - `WorkerSocietyManagement.jsx` (`/worker/society-management`)
+   - `WorkerRelocation.jsx` (`/worker/relocation`)
+   - `WorkerEvents.jsx` (`/worker/events`)
+   - Every cockpit now renders:
+     - `Pending Action` badge when incoming/pending
+     - `Accept ...` & `Decline` action buttons for pending jobs
+     - `Next Stage` / `Finish & Complete ...` action buttons during active stages
+     - `✓ ... Completed` solid disabled green button when finished
+     - 3-stage stepper with green checkmarks when completed
+     - Interactive checklists and phone dialers for hosts, clients, patients, and venues
+4. **Automated Verification**:
+   - `npm --prefix client run build`: PASSED (0 errors, 638 modules transformed).
+   - `node server/scripts/verify-specialized-services-workflow.mjs`: PASSED (19/19 checks).
+   - `node server/scripts/verify-services-hub-fixes.mjs`: PASSED (17/17 checks).
+   - `node server/scripts/verify-worker-ops-suite.mjs`: PASSED (30/30 checks).
+5. **Strict User Constraints Maintained**:
+   - ZERO git push.
+   - ZERO local git commit (all changes remain uncommitted in working tree).
+
+## Working plan — Strict Single-Service Isolation for Worker Sidebar & Dashboard (done, uncommitted per user rule, 2026-11-25)
+
+**User outcome:**
+User explicitly ordered:
+"yeh abhi bhi tumne sabhi ke sidebar me sabhi servcies add kar diya hai na voh nika do, 
+like mujhe aise chhaiye ki travel wala worker hai to usi ke login id me uska page khule aise mujhe chhaiye"
+
+1. **Remove Multi-Service Dropdown from Sidebar (`Sidebar.jsx`)**:
+   - Completely remove the `Service Cockpits (By ID)` dropdown / list from the sidebar.
+   - For ANY worker, the sidebar must contain ONLY their specific service page:
+     * If `Travel & Commute` worker (`travelcommute.worker@gmail.com`) logs in: ONLY "Travel Operations" (`/worker/travel-commute`) appears in their sidebar.
+     * If `Food Kitchen` worker (`foodkitchen.worker@gmail.com`) logs in: ONLY "Culinary Operations" (`/worker/food-kitchen`) appears.
+     * If `Pet Services` worker (`petservices.worker@gmail.com`) logs in: ONLY "Pet Operations" (`/worker/pet-services`) appears.
+     * If `Health & Wellness` worker (`healthwellness.worker@gmail.com`) logs in: ONLY "Health Operations" (`/worker/health-wellness`) appears.
+     * If `Society Management` worker (`societymanagement.worker@gmail.com`) logs in: ONLY "Society Operations" (`/worker/society-management`) appears.
+     * If `Packers & Movers` worker (`packersmovers.worker@gmail.com`) logs in: ONLY "Relocation Operations" (`/worker/relocation`) appears.
+     * If `Events Hub` worker (`eventshub.worker@gmail.com`) logs in: ONLY "Event Operations" (`/worker/events`) appears.
+     * If general / `Home Repairs` worker logs in: ZERO specialized service links appear in sidebar.
+2. **Dashboard Isolation (`WorkerDashboard.jsx`)**:
+   - Remove the 7-card directory from `WorkerDashboard.jsx`.
+   - Only show the single dedicated hero card for the logged-in worker's assigned category.
+3. **Preservation**:
+   - Keep all 7 worker cockpit components (`WorkerTravel.jsx`, `WorkerFood.jsx`, etc.) completely intact and routed in `App.jsx`.
+4. **Strict Rules**:
+   - NO git push.
+   - NO local git commit.
+
+## Working plan — Service ID-Driven Dedicated Worker Cockpit Access & Visibility (done, uncommitted per user rule, 2026-11-25)
+
+**User outcome:**
+User clarified:
+"lekin abhi tumne voh jo worker pages me add kiya tha alag alag worker pages bana ke voh kyu sab nikal diya voh to services se according alag alag pages services me rakhne hi the"
+
+1. **Assurance & Preservation**:
+   - Confirm that all 7 dedicated worker pages created (`WorkerTravel.jsx`, `WorkerFood.jsx`, `WorkerPetServices.jsx`, `WorkerHealthWellness.jsx`, `WorkerSocietyManagement.jsx`, `WorkerRelocation.jsx`, `WorkerEvents.jsx`) remain 100% intact, robust, and registered in `App.jsx`.
+2. **Dynamic Service ID Matching**:
+   - Ensure `Sidebar.jsx` accurately reads worker session from both `servecircle_worker_session` and `servecircle_session` via `getWorkerSession()` and `getSession()`.
+   - If the logged-in worker's account matches a specialized service (e.g. `travelcommute.worker@gmail.com` -> Travel & Commute), that specific service's operations link is injected cleanly into their sidebar menu.
+   - If the user/operator navigates to any of the 7 worker cockpits, the sidebar dynamically keeps that service link visible and active.
+3. **Explicit Visibility in Worker Dashboard**:
+   - Enhance `WorkerDashboard.jsx` so that:
+     * If logged in as that specialized pro, their active hero cockpit is displayed.
+     * All 7 dedicated service operational cockpits are neatly catalogued in an organized "Specialized Service Operational Cockpits" directory with direct 1-click links to their workflow pages, so that users testing any worker ID or generic accounts can instantly see and access every service page.
+4. **WorkerJobs Launcher**:
+   - Show a direct link to the specialized service cockpit in `WorkerJobs.jsx` when the worker belongs to that category.
+5. **Strict User Constraints**:
+   - ZERO git push.
+   - ZERO local commits (`local me bhi commit mat karna me push ka code likhu baad me hi push karna`).
+
+## Working plan — Dedicated Worker Pages for All Services Across 7 Categories Matching Specific IDs (done, uncommitted per user rule, 2026-11-25)
+
+**User outcome:**
+User requested:
+"ae sirf mene jo jo photoe bheji thi uski kaa kaam nahi karna tha sirf yaar mujhe tavel & commute , food & kitchen, pet servcies, health & wellness, society manegement, reloaction & packers, events hub ke sab ke sab services ke workflow ke according worker ki pannel me specific services boli uske worker ke pages me hi chnegs karna tha and humne specific servcies ke according alag alag id banai hai to usme hi chnegs karo na ek worker ke page me tumne sab servcies ka add kar diya use revert kar dena and alag alag servcies ke according id hai usi me worker page banao workflow ke according kyuki worker yeh sab services book karega to kitna kuch features hai uska use kareg uske samne worker bhi apne page se sab kuch accpet and all handeling ke liye apni tarah se add karo accha sa.
+
+and main baat kahi bhi jagah pe puch ya fir local me bhi commit mat karna me push ka code likhu baad me hi push karna"
+
+**Executed Overhaul:**
+1. **Reverted Single-Page Bundle**:
+   - Permanently deleted `client/src/pages/worker/WorkerSpecializedServices.jsx`.
+   - Removed `/worker/specialized` route and references from `App.jsx`, `Sidebar.jsx`, and `WorkerJobs.jsx`.
+2. **Dedicated Worker Cockpits by Exact Domain ID**:
+   - `travel-commute` & `travel` (`WorkerTravel.jsx`): All services covered (School Commute, Airport Transfer, Outstation Chauffeur, Luxury Fleet, Corporate Carpool) with Accept/Decline, student manifests, flight placard, odometer logs, vehicle audits.
+   - `food-kitchen` & `food` (`WorkerFood.jsx`): All services covered (Home Chef, Live BBQ, Custom Designer Cake, Banquet Catering, Steam Kitchen Cleaning) with recipe progress, grill checks, cold-box cake inspection.
+   - `pet-services` (`WorkerPetServices.jsx`): All services covered (Full Spa Grooming, Home Vet Visit, Cage-Free Boarding, KCI Behavioral Training, VIP Pet Transit) with pet profile intake, 3x daily WhatsApp video updates, health checklists.
+   - `health-wellness` (`WorkerHealthWellness.jsx`): All services covered (Doctor Home Visit, IV Drip Therapy, Sports Physio, Elderly Rehab, Lab Diagnostics) with pre-vitals log, sterile seals, tele-doc signoffs.
+   - `society-management` (`WorkerSocietyManagement.jsx`): All services covered (Waterless Car Wash, EV Wallbox Setup, Security Staffing, Deep Tank UV Clean, Common Area Scrub) with gate pass PIN, bay wash matrix, RCCB shock tests.
+   - `relocation` (`WorkerRelocation.jsx`): All services covered (Full Home Move, Vehicle Transit, Scrap Declutter, Office Move, Single Item) with room inventory packing, scrap digital weighing scale, transit waypoint tracker.
+   - `events` (`WorkerEvents.jsx`): All services covered (Theme Birthday Decor, Wedding Sangeet AV, Corporate Summit, Live DJ Console, Cinematic Photo & Drone) with run-of-show timeline, line-array sweep, decibel compliance.
+3. **Strict Constraints Compliance**:
+   - ZERO git commits made (`local me bhi commit mat karna`).
+   - ZERO git push performed.
+   - All files verified with passing build and 47/47 tests.
 
 ## Working plan — Dedicated Worker Specialized Consoles for Advance Bookings & Quotation/Payment Strategy Analysis (done, verified 2026-11-25)
 
@@ -2184,6 +2337,82 @@ No feature implementation task is in progress. The only unfinished cleanup is th
 - Verification:
   * Added `server/scripts/verify-m1-duty-and-availability.mjs`: 12/12 unit and contract tests passed.
   * Client production build (`npm run build`) passed with 0 errors.
+
+### 2026-11-25 — End-to-end customer order to worker acceptance and specialized 3-stage workflows
+
+- Verified and tightened the complete lifecycle across all 7 specialized services:
+  * Travel & Commute (`WorkerTravel.jsx`)
+  * Food & Kitchen (`WorkerFood.jsx`)
+  * Pet Services (`WorkerPetServices.jsx`)
+  * Health & Wellness (`WorkerHealthWellness.jsx`)
+  * Society Management (`WorkerSocietyManagement.jsx`)
+  * Relocation & Packers (`WorkerRelocation.jsx`)
+  * Events Hub (`WorkerEvents.jsx`)
+- Customer order persistence and live sync:
+  * `BookingFlow.jsx` creates full spec records into `servecircle_customer_recent_bookings` and dispatches `servecircle:new-booking`.
+  * `useSpecializedJobs.js` normalizes incoming bookings for domain-specific schemas, renders them as `status: 'pending'`, and handles `handleJobAction('accepted' | 'rejected')`.
+  * State progression machine: Stage 1 (Audit/Prep) ➔ Stage 2 (Execution) ➔ Stage 3 (Handover) ➔ Completed (`status: 'completed'`).
+  * `LiveTracking.jsx` listens to `servecircle:job-status-updated` to reflect worker acceptance and stage progression.
+- Interactive controls and UI polish:
+  * Every cockpit features a reactive queue card badge (`Pending Action` / `Completed ✓`), Accept & Decline buttons, Stage stepper (turns solid green with `✓` on completion), and disabled green "Service Completed" confirmation button.
+  * Interactive checklists (boolean toggles and array state machines) verified.
+- Sidebar isolation:
+  * `Sidebar.jsx` dynamically injects only the single specialized link corresponding to the logged-in worker ID (zero cross-service clutter).
+- Verification:
+  * Added `server/scripts/verify-specialized-services-workflow.mjs`: 19/19 checks passed.
+  * Ran `server/scripts/verify-services-hub-fixes.mjs`: 17/17 checks passed.
+  * Ran `server/scripts/verify-worker-ops-suite.mjs`: 30/30 checks passed.
+  * Client production build (`npm --prefix client run build`) passed with zero errors.
+- Strict user constraints:
+  * ZERO git push executed.
+  * ZERO local commits created; all changes remain uncommitted in the working tree.
+
+### 2026-11-25 — Worker cockpit button interactivity, workflow audit, and sidebar menu deduplication
+
+- **Sidebar Menu Deduplication & Rationalization (`Sidebar.jsx`, `WorkerDashboard.jsx`)**:
+  * For specialized workers (`Travel & Commute`, `Food Kitchen`, `Pet Services`, `Health & Wellness`, `Society Management`, `Packers & Movers`, `Events Hub`), replaced the generic "Job Requests" (`/worker/jobs`) menu item with their dedicated operational cockpit link (`SPECIALIZED_NAV_MAP[workerCat]`).
+  * Removed redundant "Become a Pro" (`/worker/become-a-pro`) from `sidebarConfig.worker`.
+  * Preserved essential utility pages: `Dashboard` (duty toggle + stats), `My Schedule` (weekly availability + leave planner), `Earnings` (UPI/Bank ledger + withdrawal), `Training` (safety & certification), and `My Profile` (ID card + verification badge).
+  * In `WorkerDashboard.jsx`, the primary action button routes specialized pros directly to their operations console.
+- **5-Point Operational Polish across all 7 Worker Cockpits**:
+  * Corrected tab switching synchronization: when changing category tabs, `selectedJobId` is immediately set to the active tab's first job, avoiding cross-category state locks.
+  * Added locked disabled buttons (`... Declined`) when a job status is `'rejected'`, preventing accidental stage advancement on cancelled/declined jobs.
+  * Sanitized phone dialer links with regex removal of non-numeric characters for reliable one-click mobile calling.
+  * Added styled empty state cards (`🐾`, `🩺`, `🏢`, `🚚`, `🎭`, `🚖`, `🍳`) with category reset buttons when no jobs match the active filter.
+- **Verification**:
+  * Client production build (`npm --prefix client run build`) passed cleanly in 4.62s (638 modules transformed).
+  * `verify-specialized-services-workflow.mjs` passed 19/19 checks.
+  * `verify-services-hub-fixes.mjs` passed 17/17 checks.
+  * `verify-worker-ops-suite.mjs` passed 30/30 checks.
+  * 100% compliant with strict user rule: 0 git commits, 0 git pushes (all changes uncommitted in local tree).
+
+### 2026-11-25 — Restored and upgraded "Become a Pro" partner onboarding workflow
+
+- `client/src/components/Sidebar.jsx`:
+  * Restored `{ path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro', fallbackLabel: 'Become a Pro' }` at the bottom of the worker navigation menu.
+- `client/src/pages/worker/BecomeAProHub.jsx`:
+  * Fixed broken CSS variable typo (`var(--gray-5` -> `#f8fafc`).
+  * Expanded skill tracks to 9 domains covering all 7 newly built specialized service sectors (Travel Chauffeur, Gourmet Culinary, Pet Care, Clinical Health, Society Facility, Relocation Logistics, Events Production, plus Core Electrical and Beauty).
+  * Implemented click-to-apply track auto-selection that highlights the track and scrolls smoothly to the registration form.
+  * Integrated an interactive Monthly Net Earning Estimator (Part-Time, Full-Time, Specialist Pro).
+  * Added 10-digit mobile and 6-digit pincode format validation.
+  * Added application state persistence via `localStorage` (`servecircle_candidate_pro_app`).
+  * Implemented live 3-stage candidate onboarding tracker with candidate ref ID, telephonic verification ETA, and direct call/hotline helpline.
+- Verification:
+  * Client production build (`npm --prefix client run build`) passed with 0 errors.
+  * Test suites (56 checks) all passed.
+  * Zero git commits, zero git pushes.
+
+### 2026-11-25 — Fixed ReferenceError: notifTypeIcon is not defined on Duty Toggle
+
+- `client/src/components/DashboardNavbar.jsx`:
+  * Defined missing `notifTypeIcon` dictionary mapping notification types (`alert`, `broadcast`, `system`, `booking_update`, `call_request`, `call_accepted`, `promotion`, `default`) to emoji/icon glyphs.
+  * Updated floating action toast notification renderer at line 1156 to safely resolve `{notifTypeIcon[latestToast.type] || notifTypeIcon.default || '🔔'}`.
+  * Extended `getNotifIcon` to explicitly handle `'system'` (`<HiOutlineBolt size={18} />`).
+- Verification:
+  * Client production build (`npm --prefix client run build`) passed in 4.86s with 0 errors.
+  * All 66/66 test checks across the test suites passed.
+  * Zero git commits, zero git pushes.
 
 ### 2026-11-20 — M0 PostgreSQL persistence unification
 

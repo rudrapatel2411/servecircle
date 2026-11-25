@@ -43,8 +43,20 @@ import {
  formatInr,
  getStatusBadgeClass,
 } from './workerHelpers';
+import { getWorkerCategory } from '../../utils/workerCategoryHelper';
 import '../Dashboard.css';
 import './WorkerPages.css';
+
+const SPECIALIZED_JOB_SHORTCUTS = {
+ 'Travel & Commute': { path: '/worker/travel-commute', label: 'Travel Operations Cockpit', icon: '🚖', color: '#0d9488' },
+ 'Food Kitchen': { path: '/worker/food-kitchen', label: 'Culinary Operations Cockpit', icon: '🍳', color: '#ea580c' },
+ 'Pet Services': { path: '/worker/pet-services', label: 'Pet Operations Cockpit', icon: '🐾', color: '#db2777' },
+ 'Health & Wellness': { path: '/worker/health-wellness', label: 'Health Clinical Cockpit', icon: '🩺', color: '#0284c7' },
+ 'Society Management': { path: '/worker/society-management', label: 'Society Operations Cockpit', icon: '🏢', color: '#16a34a' },
+ 'Property & Society': { path: '/worker/society-management', label: 'Society Operations Cockpit', icon: '🏢', color: '#16a34a' },
+ 'Packers & Movers': { path: '/worker/relocation', label: 'Relocation Cockpit', icon: '🚚', color: '#2563eb' },
+ 'Events Hub': { path: '/worker/events', label: 'Event Production Cockpit', icon: '🎭', color: '#6366f1' },
+};
 
 const tabs = [
  { key: 'all', label: 'All' },
@@ -114,6 +126,8 @@ const DEMO_JOBS = [
 const WorkerJobs = () => {
  const { t } = useTranslation();
  const { token, user, isAuthenticated, signIn, authError, authLoading, isDemoMode, workerStatus, dutyStatus, dutyStatusUpdatedAt, updateDuty } = useWorkerAuth();
+ const workerCategory = getWorkerCategory(user);
+ const specializedShortcut = SPECIALIZED_JOB_SHORTCUTS[workerCategory] || null;
 
  const [activeTab, setActiveTab] = useState('all');
  const [currentPage, setCurrentPage] = useState(1);
@@ -530,45 +544,50 @@ const WorkerJobs = () => {
  </div>
  )}
 
- {/* Specialized Operations Notice */}
- <div style={{
-  background: 'linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%)',
-  border: '1.5px solid #0284c7',
-  borderRadius: '16px',
-  padding: '14px 20px',
-  marginBottom: '18px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  gap: '12px'
- }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-   <span style={{ fontSize: '1.5rem' }}>✨</span>
-   <div>
-    <strong style={{ color: '#0369a1', fontSize: '0.92rem' }}>Looking for Advance Scheduled Bookings & Specialized Manifests?</strong>
-    <div style={{ color: '#475569', fontSize: '0.78rem' }}>
-     Travel routes, Kids school van attendance, Live BBQ setups, Pet care logs & Clinical health sessions.
-    </div>
-   </div>
-  </div>
-  <Link
-   to="/worker/specialized"
+ {specializedShortcut && (
+  <div
    style={{
-    background: '#0284c7',
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '10px',
-    fontWeight: 800,
-    fontSize: '0.8rem',
-    textDecoration: 'none',
-    boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
-    whiteSpace: 'nowrap'
+    background: 'white',
+    border: `1.5px solid ${specializedShortcut.color}`,
+    borderRadius: '12px',
+    padding: '12px 18px',
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
+    flexWrap: 'wrap',
+    boxShadow: `0 2px 10px ${specializedShortcut.color}15`
    }}
   >
-   Open Advance Hub →
-  </Link>
- </div>
+   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <span style={{ fontSize: '1.4rem' }}>{specializedShortcut.icon}</span>
+    <div>
+     <strong style={{ color: '#0f172a', fontSize: '0.92rem' }}>
+      {specializedShortcut.label}
+     </strong>
+     <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '1px' }}>
+      You are assigned to {workerCategory}. Open your dedicated operations console for advance booking workflows.
+     </div>
+    </div>
+   </div>
+   <Link
+    to={specializedShortcut.path}
+    className="btn"
+    style={{
+     background: specializedShortcut.color,
+     color: 'white',
+     padding: '7px 16px',
+     fontSize: '0.82rem',
+     fontWeight: 700,
+     borderRadius: '8px',
+     textDecoration: 'none'
+    }}
+   >
+    Launch Console →
+   </Link>
+  </div>
+ )}
 
  <div className="tabs-bar">
  {tabs.map((tab) => (

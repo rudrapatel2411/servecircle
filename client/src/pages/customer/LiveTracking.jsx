@@ -197,8 +197,28 @@ const LiveTracking = () => {
 
     fetchBookingDetails();
     fetchProofs();
+
+    const checkLocalBooking = () => {
+      try {
+        const raw = localStorage.getItem('servecircle_customer_recent_bookings');
+        if (raw) {
+          const list = JSON.parse(raw);
+          const match = list.find(b => b.bookingId === bookingId || b._id === bookingId || b.id === bookingId);
+          if (match && isMounted) {
+            setBookingData(prev => prev ? { ...match, ...prev } : match);
+            const mapping = statusToStep(match.status);
+            setActiveStep(mapping.step);
+            setCurrentStatusText(mapping.text);
+          }
+        }
+      } catch (_) {}
+    };
+    checkLocalBooking();
+    window.addEventListener('servecircle:job-status-updated', checkLocalBooking);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('servecircle:job-status-updated', checkLocalBooking);
     };
   }, [bookingId, token]);
 

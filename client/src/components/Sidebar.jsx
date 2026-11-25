@@ -26,7 +26,21 @@ import {
   HiOutlineTruck,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
+import { getWorkerCategory } from '../utils/workerCategoryHelper';
+import { getSession } from '../utils/authSession';
+import { getWorkerSession } from '../pages/worker/workerApi';
 import './Sidebar.css';
+
+const SPECIALIZED_NAV_MAP = {
+  'Travel & Commute': { path: '/worker/travel-commute', icon: <HiOutlineTruck style={{ color: '#0d9488' }} />, label: 'Travel Operations' },
+  'Food Kitchen': { path: '/worker/food-kitchen', icon: <HiOutlineSparkles style={{ color: '#ea580c' }} />, label: 'Culinary Operations' },
+  'Pet Services': { path: '/worker/pet-services', icon: <HiOutlineSparkles style={{ color: '#db2777' }} />, label: 'Pet Operations' },
+  'Health & Wellness': { path: '/worker/health-wellness', icon: <HiOutlineSparkles style={{ color: '#0284c7' }} />, label: 'Health Operations' },
+  'Society Management': { path: '/worker/society-management', icon: <HiOutlineBuildingOffice2 style={{ color: '#16a34a' }} />, label: 'Society Operations' },
+  'Property & Society': { path: '/worker/society-management', icon: <HiOutlineBuildingOffice2 style={{ color: '#16a34a' }} />, label: 'Society Operations' },
+  'Packers & Movers': { path: '/worker/relocation', icon: <HiOutlineTruck style={{ color: '#2563eb' }} />, label: 'Relocation Operations' },
+  'Events Hub': { path: '/worker/events', icon: <HiOutlineSparkles style={{ color: '#6366f1' }} />, label: 'Event Operations' }
+};
 
 /* =====================================================
    GENERAL SERVICES CATEGORY MENU (customer panel)
@@ -46,18 +60,11 @@ const sidebarConfig = {
   worker: [
     { path: '/worker', icon: <HiOutlineHome />, labelKey: 'worker.dashboard', end: true },
     { path: '/worker/jobs', icon: <HiOutlineBriefcase />, labelKey: 'worker.jobRequests' },
-    { path: '/worker/relocation', icon: <HiOutlineTruck style={{ color: '#2563eb' }} />, labelKey: 'worker.relocation', fallbackLabel: 'Relocation & Moving' },
-    { path: '/worker/travel', icon: <HiOutlineTruck style={{ color: '#0d9488' }} />, labelKey: 'worker.travel', fallbackLabel: 'Travel & Commute' },
-    { path: '/worker/food', icon: <HiOutlineSparkles style={{ color: '#ea580c' }} />, labelKey: 'worker.food', fallbackLabel: 'Food & Culinary' },
-    { path: '/worker/pet-services', icon: <HiOutlineSparkles style={{ color: '#db2777' }} />, labelKey: 'worker.pets', fallbackLabel: 'Pet Care Operations' },
-    { path: '/worker/health-wellness', icon: <HiOutlineSparkles style={{ color: '#0284c7' }} />, labelKey: 'worker.health', fallbackLabel: 'Health & Wellness' },
-    { path: '/worker/society-management', icon: <HiOutlineBuildingOffice2 style={{ color: '#16a34a' }} />, labelKey: 'worker.society', fallbackLabel: 'Society Operations' },
-    { path: '/worker/events', icon: <HiOutlineSparkles style={{ color: '#6366f1' }} />, labelKey: 'worker.events', fallbackLabel: 'Events Production' },
     { path: '/worker/schedule', icon: <HiOutlineClipboardDocumentList />, labelKey: 'worker.mySchedule' },
     { path: '/worker/earnings', icon: <HiOutlineBanknotes />, labelKey: 'worker.earnings' },
     { path: '/worker/training', icon: <HiOutlineAcademicCap />, labelKey: 'worker.training' },
     { path: '/worker/profile', icon: <HiOutlineUserCircle />, labelKey: 'worker.profile' },
-    { path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro' },
+    { path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro', fallbackLabel: 'Become a Pro' },
   ],
   admin: [
     { path: '/admin', icon: <HiOutlineHome />, labelKey: 'admin.dashboard', end: true },
@@ -189,11 +196,40 @@ const GeneralServicesSidebar = () => {
    ===================================================== */
 const Sidebar = ({ panel }) => {
   const { t } = useTranslation();
-  const links = sidebarConfig[panel] || [];
+  const location = useLocation();
+  const rawLinks = sidebarConfig[panel] || [];
   const panelInfo = panelLabels[panel];
 
   if (panel === 'customer') {
     return <GeneralServicesSidebar />;
+  }
+
+  let links = [...rawLinks];
+  let workerUser = null;
+  let workerCat = 'Home Repairs';
+
+  if (panel === 'worker') {
+    try {
+      const wSession = getWorkerSession();
+      const gSession = getSession();
+      workerUser = wSession?.user || gSession?.user || null;
+      workerCat = getWorkerCategory(workerUser);
+
+      const assignedSpecialized = SPECIALIZED_NAV_MAP[workerCat] || null;
+      if (assignedSpecialized) {
+        // Replace generic "Job Requests" menu with the dedicated specialized operations console
+        links = links.map((l) =>
+          l.path === '/worker/jobs'
+            ? {
+                path: assignedSpecialized.path,
+                icon: assignedSpecialized.icon,
+                labelKey: `worker.${(assignedSpecialized.label || '').toLowerCase().replace(/[^a-z]/g, '')}`,
+                fallbackLabel: assignedSpecialized.label,
+              }
+            : l
+        );
+      }
+    } catch (_) {}
   }
 
   return (
