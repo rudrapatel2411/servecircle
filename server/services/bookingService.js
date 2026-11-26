@@ -54,6 +54,8 @@ import {
 } from './featureService.js';
 import { prisma } from '../config/prisma.js';
 import { validateAndEnforcePricing } from './pricingEngineService.js';
+import { doesCategoryMatchWorker } from '../constants/categoryMatcher.js';
+import { findFallbackUserById } from '../utils/demoAuthStore.js';
 
 /** Prisma stores booking status as an uppercase enum ("EN_ROUTE") */
 function toDbStatus(status) {
@@ -306,26 +308,39 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
       'alert'
     );
 
-    const formatted = formatPrismaBooking(created);
-
-    // Auto-assignment runs against the SAME store that created the booking.
-    try {
-      const bestWorker = await findBestWorker(formatted);
-      if (bestWorker) {
-        return await assignBooking(formatted._id, bestWorker._id, io, reqCtx);
+    // Broadcast open 15km job alert to matching specialists
+    if (io) {
+      const workerAlertPayload = {
+        id: `notif_${Date.now()}_${created.bookingId}`,
+        bookingId: created.bookingId,
+        _id: created.id,
+        title: `⚡ New ${created.category} Request (Within 15 km)`,
+        message: `${created.serviceName} requested by ${customerName || 'Customer'} at ${created.address || 'Ahmedabad'}. Tap to review & accept.`,
+        type: 'booking_request',
+        category: created.category,
+        service: created.serviceName,
+        targetCategory: created.category,
+        targetRole: 'worker',
+        canAccept: true,
+        amount: created.amount,
+        address: created.address,
+        customerName: customerName || 'Customer',
+        scheduledTime: created.scheduledTime,
+        date: new Date().toLocaleString('en-IN'),
+      };
+      if (created.category) {
+        io.to(`workers_category_${created.category}`).emit('worker_notification', workerAlertPayload);
+        io.to(`workers_category_${created.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerAlertPayload);
+      } else {
+        io.to('workers_broadcast').emit('worker_notification', workerAlertPayload);
       }
-      notifyAdmin(
-        io,
-        'No Worker Available',
-        `Booking ${created.bookingId} has no eligible worker right now. Assign manually or retry dispatch.`,
-        'alert'
-      );
-    } catch (assignErr) {
-      console.warn(
-        `[AssignmentService] Auto-assignment skipped for ${created.bookingId}: ${assignErr.message}`
-      );
     }
 
+    const formatted = formatPrismaBooking(created);
+
+    // In ServeCircle workflow, new bookings enter the open 15km broadcast pool for nearby specialists to claim.
+    // They are NOT auto-assigned synchronously; workers review and accept from their panel.
+    console.log(`[AssignmentService] Booking ${created.bookingId} queued in 15km broadcast pool for specialist claiming.`);
     return formatted;
   } catch (prismaErr) {
     console.warn('[createBooking] Prisma creation fallback:', prismaErr.message);
@@ -338,6 +353,34 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
     `Booking ${booking.bookingId} created by ${customerName || 'Customer'}.`,
     'alert'
   );
+
+  if (io) {
+    const workerAlertPayload = {
+      id: `notif_${Date.now()}_${booking.bookingId}`,
+      bookingId: booking.bookingId,
+      _id: booking._id,
+      title: `⚡ New ${booking.category} Request (Within 15 km)`,
+      message: `${booking.service} requested by ${customerName || 'Customer'} at ${booking.address || 'Ahmedabad'}. Tap to review & accept.`,
+      type: 'booking_request',
+      category: booking.category,
+      service: booking.service,
+      targetCategory: booking.category,
+      targetRole: 'worker',
+      canAccept: true,
+      amount: booking.amount,
+      address: booking.address,
+      customerName: customerName || 'Customer',
+      scheduledTime: booking.scheduledTime,
+      date: new Date().toLocaleString('en-IN'),
+    };
+    if (booking.category) {
+      io.to(`workers_category_${booking.category}`).emit('worker_notification', workerAlertPayload);
+      io.to(`workers_category_${booking.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerAlertPayload);
+    } else {
+      io.to('workers_broadcast').emit('worker_notification', workerAlertPayload);
+    }
+  }
+
   return booking;
 }
 
@@ -413,21 +456,55 @@ export async function getCustomerBookings(customerId, status) {
 // @param {string} [status]
 // @returns {Promise<Booking[]>}
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getWorkerJobs(workerId, status) {
+export async function getWorkerJobs(workerId, status, workerCategory = null) {
+  let resolvedWorkerCat = workerCategory || findFallbackUserById(workerId)?.serviceCategory || '';
+  if (!resolvedWorkerCat && workerId) {
+    try {
+      const profile = await prisma.workerProfile.findUnique({
+        where: { userId: String(workerId) },
+        select: { serviceCategory: true },
+      });
+      if (profile?.serviceCategory) resolvedWorkerCat = profile.serviceCategory;
+    } catch {}
+  }
+
   // 1. PostgreSQL (Prisma)
   try {
-    const where = { workerId };
-    if (status) where.status = status.toUpperCase().replace('-', '_');
+    let where = {};
+    const norm = status ? status.toLowerCase() : null;
+    if (norm === 'pending') {
+      where.OR = [
+        { workerId },
+        { workerId: null, status: 'PENDING' },
+      ];
+    } else if (norm && norm !== 'all') {
+      where.workerId = workerId;
+      where.status = norm.toUpperCase().replace('-', '_');
+    } else {
+      where.OR = [
+        { workerId },
+        { workerId: null, status: 'PENDING' },
+      ];
+    }
     const bookings = await prisma.booking.findMany({
       where,
       include: {
-        customer: { select: { id: true, name: true, phone: true, address: true } },
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+        worker: { select: { id: true, name: true, phone: true } },
       },
-      orderBy: { scheduledDate: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { scheduledDate: 'desc' }],
     });
-    return bookings.map(formatPrismaBooking);
+    const scopedBookings = resolvedWorkerCat
+      ? bookings.filter((b) => {
+          if (b.workerId && String(b.workerId) === String(workerId)) {
+            return doesCategoryMatchWorker(resolvedWorkerCat, b.category, b.serviceName);
+          }
+          return doesCategoryMatchWorker(resolvedWorkerCat, b.category, b.serviceName);
+        })
+      : bookings;
+    return scopedBookings.map(formatPrismaBooking);
   } catch (prismaErr) {
-    return getDemoBookingsForWorker(workerId, status);
+    return getDemoBookingsForWorker(workerId, status, resolvedWorkerCat);
   }
 }
 
@@ -637,13 +714,13 @@ export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
   const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
-  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
-    throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
+  if (bWorkerId && String(bWorkerId) !== String(workerId)) {
+    throw new AppError('This booking is already claimed by another specialist', StatusCodes.CONFLICT);
   }
 
   const prevStatus = booking.status;
   const responseTimeMs = booking.assignedAt ? Date.now() - new Date(booking.assignedAt).getTime() : null;
-  const updated = await applyTransition(bookingId, prevStatus, 'accepted');
+  const updated = await applyTransition(bookingId, prevStatus, 'accepted', { worker: String(workerId) });
 
   notifyCustomer(io, booking.customer?._id || booking.customer, 'Booking Accepted', `Worker accepted your booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
@@ -659,8 +736,15 @@ export async function rejectBooking(bookingId, workerId, reqCtx = {}) {
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
 
   const bWorkerId = booking.worker?._id || booking.worker?.id || booking.worker;
-  if (!bWorkerId || String(bWorkerId) !== String(workerId)) {
+  if (bWorkerId && String(bWorkerId) !== String(workerId)) {
     throw new AppError('This booking is not assigned to you', StatusCodes.FORBIDDEN);
+  }
+
+  // If unassigned broadcast job, decline for this specialist while keeping open in pool
+  if (!bWorkerId) {
+    recordWorkerRejection(workerId);
+    logBookingEvent(EVENT_TYPES.BOOKING_REJECTED, booking, { _id: workerId, role: 'worker' }, reqCtx);
+    return { ...booking, status: 'pending', declinedBy: workerId };
   }
 
   const prevStatus = booking.status;

@@ -43,12 +43,13 @@ export const handleValidationErrors = (req, res, next) => {
 // Helper to check valid ID format (UUID, hex ID, or custom format)
 const isValidId = (val) => {
   if (!val || typeof val !== 'string') return false;
+  const clean = val.replace(/^#/, '');
   // Standard UUID format
-  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)) return true;
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean)) return true;
   // 24-character hex ID (legacy/compatible)
-  if (/^[0-9a-fA-F]{24}$/.test(val)) return true;
-  // Custom prefix formats: SC-123, BK-123, demo_...
-  if (/^(SC|BK|SRV|USR|WRK)-[a-zA-Z0-9_-]+$/i.test(val) || String(val).startsWith('demo_')) return true;
+  if (/^[0-9a-fA-F]{24}$/.test(clean)) return true;
+  // Custom prefix formats: SC-123, BK-123, demo_..., wb-..., JOB-...
+  if (/^(SC|BK|SRV|USR|WRK|JOB|wb|REL|TRV|FOD|PET|HLT|SOC|EVT)-[a-zA-Z0-9_-]+$/i.test(clean) || String(clean).startsWith('demo_') || String(clean).startsWith('wb_')) return true;
   return false;
 };
 

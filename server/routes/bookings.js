@@ -77,7 +77,8 @@ router.get(
   protect,
   authorize('worker'),
   asyncHandler(async (req, res) => {
-    const bookings = await getWorkerJobs(req.user._id, req.query.status);
+    const workerCategory = req.user.serviceCategory || req.user.workerProfile?.serviceCategory || '';
+    const bookings = await getWorkerJobs(req.user._id, req.query.status, workerCategory);
     res.json(bookings);
   })
 );

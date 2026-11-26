@@ -21,6 +21,7 @@ function formatUser(user) {
     _id: user.id,
     role: roleLower,
     rawRole: user.role,
+    serviceCategory: user.serviceCategory || user.workerProfile?.serviceCategory || '',
   };
 }
 

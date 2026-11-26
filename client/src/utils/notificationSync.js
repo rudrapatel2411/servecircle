@@ -1,17 +1,45 @@
 /**
+ * Helper to identify and purge fake/mock hardcoded notifications
+ */
+export function isFakeNotification(notif) {
+  if (!notif) return true;
+  const str = JSON.stringify(notif).toLowerCase();
+  if (
+    str.includes('sc-2801') ||
+    str.includes('summer20') ||
+    str.includes('ramesh kumar') ||
+    str.includes('biometric & badge') ||
+    str.includes('no worker available') ||
+    str.includes('no eligible worker') ||
+    notif.id === 'notif_1' ||
+    notif.id === 'notif_2' ||
+    notif.id === 'notif_3' ||
+    notif._id === 'notif_1' ||
+    notif._id === 'notif_2' ||
+    notif._id === 'notif_3'
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * notificationSync.js
  *
  * Multi-layer real-time notification sync utility for ServeCircle.
- * Ensures notifications are NEVER lost between Customer, Worker, and Admin panels:
- *   1. Cross-tab BroadcastChannel
- *   2. LocalStorage storage event (inter-tab broadcast fallback)
- *   3. Persistent caching in localStorage so switching tabs preserves alerts
+ * Supports STRICT TARGETED NOTIFICATIONS:
+ *  - Worker requests routed ONLY to matching service category (Home Repairs, etc.)
+ *  - Customer acceptances routed ONLY to the specific customer
+ *  - Zero leak to Admin, B2B, or unrelated workers/customers
  */
+
+import { doesServiceMatchWorker } from './workerCategoryHelper.js';
 
 const CHANNEL_NAME = 'servecircle_cross_tab_notifications';
 const STORAGE_KEY = 'servecircle_recent_notifications';
 const DISMISSED_KEY = 'servecircle_dismissed_notif_ids';
 const READ_KEY = 'servecircle_read_notif_ids';
+const CLEANED_FLAG_KEY = 'servecircle_notifs_cleaned_v2';
 
 let channel = null;
 if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
@@ -20,6 +48,154 @@ if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
   } catch (e) {
     channel = null;
   }
+}
+
+/**
+ * One-time cleaner to purge legacy spam/cluttered notifications
+ */
+const PURGE_STAMP_KEY = 'servecircle_purge_stamp_v8';
+
+export function purgeLegacySpamNotifications() {
+  if (typeof window === 'undefined') return;
+  try {
+    if (!localStorage.getItem(PURGE_STAMP_KEY)) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(DISMISSED_KEY);
+      localStorage.removeItem(READ_KEY);
+      localStorage.removeItem('servecircle_recent_notifications');
+      localStorage.removeItem('servecircle_notifs_cleaned_v2');
+      localStorage.setItem(PURGE_STAMP_KEY, 'true');
+    } else {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const list = JSON.parse(raw);
+        const clean = list.filter((item) => !isFakeNotification(item));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
+      }
+    }
+  } catch {}
+}
+
+// Auto-purge once on module load
+purgeLegacySpamNotifications();
+
+/**
+ * Filter to determine if a notification strictly belongs to the current user and panel
+ */
+export function isNotificationTargetedForSession(notif, { panel, user, workerCategory }) {
+  if (!notif || isFakeNotification(notif)) return false;
+
+  // 1. Strict Target Role Isolation
+  if (notif.targetRole) {
+    if (notif.targetRole !== panel) {
+      return false; // Wrong panel! Admin, B2B, Worker, Customer completely isolated
+    }
+  } else if (notif.targetAudience && notif.targetAudience !== 'all' && notif.targetAudience !== panel) {
+    return false;
+  }
+
+  // 2. Worker panel: Strict category isolation (Home Repairs worker only gets Home Repairs)
+  if (panel === 'worker') {
+    const title = String(notif.title || '').toLowerCase();
+    const msg = String(notif.message || '').toLowerCase();
+
+    // Block administrative logs from leaking to worker feed
+    if (
+      title === 'new booking' ||
+      title === 'booking assigned' ||
+      title.includes('no worker available') ||
+      msg.includes('assign manually or retry dispatch')
+    ) {
+      return false;
+    }
+
+    const reqCategory = notif.targetCategory || notif.category;
+    const reqService = notif.service || notif.serviceType;
+    if (reqCategory || reqService) {
+      if (!doesServiceMatchWorker(workerCategory, reqCategory, reqService)) {
+        return false; // Belongs to another service sector!
+      }
+    }
+    if (notif.targetWorkerId && user) {
+      const uId = user._id || user.id;
+      if (notif.targetWorkerId !== uId && notif.targetWorkerId !== user.email) {
+        return false;
+      }
+    }
+  }
+
+  // 3. Customer panel: Strict customer identity isolation (Only the booking customer gets their own updates)
+  if (panel === 'customer') {
+    if (notif.targetRole && notif.targetRole !== 'customer') {
+      return false;
+    }
+    const title = String(notif.title || '').toLowerCase();
+    const msg = String(notif.message || '').toLowerCase();
+
+    // Block admin alerts or worker job requests from customer view
+    if (
+      title.includes('new booking') ||
+      title.includes('booking assigned') ||
+      title.includes('no worker available') ||
+      title.includes('request (within 15 km)') ||
+      notif.type === 'booking_request'
+    ) {
+      return false;
+    }
+
+    if (notif.targetCustomerId && user) {
+      const uId = user._id || user.id;
+      if (notif.targetCustomerId !== uId) return false;
+    }
+    if (notif.targetCustomerEmail && user?.email) {
+      if (notif.targetCustomerEmail.toLowerCase() !== user.email.toLowerCase()) return false;
+    }
+    if (notif.targetCustomerName && user?.name) {
+      const uName = user.name.toLowerCase().trim();
+      const tName = notif.targetCustomerName.toLowerCase().trim();
+      if (!uName.includes(tName) && !tName.includes(uName)) {
+        return false;
+      }
+    }
+    if (user?.name && msg.includes('created by ') && !msg.includes(user.name.toLowerCase())) {
+      return false;
+    }
+    if (user?.name && msg.includes('requested by ') && !msg.includes(user.name.toLowerCase())) {
+      return false;
+    }
+
+    // If it's a booking-related notification, ensure it strictly belongs to this customer
+    const isBookingNotif =
+      title.includes('booking') ||
+      title.includes('specialist') ||
+      title.includes('assigned') ||
+      msg.includes('booking') ||
+      notif.bookingId;
+    if (isBookingNotif) {
+      const hasTarget = notif.targetCustomerId || notif.targetCustomerEmail || notif.targetCustomerName;
+      if (!hasTarget && notif.bookingId) {
+        try {
+          const recent = JSON.parse(localStorage.getItem('servecircle_customer_recent_bookings') || '[]');
+          const matchesRecent = recent.some(
+            (b) => b.id === notif.bookingId || b.bookingId === notif.bookingId || b._id === notif.bookingId
+          );
+          if (!matchesRecent) return false;
+        } catch {}
+      }
+    }
+  }
+
+  // 4. Admin / B2B panels: Block consumer booking spam
+  if (panel === 'admin' || panel === 'b2b') {
+    if (notif.targetRole === 'worker' || notif.targetRole === 'customer') {
+      return false;
+    }
+    if (['booking_request', 'booking_accepted', 'worker_arrived', 'quote_received'].includes(notif.type)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**
@@ -112,9 +288,9 @@ export function getReadNotificationIds() {
 }
 
 /**
- * Get all cached recent notifications from localStorage (filtering out dismissed ones)
+ * Get all cached recent notifications from localStorage, optionally filtered for session
  */
-export function getCachedNotifications() {
+export function getCachedNotifications(sessionContext = null) {
   if (typeof window === 'undefined') return [];
   try {
     const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -122,6 +298,7 @@ export function getCachedNotifications() {
     const readIds = new Set(getReadNotificationIds());
     return list
       .filter((item) => !dismissed.has(item.id) && !dismissed.has(item._id))
+      .filter((item) => !sessionContext || isNotificationTargetedForSession(item, sessionContext))
       .map((item) => ({
         ...item,
         read: item.read || readIds.has(item.id) || readIds.has(item._id),
@@ -184,12 +361,14 @@ export function dismissCachedNotification(id) {
 }
 
 /**
- * Clear all notifications
+ * Clear all notifications completely
  */
 export function clearAllCachedNotifications() {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(DISMISSED_KEY);
+    localStorage.removeItem(READ_KEY);
+    window.dispatchEvent(new CustomEvent('servecircle:notifications-cleared'));
   } catch {}
 }
-

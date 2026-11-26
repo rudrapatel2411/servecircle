@@ -11,6 +11,12 @@ const readJson = async (response) => {
   }
 };
 
+const sanitizePath = (path) => {
+  return String(path || '')
+    .replace(/\/#[a-zA-Z0-9_-]+/g, (match) => '/' + match.slice(2))
+    .replace(/#([a-zA-Z0-9_-]+)/g, '$1');
+};
+
 const apiRequest = async (path, { method = 'GET', token, body } = {}) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -20,7 +26,8 @@ const apiRequest = async (path, { method = 'GET', token, body } = {}) => {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const cleanPath = sanitizePath(path);
+  const response = await fetch(`${API_BASE}${cleanPath}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
@@ -120,14 +127,16 @@ export const fetchWorkerJobs = async (token, status) => {
 };
 
 export const respondToJobRequest = async (token, bookingId, action) => {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
   const endpoint = action === 'accept' ? 'accept' : 'reject';
-  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
+  return apiRequest(`/bookings/${cleanId}/${endpoint}`, {
     method: 'PATCH',
     token,
   });
 };
 
 export const updateWorkerJobStatus = async (token, bookingId, status) => {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
   const endpointByStatus = {
     'en-route': 'en-route',
     arrived: 'arrive',
@@ -136,15 +145,16 @@ export const updateWorkerJobStatus = async (token, bookingId, status) => {
   const endpoint = endpointByStatus[status];
   if (!endpoint) throw new Error(`Unsupported worker status action: ${status}`);
 
-  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
+  return apiRequest(`/bookings/${cleanId}/${endpoint}`, {
     method: 'PATCH',
     token,
   });
 };
 
 export const verifyWorkerOtp = async (token, bookingId, type, otp) => {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
   const endpoint = type === 'start' ? 'start-otp/verify' : 'end-otp/verify';
-  return apiRequest(`/bookings/${bookingId}/${endpoint}`, {
+  return apiRequest(`/bookings/${cleanId}/${endpoint}`, {
     method: 'POST',
     token,
     body: { otp },
@@ -192,11 +202,13 @@ export const deleteWorkerLeave = async (token, leaveId) => {
 // ─────────────────────────────────────────────
 
 export const fetchBookingMessages = async (token, bookingId) => {
-  return apiRequest(`/bookings/${bookingId}/messages`, { token });
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/messages`, { token });
 };
 
 export const sendBookingMessage = async (token, bookingId, text) => {
-  return apiRequest(`/bookings/${bookingId}/messages`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/messages`, {
     method: 'POST',
     token,
     body: { text },
@@ -204,14 +216,16 @@ export const sendBookingMessage = async (token, bookingId, text) => {
 };
 
 export const initiateBookingCall = async (token, bookingId) => {
-  return apiRequest(`/bookings/${bookingId}/call`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/call`, {
     method: 'POST',
     token,
   });
 };
 
 export const uploadBookingProof = async (token, bookingId, { type, imageUrl, notes }) => {
-  return apiRequest(`/bookings/${bookingId}/proof`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/proof`, {
     method: 'POST',
     token,
     body: { type, imageUrl, notes },
@@ -219,11 +233,13 @@ export const uploadBookingProof = async (token, bookingId, { type, imageUrl, not
 };
 
 export const fetchBookingProofs = async (token, bookingId) => {
-  return apiRequest(`/bookings/${bookingId}/proofs`, { token });
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/proofs`, { token });
 };
 
 export const submitQuoteRevision = async (token, bookingId, { items, totalAmount, notes }) => {
-  return apiRequest(`/bookings/${bookingId}/quote-revision`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/quote-revision`, {
     method: 'POST',
     token,
     body: { items, totalAmount, notes },
@@ -231,11 +247,14 @@ export const submitQuoteRevision = async (token, bookingId, { items, totalAmount
 };
 
 export const fetchQuoteRevisions = async (token, bookingId) => {
-  return apiRequest(`/bookings/${bookingId}/quote-revisions`, { token });
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/quote-revisions`, { token });
 };
 
 export const decideQuoteRevision = async (token, bookingId, revisionId, decision, customerNote) => {
-  return apiRequest(`/bookings/${bookingId}/quote-revision/${revisionId}/decision`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  const cleanRevId = encodeURIComponent(String(revisionId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/quote-revision/${cleanRevId}/decision`, {
     method: 'PATCH',
     token,
     body: { decision, customerNote },
@@ -243,7 +262,8 @@ export const decideQuoteRevision = async (token, bookingId, revisionId, decision
 };
 
 export const collectCodPayment = async (token, bookingId, amountCollected) => {
-  return apiRequest(`/bookings/${bookingId}/cod-collect`, {
+  const cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''));
+  return apiRequest(`/bookings/${cleanId}/cod-collect`, {
     method: 'POST',
     token,
     body: { amountCollected },

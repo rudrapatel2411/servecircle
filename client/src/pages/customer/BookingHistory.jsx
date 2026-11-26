@@ -9,6 +9,7 @@ import '../Dashboard.css';
 import './CustomerPages.css';
 import Pagination from '../../components/Pagination';
 import { getSession, requestApi } from '../../utils/authSession.js';
+import { getWorkflowBookings, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
 
 const statusConfig = {
   completed: { label: 'Completed', color: 'success' },

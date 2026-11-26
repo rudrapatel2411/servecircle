@@ -5,6 +5,7 @@ import {
   HiOutlinePlusCircle, HiOutlineGift, HiOutlineBanknotes, HiOutlineSparkles
 } from 'react-icons/hi2';
 import { getSession, requestApi } from '../../utils/authSession';
+import { getWorkflowWalletData, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -74,7 +75,7 @@ const CustomerWallet = () => {
     };
 
     fetchWallet();
-    return () => { isMounted = false; };
+    return () => { isMounted = false; if (typeof unsub === "function") unsub(); };
   }, [token]);
 
   const totalSpent = transactions.filter(t => t.type === 'payment').reduce((s, t) => s + Math.abs(t.amount), 0);

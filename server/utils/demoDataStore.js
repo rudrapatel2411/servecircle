@@ -152,38 +152,7 @@ export const DEMO_COMPLAINTS = [
   },
 ];
 
-export const DEMO_NOTIFICATIONS = [
-  {
-    _id: 'notif_1',
-    title: 'Booking Confirmed ⚡',
-    message: 'Your AC Service & Deep Cleaning (SC-2801) has been scheduled with Ramesh Kumar.',
-    type: 'booking_update',
-    targetAudience: 'all',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(Date.now() - 3600000),
-  },
-  {
-    _id: 'notif_2',
-    title: 'Summer Offer Active ☀️',
-    message: 'Use coupon code SUMMER20 to get 20% off on all home repair and appliance services.',
-    type: 'promotion',
-    targetAudience: 'customers',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(Date.now() - 86400000),
-  },
-  {
-    _id: 'notif_3',
-    title: 'Biometric & Badge Verified',
-    message: 'All ServeCircle technicians undergo 3-tier police & background verification for your safety.',
-    type: 'system',
-    targetAudience: 'all',
-    readBy: [],
-    isActive: true,
-    createdAt: new Date(Date.now() - 172800000),
-  },
-];
+export const DEMO_NOTIFICATIONS = [];
 
 export const DEMO_PARTNERS = [
   {

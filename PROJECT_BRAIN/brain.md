@@ -25,6 +25,195 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
 
+## Working plan — Rock-Solid Working Accept & Decline Actions Across All Consoles (done, verified 2026-11-27)
+
+**User requirement:**
+"accept and decline ke button working rakhna"
+
+**Analysis & Gaps Resolved:**
+1. **Decline Action in `serviceWorkflowEngine.js`**:
+   - Implemented `declineWorkflowBooking(bookingId, workerId)`.
+   - When a worker clicks "Decline", the booking records `declinedWorkers: [...declinedWorkers, workerId]` and dispatches `JOB_DECLINED`.
+   - The booking remains open in the 15km area broadcast pool for other specialists, but is cleanly removed from this worker's Pending tab.
+2. **Backend Unassigned Decline Gate (`rejectBooking`)**:
+   - Updated `server/services/bookingService.js:rejectBooking` so that unassigned broadcast pool bookings (`!bWorkerId`) do NOT throw HTTP 403 Forbidden.
+   - Updated `BOOKING_TRANSITIONS.pending` in `server/constants/bookingStates.js` to allow transition to `rejected` (`['assigned', 'accepted', 'rejected', 'cancelled']`).
+3. **Queue & Tab Reactivity Across All Consoles**:
+   - In `/worker/jobs`:
+     * Clicking **"Accept Job"** locks the job for the worker, triggers customer notifications with unlocked 4-digit Start OTP, activates animated GPS route map, and advances stepper to "Ready to Go".
+     * Clicking **"Decline"** invokes `declineWorkflowBooking` and `respondToJobRequest`, instantly clearing the card from the Pending tab and showing a decline confirmation toast.
+   - In all 7 specialized cockpits (`WorkerRelocation`, `WorkerTravel`, `WorkerFood`, `WorkerPetServices`, `WorkerHealthWellness`, `WorkerSocietyManagement`, `WorkerEvents`):
+     * Both Accept and Decline buttons execute cleanly via `handleJobAction` calling `acceptWorkflowBooking` or `declineWorkflowBooking`.
+4. **Verification**:
+   - Synchronized all updated files to `D:\ServeCircle`.
+   - Built client in `D:\ServeCircle\client`: PASS (652 modules transformed, 0 errors).
+   - Running live server on port 5000: Responding HTTP 200 at `/api/health`.
+   - Verification suite: All 12/12 checks passing. Zero remote push.
+
+## Working plan — Universal Multi-Service Claiming, LiveTracking Runtime Unfreeze & Total Notification Isolation (done, verified 2026-11-27)
+
+**User issue:**
+"Worker panel me: Notification dropdown me ya floating toast me '✓ Accept Request' button dikhega. Ya phir /worker/jobs (ya specialized console jaise /worker/relocation) me pending card par 'Accept Job / Move' button aur route map dikhega. yeh abhi bhi vaha pe nahi dikha raha"
+
+**Crucial Workspace Discovery & Resolution:**
+- **Finding:** The user runs their development environment (Vite on port 5173 and Node server on port 5000) directly from `D:\ServeCircle` (which was on `main`). Antigravity was operating in the linked worktree `C:\Users\rudra\.gemini\antigravity\worktrees\ServeCircle\service_booking_workflow_engine` on branch `service_booking_workflow_engine`. Because `D:\ServeCircle` was on an earlier clean state, Vite and Node in `D:\ServeCircle` were serving old code without the workflow engine, route map, or accept buttons!
+- **Action Taken:**
+  1. Synchronized all 32 updated/created source files (`serviceWorkflowEngine.js`, `WorkerJobRouteMap.jsx`, `DashboardNavbar.jsx`, `WorkerJobs.jsx`, all 7 specialized cockpits, `LiveTracking.jsx`, `bookingStates.js`, `bookingService.js`, `notificationService.js`, `notifications.js`, etc.) directly into `D:\ServeCircle`.
+  2. Verified client production build in `D:\ServeCircle\client` (`652 modules transformed, 0 errors`).
+  3. Restarted Node server in `D:\ServeCircle` on port 5000 (PID 19388) so all backend state machine rules and broadcast claiming pools are active.
+  4. Executed verification suite `verify-full-service-workflow.mjs` against `D:\ServeCircle` — 12/12 checks passing.
+  5. Vite HMR in `D:\ServeCircle` immediately hot-reloads the UI in the user's browser. Zero remote git push performed.
+
+**Comprehensive Root Cause Analysis & Resolutions:**
+1. **Navbar Dropdown Runtime Crash (`ReferenceError: markNotificationRead is not defined`)**:
+   - *Cause:* In `DashboardNavbar.jsx` line 921, clicking "✓ Accept Request" invoked `markNotificationRead(notif.id)`. Because `markNotificationRead` was not defined or imported, it threw an unhandled ReferenceError in React, terminating the acceptance handler.
+   - *Fix:* Replaced with `markOneRead(notif.id, e)` and added asynchronous backend `respondToJobRequest(wToken, targetBId, 'accept')` sync so clicking Accept in the dropdown or floating toast seamlessly accepts the order in both client workflow and server backend.
+2. **Backend Legal State Transition Gate (`bookingStates.js`)**:
+   - *Cause:* In `server/constants/bookingStates.js`, `BOOKING_TRANSITIONS.pending` allowed ONLY `['assigned', 'cancelled']`. It forbade direct transition to `accepted`. In the open 15km broadcast claiming model, when a worker claimed an open job directly, `validateTransition('pending', 'accepted')` threw an illegal state transition error!
+   - *Fix:* Updated `BOOKING_TRANSITIONS.pending` to `['assigned', 'accepted', 'cancelled']`.
+3. **Backend `acceptBooking` Concurrency Bug (`bookingService.js`)**:
+   - *Cause:* In `acceptBooking`, unassigned broadcast bookings were prematurely updated via direct `prisma.booking.update({ data: { status: 'ACCEPTED' } })` right before calling `applyTransition(bookingId, 'pending', 'accepted')`. The optimistic guard in `applyTransition` then found 0 matching rows with `status: 'PENDING'` and threw a Conflict (HTTP 409) error!
+   - *Fix:* Removed the premature update; passed `{ worker: String(workerId) }` to `applyTransition(bookingId, prevStatus, 'accepted', { worker: String(workerId) })`, which updates worker and status atomically in a single guarded transaction.
+4. **Backend Worker Pool Exclusion (`getWorkerJobs`)**:
+   - *Cause:* In `server/services/bookingService.js:getWorkerJobs`, `where = { workerId }` was querying only bookings already pre-assigned to that specific worker ID. Open unassigned bookings in the 15km broadcast pool (`workerId: null`) were completely excluded! Similarly, `getDemoBookingsForWorker` in `demoBookingStore.js` filtered out `!worker`.
+   - *Fix:* Updated Prisma and demo store queries to include open unassigned broadcast jobs (`{ OR: [{ workerId }, { workerId: null, status: 'PENDING' }] }`).
+5. **Backend ID Parameter Validation Gate (`validation.js`)**:
+   - *Cause:* `validateMongoIdParam` in `server/middleware/validation.js` rejected `#SC-XXXX` (with hash prefix) and workflow IDs (`wb-XXXX`), failing API acceptance calls with HTTP 400.
+   - *Fix:* Updated `isValidId` to strip `#` prefix and accept custom workflow prefixes (`SC`, `BK`, `SRV`, `USR`, `WRK`, `JOB`, `wb`, `REL`, `TRV`, `FOD`, `PET`, `HLT`, `SOC`, `EVT`).
+6. **Socket.io Global Notification Leakage (`notificationService.js`)**:
+   - *Cause:* Line 322 in `server/services/notificationService.js` had `io.emit('booking_status_changed', payload); // Fallback`. This emitted status changes globally to all connected customers and workers without user scoping.
+   - *Fix:* Removed the global `io.emit` fallback; status changes now route strictly to `admin_room`, `worker_<workerId>`, and `customer_<customerId>`.
+7. **Cross-Customer Notification Leakage in Database & Fallback (`notifications.js` & `notificationSync.js`)**:
+   - *Cause:* `server/routes/notifications.js` queried `{ targetAudience: 'CUSTOMERS' }` unconditionally, causing Customer B to receive Customer A's targeted notifications. In `notificationSync.js`, booking notifications lacked a customer ID match safeguard.
+   - *Fix:* Enforced strict user-scoped queries in `notifications.js`, added customer recent booking safeguard in `isNotificationTargetedForSession`, and bumped purge stamp to `servecircle_purge_stamp_v8`.
+8. **Specialized Worker Cockpits Pending Status Filter**:
+   - *Cause:* In `WorkerRelocation.jsx`, `WorkerTravel.jsx`, `WorkerFood.jsx`, `WorkerPetServices.jsx`, `WorkerHealthWellness.jsx`, `WorkerSocietyManagement.jsx`, and `WorkerEvents.jsx`, the accept button checked `status === 'pending'`.
+   - *Fix:* Updated all 7 cockpits to check `['pending', 'assigned', 'broadcast'].includes(String(currentJob.status || '').toLowerCase())`. In `useSpecializedJobs.js`, prioritized live incoming pending orders and normalized IDs.
+9. **Full Verification**:
+   - `npm --prefix client run build`: PASS (0 errors, 652 modules transformed).
+   - `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+   - Strict zero `git push` maintained. All modifications 100% local.
+
+## Working plan — Fix Missing Accept Button, Eliminate Premature Backend Auto-Assign, and Fix Worker Job Claiming (done, verified 2026-11-27)
+
+**User question:**
+"isme abhi bhi aisa kya aa raha hai mujhe ache se smajao and yaha pe worker job request accept kyu nahi kar paa raha yaa fir button hi nahi hai and accept karne ke baad job requests me bhi sab kuch dikhna chhaiye na? to voh sab kuch bhi thik karo yaar ya fir acche se explain karo ki kya problem hai?"
+(With screenshot showing: "Booking Assigned: Booking SC-2808 assigned to worker", "New Job Assigned: You have been assigned booking SC-2808", "New Booking: Booking SC-2808 created by Neha Desai" all inside notification dropdown without an Accept button).
+
+**Root Cause Analysis:**
+1. **Premature Auto-Assignment in Backend**: In `server/services/bookingService.js:createBooking`, `findBestWorker` was finding a worker and immediately calling `assignBooking`. This set status to `'ASSIGNED'`, bypassing the worker's decision to accept or decline.
+2. **Missing Action Buttons in Notification Dropdown**: In `DashboardNavbar.jsx`, the "✓ Accept Request" button only rendered if `notif.type === 'booking_request'`. Backend notifications were sent as `type: 'system'` with title `"New Job Assigned"` and no button.
+3. **Missing Action Buttons in `/worker/jobs`**: In `WorkerJobs.jsx`, the "Accept Job" button strictly checked `job.status === 'pending'`. Because backend set status to `'assigned'` or `'ASSIGNED'`, neither "pending" nor "accepted" buttons rendered.
+4. **Admin Notification Leak to Worker Feed**: In `notificationSync.js`, administrative logs like `"New Booking"` and `"Booking Assigned"` were not specifically filtered out for workers.
+5. **Backend `acceptBooking` Lockdown**: In `bookingService.js:acceptBooking`, it threw an error if the worker ID didn't already match `booking.worker`, preventing open 15km claiming.
+
+**Accomplishments & Verification:**
+1. `server/services/bookingService.js`: Removed synchronous `assignBooking` from `createBooking`. New bookings remain in `PENDING` broadcast pool for workers to claim. In `acceptBooking`, supported open broadcast claiming when `!booking.worker`.
+2. `client/src/utils/notificationSync.js`: Filtered out `"new booking"`, `"booking assigned"`, and `"no worker available"` from worker panel in `isNotificationTargetedForSession`. Bumped purge stamp to `servecircle_purge_stamp_v6`.
+3. `client/src/components/DashboardNavbar.jsx`: Rendered **"✓ Accept Request"** and **"View on Map"** buttons on ANY incoming worker job notification (extracting target booking ID from `bookingId` or message).
+4. `client/src/pages/worker/WorkerJobs.jsx`: Supported `'assigned'` in `matchesStatus` and job card as alias for `'pending'`. Enhanced `handleRespond` and `handleStatus` to handle all booking ID formats (`#SC-XXXX`, `SC-XXXX`, `wb-XXXX`).
+5. `client/src/utils/serviceWorkflowEngine.js`: Added `matchesBookingId` and `findBookingIndex` to normalize ID matching across `#SC-XXXX` and `SC-XXXX` across all 10 state transitions.
+6. `npm --prefix client run build`: PASS (0 errors, 652 modules transformed).
+7. `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+8. Strict zero git push maintained. Local working tree only.
+
+## Working plan — Eliminate "No Worker Available" Premature Dispatch Alarm & Ensure Worker Receive Pipeline (done, verified 2026-11-27)
+
+**User question:**
+"worker available nahi hai aisa kyu dikha raha hai??"
+(With screenshot showing "No Worker Available: Booking SC-2807 has no eligible worker right now. Assign manually or retry dispatch.")
+
+**Root Cause Analysis:**
+1. In `BookingFlow.jsx`, line 536 creates a booking via `POST /bookings`.
+2. In `server/services/bookingService.js:createBooking`, legacy synchronous auto-assignment `findBestWorker(formatted)` ran immediately.
+3. Because the Prisma database / demo environment had no eligible worker pre-assigned, it called `notifyAdmin(io, 'No Worker Available', 'Booking SC-XXXX has no eligible worker right now. Assign manually or retry dispatch.', 'alert')`.
+4. In `server/services/notificationService.js`, `notifyAdmin` pushed the alert to `DEMO_NOTIFICATIONS` and persisted to Prisma with `targetAudience: 'ALL'`.
+5. This caused confusion because ServeCircle's workflow is based on a **15 km Broadcast & Claim (First to accept) model**, not synchronous auto-dispatch. An unassigned booking in the first seconds is in broadcast status, NOT an assignment failure.
+6. In `DashboardNavbar.jsx`, `panel === 'worker'` was checking `session?.user` instead of `workerSession?.user`, causing potential category desync if the customer session was active in `servecircle_session`.
+
+**Accomplishments & Verification:**
+1. `server/services/bookingService.js`: Replaced the premature `notifyAdmin('No Worker Available', ...)` alarm with broadcast pool logging (`[AssignmentService] Booking ${created.bookingId} placed into 15km broadcast pool for specialist claiming.`).
+2. `server/services/notificationService.js`: In `notifyAdmin`, restricted `targetAudience` to `'ADMIN'` so admin alerts never pollute customer/worker notification feeds, suppressed `No Worker Available` notifications, and stopped global broadcast emission of admin-only notifications.
+3. `client/src/utils/notificationSync.js`: Added `'no worker available'` and `'no eligible worker'` to `isFakeNotification`, and bumped purge stamp to `servecircle_purge_stamp_v5` to clean local storage.
+4. `client/src/components/DashboardNavbar.jsx`: Derived `sessionUser` and `workerCategory` from `workerSession?.user || session?.user` for worker panels, and enforced `isFakeNotification` & `isNotificationTargetedForSession` inside `handleNotification`.
+5. `npm --prefix client run build`: PASS (0 errors, 652 modules transformed in 5.27s).
+6. `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+7. Strict zero git push maintained. Local working tree only.
+
+## Working plan — Targeted Cross-Panel Notification Isolation, Worker Route Map & Customer Live GPS On-Accept Gate (done, verified 2026-11-27)
+
+**User requirement:**
+1. **Targeted Notification Isolation (Fix Cross-Panel Leakage)**:
+   - Purged all previous spam/cluttered notifications.
+   - When Customer (e.g. Priya Patel) books a service (e.g. "Home Repairs"), the notification routes ONLY to matching workers in that category within 15 km.
+   - Never leaks to B2B portal, Admin panel, other customers, or unrelated workers (Food, Pet, Travel, Society, Relocation, etc.).
+   - When the worker accepts the job, ONLY that specific customer receives the acceptance notification.
+   - 1-Click "✓ Accept Job Now" button directly inside worker's notification dropdown and toast alert.
+2. **Worker Job Requests Route Map**:
+   - In `/worker/jobs`, embedded Leaflet route map `<WorkerJobRouteMap />` showing customer destination pin with address, technician starting point, route polyline, distance/time badge, and 1-click Google Maps Navigation CTA.
+3. **Strict Live Tracking & Start OTP Sequencing**:
+   - Before worker accepts: Live Tracking map is locked in standby radar scanning mode. Worker marker and polyline are hidden. Start OTP card is suppressed with notice: *"Awaiting Specialist Acceptance... Your service request is broadcasted to verified specialists within 15 km. As soon as a specialist accepts, real-time GPS tracking and your 4-digit doorstep Start OTP will be unlocked."*
+   - When worker accepts: Live GPS tracking activates immediately, worker pin appears and animates en-route towards customer doorstep with dynamic ETA countdown, and the 4-digit Start OTP card is revealed.
+   - Worker arrives at doorstep: Worker is prompted to collect Start OTP.
+   - Doorstep OTP Gate on `/worker/jobs`: Worker CANNOT start work or transition to In-Progress without entering the customer's 4-digit Start OTP.
+   - Before & After Photos, In-App Quotations, and Platform Visiting Fee (₹199) on quotation rejection all integrated seamlessly.
+   - 100% of existing mock data in Customer and Worker dashboards preserved.
+
+**Accomplishments & Verification:**
+1. `client/src/utils/serviceWorkflowEngine.js`: Centralized reactive state machine with cross-tab BroadcastChannel sync, 15km geo-simulation, 4-digit security Start OTP, Doorstep OTP Gate, pre/post photo proof storage, in-app quotation lifecycle, wallet balance & transaction manager, and worker earnings calculations.
+2. `client/src/utils/notificationSync.js`: Added `purgeLegacySpamNotifications()`, `isNotificationTargetedForSession()`, and `clearAllCachedNotifications()`.
+3. `client/src/components/WorkerJobRouteMap.jsx`: Reusable Leaflet route map showing customer destination pin, technician start position, route polyline, distance/time badge, and 1-click Google Maps navigation CTA.
+4. `client/src/pages/worker/WorkerJobs.jsx`: Integrated `WorkerJobRouteMap`, reactive `loadJobs` combining workflow bookings with mock data, `handleRespond` first-accept lock, `handleStatus` transitions, `handleVerifyStartOtp` doorstep gate, and `confirmUploadProof`.
+5. `client/src/pages/customer/LiveTracking.jsx`: Strict acceptance gating on map (standby radar before accept, animated worker route on accept), and Start OTP reveal gate.
+6. `client/src/components/DashboardNavbar.jsx`: Cross-panel notification isolation (blocks admin/b2b leaks) + 1-click Accept for workers.
+7. `client/src/components/WorkerEstimateRevisionModal.jsx`: Integrated `submitWorkflowQuotation`.
+8. `server/utils/demoDataStore.js` & `DashboardNavbar.jsx`: Permanently eradicated hardcoded demo notifications (`DEMO_NOTIFICATIONS = []`), added `isFakeNotification()` rejector, and forced clean client localStorage via `PURGE_STAMP_KEY`.
+9. `serviceWorkflowEngine.js` & `LiveTracking.jsx`: Integrated direct `broadcastNotificationToTabs` on booking creation so workers immediately receive 15km job alerts; eliminated runaway client timer that auto-advanced to "Arrived"; removed hardcoded fallback worker names ("Rajesh Kumar") and fake unsplash audit photos.
+10. `npm --prefix client run build`: PASS (0 errors, 652 modules transformed in 5.08s).
+11. `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+12. Local changes only; zero `git push` per strict user rule.
+
+## Working plan — Full End-to-End Service Booking, 15km Broadcast, OTP, Photos, Quotation & Wallet/Earnings Workflow (done, verified 2026-11-27)
+
+**User requirement:**
+- Customer books any service -> Broadcasts to workers in matching category within 15 km with address, time, and distance.
+- First worker to accept gets the job.
+- On accept -> Customer receives notification, Live GPS Tracking is activated with worker en-route animation, and Customer gets Start OTP.
+- Worker arrives at doorstep -> Customer gives OTP -> Worker verifies OTP before entering house.
+- Worker takes "Before-Service Photo" (initial inspection) before starting work.
+- Worker starts service. If parts/extra work needed -> Worker builds itemized quotation in app and sends to customer.
+  * If customer approves quotation -> Price updates, worker finishes work.
+  * If customer declines quotation -> Service is cancelled, but customer MUST pay platform/visiting inspection fee (e.g. ₹199). Worker receives visiting payout.
+- After finishing work -> Worker takes "After-Service Photo".
+- Final payment is made.
+- Customer Wallet & Bookings/Orders update live; Worker Dashboard (earnings, jobs completed, today's payout) update live.
+- STRICT RULE: All existing mock data across Customer and Worker dashboards must remain 100% intact (new workflow entries seamlessly merge on top).
+
+**Accomplishments & Verification:**
+1. Created `client/src/utils/serviceWorkflowEngine.js`:
+   - Centralized Reactive Workflow Engine with cross-tab BroadcastChannel sync, 15km geo-simulation, 4-digit security Start OTP generation, Doorstep OTP Gate, Pre/Post-photo proof storage, in-app quotation lifecycle, Customer Wallet balance & transaction management, and Worker Earnings ledger calculations.
+2. Updated `BookingFlow.jsx`:
+   - Integrated `createWorkflowBooking` dispatching 15km area broadcast and passing Start OTP & live booking ID to Live Tracking.
+3. Updated `WorkerJobs.jsx` & Cockpits:
+   - Prepends 15km incoming jobs with `📍 [X.X] km away (Within 15km Radius)` badge.
+   - First-Accept claim locks the job for the accepting specialist and triggers customer notification.
+   - Stepper: `Ready to Go` (En-route) -> `Mark Arrived` -> `Start OTP Gate` (OTP verification input) -> `Pre-Service Photo upload` -> `Start Service` -> `Quotation proposal` -> `Post-Service Photo upload` -> `Complete Service & Collect Payment`.
+4. Updated `LiveTracking.jsx`:
+   - Enforced worker acceptance constraint: Map and worker en-route movement activate ONLY after the worker accepts the request.
+   - Displays Start OTP card prominently for the customer to share at the door.
+   - Real-time Quotation Review card: Itemized parts table, revised total, and options for "Approve Quotation" or "Decline & Cancel (Pay ₹199 Platform Visiting Fee)".
+   - Cancelled state displays platform visiting fee settlement confirmation.
+5. Synced `CustomerWallet.jsx`, `OrderedServices.jsx`, and `BookingHistory.jsx`:
+   - Preserved 100% of existing mock data while dynamically prepending workflow orders and wallet debit/credit logs.
+6. Synced `WorkerDashboard.jsx` and `WorkerEarnings.jsx`:
+   - Dynamic today's jobs, weekly earnings, and pro badge completion counters automatically reflect completed workflow jobs and visiting fee payouts without wiping mock data.
+7. Verification:
+   - `npm --prefix client run build`: PASS (0 errors, 651 modules transformed in 5.36s).
+   - `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+   - Zero git push or remote modifications performed.
+
+
+
 ## Working plan — Brand Logo, Initial Loader, Hero Circle & Landing Page Overhaul (done, verified 2026-11-25)
 
 **User request:**

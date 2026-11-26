@@ -115,8 +115,9 @@ io.on('connection', (socket) => {
     if (payload.category) {
       io.to(`workers_category_${payload.category}`).emit('worker_notification', workerJobPayload);
       io.to(`workers_category_${payload.category.toLowerCase().replace(/[^a-z0-9]/g, '-')}`).emit('worker_notification', workerJobPayload);
+    } else {
+      io.to('workers_broadcast').emit('worker_notification', workerJobPayload);
     }
-    io.to('workers_broadcast').emit('worker_notification', workerJobPayload);
 
     // 3. Booking confirmation back to customer
     if (payload.customerId) {

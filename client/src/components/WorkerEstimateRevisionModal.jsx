@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HiOutlineXMark, HiOutlinePlus, HiOutlineTrash, HiOutlineCalculator } from 'react-icons/hi2';
 import { submitQuoteRevision } from '../pages/worker/workerApi';
+import { submitWorkflowQuotation } from '../utils/serviceWorkflowEngine';
 
 export default function WorkerEstimateRevisionModal({
   isOpen,
@@ -55,13 +56,25 @@ export default function WorkerEstimateRevisionModal({
 
     setLoading(true);
     try {
-      const res = await submitQuoteRevision(token, bookingId, {
-        items: validItems,
-        totalAmount: totalRevisedAmount,
-        notes,
-      });
-      alert('Estimate revision submitted! The customer will be notified to review and approve.');
-      if (onSuccess) onSuccess(res.revision);
+      let revision = { id: `rev-${Date.now()}`, items: validItems, totalAmount: totalRevisedAmount, notes };
+      try {
+        submitWorkflowQuotation(bookingId, { items: validItems, totalAmount: extraTotal, notes });
+      } catch (e) {
+        console.warn("Workflow quote sync notice:", e);
+      }
+      try {
+        if (token && !String(bookingId).startsWith('#SC')) {
+          const res = await submitQuoteRevision(token, bookingId, {
+            items: validItems,
+            totalAmount: totalRevisedAmount,
+            notes,
+          });
+          if (res?.revision) revision = res.revision;
+        }
+      } catch (backendErr) {
+        console.warn('Backend quote revision fallback to workflow engine:', backendErr);
+      }
+      if (onSuccess) onSuccess(revision);
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to submit estimate revision');

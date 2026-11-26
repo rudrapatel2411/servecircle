@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest, updateWorkerJobStatus } from './workerApi';
+import {
+  getWorkflowBookings,
+  acceptWorkflowBooking,
+  declineWorkflowBooking,
+  subscribeWorkflowUpdates,
+} from '../../utils/serviceWorkflowEngine';
 
 export function useSpecializedJobs({
   category,
@@ -38,6 +44,20 @@ export function useSpecializedJobs({
       }
     } catch (_) {}
 
+    try {
+      const allWf = getWorkflowBookings();
+      if (Array.isArray(allWf)) {
+        allWf.forEach((wf) => {
+          const bCat = (wf.category || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          const bSvc = (wf.service || '').toLowerCase();
+          const match = allAliases.some((alias) => bCat.includes(alias) || alias.includes(bCat) || bSvc.includes(alias));
+          if (match && !customerBookings.some((cb) => cb.id === wf.id || cb._id === wf.id)) {
+            customerBookings.unshift(wf);
+          }
+        });
+      }
+    } catch (_) {}
+
     let apiJobs = [];
     if (token && token !== 'demo-token-worker') {
       try {
@@ -64,7 +84,7 @@ export function useSpecializedJobs({
           id: incoming.bookingId || incoming._id || incoming.id || `JOB-INC-${idx + 1}`,
           ...baseNormalized,
           isLiveOrder: true,
-          status: incoming.status || 'pending',
+          status: String(incoming.status || 'pending').toLowerCase(),
         };
       });
 
@@ -76,22 +96,30 @@ export function useSpecializedJobs({
         return combined;
       });
 
-      if (!selectedJobId || !defaultJobs.some((d) => d.id === selectedJobId)) {
-        setSelectedJobId(normalizedIncoming[0]?.id);
-      }
+      // Prioritize selecting live incoming pending order so the worker immediately sees the Accept button!
+      const pendingIncoming = normalizedIncoming.find((ni) =>
+        ['pending', 'assigned', 'broadcast'].includes(String(ni.status || '').toLowerCase())
+      );
+      setSelectedJobId((cur) => {
+        if (pendingIncoming && cur !== pendingIncoming.id) return pendingIncoming.id;
+        if (!cur || !defaultJobs.some((d) => d.id === cur)) return normalizedIncoming[0]?.id;
+        return cur;
+      });
     } else {
       setJobs(defaultJobs);
     }
-  }, [category, categoryAliases, defaultJobs, normalizeIncomingBooking, token, selectedJobId]);
+  }, [category, categoryAliases, defaultJobs, normalizeIncomingBooking, token]);
 
   useEffect(() => {
     syncJobs();
     const handleNewBooking = () => syncJobs();
     window.addEventListener('servecircle:new-booking', handleNewBooking);
     window.addEventListener('servecircle:job-status-updated', handleNewBooking);
+    const unsubWorkflow = subscribeWorkflowUpdates(() => syncJobs());
     return () => {
       window.removeEventListener('servecircle:new-booking', handleNewBooking);
       window.removeEventListener('servecircle:job-status-updated', handleNewBooking);
+      unsubWorkflow();
     };
   }, [syncJobs]);
 
@@ -112,12 +140,35 @@ export function useSpecializedJobs({
   };
 
   const handleJobAction = async (jobId, newStatus) => {
-    setJobs((prev) => prev.map((j) => (j.id === jobId ? { ...j, status: newStatus } : j)));
-    updateRecentStorage(jobId, newStatus);
+    const cleanId = String(jobId || '').trim();
+    setJobs((prev) =>
+      prev.map((j) => (j.id === cleanId || j._id === cleanId || String(j.id).replace(/^#/, '') === cleanId.replace(/^#/, '') ? { ...j, status: newStatus } : j))
+    );
+    updateRecentStorage(cleanId, newStatus);
+
+    if (newStatus === 'accepted') {
+      try {
+        acceptWorkflowBooking(cleanId, {
+          id: 'worker-specialist-01',
+          name: 'Verified Specialist',
+          phone: '+91 98250 12345',
+          rating: 4.9,
+          jobsCompleted: 342,
+        });
+      } catch (e) {
+        console.warn('acceptWorkflowBooking note:', e);
+      }
+    } else if (newStatus === 'rejected') {
+      try {
+        declineWorkflowBooking(cleanId, 'worker-specialist-01');
+      } catch (e) {
+        console.warn('declineWorkflowBooking note:', e);
+      }
+    }
 
     if (token && token !== 'demo-token-worker') {
       try {
-        await respondToJobRequest(token, jobId, newStatus === 'accepted' ? 'accept' : 'reject');
+        await respondToJobRequest(token, cleanId.replace(/^#/, ''), newStatus === 'accepted' ? 'accept' : 'reject');
       } catch (err) {
         console.warn('Backend job respond notice:', err.message);
       }
@@ -162,10 +213,11 @@ export function useSpecializedJobs({
 
     if (token && token !== 'demo-token-worker') {
       try {
+        const apiId = String(jobId || '').replace(/^#/, '');
         if (finalStatus === 'completed') {
-          await updateWorkerJobStatus(token, jobId, 'completed');
+          await updateWorkerJobStatus(token, apiId, 'completed');
         } else {
-          await updateWorkerJobStatus(token, jobId, 'in-progress');
+          await updateWorkerJobStatus(token, apiId, 'in-progress');
         }
       } catch (err) {
         console.warn('Backend advance stage notice:', err.message);

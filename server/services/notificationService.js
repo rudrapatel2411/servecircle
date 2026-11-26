@@ -50,15 +50,19 @@ function buildPayload(title, message, type = 'broadcast', extra = {}) {
 // Emit to admin_room AND persist so Admin sees it in notifications list / bell.
 // ─────────────────────────────────────────────────────────────────────────────
 export function notifyAdmin(io, title, message, type = 'broadcast', extra = {}) {
-  const payload = buildPayload(title, message, type, extra);
-
-  // 1. Socket live emission
-  if (io && typeof io.to === 'function') {
-    io.to('admin_room').emit('admin_notification', payload);
-    io.emit('admin_notification', payload); // Broadcast fallback
+  // Suppress obsolete "No Worker Available" notifications in broadcast-claiming workflow
+  if (title === 'No Worker Available' || message?.includes('no eligible worker')) {
+    return;
   }
 
-  // 2. In-memory demo store persistence (instant availability)
+  const payload = buildPayload(title, message, type, extra);
+
+  // 1. Socket live emission (strictly to admin_room)
+  if (io && typeof io.to === 'function') {
+    io.to('admin_room').emit('admin_notification', payload);
+  }
+
+  // 2. In-memory demo store persistence (strictly for admin audience)
   const record = {
     _id: payload.id,
     id: payload.id,
@@ -73,14 +77,14 @@ export function notifyAdmin(io, title, message, type = 'broadcast', extra = {}) 
   };
   DEMO_NOTIFICATIONS.unshift(record);
 
-  // 3. Database persistence with Prisma
+  // 3. Database persistence with Prisma (targetAudience strictly ADMIN)
   try {
     prisma.notification.create({
       data: {
         title,
         message,
         type: mapTypeToPrisma(type),
-        targetAudience: 'ALL',
+        targetAudience: 'ADMIN',
         isActive: true,
       },
     }).catch(() => {});
@@ -315,7 +319,6 @@ export function emitBookingStatus(io, booking, prevStatus) {
   };
 
   io.to('admin_room').emit('booking_status_changed', payload);
-  io.emit('booking_status_changed', payload); // Fallback
 
   if (booking.worker) {
     io.to(`worker_${booking.worker._id || booking.worker.id || booking.worker}`).emit('booking_status_changed', payload);

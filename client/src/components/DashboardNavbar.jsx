@@ -37,16 +37,19 @@ import {
  getDismissedNotificationIds,
  getReadNotificationIds,
  broadcastNotificationToTabs,
+ isFakeNotification,
+ isNotificationTargetedForSession,
 } from '../utils/notificationSync';
 import { getWorkerCategory, doesServiceMatchWorker } from '../utils/workerCategoryHelper';
-import { getWorkerSession, setWorkerSession, updateDutyStatus } from '../pages/worker/workerApi';
+import { acceptWorkflowBooking } from '../utils/serviceWorkflowEngine';
+import { getWorkerSession, setWorkerSession, updateDutyStatus, respondToJobRequest } from '../pages/worker/workerApi';
 import './DashboardNavbar.css';
 
 const DashboardNavbar = ({ panel }) => {
  const { t } = useTranslation();
  const session = getSession();
- const sessionUser = session?.user;
  const workerSession = getWorkerSession();
+ const sessionUser = panel === 'worker' ? (workerSession?.user || session?.user) : session?.user;
  const workerCategory = panel === 'worker' ? getWorkerCategory(sessionUser) : null;
 
  const [dutyStatus, setDutyStatus] = useState(() => {
@@ -230,6 +233,8 @@ const DashboardNavbar = ({ panel }) => {
  };
 
  const addNotification = (data, extra = {}) => {
+ if (!data || isFakeNotification(data)) return;
+ if (!isNotificationTargetedForSession(data, { panel, user: sessionUser, workerCategory })) return;
  const id = data.id || data._id || `notif_${Date.now()}`;
  const dismissed = getDismissedNotificationIds();
  if (dismissed.includes(id)) return;
@@ -330,20 +335,13 @@ const DashboardNavbar = ({ panel }) => {
  useEffect(() => {
  joinUserRoom(sessionUser, panel);
 
- // 1. Pre-seed state from local cache so notifications never disappear on refresh
- try {
- const cached = getCachedNotifications();
- if (cached && cached.length > 0) {
- const relevant = cached.filter((c) => {
- if (panel === 'admin') return true;
- if (panel === 'worker') return c.targetAudience === 'workers' || c.targetAudience === 'all' || c.type === 'call_request';
- return c.targetAudience === panel || c.targetAudience === 'all';
- });
- if (relevant.length > 0) {
- setNotifications(relevant);
- }
- }
- } catch {}
+ // 1. Pre-seed state strictly filtered for this user and panel (Zero fake notifications)
+    try {
+      const cached = getCachedNotifications({ panel, user: sessionUser, workerCategory });
+      setNotifications(cached || []);
+    } catch {
+      setNotifications([]);
+    }
 
  // 2. Load persistent notifications from backend API
  const loadNotifications = async () => {
@@ -358,8 +356,9 @@ const DashboardNavbar = ({ panel }) => {
  const dismissed = new Set(getDismissedNotificationIds());
  const readIds = new Set(getReadNotificationIds());
  const mapped = (data.notifications || [])
+ .filter((n) => !isFakeNotification(n))
  .filter((n) => !dismissed.has(n._id || n.id))
- .filter((n) => panel !== 'worker' || !n.category || doesServiceMatchWorker(workerCategory, n.category, n.service || n.serviceType))
+ .filter((n) => isNotificationTargetedForSession(n, { panel, user: sessionUser, workerCategory }))
  .map((n) => {
  const nid = n._id || n.id;
  return {
@@ -388,11 +387,8 @@ const DashboardNavbar = ({ panel }) => {
  loadNotifications();
 
  const handleNotification = (data) => {
- if (panel === 'worker' && (data?.category || data?.service)) {
- if (!doesServiceMatchWorker(workerCategory, data.category, data.service || data.serviceType)) {
- return; // Category does not match this worker
- }
- }
+ if (isFakeNotification(data)) return;
+ if (!isNotificationTargetedForSession(data, { panel, user: sessionUser, workerCategory })) return;
  addNotification(data);
  };
 
@@ -454,21 +450,18 @@ const DashboardNavbar = ({ panel }) => {
 
  socket.on('booking_status_changed', handleStatusChange);
 
- // 4. Cross-tab instant broadcast sync
- const unsubscribeCrossTab = subscribeToCrossTabNotifications((crossData) => {
- if (panel === 'admin') {
- addNotification(crossData);
- } else if (panel === 'worker') {
- const matches = doesServiceMatchWorker(workerCategory, crossData.category, crossData.serviceType || crossData.service);
- if (matches) {
- if (crossData.type === 'call_request') {
- handleCallRequest(crossData);
- } else {
- handleNotification(crossData);
- }
- }
- }
- });
+ // 4. Cross-tab instant broadcast sync (Strict isolation, zero fake leakage)
+    const unsubscribeCrossTab = subscribeToCrossTabNotifications((crossData) => {
+      if (isFakeNotification(crossData)) return;
+      if (!isNotificationTargetedForSession(crossData, { panel, user: sessionUser, workerCategory })) {
+        return; // Block leaks to Admin, B2B, or other workers/customers
+      }
+      if (panel === 'worker' && crossData.type === 'call_request') {
+        handleCallRequest(crossData);
+      } else {
+        addNotification(crossData);
+      }
+    });
 
  return () => {
  if (panel === 'admin') {
@@ -915,7 +908,42 @@ const DashboardNavbar = ({ panel }) => {
  {notif.message}
  </p>
 
- {/* Direct Call & Accept buttons for call notifications (worker panel) */}
+ {panel === 'worker' && (notif.type === 'booking_request' || notif.canAccept || notif.title?.toLowerCase?.().includes('job') || notif.bookingId || notif.message?.includes('SC-')) && (
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '6px', marginBottom: '4px' }}>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ padding: '4px 12px', fontSize: '0.78rem', background: '#16a34a', border: 'none', borderRadius: '6px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const targetBId = notif.bookingId || (notif.message?.match(/SC-\d+/)?.[0]) || notif.id;
+                            acceptWorkflowBooking(targetBId, sessionUser);
+                            const wToken = workerSession?.token || session?.token;
+                            if (wToken && wToken !== 'demo-token-worker') {
+                              respondToJobRequest(wToken, String(targetBId).replace(/^#/, ''), 'accept').catch(() => {});
+                            }
+                            markOneRead(notif.id, e);
+                            setShowNotifDropdown(false);
+                            navigate('/worker/jobs');
+                          }}
+                        >
+                          ✓ Accept Request
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          style={{ padding: '4px 10px', fontSize: '0.78rem', borderRadius: '6px' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowNotifDropdown(false);
+                            navigate('/worker/jobs');
+                          }}
+                        >
+                          View on Map
+                        </button>
+                      </div>
+                    )}
+                    {/* Direct Call & Accept buttons for call notifications (worker panel) */}
  {panel === 'worker' && (notif.type === 'call_request' || notif.type === 'call_accepted' || notif.phone) && (
  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px', marginBottom: '6px' }}>
  {notif.phone && (
@@ -1187,7 +1215,66 @@ const DashboardNavbar = ({ panel }) => {
  {latestToast.message}
  </p>
 
- {/* Direct Call & Accept buttons inside toast for worker panel */}
+ {/* Direct Job Request Accept button inside toast for worker panel */}
+	{panel === 'worker' && (latestToast.type === 'booking_request' || latestToast.title?.toLowerCase()?.includes('request') || latestToast.bookingId) && (
+		<div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+			<button
+				type="button"
+				style={{
+					display: 'inline-flex',
+					alignItems: 'center',
+					gap: '6px',
+					background: 'linear-gradient(135deg, #10b981, #059669)',
+					color: 'white',
+					border: 'none',
+					borderRadius: '8px',
+					padding: '6px 14px',
+					fontSize: '0.8rem',
+					fontWeight: 700,
+					cursor: 'pointer',
+				}}
+				onClick={(e) => {
+					e.stopPropagation();
+					const targetBId = latestToast.bookingId || (latestToast.message?.match(/SC-\d+/)?.[0]) || latestToast.id;
+					acceptWorkflowBooking(targetBId, sessionUser);
+					const wToken = workerSession?.token || session?.token;
+					if (wToken && wToken !== 'demo-token-worker') {
+						respondToJobRequest(wToken, String(targetBId).replace(/^#/, ''), 'accept').catch(() => {});
+					}
+					markOneRead(latestToast.id || latestToast._id, e);
+					setShowToast(false);
+					navigate('/worker/jobs');
+				}}
+			>
+				✓ Accept Request
+			</button>
+			<button
+				type="button"
+				style={{
+					display: 'inline-flex',
+					alignItems: 'center',
+					gap: '6px',
+					background: '#f1f5f9',
+					color: '#334155',
+					border: '1px solid #cbd5e1',
+					borderRadius: '8px',
+					padding: '6px 12px',
+					fontSize: '0.8rem',
+					fontWeight: 600,
+					cursor: 'pointer',
+				}}
+				onClick={(e) => {
+					e.stopPropagation();
+					setShowToast(false);
+					navigate('/worker/jobs');
+				}}
+			>
+				View on Map
+			</button>
+		</div>
+	)}
+
+	{/* Direct Call & Accept buttons inside toast for worker panel */}
  {panel === 'worker' && (latestToast.type === 'call_request' || latestToast.phone) && (
  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
  {latestToast.phone && (

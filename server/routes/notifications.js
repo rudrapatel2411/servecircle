@@ -35,44 +35,74 @@ router.get(
   '/',
   protect,
   asyncHandler(async (req, res) => {
-    const userId = req.user._id || req.user.id;
+    const userId = String(req.user._id || req.user.id);
     const role = (req.user.role || 'customer').toLowerCase();
     const audienceRole = role === 'customer' ? 'CUSTOMERS' : role === 'worker' ? 'WORKERS' : 'B2B';
 
     try {
+      let whereClause = { isActive: true };
+      if (role === 'customer') {
+        whereClause.OR = [
+          { targetUsers: { has: userId } },
+          { targetAudience: 'CUSTOMERS', targetUsers: { isEmpty: true } },
+        ];
+      } else if (role === 'worker') {
+        whereClause.OR = [
+          { targetUsers: { has: userId } },
+          { targetAudience: 'WORKERS', targetUsers: { isEmpty: true } },
+        ];
+      } else if (role === 'admin') {
+        whereClause.OR = [
+          { targetAudience: 'ADMIN' },
+          { targetAudience: 'ALL' },
+        ];
+      } else {
+        whereClause.targetAudience = 'B2B';
+      }
+
       const notifications = await prisma.notification.findMany({
-        where: {
-          isActive: true,
-          OR: [
-            { targetAudience: 'ALL' },
-            { targetAudience: audienceRole },
-            { targetUsers: { has: String(userId) } },
-          ],
-        },
+        where: whereClause,
         orderBy: { createdAt: 'desc' },
         take: 50,
       });
 
-      const unreadCount = notifications.filter((n) => !n.readBy.includes(String(userId))).length;
+      const unreadCount = notifications.filter((n) => !n.readBy.includes(userId)).length;
       return res.json({
         notifications: notifications.map(formatNotif),
         unreadCount,
       });
     } catch {
-      // In-memory demo fallback
+      // In-memory demo fallback (Strict role & user isolation)
       let userNotifs = [];
       if (role === 'admin') {
         userNotifs = DEMO_NOTIFICATIONS.filter(
-          (n) => n.isActive && (n.targetAudience === 'admin' || n.targetAudience === 'all' || !n.targetAudience)
+          (n) => n.isActive && (n.targetAudience === 'admin' || !n.targetAudience)
         );
+      } else if (role === 'worker') {
+        userNotifs = DEMO_NOTIFICATIONS.filter((n) => {
+          if (!n.isActive) return false;
+          if (n.targetAudience !== 'workers' && n.targetAudience !== 'all') return false;
+          if (n.targetWorkerId && String(n.targetWorkerId) !== userId) return false;
+          return true;
+        });
+      } else if (role === 'customer') {
+        userNotifs = DEMO_NOTIFICATIONS.filter((n) => {
+          if (!n.isActive) return false;
+          if (n.targetAudience !== 'customers') return false;
+          if (n.targetCustomerId && String(n.targetCustomerId) !== userId) return false;
+          if (n.targetCustomerEmail && req.user?.email && n.targetCustomerEmail.toLowerCase() !== req.user.email.toLowerCase()) return false;
+          if (n.targetCustomerName && req.user?.name) {
+            const u = req.user.name.toLowerCase().trim();
+            const t = n.targetCustomerName.toLowerCase().trim();
+            if (!u.includes(t) && !t.includes(u)) return false;
+          }
+          return true;
+        });
       } else {
-        const audience = role === 'customer' ? 'customers' : role === 'worker' ? 'workers' : 'b2b';
-        userNotifs = DEMO_NOTIFICATIONS.filter(
-          (n) => n.isActive && (n.targetAudience === 'all' || n.targetAudience === audience)
-        );
+        userNotifs = DEMO_NOTIFICATIONS.filter((n) => n.isActive && n.targetAudience === 'b2b');
       }
       const unreadCount = userNotifs.filter(
-        (n) => !n.readBy.some((id) => String(id) === String(userId))
+        (n) => !n.readBy.some((id) => String(id) === userId)
       ).length;
       return res.json({ notifications: userNotifs.map(formatNotif), unreadCount });
     }

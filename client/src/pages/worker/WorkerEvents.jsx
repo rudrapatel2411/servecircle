@@ -436,7 +436,7 @@ const WorkerEvents = () => {
                   <span>Call Venue POC</span>
                 </a>
 
-                {currentJob.status === 'pending' ? (
+                {['pending', 'assigned', 'broadcast'].includes(String(currentJob.status || '').toLowerCase()) ? (
                   <>
                     <button
                       onClick={() => handleJobAction(currentJob.id, 'accepted')}

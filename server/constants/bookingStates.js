@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Booking State Machine — Single Source of Truth
  *
  * States flow:
@@ -28,7 +28,7 @@ export const BOOKING_STATUS = {
 // Key   = current state
 // Value = array of states this booking may legally move to
 export const BOOKING_TRANSITIONS = {
-  pending:    ['assigned', 'cancelled'],
+  pending:    ['assigned', 'accepted', 'rejected', 'cancelled'],
   assigned:   ['accepted', 'rejected', 'cancelled'],
   accepted:   ['en-route', 'cancelled'],
   'en-route': ['arrived', 'cancelled'],

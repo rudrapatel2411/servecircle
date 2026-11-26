@@ -28,6 +28,7 @@ import {
   EmptyState,
 } from '../../components/ui';
 import WorkerVerifyModal from '../../components/WorkerVerifyModal';
+import { getWorkflowBookings, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -160,7 +161,52 @@ const OrderedServices = () => {
   });
   const [verifyModalBookingId, setVerifyModalBookingId] = useState(null);
 
-  const combinedOrders = realOrders.length > 0 ? [...realOrders, ...mockOrders] : mockOrders;
+  const [workflowOrders, setWorkflowOrders] = useState([]);
+
+  useEffect(() => {
+    const loadWorkflowOrders = () => {
+      try {
+        const raw = getWorkflowBookings();
+        const mapped = (raw || []).map((b) => ({
+          id: b.id.startsWith('#') ? b.id : `#${b.id}`,
+          rawId: b.id,
+          service: b.service || b.serviceName,
+          category: b.category,
+          date: b.scheduledDate ? new Date(b.scheduledDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Today',
+          time: b.scheduledTime || 'Immediate',
+          address: b.address,
+          amount: b.finalAmount || b.amount || 499,
+          status: b.status === 'in-progress' ? 'active' : (b.status === 'cancelled_visiting_fee' ? 'cancelled' : (b.status === 'verified' || b.status === 'before_photo_uploaded' ? 'active' : b.status)),
+          startOtp: b.startOtp,
+          endOtp: '9182',
+          worker: b.worker ? {
+            name: b.worker.name,
+            tier: b.worker.tier || 'Verified Pro',
+            rating: b.worker.rating || 4.9,
+            jobsSolved: b.worker.jobsSolved || 240,
+            initials: (b.worker.name || 'Pro').split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase(),
+            phone: b.worker.phone,
+          } : {
+            name: 'Assigning Specialist...',
+            tier: '15km Area Matching',
+            rating: 5.0,
+            jobsSolved: 0,
+            initials: 'SC',
+          },
+          trainee: null,
+        }));
+        setWorkflowOrders(mapped);
+      } catch (e) {}
+    };
+
+    loadWorkflowOrders();
+    const unsub = subscribeWorkflowUpdates(() => {
+      loadWorkflowOrders();
+    });
+    return unsub;
+  }, []);
+
+  const combinedOrders = [...workflowOrders, ...(realOrders.length > 0 ? realOrders : []), ...mockOrders];
 
   const activeOrders = activeTab === 'all' ? combinedOrders
     : activeTab === 'active' ? combinedOrders.filter((o) => !['completed', 'cancelled', 'cant-resolve'].includes(o.status))

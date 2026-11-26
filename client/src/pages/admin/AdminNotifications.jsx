@@ -73,7 +73,7 @@ const AdminNotifications = () => {
  headers: { Authorization: `Bearer ${session?.token}` },
  });
  const data = await res.json();
- if (res.ok) setNotifications(data);
+ if (res.ok && Array.isArray(data)) setNotifications(data.filter(n => !isFakeNotification(n)));
  } catch {
  // Use live notifications if API fails
  } finally {
@@ -100,7 +100,7 @@ const AdminNotifications = () => {
 
  // Pre-seed live notifications and call requests from cross-tab cache
  try {
- const cached = getCachedNotifications();
+ const cached = getCachedNotifications({ panel: 'admin' }).filter(n => !isFakeNotification(n));
  if (cached.length > 0) {
  setLiveNotifs(cached.map((c) => ({ ...c, _isLive: true, audience: c.targetAudience || 'all' })).slice(0, 25));
  const cachedCalls = cached

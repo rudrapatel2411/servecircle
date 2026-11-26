@@ -20,6 +20,12 @@ import 'leaflet/dist/leaflet.css';
 import { socket } from '../../socket';
 import { getSession, requestApi } from '../../utils/authSession';
 import BookingChatModal from '../../components/BookingChatModal';
+import {
+  getWorkflowBookingById,
+  decideWorkflowQuotation,
+  subscribeWorkflowUpdates,
+  PLATFORM_VISITING_FEE,
+} from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -82,7 +88,9 @@ const LiveTracking = () => {
   const workerParam = searchParams.get('worker');
 
   const [bookingData, setBookingData] = useState(null);
-  const [displayedStartOtp, setDisplayedStartOtp] = useState('');
+  const [displayedStartOtp, setDisplayedStartOtp] = useState(
+    searchParams.get('startOtp') || ''
+  );
   const [displayedEndOtp, setDisplayedEndOtp] = useState('');
   const [endOtpError, setEndOtpError] = useState('');
   const [proofs, setProofs] = useState([]);
@@ -92,11 +100,17 @@ const LiveTracking = () => {
   const serviceName = bookingData?.service || requestedService || 'Service booking';
   const workerName =
     (typeof bookingData?.worker === 'string' ? bookingData.worker : bookingData?.worker?.name) ||
-    workerParam ||
-    'Ramesh Kumar';
+    '';
 
   // Availability & Acceptance states: 'checking' | 'accepted' | 'unavailable'
   const [workerAvailability, setWorkerAvailability] = useState('checking');
+
+  // Strict acceptance gate: worker must accept before GPS route and Start OTP unlock
+  const isWorkerAccepted = Boolean(
+    bookingData?.status
+      ? !['pending', 'checking', 'rejected', 'cancelled', 'cancelled_visiting_fee'].includes(bookingData.status)
+      : workerAvailability === 'accepted'
+  );
   const [acceptanceNotice, setAcceptanceNotice] = useState('');
 
   // Geolocation states
@@ -118,6 +132,7 @@ const LiveTracking = () => {
   const workerMarkerRef = useRef(null);
   const customerMarkerRef = useRef(null);
   const polylineRef = useRef(null);
+  const radarCircleRef = useRef(null);
   const animationTimerRef = useRef(null);
 
   // --- Geolocation: Detect customer location with high accuracy ---
@@ -157,6 +172,8 @@ const LiveTracking = () => {
     let isMounted = true;
     const fetchBookingDetails = async () => {
       if (!token || !bookingId) return;
+      // If active reactive workflow booking exists, it is the authoritative source of truth
+      if (getWorkflowBookingById(bookingId)) return;
       try {
         const myBookings = await requestApi('/bookings/my', { token });
         if (isMounted && Array.isArray(myBookings)) {
@@ -201,6 +218,7 @@ const LiveTracking = () => {
 
     const checkLocalBooking = () => {
       try {
+        if (getWorkflowBookingById(bookingId)) return;
         const raw = localStorage.getItem('servecircle_customer_recent_bookings');
         if (raw) {
           const list = JSON.parse(raw);
@@ -258,6 +276,27 @@ const LiveTracking = () => {
       if (Array.isArray(res)) setProofs(res);
     } catch {
       // ignore
+    }
+  };
+
+  const handleWorkflowDecideQuotation = (decision) => {
+    const targetId = bookingData?._id || bookingData?.id || bookingId;
+    if (!targetId) return;
+    setRevisionActionLoading(true);
+    try {
+      const updated = decideWorkflowQuotation(targetId, decision);
+      if (updated) {
+        setBookingData({ ...updated });
+        if (decision === 'APPROVED') {
+          alert('Quotation approved! Total bill updated to ₹' + updated.amount);
+        } else {
+          alert('Quotation declined. Service cancelled. Platform Visiting Fee of ₹' + PLATFORM_VISITING_FEE + ' was deducted from your wallet for inspection.');
+        }
+      }
+    } catch (err) {
+      console.warn('Quotation decision note:', err);
+    } finally {
+      setRevisionActionLoading(false);
     }
   };
 
@@ -328,53 +367,85 @@ const LiveTracking = () => {
     };
   }, [bookingId, bookingData]);
 
-  // --- Realistic Worker Acceptance & Demo Animation Lifecycle ---
+  // --- Live Reactive Workflow State Machine & Worker Acceptance ---
   useEffect(() => {
-    // If explicitly rejected
-    if (bookingData?.status === 'rejected') {
-      setWorkerAvailability('unavailable');
-      return;
-    }
+    // 1. Load initial booking from Workflow Engine
+    const loadFromWorkflow = () => {
+      const rawTarget = bookingId || searchParams.get('bookingId');
+      if (!rawTarget) return;
+      const targetId = String(rawTarget).trim().replace(/^#/, '');
+      const wf = getWorkflowBookingById(targetId) || getWorkflowBookingById(`#${targetId}`) || getWorkflowBookingById(rawTarget);
+      if (wf) {
+        setBookingData((prev) => (prev ? { ...prev, ...wf } : wf));
+        if (wf.startOtp) {
+          setDisplayedStartOtp(wf.startOtp);
+        } else if (searchParams.get('startOtp')) {
+          setDisplayedStartOtp(searchParams.get('startOtp'));
+        }
 
-    // Step 1: Matching window
-    setWorkerAvailability('checking');
-    setCurrentStatusText('Searching for verified professionals nearby...');
-
-    const acceptanceTimer = setTimeout(() => {
-      // Step 2: Worker Accepts
-      setWorkerAvailability('accepted');
-      setAcceptanceNotice(`${workerName} accepted your booking and is preparing tools.`);
-      setCurrentStatusText(`${workerName} accepted your booking.`);
-
-      // Step 3: Transition to En Route after 2.5 seconds
-      const enRouteTimer = setTimeout(() => {
-        setActiveStep(1); // Step 1: On the way
-        setCurrentStatusText(`${workerName} is on the way to your location.`);
-        setEta(15);
-      }, 2500);
-
-      return () => clearTimeout(enRouteTimer);
-    }, 2200);
-
-    return () => {
-      clearTimeout(acceptanceTimer);
+        // Sync availability strictly to worker's accept action
+        if (wf.status === 'pending') {
+          setWorkerAvailability('checking');
+          setCurrentStatusText('Broadcasting request to verified specialists within 15 km...');
+          setActiveStep(0);
+        } else if (['accepted', 'en-route', 'arrived', 'verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending', 'completed'].includes(wf.status)) {
+          setWorkerAvailability('accepted');
+          const wName = wf.worker?.name || workerName || 'Specialist';
+          if (wf.status === 'accepted') {
+            setAcceptanceNotice(`${wName} accepted your booking!`);
+            setCurrentStatusText(`${wName} accepted your request. Preparing tools.`);
+            setActiveStep(0);
+          } else if (wf.status === 'en-route') {
+            setCurrentStatusText(`${wName} is en route to your location.`);
+            setActiveStep(1);
+          } else if (wf.status === 'arrived') {
+            setCurrentStatusText(`${wName} has arrived at your doorstep!`);
+            setActiveStep(2);
+            setOtpVisible(true);
+          } else if (['verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending'].includes(wf.status)) {
+            setCurrentStatusText('Service in progress at your premises.');
+            setActiveStep(3);
+          } else if (wf.status === 'completed') {
+            setCurrentStatusText('Service completed successfully!');
+            setActiveStep(4);
+          }
+        } else if (wf.status === 'cancelled_visiting_fee' || wf.status === 'cancelled') {
+          setWorkerAvailability('unavailable');
+          setCurrentStatusText('This booking was cancelled.');
+        }
+      }
     };
-  }, [bookingData?.status, workerName]);
 
-  // --- Leaflet Map Initialization and Route Animation ---
+    loadFromWorkflow();
+
+    // 2. Real-time subscription to events across tabs
+    const unsub = subscribeWorkflowUpdates((event) => {
+      loadFromWorkflow();
+    });
+
+    return unsub;
+  }, [bookingId, searchParams, workerName]);
+
+    // --- Leaflet Map Initialization and Route Animation ---
   useEffect(() => {
     window.scrollTo(0, 0);
 
     const [userLat, userLng] = customerCoords;
     if (!mapContainerRef.current) return;
 
-    // Reset container _leaflet_id to eliminate any duplicate initialization
-    if (mapContainerRef.current._leaflet_id) {
-      delete mapContainerRef.current._leaflet_id;
-    }
+    // Clean up any previous map instance cleanly BEFORE reinitializing
     if (mapRef.current) {
-      mapRef.current.remove();
+      try {
+        mapRef.current.remove();
+      } catch (e) {
+        console.warn('Leaflet map remove notice:', e);
+      }
       mapRef.current = null;
+    }
+    if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
+      try {
+        delete mapContainerRef.current._leaflet_id;
+      } catch (e) {}
     }
 
     try {
@@ -446,6 +517,23 @@ const LiveTracking = () => {
       );
 
       // Add worker marker at worker start position
+
+      // BEFORE WORKER ACCEPTS: Standby radar scanning only (No moving worker, no polyline)
+      if (!isWorkerAccepted) {
+        radarCircleRef.current = L.circle([userLat, userLng], {
+          radius: 1200,
+          color: '#3b82f6',
+          fillColor: '#3b82f6',
+          fillOpacity: 0.14,
+          weight: 2,
+          dashArray: '6, 8',
+        }).addTo(mapRef.current);
+
+        mapRef.current.setView([userLat, userLng], 14);
+        return;
+      }
+
+      // WORKER ACCEPTED: Place worker marker and draw navigation route
       workerMarkerRef.current = L.marker([workerStartLat, workerStartLng], {
         icon: createMarkerIcon('worker'),
         zIndexOffset: 1000,
@@ -481,33 +569,40 @@ const LiveTracking = () => {
 
       mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [60, 60] });
 
-      // --- Smooth Demo Worker Approach Animation ---
+      // --- Smooth En-Route Worker Approach Animation (Visual movement ONLY, no auto-arrived mutation) ---
       let stepIndex = 0;
       if (animationTimerRef.current) clearInterval(animationTimerRef.current);
+      if (radarCircleRef.current) {
+        radarCircleRef.current.remove();
+        radarCircleRef.current = null;
+      }
 
-      animationTimerRef.current = setInterval(() => {
-        // Move only when worker has accepted and is en-route
-        if (activeStep < 1 || activeStep >= 2) return;
+      // If worker already arrived or in-progress, position at customer coordinates
+      if (['arrived', 'verified', 'before_photo_uploaded', 'in-progress', 'started', 'completed'].includes(bookingData?.status) || activeStep >= 2) {
+        workerMarkerRef.current?.setLatLng([userLat, userLng]);
+        setEta(0);
+        return;
+      }
 
-        stepIndex++;
-        if (stepIndex < routePoints.length) {
-          const currentPoint = routePoints[stepIndex];
-          workerMarkerRef.current?.setLatLng(currentPoint);
+      // Animate ONLY when specialist is en-route
+      if (bookingData?.status === 'en-route' || activeStep === 1) {
+        animationTimerRef.current = setInterval(() => {
+          stepIndex++;
+          if (stepIndex < routePoints.length) {
+            const currentPoint = routePoints[stepIndex];
+            workerMarkerRef.current?.setLatLng(currentPoint);
 
-          // Calculate remaining dynamic ETA
-          const remainingPct = 1 - stepIndex / routePoints.length;
-          const dynamicEta = Math.max(1, Math.round(remainingPct * 15));
-          setEta(dynamicEta);
-        } else {
-          // Worker reached customer doorstep!
-          clearInterval(animationTimerRef.current);
-          workerMarkerRef.current?.setLatLng([userLat, userLng]);
-          setActiveStep(2); // Arrived
-          setEta(0);
-          setCurrentStatusText(`${workerName} has arrived at your doorstep! Share Start OTP to begin.`);
-          setOtpVisible(true);
-        }
-      }, 1400);
+            const remainingPct = 1 - stepIndex / routePoints.length;
+            const dynamicEta = Math.max(1, Math.round(remainingPct * 12));
+            setEta(dynamicEta);
+          } else {
+            // Reached near doorstep: wait for specialist to click "Mark Arrived"
+            clearInterval(animationTimerRef.current);
+            workerMarkerRef.current?.setLatLng(routePoints[routePoints.length - 1]);
+            setEta(1);
+          }
+        }, 1400);
+      }
     } catch (err) {
       console.warn('Leaflet initialization notice:', err.message);
     }
@@ -515,11 +610,18 @@ const LiveTracking = () => {
     return () => {
       if (animationTimerRef.current) clearInterval(animationTimerRef.current);
       if (mapRef.current) {
-        mapRef.current.remove();
+        try {
+          mapRef.current.remove();
+        } catch (e) {}
         mapRef.current = null;
       }
+      if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
+        try {
+          delete mapContainerRef.current._leaflet_id;
+        } catch (e) {}
+      }
     };
-  }, [customerCoords, activeStep, workerName]);
+  }, [customerCoords, isWorkerAccepted, activeStep, workerName]);
 
   // If worker is unavailable
   if (workerAvailability === 'unavailable') {
@@ -715,7 +817,7 @@ const LiveTracking = () => {
                   Live Status
                 </span>
                 <span style={{ fontSize: '1.05rem', fontWeight: 900, color: 'var(--sc-dark-accent, var(--blue))', display: 'block', letterSpacing: '-0.02em' }}>
-                  {eta === 0 ? 'Arrived at Doorstep' : `Arriving in ~${eta} min (1.8 km)`}
+                  {!isWorkerAccepted ? 'Broadcasting Request (15 km Radius)...' : eta === 0 ? 'Arrived at Doorstep' : `Arriving in ~${eta} min (1.8 km)`}
                 </span>
               </div>
             </div>
@@ -833,6 +935,85 @@ const LiveTracking = () => {
               )}
             </AnimatePresence>
 
+            {/* In-App Spare Parts / Quotation Review Banner */}
+            {bookingData?.quotation && bookingData?.quotation?.status === 'PENDING' && (
+              <div
+                style={{
+                  margin: '16px 0',
+                  padding: '16px',
+                  background: '#fefce8',
+                  border: '2px solid #eab308',
+                  borderRadius: '16px',
+                  boxShadow: '0 8px 24px rgba(234, 179, 8, 0.15)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <strong style={{ color: '#854d0e', fontSize: '0.95rem' }}>
+                    📝 In-App Spare Parts & Additional Quotation
+                  </strong>
+                  <span style={{ fontSize: '0.78rem', background: '#fef08a', color: '#854d0e', padding: '3px 10px', borderRadius: '100px', fontWeight: 800 }}>
+                    Additional: +₹{bookingData.quotation.totalAmount}
+                  </span>
+                </div>
+
+                {bookingData.quotation.notes && (
+                  <p style={{ fontSize: '0.82rem', color: '#713f12', margin: '0 0 10px 0' }}>
+                    <strong>Specialist Note:</strong> {bookingData.quotation.notes}
+                  </p>
+                )}
+
+                {/* Itemized parts list */}
+                {Array.isArray(bookingData.quotation.items) && bookingData.quotation.items.length > 0 && (
+                  <div style={{ background: 'rgba(255,255,255,0.8)', borderRadius: '10px', padding: '10px', marginBottom: '12px', border: '1px solid #fde047' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#854d0e', marginBottom: '6px' }}>Itemized Breakdown:</div>
+                    {bookingData.quotation.items.map((it, idx) => (
+                      <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', padding: '3px 0', borderBottom: idx < bookingData.quotation.items.length - 1 ? '1px dashed #fef08a' : 'none' }}>
+                        <span>{it.name || 'Spare Part'} (x{it.quantity || 1})</span>
+                        <strong style={{ color: '#1e293b' }}>₹{it.amount || it.unitPrice || 0}</strong>
+                      </div>
+                    ))}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 800, marginTop: '8px', paddingTop: '6px', borderTop: '1.5px solid #eab308', color: '#854d0e' }}>
+                      <span>New Total Payable (Base + Parts):</span>
+                      <span>₹{(bookingData.basePrice || bookingData.amount) + (bookingData.quotation.totalAmount || 0)}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ fontSize: '0.75rem', color: '#b45309', marginBottom: '12px', background: '#fffbeb', padding: '8px 12px', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                  ℹ️ <strong>Platform Policy:</strong> If you decline this quotation and cancel the service, a nominal <strong>Platform Visiting Fee of ₹{PLATFORM_VISITING_FEE}</strong> will apply to compensate the specialist for their visit and inspection.
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    className="btn btn-primary"
+                    style={{ flex: 1, background: '#16a34a', padding: '10px', fontSize: '0.85rem', fontWeight: 700 }}
+                    disabled={revisionActionLoading}
+                    onClick={() => handleWorkflowDecideQuotation('APPROVED')}
+                  >
+                    ✓ Approve Quotation
+                  </button>
+                  <button
+                    className="btn btn-outline"
+                    style={{ flex: 1, borderColor: '#ef4444', color: '#dc2626', background: '#ffffff', padding: '10px', fontSize: '0.85rem', fontWeight: 700 }}
+                    disabled={revisionActionLoading}
+                    onClick={() => handleWorkflowDecideQuotation('REJECTED')}
+                  >
+                    ✗ Decline & Cancel (Pay ₹{PLATFORM_VISITING_FEE})
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Cancelled with Visiting Fee Banner */}
+            {bookingData?.status === 'cancelled_visiting_fee' && (
+              <div style={{ margin: '16px 0', padding: '16px', background: '#fff1f2', border: '2px solid #fda4af', borderRadius: '16px', color: '#9f1239' }}>
+                <strong style={{ fontSize: '0.95rem' }}>Service Cancelled After Quotation Review</strong>
+                <p style={{ fontSize: '0.82rem', margin: '6px 0 0', lineHeight: 1.4 }}>
+                  As per your decision, the quotation was declined and the repair was cancelled. The <strong>Platform Visiting Fee of ₹{PLATFORM_VISITING_FEE}</strong> has been charged to your wallet for the specialist's on-site inspection.
+                </p>
+              </div>
+            )}
+
             {/* Quote Revision Approval Banner */}
             {quoteRevisions
               .filter((r) => r.status === 'PENDING')
@@ -878,34 +1059,83 @@ const LiveTracking = () => {
                 </div>
               ))}
 
-            {/* Start OTP handover protocol */}
+            {/* Start OTP handover protocol & Acceptance gate */}
             <AnimatePresence>
-              {activeStep >= 2 && activeStep < 4 && otpVisible && (
+              {!isWorkerAccepted ? (
                 <motion.div
+                  key="otp-pending-gate"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '16px', padding: '14px', background: 'var(--status-danger-tint)', border: '1.5px dashed var(--status-danger-text)', borderRadius: '12px', textAlign: 'center' }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    marginTop: '16px',
+                    padding: '16px',
+                    background: 'rgba(59, 130, 246, 0.08)',
+                    border: '1.5px dashed #3b82f6',
+                    borderRadius: '14px',
+                    textAlign: 'center',
+                  }}
                 >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--status-danger-text)' }}>
-                    Job Start Verification Code
-                  </span>
-                  {displayedStartOtp ? (
-                    <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--status-danger-text)', letterSpacing: '8px', margin: '8px 0' }}>
-                      {displayedStartOtp}
-                    </div>
-                  ) : (
-                    <div style={{ margin: '8px 0' }}>
-                      <button type="button" className="btn btn-primary" onClick={requestStartOtp} style={{ padding: '8px 18px', fontSize: '0.85rem' }}>
-                        Display Start Code
-                      </button>
-                    </div>
-                  )}
-                  {otpError && <p role="alert" style={{ fontSize: '0.75rem', color: 'var(--status-danger-text)', margin: '4px 0' }}>{otpError}</p>}
-                  <p style={{ fontSize: '0.72rem', color: 'var(--status-danger-text)', margin: 0 }}>
-                    Share this code with the technician only when they arrive at your location to begin work.
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#1d4ed8', fontWeight: 800, fontSize: '0.88rem' }}>
+                    <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.25)' }}></span>
+                    <span>Awaiting Specialist Acceptance</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#1e40af', margin: '8px 0 0 0', lineHeight: 1.5 }}>
+                    Your service request is broadcasted to verified specialists within 15 km. As soon as a specialist accepts, real-time GPS tracking and your 4-digit doorstep Start OTP will be unlocked.
                   </p>
                 </motion.div>
-              )}
+              ) : ['verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending'].includes(bookingData?.status) ? (
+                <motion.div
+                  key="otp-verified-gate"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    marginTop: '16px',
+                    padding: '14px',
+                    background: '#f0fdf4',
+                    border: '1.5px solid #86efac',
+                    borderRadius: '12px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ color: '#16a34a', fontWeight: 800, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <HiOutlineCheckCircle style={{ fontSize: '1.2rem' }} />
+                    <span>Doorstep Entry Authorized!</span>
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: '#15803d', margin: '4px 0 0 0' }}>
+                    Start OTP verified successfully. Specialist is currently working at your premises.
+                  </p>
+                </motion.div>
+              ) : activeStep < 4 ? (
+                <motion.div
+                  key="otp-active-gate"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    marginTop: '16px',
+                    padding: '16px',
+                    background: bookingData?.status === 'arrived' ? '#fef2f2' : '#f0f9ff',
+                    border: bookingData?.status === 'arrived' ? '2px solid #ef4444' : '2px solid #3b82f6',
+                    borderRadius: '14px',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 16px rgba(15, 23, 42, 0.08)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: bookingData?.status === 'arrived' ? '#dc2626' : '#1d4ed8', fontWeight: 800, fontSize: '0.85rem' }}>
+                    <HiOutlineShieldCheck style={{ fontSize: '1.2rem' }} />
+                    <span>{bookingData?.status === 'arrived' ? '⚡ SPECIALIST AT DOORSTEP — SHARE START OTP' : 'DOORSTEP ENTRY START OTP'}</span>
+                  </div>
+                  <div style={{ fontSize: '2.4rem', fontWeight: 900, color: bookingData?.status === 'arrived' ? '#b91c1c' : '#1e40af', letterSpacing: '8px', margin: '8px 0', fontFamily: 'monospace' }}>
+                    {displayedStartOtp || bookingData?.startOtp || searchParams.get('startOtp') || '8386'}
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: bookingData?.status === 'arrived' ? '#991b1b' : '#1e3a8a', margin: 0, fontWeight: 600 }}>
+                    {bookingData?.status === 'arrived'
+                      ? 'Please provide this 4-digit code to the specialist at your door to authorize entry.'
+                      : 'Share this code with the specialist only when they arrive at your location to begin work.'}
+                  </p>
+                </motion.div>
+              ) : null}
             </AnimatePresence>
 
             {/* End OTP handover protocol */}
@@ -932,36 +1162,40 @@ const LiveTracking = () => {
               )}
             </AnimatePresence>
 
-            {/* Before & After Photo Evidence */}
-            {(activeStep >= 2 || (proofs && proofs.length > 0)) && (
+            {/* Before & After Photo Evidence (Shows ONLY real uploaded proof photos) */}
+            {(bookingData?.beforePhoto || bookingData?.afterPhoto || (proofs && proofs.length > 0)) && (
               <div style={{ marginTop: '16px', padding: '16px', background: 'var(--bg-page)', borderRadius: '12px', border: '1px solid var(--glass-edge)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <strong style={{ fontSize: '0.85rem', color: 'var(--ink)' }}>Verified Proof of Work (Audit Photos)</strong>
                   <span style={{ fontSize: '0.7rem', color: 'var(--status-success-text)', fontWeight: 700, background: 'var(--status-success-tint)', padding: '2px 8px', borderRadius: '10px' }}>
-                    Tamper Proof Watermark
+                    Tamper Proof Timestamp
                   </span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
-                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden' }}>
-                      <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800" alt="Before work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {bookingData?.beforePhoto ? (
+                        <img src={bookingData.beforePhoto} alt="Before work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', textAlign: 'center', padding: '8px' }}>Pending specialist photo</span>
+                      )}
                     </div>
                     <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>Before Work</span>
-                      <span style={{ color: 'var(--status-success-text)' }}>Logged</span>
+                      <span style={{ color: bookingData?.beforePhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{bookingData?.beforePhoto ? 'Uploaded ✓' : 'Pending'}</span>
                     </div>
                   </div>
                   <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
-                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden' }}>
-                      <img
-                        src={activeStep >= 3 ? 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=800' : 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800'}
-                        alt="After work"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                    <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {bookingData?.afterPhoto ? (
+                        <img src={bookingData.afterPhoto} alt="After work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', textAlign: 'center', padding: '8px' }}>Captured on completion</span>
+                      )}
                     </div>
                     <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>After Work</span>
-                      <span style={{ color: activeStep >= 3 ? 'var(--status-success-text)' : 'var(--status-warning-text)' }}>{activeStep >= 3 ? 'Complete' : 'In Progress'}</span>
+                      <span style={{ color: bookingData?.afterPhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{bookingData?.afterPhoto ? 'Completed ✓' : 'Pending'}</span>
                     </div>
                   </div>
                 </div>

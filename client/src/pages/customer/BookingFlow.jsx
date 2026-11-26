@@ -14,6 +14,7 @@ import { socket } from '../../socket';
 import { broadcastNotificationToTabs } from '../../utils/notificationSync';
 import servicesCatalog from '../../data/servicesCatalog.json';
 import { resolveRequirementArchetype, getRequirementsSchema, calculateRequirementsPriceImpact } from '../../data/serviceRequirementsConfig';
+import { createWorkflowBooking } from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -72,6 +73,7 @@ export function inferCategoryFromService(serviceName = '', serviceId = '', rawCa
  if (s.includes('car') || s.includes('bike') || s.includes('vehicle') || s.includes('puncture') || s.includes('battery')) return 'Vehicle Services';
  if (s.includes('furniture') || s.includes('decor') || s.includes('wallpaper') || s.includes('curtain')) return 'Furniture & Decor';
  if (s.includes('garden') || s.includes('lawn') || s.includes('plant') || s.includes('outdoor')) return 'Garden & Outdoor';
+ if (s.includes('salon') || s.includes('beauty') || s.includes('makeup') || s.includes('bridal') || s.includes('senior citizen') || s.includes('cook placement') || s.includes('yoga coach')) return 'Care & Family';
  if (s.includes('child') || s.includes('kid') || s.includes('elder') || s.includes('nanny') || s.includes('babysitting')) return 'Kids & Elderly Care';
  if (s.includes('it') || s.includes('wifi') || s.includes('cctv') || s.includes('computer') || s.includes('tv') || s.includes('printer')) return 'Home IT & Tech Support';
 
@@ -292,7 +294,7 @@ const BookingFlow = () => {
  return dateStr;
  };
 
- const workerName = selectedWorker ? t('workers.' + selectedWorker.id + '.name', selectedWorker.name) : t('workers.w1.name', 'Rajesh Kumar');
+ const workerName = selectedWorker ? t('workers.' + selectedWorker.id + '.name', selectedWorker.name) : '';
  const tier = initialTier === 'premium' ? t('bookingFlow.tierPremiumPro', 'Premium Pro') : t('bookingFlow.tierStandard', 'Standard');
  
  // Dynamic Financial Calculations incorporating requirements
@@ -501,117 +503,66 @@ const BookingFlow = () => {
  }
 
  const handleBook = async (confirmedMethod) => {
- const finalMethod = confirmedMethod || paymentMethod || 'Cash';
- const session = getSession();
- if (!session?.token) {
- navigate('/login', { replace: true, state: { from: '/customer/book' } });
- return;
- }
+  const finalMethod = confirmedMethod || paymentMethod || 'Cash';
+  const session = getSession();
+  if (!session?.token) {
+   navigate('/login', { replace: true, state: { from: '/customer/book' } });
+   return;
+  }
 
- setIsCreatingBooking(true);
- try {
- const finalCategory = CATEGORY_DISPLAY_MAP[formData.category?.toLowerCase()] || formData.category || 'Home Repairs';
- const booking = await requestApi('/bookings', {
- method: 'POST',
- token: session.token,
- body: {
- service: formData.service,
- serviceId: initialServiceId || resolvedServiceId || undefined,
- category: finalCategory,
- description: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
- scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
- scheduledTime: formData.time,
- address: formData.address,
- city: formData.city,
- amount: Math.max(0, totalAmount ?? subtotal ?? 299),
- paymentMethod: finalMethod,
- isEmergency: isExpressMode,
- requirements: {
- ...requirements,
- ...(pickupParam ? { pickupLocation: pickupParam } : {}),
- ...(destParam ? { destination: destParam } : {}),
- ...(safeParsedStops ? { stops: safeParsedStops } : {}),
- ...(routeParam ? { route: routeParam } : {}),
- ...(terminalParam ? { terminal: terminalParam } : {}),
- ...(flightNoParam ? { flightNo: flightNoParam } : {}),
- ...(inventorySpecsParam ? { inventorySpecs: inventorySpecsParam } : {}),
- ...(deliveryDaysParam ? { deliveryDays: deliveryDaysParam } : {}),
- ...(cakeWeightParam ? { cakeWeight: Number(cakeWeightParam) } : {}),
- ...(cakeFlavorParam ? { cakeFlavor: cakeFlavorParam } : {}),
- ...(cakeMessageParam ? { cakeMessage: cakeMessageParam } : {}),
- ...(petNameParam ? { petName: petNameParam } : {}),
- ...(petBreedParam ? { petBreed: petBreedParam } : {}),
- ...(petTypeParam ? { petType: petTypeParam } : {}),
- ...(prescriptionNameParam ? { prescriptionName: prescriptionNameParam } : {}),
- ...(vaultSpaceParam ? { vaultSpaceSqFt: Number(vaultSpaceParam) } : {}),
- },
- pricingParams: {
- ...requirements,
- fleetType: requirements.vehicleType || searchParams.get('fleetType') || 'sedan',
- tripType: searchParams.get('tripType') || (formData.service?.toLowerCase().includes('outstation') ? 'outstation' : 'airport'),
- distanceKm: Number(searchParams.get('distanceKm')) || (formData.service?.toLowerCase().includes('airport') ? 35 : 10),
- days: Number(searchParams.get('days')) || 1,
- stopsCount: Number(searchParams.get('stopsCount')) || (safeParsedStops ? (safeParsedStops?.length || 0) : 0),
- homeSize: requirements.homeConfig || searchParams.get('homeSize') || '2bhk',
- originHasLift: requirements.originElevator !== 'stairs_floor2' && requirements.originElevator !== 'stairs_floor3' && requirements.originElevator !== 'stairs_floor4',
- destHasLift: searchParams.get('hasLift') !== 'false',
- sofaSeats: Number(requirements.sofaSeats) || Number(searchParams.get('sofaSeats')) || 0,
- balconies: Number(requirements.balconies) || Number(searchParams.get('balconies')) || 0,
- guests: Number(requirements.headcount) || Number(searchParams.get('guests')) || 4,
- cakeWeight: Number(cakeWeightParam) || 1,
- cakeFlavor: cakeFlavorParam,
- activeDaysCount: Number(activeDaysCountParam) || 5,
- },
- },
- });
+  setIsCreatingBooking(true);
+  try {
+   const finalCategory = CATEGORY_DISPLAY_MAP[formData.category?.toLowerCase()] || formData.category || 'Home Repairs';
+   const cleanAddress = formData.address ? `${formData.address}, ${formData.city || 'Ahmedabad'}` : 'Satellite, Ahmedabad';
+   const finalServiceAmount = Math.max(0, totalAmount ?? subtotal ?? 499);
 
- const bookingId = booking?._id || booking?.id || booking?.bookingId;
- const resolvedId = bookingId || `SC-${Date.now().toString().slice(-6)}`;
+   // Create booking in the Centralized Reactive Workflow Engine with Start OTP & 15km area broadcast
+   const workflowBooking = createWorkflowBooking({
+    serviceName: formData.service || 'Home Service',
+    category: finalCategory,
+    amount: finalServiceAmount,
+    address: cleanAddress,
+    scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
+    scheduledTime: formData.time || '10:00 AM - 12:00 PM',
+    customerName: session?.user?.name || 'Customer',
+    customerPhone: session?.user?.phone || '9876543210',
+    notes: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
+    paymentMethod: finalMethod,
+   });
 
- // Store in customer recent bookings for real-time worker cockpit sync
- try {
- const newRecord = {
- _id: resolvedId,
- id: resolvedId,
- bookingId: resolvedId,
- service: formData.service || 'Specialized Service',
- category: finalCategory,
- customer: { name: session?.user?.name || 'Customer', phone: session?.user?.phone || '9876543210' },
- address: formData.address ? `${formData.address}, ${formData.city || 'Ahmedabad'}` : 'Ahmedabad',
- scheduledDate: formData.date || new Date().toISOString(),
- scheduledTime: formData.time || '10:00 AM - 12:00 PM',
- amount: Math.max(0, totalAmount ?? subtotal ?? 499),
- status: 'pending',
- requirements: {
- ...requirements,
- pickupLocation: pickupParam,
- destination: destParam,
- stops: safeParsedStops,
- flightNo: flightNoParam,
- cakeWeight: cakeWeightParam,
- cakeFlavor: cakeFlavorParam,
- petName: petNameParam,
- petBreed: petBreedParam,
- inventorySpecs: inventorySpecsParam,
- },
- createdAt: new Date().toISOString(),
- };
- const rawPrev = localStorage.getItem('servecircle_customer_recent_bookings');
- const prevList = rawPrev ? JSON.parse(rawPrev) : [];
- const updatedList = [newRecord, ...prevList.filter(b => b.id !== resolvedId)].slice(0, 50);
- localStorage.setItem('servecircle_customer_recent_bookings', JSON.stringify(updatedList));
- window.dispatchEvent(new CustomEvent('servecircle:new-booking', { detail: newRecord }));
- } catch (storageErr) {
- console.warn('Booking local storage sync note:', storageErr);
- }
+   const resolvedId = workflowBooking.id;
 
- showToast('Booking confirmed successfully.');
- navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(resolvedId)}&service=${encodeURIComponent(formData.service || 'Service')}&worker=${encodeURIComponent(workerName || 'Service Pro')}&price=${totalAmount || price || 499}`);
- } catch (bookingError) {
- showToast(bookingError.message || 'Unable to create booking. Please try again.');
- } finally {
- setIsCreatingBooking(false);
- }
+   // Also attempt backend creation if available
+   try {
+    await requestApi('/bookings', {
+     method: 'POST',
+     token: session.token,
+     body: {
+      service: formData.service,
+      serviceId: initialServiceId || resolvedServiceId || undefined,
+      category: finalCategory,
+      description: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
+      scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
+      scheduledTime: formData.time,
+      address: cleanAddress,
+      city: formData.city || 'Ahmedabad',
+      amount: finalServiceAmount,
+      paymentMethod: finalMethod,
+      isEmergency: isExpressMode,
+      requirements,
+     },
+    });
+   } catch (backendErr) {
+    console.warn('Backend booking sync note (workflow engine active):', backendErr.message);
+   }
+
+   showToast('Booking placed! Broadcasting to nearby specialists within 15 km...');
+   navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(resolvedId)}&service=${encodeURIComponent(formData.service || 'Service')}&price=${finalServiceAmount}&startOtp=${workflowBooking.startOtp}`);
+  } catch (bookingError) {
+   showToast(bookingError.message || 'Unable to create booking. Please try again.');
+  } finally {
+   setIsCreatingBooking(false);
+  }
  };
 
  return (

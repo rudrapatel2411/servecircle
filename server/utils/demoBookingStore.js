@@ -5,6 +5,8 @@
  * Automatically active when MongoDB is offline / Atlas is unwhitelisted.
  */
 
+import { doesCategoryMatchWorker } from '../constants/categoryMatcher.js';
+
 export const DEMO_BOOKINGS = [
   {
     _id: 'demo_bk_1001',
@@ -111,13 +113,23 @@ export function getDemoBookingsForCustomer(customerId, status) {
   return list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 }
 
-export function getDemoBookingsForWorker(workerId, status) {
+export function getDemoBookingsForWorker(workerId, status, workerCategory = null) {
   let list = DEMO_BOOKINGS.filter(b => {
     const wId = typeof b.worker === 'object' ? b.worker?._id : b.worker;
-    return String(wId) === String(workerId);
+    const isMine = String(wId) === String(workerId);
+    const isBroadcastPool = !wId && (b.status === 'pending' || b.status === 'PENDING' || b.status === 'assigned');
+    if (workerCategory) {
+      return (isMine || isBroadcastPool) && doesCategoryMatchWorker(workerCategory, b.category, b.service);
+    }
+    return isMine || isBroadcastPool;
   });
   if (status) {
-    list = list.filter(b => b.status === status);
+    const norm = status.toLowerCase();
+    list = list.filter(b => {
+      const bStatus = String(b.status || '').toLowerCase();
+      if (norm === 'pending') return bStatus === 'pending' || bStatus === 'assigned';
+      return bStatus === norm;
+    });
   }
   return list.sort((a, b) => new Date(b.scheduledDate) - new Date(a.scheduledDate));
 }

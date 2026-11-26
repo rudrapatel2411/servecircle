@@ -47,13 +47,63 @@ export const CANONICAL_CATEGORIES = [
   'Events Hub',
 ];
 
+export const CANONICAL_CATEGORY_GROUPS = {
+  'home-repairs': ['home repairs', 'homerepairs', 'home-repairs', 'electrical', 'plumbing', 'carpentry', 'appliance repair'],
+  'vehicle-services': ['vehicle services', 'vehicleservices', 'vehicle-services'],
+  'cleaning': ['cleaning & hygiene', 'cleaninghygiene', 'cleaning', 'cleaning-hygiene'],
+  'home-it': ['home it & smart devices', 'home it & tech support', 'homeitsmartdevices', 'homeit', 'home-it', 'home-it-tech'],
+  'care-family': ['care & family', 'carefamily', 'care-family'],
+  'utility-daily': ['utility & daily help', 'utility & daily services', 'utilitydailyhelp', 'utilitydailyservices', 'utility-daily', 'utility-daily-help'],
+  'learning-support': ['learning & support', 'learningsupport', 'learning-support'],
+  'property-services': ['property & society', 'property services', 'propertysociety', 'propertyservices', 'property-services', 'property-society'],
+  'festive-seasonal': ['seasonal & festive', 'festive & seasonal', 'seasonalfestive', 'festiveseasonal', 'festive-seasonal', 'seasonal-festive'],
+  'furniture-decor': ['furniture & decor', 'furnituredecor', 'furniture-decor'],
+  'garden-outdoor': ['garden & outdoor', 'gardenoutdoor', 'garden-outdoor'],
+  'relocation': ['packers & movers', 'relocation & packers', 'packersmovers', 'relocationpackers', 'relocation', 'packers-movers'],
+  'health-wellness': ['health & wellness', 'healthwellness', 'health-wellness', 'health'],
+  'kids-elderly': ['kids & elderly care', 'kidselderlycare', 'kids-elderly', 'kids-elderly-care', 'family care'],
+  'pet-services': ['pet services', 'petservices', 'pet-services', 'pet'],
+  'food-kitchen': ['food kitchen', 'food & kitchen', 'foodkitchen', 'food-kitchen', 'food'],
+  'travel-commute': ['travel & commute', 'travelcommute', 'travel-commute', 'travel'],
+  'society-management': ['society management', 'societymanagement', 'society-management', 'society'],
+  'events': ['events hub', 'events & celebrations', 'eventshub', 'eventscelebrations', 'events', 'events-hub'],
+  'emergency': ['emergency services', 'emergency'],
+};
+
+const ALIAS_TO_GROUP = (() => {
+  const map = new Map();
+  for (const [group, aliases] of Object.entries(CANONICAL_CATEGORY_GROUPS)) {
+    map.set(group.replace(/[^a-z0-9]/g, ''), group);
+    for (const alias of aliases) {
+      map.set(alias.toLowerCase().replace(/[^a-z0-9]/g, ''), group);
+    }
+  }
+  return map;
+})();
+
+export function resolveCanonicalCategoryGroup(raw = '') {
+  const clean = String(raw || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!clean) return null;
+  if (ALIAS_TO_GROUP.has(clean)) return ALIAS_TO_GROUP.get(clean);
+  for (const [aliasKey, group] of ALIAS_TO_GROUP.entries()) {
+    if (aliasKey.length >= 5 && (clean === aliasKey || clean.includes(aliasKey) || aliasKey.includes(clean))) {
+      return group;
+    }
+  }
+  return null;
+}
+
 /**
  * Returns canonical category name for a worker user
  */
 export function getWorkerCategory(user) {
   if (!user) return 'Home Repairs';
+  const profileCat = user.workerProfile?.serviceCategory;
   if (user.serviceCategory && user.serviceCategory.trim()) {
     return user.serviceCategory.trim();
+  }
+  if (profileCat && profileCat.trim()) {
+    return profileCat.trim();
   }
   const email = (user.email || '').toLowerCase().trim();
   if (WORKER_EMAIL_CATEGORY_MAP[email]) {
@@ -62,55 +112,50 @@ export function getWorkerCategory(user) {
   return 'Home Repairs';
 }
 
+const SERVICE_FALLBACK_KEYWORDS = {
+  'vehicle-services': ['vehicle', 'car', 'bike', 'scooter', 'puncture', 'mechanic', 'battery jumpstart', 'tyre'],
+  'home-repairs': ['plumb', 'electric', 'carpenter', 'ac repair', 'ac service', 'water purifier', 'ro filter', 'leak', 'switch', 'tap', 'drill', 'fan installation', 'appliance', 'geysers'],
+  'cleaning': ['deep clean', 'sofa', 'carpet', 'pest', 'disinfect', 'sanitization', 'refrigerator deep'],
+  'home-it': ['wifi', 'router', 'cctv', 'laptop', 'smart tv', 'printer', 'tech support'],
+  'care-family': ['care & family', 'senior citizen', 'elder care', 'patient caretaker', 'salon', 'beauty', 'makeup', 'bridal', 'home cook', 'yoga coach', 'companion'],
+  'utility-daily': ['maid', 'laundry', 'ironing', 'errand', 'helper'],
+  'learning-support': ['tutor', 'teach', 'guitar', 'music', 'language coach'],
+  'property-services': ['property', 'security guard', 'gate supervisor', 'facility'],
+  'festive-seasonal': ['seasonal', 'festive', 'diwali', 'holi', 'lights', 'waterproofing'],
+  'furniture-decor': ['furniture', 'wardrobe', 'sofa assembly', 'wallpaper', 'curtain'],
+  'garden-outdoor': ['garden', 'lawn', 'plant', 'grass', 'mower', 'prune'],
+  'relocation': ['packer', 'mover', 'shifting', 'relocation', 'loading', 'transit truck', 'storage vault'],
+  'health-wellness': ['health', 'wellness', 'physio', 'blood sample', 'doctor', 'lab test'],
+  'kids-elderly': ['kid', 'nanny', 'babysit', 'child care', 'infant'],
+  'pet-services': ['pet', 'dog walk', 'cat', 'grooming', 'vet', 'boarding'],
+  'food-kitchen': ['food', 'kitchen', 'chef', 'meal', 'tiffin', 'cake', 'catering'],
+  'travel-commute': ['travel', 'commute', 'driver', 'chauffeur', 'cab', 'airport transfer', 'outstation'],
+  'society-management': ['society', 'rwa', 'apartment', 'visitor', 'gate pass'],
+  'events': ['event', 'party', 'wedding', 'dj', 'balloon', 'birthday', 'celebration'],
+};
+
 /**
  * Checks whether a requested service/category matches a given worker's category.
  */
 export function doesServiceMatchWorker(workerCat = '', reqCat = '', reqService = '') {
   if (!workerCat) return true;
-  const wCat = String(workerCat).toLowerCase().replace(/[^a-z0-9]/g, '');
-  const rCat = String(reqCat || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const rSvc = String(reqService || '').toLowerCase();
+  const wGroup = resolveCanonicalCategoryGroup(workerCat);
+  const rGroup = resolveCanonicalCategoryGroup(reqCat);
 
-  // If no category requested, treat as general
-  if (!rCat && !rSvc) return true;
-
-  // Direct match on category
-  if (rCat && (wCat === rCat || wCat.includes(rCat) || rCat.includes(wCat))) {
-    return true;
+  // If the booking already has an explicit canonical category, match strictly on that group.
+  if (rGroup) {
+    if (wGroup) return wGroup === rGroup;
+    return String(workerCat).toLowerCase().trim() === String(reqCat).toLowerCase().trim();
   }
 
-  // Keyword associations
-  const KEYWORD_MAP = {
-    'vehiclereservices': ['vehicle', 'car', 'bike', 'puncture', 'mechanic', 'battery', 'tyre', 'scooter'],
-    'homerepairs': ['repair', 'plumb', 'electric', 'carpenter', 'ac service', 'leak', 'switch', 'tap', 'drill'],
-    'cleaninghygiene': ['clean', 'sofa', 'carpet', 'pest', 'disinfect', 'sanitize', 'tank', 'wash'],
-    'homeitsmartdevices': ['it', 'wifi', 'router', 'cctv', 'laptop', 'pc', 'smart tv', 'printer'],
-    'carefamily': ['care', 'patient', 'senior', 'nurse', 'companion'],
-    'utilitydailyhelp': ['maid', 'cook', 'laundry', 'ironing', 'errand', 'helper'],
-    'learningsupport': ['tutor', 'teach', 'guitar', 'music', 'yoga', 'coach', 'fitness'],
-    'propertysociety': ['property', 'security', 'guard', 'gate', 'supervisor', 'facility'],
-    'seasonalfestive': ['seasonal', 'festive', 'diwali', 'holi', 'lights', 'waterproofing'],
-    'furnituredecor': ['furniture', 'wardrobe', 'bed', 'sofa assembly', 'wallpaper', 'decor'],
-    'gardenoutdoor': ['garden', 'lawn', 'plant', 'grass', 'mower', 'prune'],
-    'packersmovers': ['packer', 'mover', 'shifting', 'relocation', 'loading', 'transit truck'],
-    'healthwellness': ['health', 'wellness', 'physio', 'blood', 'sample', 'doctor'],
-    'kidselderlycare': ['kid', 'nanny', 'babysit', 'child', 'infant', 'elderly'],
-    'petservices': ['pet', 'dog', 'cat', 'grooming', 'vet', 'walk', 'boarding'],
-    'foodkitchen': ['food', 'kitchen', 'chef', 'meal', 'tiffin', 'cake', 'catering'],
-    'travelcommute': ['travel', 'commute', 'driver', 'chauffeur', 'cab', 'airport transfer', 'outstation'],
-    'societymanagement': ['society', 'rwa', 'apartment', 'visitor', 'maintenance', 'gate pass'],
-    'eventshub': ['event', 'party', 'wedding', 'dj', 'balloon', 'birthday', 'celebration'],
-  };
+  // Fallback to service-title keywords only when category is absent or unmapped.
+  const rSvc = String(reqService || '').toLowerCase();
+  if (!rSvc) return !reqCat;
 
-  const keywords = KEYWORD_MAP[wCat];
+  const keywords = wGroup ? SERVICE_FALLBACK_KEYWORDS[wGroup] : null;
   if (keywords) {
-    for (const kw of keywords) {
-      if (rSvc.includes(kw) || rCat.includes(kw)) {
-        return true;
-      }
-    }
+    return keywords.some((kw) => rSvc.includes(kw));
   }
 
   return false;
 }
-

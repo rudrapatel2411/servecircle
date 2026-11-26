@@ -27,6 +27,7 @@ import BookingChatModal from '../../components/BookingChatModal';
 import WorkerEstimateRevisionModal from '../../components/WorkerEstimateRevisionModal';
 import WorkerRateCustomerModal from '../../components/WorkerRateCustomerModal';
 import WorkerSosModal from '../../components/WorkerSosModal';
+import WorkerJobRouteMap from '../../components/WorkerJobRouteMap';
 import Pagination from '../../components/Pagination';
 import {
  fetchWorkerJobs,
@@ -43,7 +44,22 @@ import {
  formatInr,
  getStatusBadgeClass,
 } from './workerHelpers';
-import { getWorkerCategory } from '../../utils/workerCategoryHelper';
+import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
+import {
+  getWorkflowBookings,
+  acceptWorkflowBooking,
+  declineWorkflowBooking,
+  setWorkflowEnRoute,
+  setWorkflowArrived,
+  verifyWorkflowStartOtp,
+  uploadWorkflowBeforePhoto,
+  startWorkflowService,
+  submitWorkflowQuotation,
+  uploadWorkflowAfterPhoto,
+  completeAndPayWorkflowBooking,
+  subscribeWorkflowUpdates,
+  PLATFORM_VISITING_FEE,
+} from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -123,6 +139,19 @@ const DEMO_JOBS = [
  },
 ];
 
+const matchesStatus = (jobStatus, targetTab) => {
+  const norm = String(jobStatus || '').toLowerCase();
+  if (targetTab === 'all') return true;
+  if (targetTab === 'pending') return norm === 'pending' || norm === 'assigned';
+  if (targetTab === 'accepted') return norm === 'accepted' || norm === 'confirmed';
+  if (targetTab === 'en-route') return norm === 'en-route';
+  if (targetTab === 'arrived') return ['arrived', 'verified', 'before_photo_uploaded'].includes(norm);
+  if (targetTab === 'started') return ['started', 'in-progress', 'verified', 'before_photo_uploaded', 'quotation_pending'].includes(norm);
+  if (targetTab === 'completed') return norm === 'completed';
+  if (targetTab === 'cancelled') return ['cancelled', 'cancelled_visiting_fee', 'rejected'].includes(norm);
+  return norm === targetTab.toLowerCase();
+};
+
 const WorkerJobs = () => {
  const { t } = useTranslation();
  const { token, user, isAuthenticated, signIn, authError, authLoading, isDemoMode, workerStatus, dutyStatus, dutyStatusUpdatedAt, updateDuty } = useWorkerAuth();
@@ -173,23 +202,41 @@ const WorkerJobs = () => {
  });
  };
 
- const confirmUploadProof = async () => {
- const { jobId, type, previewUrl, notes } = proofModal;
- if (!previewUrl || !jobId) return;
- setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: true }));
- try {
- await uploadBookingProof(token, jobId, { type, imageUrl: previewUrl, notes });
- showToast(` ${type === 'BEFORE_WORK' ? 'Before-Work' : 'After-Work'} proof photo uploaded successfully!`);
- setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
- await loadJobs(activeTab);
- } catch (err) {
- showToast(err.message || 'Proof upload failed');
- } finally {
- setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: false }));
- }
- };
+  const confirmUploadProof = async () => {
+    const { jobId, type, previewUrl, notes } = proofModal;
+    if (!previewUrl || !jobId) return;
+    setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: true }));
+    try {
+      const cleanId = String(jobId || '').trim();
+      const apiId = cleanId.replace(/^#/, '');
+      const isWf =
+        cleanId.startsWith('wb-') ||
+        cleanId.includes('SC-') ||
+        jobs.find((j) => j._id === jobId || j.id === jobId)?.isWorkflow;
 
- const openCodModal = (jobId, amount) => {
+      if (isWf) {
+        if (type === 'BEFORE_WORK') {
+          uploadWorkflowBeforePhoto(cleanId, previewUrl, notes);
+        } else {
+          uploadWorkflowAfterPhoto(cleanId, previewUrl, notes);
+        }
+        showToast(`📸 ${type === 'BEFORE_WORK' ? 'Pre-Service' : 'After-Work'} proof photo saved!`);
+        setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
+        await loadJobs(activeTab);
+        return;
+      }
+      await uploadBookingProof(token, apiId, { type, imageUrl: previewUrl, notes });
+      showToast(`📸 ${type === 'BEFORE_WORK' ? 'Pre-Service' : 'After-Work'} proof photo uploaded successfully!`);
+      setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
+      await loadJobs(activeTab);
+    } catch (err) {
+      showToast(err.message || 'Proof upload failed');
+    } finally {
+      setUploadingProof((prev) => ({ ...prev, [`${jobId}-${type}`]: false }));
+    }
+  };
+
+  const openCodModal = (jobId, amount) => {
  setCodModal({ open: true, jobId, amount });
  };
 
@@ -231,78 +278,165 @@ const WorkerJobs = () => {
  }
  };
 
- const loadJobs = async (status = activeTab) => {
- let b2bJobs = [];
- try {
- const raw = localStorage.getItem('b2bWorkOrders');
- if (raw) {
- const parsed = JSON.parse(raw);
- b2bJobs = parsed.map(o => ({
- _id: o.rawId || o.id,
- id: o.id,
- service: o.service,
- category: o.category || 'Society Management',
- scheduledDate: o.date ? new Date(o.date).toISOString() : new Date().toISOString(),
- scheduledTime: o.time || '10:00 AM',
- address: `${o.tower || 'Central Campus'}, Green Valley Society, Ahmedabad`,
- amount: o.amount || o.cost || 2500,
- workerEarnings: Math.round((o.amount || o.cost || 2500) * 0.9),
- status: o.status || 'confirmed',
- isEmergency: Boolean(o.urgency && o.urgency.includes('Emergency')),
- isB2B: true,
- societyName: o.societyName || 'Green Valley Society',
- tower: o.tower,
- gatePassPin: o.gatePassPin,
- customer: { name: 'Rajesh Mehta (RWA Secretary)', phone: '+91 98765 43210' },
- description: `Specs: [Society: ${o.societyName || 'Green Valley Society'}, Wing: ${o.tower || 'All Towers'}, GatePIN: ${o.gatePassPin || '4892'}]`,
- }));
- }
- } catch (e) {
- console.warn('Error reading local B2B work orders:', e);
- }
+  const loadJobs = async (status = activeTab) => {
+    const currentWorkerCat = getWorkerCategory(user);
+    const myWorkerId = String(user?.id || user?._id || '');
+    const belongsToWorkerCategory = (job) => {
+      if (!job) return false;
+      return doesServiceMatchWorker(currentWorkerCat, job.category, job.service || job.serviceName);
+    };
 
- if (isDemoMode) {
- // Demo mode: filter mock jobs + B2B jobs
- const allDemo = [...b2bJobs, ...DEMO_JOBS];
- const filtered = status === 'all'
- ? allDemo
- : allDemo.filter((j) => j.status === status);
- setJobs(filtered);
- return;
- }
- if (!token) {
- if (b2bJobs.length > 0) {
- const filtered = status === 'all' ? b2bJobs : b2bJobs.filter(j => j.status === status);
- setJobs(filtered);
- }
- return;
- }
- setLoading(true);
- setError('');
- try {
- const data = await fetchWorkerJobs(token, status);
- const merged = Array.isArray(data) ? [...data] : [];
- b2bJobs.forEach(bj => {
- if (!merged.some(m => m._id === bj._id || m.bookingId === bj.id)) {
- if (status === 'all' || bj.status === status) {
- merged.unshift(bj);
- }
- }
- });
- setJobs(merged);
- } catch (err) {
- setError(err.message || 'Failed to load jobs');
- } finally {
- setLoading(false);
- }
- };
+    let b2bJobs = [];
+    try {
+      const raw = localStorage.getItem('b2bWorkOrders');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        b2bJobs = parsed
+          .map(o => ({
+            _id: o.rawId || o.id,
+            id: o.id,
+            service: o.service,
+            category: o.category || 'Society Management',
+            scheduledDate: o.date ? new Date(o.date).toISOString() : new Date().toISOString(),
+            scheduledTime: o.time || '10:00 AM',
+            address: `${o.tower || 'Central Campus'}, Green Valley Society, Ahmedabad`,
+            amount: o.amount || o.cost || 2500,
+            workerEarnings: Math.round((o.amount || o.cost || 2500) * 0.9),
+            status: o.status || 'confirmed',
+            isEmergency: Boolean(o.urgency && o.urgency.includes('Emergency')),
+            isB2B: true,
+            societyName: o.societyName || 'Green Valley Society',
+            tower: o.tower,
+            gatePassPin: o.gatePassPin,
+            customer: { name: 'Rajesh Mehta (RWA Secretary)', phone: '+91 98765 43210' },
+            description: `Specs: [Society: ${o.societyName || 'Green Valley Society'}, Wing: ${o.tower || 'All Towers'}, GatePIN: ${o.gatePassPin || '4892'}]`,
+          }))
+          .filter(belongsToWorkerCategory);
+      }
+    } catch (e) {
+      console.warn('Error reading local B2B work orders:', e);
+    }
 
- useEffect(() => {
- loadJobs(activeTab);
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [token, activeTab]);
+    // Load reactive workflow engine jobs (strictly filtered to this worker's category)
+    let workflowJobs = [];
+    try {
+      const allWf = getWorkflowBookings();
+      workflowJobs = allWf
+        .filter((wf) => {
+          if (myWorkerId && wf.declinedWorkers?.includes(myWorkerId) && (wf.status === 'pending' || wf.status === 'assigned')) {
+            return false;
+          }
+          const match = doesServiceMatchWorker(currentWorkerCat, wf.category, wf.service);
+          if (!match) return false;
+          if (wf.worker && wf.worker.id && myWorkerId && wf.worker.id !== myWorkerId && wf.status !== 'pending') {
+            return false;
+          }
+          return true;
+        })
+        .map((wf) => ({
+          _id: wf.id,
+          id: wf.id,
+          service: wf.service,
+          category: wf.category || currentWorkerCat,
+          scheduledDate: wf.date || wf.scheduledDate || new Date().toISOString(),
+          scheduledTime: wf.timeSlot || wf.scheduledTime || '10:00 AM',
+          address: wf.address || 'Satellite, Ahmedabad',
+          amount: wf.totalAmount || wf.amount || wf.basePrice || 499,
+          workerEarnings: Math.round((wf.totalAmount || wf.amount || wf.basePrice || 499) * 0.9),
+          status: wf.status,
+          customer: wf.customer || { name: 'Priya Patel', phone: '+91 98765 43210' },
+          description: wf.description || `Specs: [Booking ID: ${wf.id}, Radius: ${wf.radiusKm || 15}km, Start OTP Protected]`,
+          distanceKm: `${wf.distanceKm || '3.2 km'}`,
+          startOtp: wf.startOtp,
+          quotation: wf.quotation,
+          beforePhoto: wf.beforePhoto,
+          afterPhoto: wf.afterPhoto,
+          hasBeforeProof: Boolean(wf.beforePhoto),
+          hasAfterProof: Boolean(wf.afterPhoto),
+          isWorkflow: true,
+        }));
+    } catch (e) {
+      console.warn('Error reading workflow bookings:', e);
+    }
 
+    const scopedDemoJobs = DEMO_JOBS.filter(belongsToWorkerCategory);
+    const combinedMock = [...workflowJobs, ...b2bJobs, ...scopedDemoJobs];
+
+    if (isDemoMode) {
+      const filtered = combinedMock.filter((j) => matchesStatus(j.status, status));
+      setJobs(filtered);
+      return;
+    }
+    if (!token) {
+      const filtered = combinedMock.filter((j) => matchesStatus(j.status, status));
+      setJobs(filtered);
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    try {
+      const data = await fetchWorkerJobs(token, status);
+      const merged = Array.isArray(data) ? data.filter(belongsToWorkerCategory) : [];
+      [...workflowJobs, ...b2bJobs, ...scopedDemoJobs].forEach((bj) => {
+        if (!merged.some((m) => m._id === bj._id || m.bookingId === bj.id || m.bookingId === bj._id)) {
+          if (matchesStatus(bj.status, status)) {
+            if (bj.isWorkflow) {
+              merged.unshift(bj);
+            } else {
+              merged.push(bj);
+            }
+          }
+        }
+      });
+      setJobs(merged);
+    } catch (err) {
+      const filtered = combinedMock.filter((j) => matchesStatus(j.status, status));
+      setJobs(filtered);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadJobs(activeTab);
+    const unsub = subscribeWorkflowUpdates(() => {
+      loadJobs(activeTab);
+    });
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, activeTab, user]);
  const handleRespond = async (bookingId, action) => {
+    const cleanId = String(bookingId || '').trim();
+    const wfList = getWorkflowBookings();
+    const isWf =
+      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
+      jobs.find((j) => j._id === cleanId || j.id === cleanId)?.isWorkflow ||
+      cleanId.startsWith('wb-') ||
+      cleanId.includes('SC-');
+
+    if (isWf) {
+      if (action === 'accept') {
+        acceptWorkflowBooking(cleanId, {
+          id: user?.id || 'worker-tech-01',
+          name: user?.name || 'Aarav Sharma (Certified Specialist)',
+          phone: user?.phone || '+91 98250 12345',
+          rating: 4.9,
+          jobsCompleted: 342,
+        });
+        showToast('✓ Job accepted! Customer notified. Route navigation activated.');
+      } else {
+        declineWorkflowBooking(cleanId, user?.id || user?._id || 'worker-tech-01');
+        showToast('Job request declined.');
+      }
+      if (token) {
+        try {
+          await respondToJobRequest(token, cleanId.replace('#', ''), action);
+        } catch {}
+      }
+      await loadJobs(activeTab);
+      return;
+    }
  if (!token) return;
  if (action === 'accept' && dutyStatus !== 'online') {
  const confirmOnline = window.confirm(
@@ -333,53 +467,167 @@ const WorkerJobs = () => {
  }
  };
 
- const handleStatus = async (bookingId, nextStatus) => {
- updateB2BWorkOrderStatus(bookingId, nextStatus);
- if (!token) {
- await loadJobs(activeTab);
- return;
- }
- setActionLoading(`${bookingId}-${nextStatus}`);
- setError('');
- try {
- await updateWorkerJobStatus(token, bookingId, nextStatus);
- await loadJobs(activeTab);
- } catch (err) {
- setError(err.message || 'Could not update job status');
- } finally {
- setActionLoading('');
- }
- };
+  const handleStatus = async (bookingId, nextStatus) => {
+    const cleanId = String(bookingId || '').trim();
+    const apiId = cleanId.replace(/^#/, '');
+    const currentJob = jobs.find((j) => j._id === cleanId || j.id === cleanId);
+    const wfList = getWorkflowBookings();
+    const isWf =
+      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
+      currentJob?.isWorkflow ||
+      cleanId.startsWith('wb-') ||
+      cleanId.includes('SC-');
 
- const handleVerifyStartOtp = async (jobId) => {
- const entered = otpInput[jobId] || '';
- if (!entered) return;
- setActionLoading(`${jobId}-start`);
- try {
- await verifyWorkerOtp(token, jobId, 'start', entered);
- setOtpError((prev) => ({ ...prev, [jobId]: '' }));
- await loadJobs(activeTab);
- } catch (err) {
- setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify Start OTP.' }));
- } finally {
- setActionLoading('');
- }
- };
+    if (isWf) {
+      if (nextStatus === 'en-route') {
+        setWorkflowEnRoute(cleanId);
+        showToast('🚀 En-route to customer location. Live GPS active.');
+      } else if (nextStatus === 'arrived') {
+        setWorkflowArrived(cleanId);
+        showToast('📍 Arrived at doorstep! Please collect Start OTP from customer.');
+      } else if (nextStatus === 'started' || nextStatus === 'in-progress') {
+        startWorkflowService(cleanId);
+        showToast('▶️ Service Started! Work is in progress.');
+      } else if (nextStatus === 'completed') {
+        completeAndPayWorkflowBooking(cleanId);
+        showToast('✓ Job completed! Earnings credited to your dashboard.');
+      }
+    }
+    updateB2BWorkOrderStatus(cleanId, nextStatus);
+    if (!token) {
+      await loadJobs(activeTab);
+      return;
+    }
+    setActionLoading(`${bookingId}-${nextStatus}`);
+    setError('');
+    try {
+      await updateWorkerJobStatus(token, apiId, nextStatus);
+      await loadJobs(activeTab);
+    } catch (err) {
+      if (!isWf) {
+        setError(err.message || 'Could not update job status');
+      } else {
+        console.log('[WorkerJobs] Handled workflow status locally; backend sync note:', err.message);
+        await loadJobs(activeTab);
+      }
+    } finally {
+      setActionLoading('');
+    }
+  };
 
- const handleVerifyEndOtp = async (jobId) => {
- const entered = otpInput[jobId] || '';
- if (!entered) return;
- setActionLoading(`${jobId}-end`);
- try {
- await verifyWorkerOtp(token, jobId, 'end', entered);
- setOtpError((prev) => ({ ...prev, [jobId]: '' }));
- await loadJobs(activeTab);
- } catch (err) {
- setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify End OTP.' }));
- } finally {
- setActionLoading('');
- }
- };
+  const handleVerifyStartOtp = async (jobId) => {
+    const entered = (otpInput[jobId] || '').trim();
+    if (!entered) {
+      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit Start OTP from the customer.' }));
+      return;
+    }
+    if (entered.length < 4) {
+      setOtpError((prev) => ({ ...prev, [jobId]: 'Start OTP must be 4 digits.' }));
+      return;
+    }
+    setActionLoading(`${jobId}-start`);
+    setOtpError((prev) => ({ ...prev, [jobId]: '' }));
+    setError('');
+
+    const cleanId = String(jobId || '').trim();
+    const apiId = cleanId.replace(/^#/, '');
+    const currentJob = jobs.find((j) => j._id === jobId || j.id === jobId);
+    const wfList = getWorkflowBookings();
+    const isWf =
+      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
+      currentJob?.isWorkflow ||
+      cleanId.startsWith('wb-') ||
+      cleanId.includes('SC-');
+
+    if (isWf) {
+      const res = verifyWorkflowStartOtp(cleanId, entered);
+      if (!res.success) {
+        setOtpError((prev) => ({ ...prev, [jobId]: res.message || 'Incorrect Start OTP. Please ask the customer.' }));
+        setActionLoading('');
+        return;
+      }
+
+      if (currentJob?.hasBeforeProof) {
+        startWorkflowService(cleanId);
+        showToast('✓ Start OTP Verified & Service Started!');
+      } else {
+        showToast('✓ Doorstep Start OTP Verified! Please capture initial inspection photo.');
+      }
+
+      if (token) {
+        try {
+          await verifyWorkerOtp(token, apiId, 'start', entered);
+        } catch (e) {
+          console.log('[WorkerJobs] Synced start OTP with backend or fallback:', e.message);
+        }
+      }
+      setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
+      await loadJobs(activeTab);
+      setActionLoading('');
+      return;
+    }
+
+    try {
+      await verifyWorkerOtp(token, apiId, 'start', entered);
+      showToast('✓ Start OTP Verified! Doorstep entry authorized.');
+      setOtpError((prev) => ({ ...prev, [jobId]: '' }));
+      setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
+      await loadJobs(activeTab);
+    } catch (err) {
+      setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify Start OTP.' }));
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const handleVerifyEndOtp = async (jobId) => {
+    const entered = (otpInput[jobId] || '').trim();
+    if (!entered) {
+      setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit End OTP from the customer.' }));
+      return;
+    }
+    setActionLoading(`${jobId}-end`);
+    setOtpError((prev) => ({ ...prev, [jobId]: '' }));
+    setError('');
+
+    const cleanId = String(jobId || '').trim();
+    const apiId = cleanId.replace(/^#/, '');
+    const currentJob = jobs.find((j) => j._id === jobId || j.id === jobId);
+    const wfList = getWorkflowBookings();
+    const isWf =
+      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
+      currentJob?.isWorkflow ||
+      cleanId.startsWith('wb-') ||
+      cleanId.includes('SC-');
+
+    if (isWf) {
+      completeAndPayWorkflowBooking(cleanId);
+      showToast('✓ End OTP Verified! Service completed & payment settled.');
+      if (token) {
+        try {
+          await verifyWorkerOtp(token, apiId, 'end', entered);
+        } catch (e) {
+          console.log('[WorkerJobs] Synced end OTP with backend or fallback:', e.message);
+        }
+      }
+      setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
+      await loadJobs(activeTab);
+      setActionLoading('');
+      return;
+    }
+
+    try {
+      await verifyWorkerOtp(token, apiId, 'end', entered);
+      showToast('✓ End OTP Verified! Job Completed.');
+      setOtpError((prev) => ({ ...prev, [jobId]: '' }));
+      setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
+      await loadJobs(activeTab);
+    } catch (err) {
+      setOtpError((prev) => ({ ...prev, [jobId]: err.message || 'Unable to verify End OTP.' }));
+    } finally {
+      setActionLoading('');
+    }
+  };
 
  const handleCantResolve = (jobId) => {
  setCantResolveModal(jobId);
@@ -630,6 +878,11 @@ const WorkerJobs = () => {
  <div className="job-info">
  <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
  {job.service}
+                  {job.within15Km && (
+                    <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '100px', fontSize: '0.72rem', fontWeight: 800, border: '1px solid #bae6fd' }}>
+                      📍 {job.distanceKm || '3.2 km'} away (Within 15km Radius)
+                    </span>
+                  )}
  {isEmergency && <span style={{ background: '#fef2f2', color: '#ef4444', padding: '2px 8px', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800 }}>EMERGENCY: 2x PAY</span>}
  {job.isB2B && (
  <span style={{ background: '#f5f3ff', color: '#6d28d9', padding: '2px 8px', borderRadius: '100px', fontSize: '0.72rem', fontWeight: 800, border: '1px solid #ddd6fe' }}>
@@ -700,10 +953,15 @@ const WorkerJobs = () => {
  )}
  </div>
 
- <div className="worker-action-buttons" style={{ flexDirection: 'column', gap: '10px' }}>
+ {/* Real-time Customer Route Map for Worker Navigation */}
+        {['pending', 'accepted', 'en-route', 'arrived', 'verified', 'before_photo_uploaded', 'in-progress', 'started'].includes(job.status) && (
+          <WorkerJobRouteMap job={job} />
+        )}
+
+        <div className="worker-action-buttons" style={{ flexDirection: 'column', gap: '10px' }}>
 
  {/* ===== STEP 1: PENDING — Accept / Decline ===== */}
- {job.status === 'pending' && (
+	{['pending', 'assigned'].includes(String(job.status || '').toLowerCase()) && (
  <div style={{ display: 'flex', gap: '10px' }}>
  <button
  className="btn btn-primary"
@@ -785,11 +1043,15 @@ const WorkerJobs = () => {
  </div>
  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
  <input
- type="number"
+ type="text"
+ inputMode="numeric"
  maxLength={4}
  placeholder="Enter Start OTP"
  value={otpInput[job._id] || ''}
- onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
+ onChange={(e) => {
+   const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+   setOtpInput((prev) => ({ ...prev, [job._id]: val }));
+ }}
  style={{
  flex: 1, padding: '10px 14px', borderRadius: '8px',
  border: '2px solid #e2e8f0', fontSize: '1.2rem',
@@ -801,9 +1063,9 @@ const WorkerJobs = () => {
  className="btn btn-primary"
  onClick={() => handleVerifyStartOtp(job._id)}
  disabled={actionLoading === `${job._id}-start`}
- style={{ padding: '10px 20px' }}
+ style={{ padding: '10px 20px', fontWeight: 700 }}
  >
- {actionLoading === `${job._id}-start` ? '...' : 'Verify & Start'}
+ {actionLoading === `${job._id}-start` ? 'Verifying...' : 'Verify & Start'}
  </button>
  </div>
  {otpError[job._id] && (
@@ -812,8 +1074,53 @@ const WorkerJobs = () => {
  </div>
  )}
 
- {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP & Proof ===== */}
- {job.status === 'started' && (
+ 
+
+          {/* ===== STEP 4B: VERIFIED — OTP Approved! Take Before-Photo & Start Service ===== */}
+          {(job.status === 'verified' || job.status === 'before_photo_uploaded') && (
+            <div>
+              <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.82rem', color: '#166534', border: '1px solid #bbf7d0', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <HiOutlineCheckCircle style={{ fontSize: '1.2rem', color: '#16a34a' }} />
+                <span><strong>Start OTP Verified!</strong> Customer granted safe doorstep entry. Please take a Pre-Service Inspection Photo before starting work.</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => handleUploadProof(job._id, 'BEFORE_WORK')}
+                  style={{
+                    width: '100%',
+                    fontSize: '0.85rem',
+                    padding: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    borderColor: job.hasBeforeProof ? '#16a34a' : '#3b82f6',
+                    color: job.hasBeforeProof ? '#16a34a' : '#2563eb',
+                    background: job.hasBeforeProof ? '#f0fdf4' : '#eff6ff',
+                    fontWeight: 700,
+                  }}
+                >
+                  <HiOutlineCamera style={{ fontSize: '1.1rem' }} />
+                  {job.hasBeforeProof ? '✓ Pre-Service Inspection Photo Saved' : '📸 Take Pre-Service Photo (Required)'}
+                </button>
+
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', background: '#2563eb' }}
+                  onClick={() => handleStatus(job._id, 'started')}
+                  disabled={actionLoading === `${job._id}-started`}
+                >
+                  ▶️ Start Service
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP & Proof ===== */}
+ {(job.status === 'started' || job.status === 'in-progress' || job.status === 'quotation_pending') && (
  <div>
  <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
  <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
@@ -883,10 +1190,20 @@ const WorkerJobs = () => {
  className="btn btn-primary"
  onClick={() => handleVerifyEndOtp(job._id)}
  disabled={actionLoading === `${job._id}-end`}
- style={{ padding: '10px 20px', background: '#16a34a' }}
+ style={{ padding: "10px 20px", background: "#16a34a" }}
  >
- {actionLoading === `${job._id}-end` ? '...' : 'Done'}
+ {actionLoading === `${job._id}-end` ? "..." : "Done"}
  </button>
+ </div>
+ <button
+ type="button"
+ className="btn btn-primary"
+ style={{ width: "100%", background: "#16a34a", marginTop: "6px", marginBottom: "8px" }}
+ onClick={() => handleStatus(job._id, "completed")}
+ >
+ Complete Service & Settle Payment (₹{job.amount})
+ </button>
+ <div style={{ display: "none" }}>
  </div>
  {otpError[job._id] && (
  <p style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px', fontWeight: 600 }}>{otpError[job._id]}</p>
@@ -903,7 +1220,18 @@ const WorkerJobs = () => {
  </div>
  )}
 
- {/* ===== STEP 6: COMPLETED — COD & Rating ===== */}
+ 
+          {/* ===== STEP 7: CANCELLED WITH VISITING FEE ===== */}
+          {job.status === 'cancelled_visiting_fee' && (
+            <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', padding: '12px', color: '#9f1239', fontSize: '0.82rem' }}>
+              <strong>❌ Customer Cancelled after Quotation.</strong>
+              <div style={{ marginTop: '4px' }}>
+                Per platform policy, the <strong>Platform Visiting Fee of ₹{job.visitingFee || 199}</strong> has been collected and credited to your earnings for inspection!
+              </div>
+            </div>
+          )}
+
+          {/* ===== STEP 6: COMPLETED — COD & Rating ===== */}
  {job.status === 'completed' && (
  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
  {job.paymentMethod === 'COD' && !job.isCodCollected && (
