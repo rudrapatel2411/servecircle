@@ -1,5 +1,24 @@
 # ServeCircle Project Brain
 
+## Working plan — Full End-to-End Workflow Audit & Cross-Panel Bug Sweep (done, verified 2026-11-27)
+
+**User request:**
+"abb ek baar pura humne set kiya hua workflow check kar lo koi chij ya bich me feature ya fir page add karna ta fir working karna baki reh gaya ho toh and achhe se dekho ki koi error ya fir bug reh to nahi gaya hai na"
+
+**Issues Found & Resolved Across All Panels & Backend:**
+1. **Prisma `notifyAdmin` Enum Error (`server/services/notificationService.js`, `server/routes/notifications.js`)**:
+   - `targetAudience: 'ADMIN'` threw `Invalid value for argument targetAudience` on every booking creation/completion because Prisma `NotificationAudience` enum only permits `ALL | CUSTOMERS | WORKERS | B2B | SPECIFIC`. Switched admin persistence to `targetAudience: 'SPECIFIC', targetUsers: ['admin']` and updated `routes/notifications.js` query accordingly — 0 Prisma notification errors.
+2. **Prisma Review Submission Crash on Human Booking ID (`server/routes/reviews.js`, `PostServiceReview.jsx`)**:
+   - `POST /reviews` passed non-UUID booking refs (`SC-XXXX`) directly into `{ id: bookingInput }`, failing UUID column parsing. Added `UUID_RE` lookup guard, stripped `#`, fixed `getCustomerSession()` usage in `PostServiceReview.jsx`, and passed updated booking `amount` via URL query from `LiveTracking.jsx`.
+3. **Quote Revision & Audit Photo Display (`WorkerEstimateRevisionModal.jsx`, `WorkerJobs.jsx`, `LiveTracking.jsx`)**:
+   - Passed `backendId` to `WorkerEstimateRevisionModal` so revisions submit cleanly to PostgreSQL even for `#SC-XXXX` linked jobs; added quotation status indicator pill on Step 5 worker cards.
+   - Added `quotation-pending` to `statusToStep()` in `LiveTracking.jsx`, fetched `/bookings/:id/proofs` during live polling, resolved `BEFORE_WORK`/`AFTER_WORK` proofs from both workflow & DB arrays, and fixed DB `quoteRevisions` banner fields (`totalAmount`, `notes`, `items`).
+4. **Customer `BookingHistory.jsx` & `CustomerWallet.jsx` Workflow Wiring**:
+   - Wired the previously non-functional **Cancel** button on `BookingHistory.jsx` to `PATCH /bookings/:id/cancel` and merged workflow orders + `cancelled_visiting_fee` status badge.
+   - Fixed `CustomerWallet.jsx` to use `getCustomerSession()`, merge workflow wallet transactions (visiting fee / completion settlements), and subscribe via `subscribeWorkflowUpdates()`.
+5. **Worker `WorkerDashboard.jsx` & `WorkerEarnings.jsx` Workflow Sync**:
+   - Synced category-filtered workflow pending requests, Accept/Decline actions, and `getWorkflowWorkerEarnings()` payouts across Dashboard stats and Earnings page.
+
 ## Working plan — Remove End OTP Gate & Fix Live Tracking Progression Past Confirmed (done, verified 2026-11-27)
 
 **User requirement:**

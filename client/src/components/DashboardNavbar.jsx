@@ -914,13 +914,15 @@ const DashboardNavbar = ({ panel }) => {
                           type="button"
                           className="btn btn-primary"
                           style={{ padding: '4px 12px', fontSize: '0.78rem', background: '#16a34a', border: 'none', borderRadius: '6px' }}
-                          onClick={(e) => {
+                          onClick={async (e) => {
                             e.stopPropagation();
                             const targetBId = notif.bookingId || (notif.message?.match(/SC-\d+/)?.[0]) || notif.id;
                             acceptWorkflowBooking(targetBId, sessionUser);
                             const wToken = workerSession?.token || session?.token;
                             if (wToken && wToken !== 'demo-token-worker') {
-                              respondToJobRequest(wToken, String(targetBId).replace(/^#/, ''), 'accept').catch(() => {});
+                              try {
+                                await respondToJobRequest(wToken, String(targetBId).replace(/^#/, ''), 'accept');
+                              } catch {}
                             }
                             markOneRead(notif.id, e);
                             setShowNotifDropdown(false);

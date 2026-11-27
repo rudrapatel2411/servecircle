@@ -53,7 +53,7 @@ router.get(
         ];
       } else if (role === 'admin') {
         whereClause.OR = [
-          { targetAudience: 'ADMIN' },
+          { targetAudience: 'SPECIFIC', targetUsers: { has: 'admin' } },
           { targetAudience: 'ALL' },
         ];
       } else {

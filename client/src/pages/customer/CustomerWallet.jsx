@@ -4,7 +4,7 @@ import {
   HiOutlineWallet, HiOutlineArrowUpCircle, HiOutlineArrowDownCircle,
   HiOutlinePlusCircle, HiOutlineGift, HiOutlineBanknotes, HiOutlineSparkles
 } from 'react-icons/hi2';
-import { getSession, requestApi } from '../../utils/authSession';
+import { getSession, getCustomerSession, requestApi } from '../../utils/authSession';
 import { getWorkflowWalletData, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './CustomerPages.css';

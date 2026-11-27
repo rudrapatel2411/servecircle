@@ -22,6 +22,8 @@ import {
  requestWithdrawal,
 } from './workerApi';
 import { formatDate, formatInr } from './workerHelpers';
+import { getWorkerCategory } from '../../utils/workerCategoryHelper';
+import { getWorkflowWorkerEarnings, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -49,7 +51,10 @@ const WorkerEarnings = () => {
  accountHolderName: '',
  });
 
+ const [wfEarnings, setWfEarnings] = useState(() => getWorkflowWorkerEarnings());
+
  const loadData = async () => {
+ setWfEarnings(getWorkflowWorkerEarnings());
  if (!token) return;
  setLoading(true);
  setError('');
@@ -80,6 +85,8 @@ const WorkerEarnings = () => {
 
  useEffect(() => {
  loadData();
+ const unsub = subscribeWorkflowUpdates(() => loadData());
+ return unsub;
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [token]);
 
@@ -89,8 +96,8 @@ const WorkerEarnings = () => {
  );
 
  const grossEarnings = useMemo(
- () => ledger?.grossEarnings ?? completedJobs.reduce((sum, job) => sum + (job.amount || 0), 0),
- [ledger, completedJobs]
+ () => (ledger?.grossEarnings ?? completedJobs.reduce((sum, job) => sum + (job.amount || 0), 0)) + (wfEarnings?.totalEarned || 0),
+ [ledger, completedJobs, wfEarnings]
  );
 
  const weeklyGross = useMemo(() => {
@@ -100,8 +107,8 @@ const WorkerEarnings = () => {
 
  return completedJobs
  .filter((job) => new Date(job.scheduledDate) >= weekAgo && new Date(job.scheduledDate) <= now)
- .reduce((sum, job) => sum + (job.amount || 0), 0);
- }, [completedJobs]);
+ .reduce((sum, job) => sum + (job.amount || 0), 0) + (wfEarnings?.totalEarned || 0);
+ }, [completedJobs, wfEarnings]);
 
  const receivedPayout = useMemo(
  () => ledger?.settledWithdrawals ?? completedJobs

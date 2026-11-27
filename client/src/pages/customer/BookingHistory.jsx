@@ -8,31 +8,36 @@ import { Link } from 'react-router-dom';
 import '../Dashboard.css';
 import './CustomerPages.css';
 import Pagination from '../../components/Pagination';
-import { getSession, requestApi } from '../../utils/authSession.js';
-import { getWorkflowBookings, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
+import { getSession, getCustomerSession, requestApi } from '../../utils/authSession.js';
+import { getWorkflowBookings, subscribeWorkflowUpdates, matchesBookingId } from '../../utils/serviceWorkflowEngine';
 
 const statusConfig = {
   completed: { label: 'Completed', color: 'success' },
   started: { label: 'In progress', color: 'primary' },
+  'in-progress': { label: 'In progress', color: 'primary' },
+  quotation_pending: { label: 'Quotation Pending', color: 'warning' },
   arrived: { label: 'Worker arrived', color: 'primary' },
   'en-route': { label: 'Worker en route', color: 'primary' },
   accepted: { label: 'Accepted', color: 'primary' },
   assigned: { label: 'Assigned', color: 'primary' },
   pending: { label: 'Pending', color: 'warning' },
+  rejected: { label: 'Declined', color: 'danger' },
   cancelled: { label: 'Cancelled', color: 'danger' },
+  cancelled_visiting_fee: { label: 'Cancelled (Visiting Fee)', color: 'danger' },
 };
 
 const normalizeBooking = (booking) => ({
-  id: booking.bookingId || booking._id,
-  service: booking.service,
+  id: booking.bookingId || booking._id || booking.id,
+  rawId: booking._id || booking.id,
+  service: booking.service || booking.serviceName,
   category: booking.category,
-  worker: booking.worker?.name || 'Pending assignment',
+  worker: booking.worker?.name || (typeof booking.worker === 'string' ? booking.worker : 'Pending assignment'),
   date: booking.scheduledDate ? new Date(booking.scheduledDate).toLocaleDateString('en-IN') : 'Not scheduled',
   time: booking.scheduledTime || 'Not specified',
   address: booking.address,
-  amount: booking.amount,
-  status: booking.status,
-  paymentStatus: booking.paymentStatus,
+  amount: booking.amount || booking.finalAmount || 499,
+  status: String(booking.status || 'pending').toLowerCase().replace(/_/g, '-'),
+  paymentStatus: booking.paymentStatus || 'pending',
   rating: booking.rating || null,
 });
 
@@ -45,16 +50,66 @@ const BookingHistory = () => {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cancellingId, setCancellingId] = useState('');
+
+  const loadBookings = async () => {
+    const session = getCustomerSession() || getSession();
+    const wfNormalized = getWorkflowBookings().map((wf) => normalizeBooking(wf));
+    if (!session?.token) {
+      setBookings(wfNormalized);
+      setIsLoading(false);
+      return;
+    }
+    try {
+      const data = await requestApi('/bookings/my', { token: session.token });
+      const dbList = Array.isArray(data) ? data.map(normalizeBooking) : [];
+      const merged = [...dbList];
+      wfNormalized.forEach((wf) => {
+        const exists = merged.some(
+          (db) => db.id === wf.id || matchesBookingId(wf, db.id) || (wf.rawId && db.rawId === wf.rawId)
+        );
+        if (!exists) merged.unshift(wf);
+      });
+      setBookings(merged);
+    } catch (requestError) {
+      if (wfNormalized.length > 0) setBookings(wfNormalized);
+      else setError(requestError.message || 'Unable to load bookings');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const session = getSession();
-    if (!session?.token) return;
-
-    requestApi('/bookings/my', { token: session.token })
-      .then((data) => setBookings(Array.isArray(data) ? data.map(normalizeBooking) : []))
-      .catch((requestError) => setError(requestError.message || 'Unable to load bookings'))
-      .finally(() => setIsLoading(false));
+    loadBookings();
+    const unsub = subscribeWorkflowUpdates(() => loadBookings());
+    const timer = setInterval(loadBookings, 5000);
+    return () => {
+      unsub();
+      clearInterval(timer);
+    };
   }, []);
+
+  const handleCancelBooking = async (booking) => {
+    const session = getCustomerSession() || getSession();
+    const targetId = String(booking.rawId || booking.id || '').replace(/^#/, '');
+    if (!targetId) return;
+    if (!window.confirm(`Cancel booking ${booking.id}?`)) return;
+    setCancellingId(booking.id);
+    try {
+      if (session?.token) {
+        await requestApi(`/bookings/${encodeURIComponent(targetId)}/cancel`, {
+          method: 'PATCH',
+          token: session.token,
+          body: { reason: 'Cancelled by customer from My Bookings' },
+        });
+      }
+      await loadBookings();
+    } catch (err) {
+      setError(err.message || 'Unable to cancel booking');
+    } finally {
+      setCancellingId('');
+    }
+  };
 
   const tabs = [
     { key: 'all', label: 'All' },
@@ -165,10 +220,20 @@ const BookingHistory = () => {
                       </div>
                     )}
                   </div>
-                  {['assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status) && (
+                  {['pending', 'assigned', 'accepted', 'en-route', 'arrived', 'started'].includes(booking.status) && (
                     <div className="booking-actions">
                       <Link to={`/customer/live-tracking?bookingId=${encodeURIComponent(booking.id)}&service=${encodeURIComponent(booking.service)}&worker=${encodeURIComponent(booking.worker)}&price=${booking.amount}`} className="btn btn-sm btn-outline">Track Live</Link>
-                      <button className="btn btn-sm btn-outline" style={{ color: 'var(--danger)', borderColor: 'var(--status-danger-soft)' }}>Cancel</button>
+                      {booking.status !== 'started' && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline"
+                          disabled={cancellingId === booking.id}
+                          onClick={() => handleCancelBooking(booking)}
+                          style={{ color: 'var(--danger)', borderColor: 'var(--status-danger-soft)' }}
+                        >
+                          {cancellingId === booking.id ? 'Cancelling...' : 'Cancel'}
+                        </button>
+                      )}
                     </div>
                   )}
                   {booking.status === 'completed' && !booking.rating && (

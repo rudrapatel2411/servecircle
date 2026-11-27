@@ -67,11 +67,17 @@ router.post(
     const { booking: bookingInput, worker: workerInput, service, rating, comment } = req.body;
     const customerId = req.user._id || req.user.id;
 
-    // Resolve booking
-    let bookingId = bookingInput;
-    const b = await prisma.booking.findFirst({
-      where: { OR: [{ id: bookingInput }, { bookingId: bookingInput }] },
-    });
+    // Resolve booking safely (never pass non-UUID strings to the UUID `id` column)
+    const rawBookingKey = String(bookingInput || '').replace(/^#/, '').trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawBookingKey);
+    let bookingId = rawBookingKey;
+    const b = rawBookingKey
+      ? await prisma.booking.findFirst({
+          where: isUuid
+            ? { OR: [{ id: rawBookingKey }, { bookingId: rawBookingKey }] }
+            : { bookingId: rawBookingKey },
+        })
+      : null;
     if (b) {
       bookingId = b.id;
     } else {

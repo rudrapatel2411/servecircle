@@ -11,7 +11,7 @@ import {
  HiOutlineXMark,
  HiOutlineShieldCheck,
 } from 'react-icons/hi2';
-import { getSession, requestApi } from '../../utils/authSession';
+import { getSession, getCustomerSession, requestApi } from '../../utils/authSession';
 import '../Dashboard.css';
 import './CustomerPages.css';
 
@@ -21,7 +21,7 @@ const PostServiceReview = () => {
  const navigate = useNavigate();
  const [searchParams] = useSearchParams();
 
- const session = getSession();
+ const session = getCustomerSession() || getSession();
  const token = session?.token;
  const user = session?.user;
 
@@ -52,7 +52,7 @@ const PostServiceReview = () => {
  method: 'POST',
  token,
  body: {
- booking: bookingId || 'SC-2841',
+ booking: String(bookingId || 'SC-2841').replace(/^#/, ''),
  service: serviceName,
  rating: rating || 5,
  comment: reviewText.trim() || 'Work was completed promptly and professionally.',

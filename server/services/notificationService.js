@@ -77,14 +77,15 @@ export function notifyAdmin(io, title, message, type = 'broadcast', extra = {}) 
   };
   DEMO_NOTIFICATIONS.unshift(record);
 
-  // 3. Database persistence with Prisma (targetAudience strictly ADMIN)
+  // 3. Database persistence with Prisma (scoped to SPECIFIC -> ['admin'] so enum stays valid and never leaks)
   try {
     prisma.notification.create({
       data: {
         title,
         message,
         type: mapTypeToPrisma(type),
-        targetAudience: 'ADMIN',
+        targetAudience: 'SPECIFIC',
+        targetUsers: ['admin'],
         isActive: true,
       },
     }).catch(() => {});

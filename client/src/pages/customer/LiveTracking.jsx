@@ -74,6 +74,8 @@ const statusToStep = (status) => {
     case 'in-progress':
     case 'started':
       return { step: 3, text: 'Job in progress at your premises...', eta: 0, otp: false };
+    case 'quotation-pending':
+      return { step: 3, text: 'Awaiting your review on additional spare parts quotation...', eta: 0, otp: false };
     case 'rejected':
       return { step: 0, text: 'Worker declined; checking next available pro.', eta: null, otp: false };
     case 'cancelled':
@@ -290,6 +292,12 @@ const LiveTracking = () => {
             } catch {
               // Quote revisions endpoint fallback
             }
+            try {
+              const proofRes = await requestApi(`/bookings/${match._id || match.id}/proofs`, { token });
+              if (isMounted && Array.isArray(proofRes)) {
+                setProofs(proofRes);
+              }
+            } catch {}
           }
         }
       } catch (err) {
@@ -1144,7 +1152,11 @@ const LiveTracking = () => {
             {/* Quote Revision Approval Banner */}
             {quoteRevisions
               .filter((r) => r.status === 'PENDING')
-              .map((rev) => (
+              .map((rev) => {
+                const origAmt = rev.originalAmount ?? bookingData?.basePrice ?? bookingData?.amount ?? 0;
+                const revAmt = rev.revisedAmount ?? rev.totalAmount ?? origAmt;
+                const revReason = rev.reason || rev.notes;
+                return (
                 <div
                   key={rev.id}
                   style={{
@@ -1159,12 +1171,24 @@ const LiveTracking = () => {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <strong style={{ color: 'var(--status-warning-text)', fontSize: '0.9rem' }}>Additional Work / Scope Revision Requested</strong>
                     <span style={{ fontSize: '0.75rem', background: 'var(--status-warning-tint)', color: 'var(--status-warning-text)', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
-                      ₹{rev.originalAmount} → ₹{rev.revisedAmount}
+                      ₹{origAmt} → ₹{revAmt}
                     </span>
                   </div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--status-warning-text)', margin: '0 0 8px 0' }}>
-                    <strong>Technician Note:</strong> {rev.reason}
-                  </p>
+                  {revReason && (
+                    <p style={{ fontSize: '0.8rem', color: 'var(--status-warning-text)', margin: '0 0 8px 0' }}>
+                      <strong>Technician Note:</strong> {revReason}
+                    </p>
+                  )}
+                  {Array.isArray(rev.items) && rev.items.length > 0 && (
+                    <div style={{ background: 'rgba(255,255,255,0.8)', borderRadius: '8px', padding: '8px 10px', marginBottom: '10px', fontSize: '0.78rem' }}>
+                      {rev.items.map((it, idx) => (
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
+                          <span>{it.name || 'Part'} (x{it.quantity || 1})</span>
+                          <strong>₹{it.amount || it.unitPrice || 0}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button
                       className="btn btn-primary"
@@ -1172,7 +1196,7 @@ const LiveTracking = () => {
                       disabled={revisionActionLoading}
                       onClick={() => handleDecideRevision(rev.id, 'APPROVED')}
                     >
-                      Approve (₹{rev.revisedAmount})
+                      Approve (₹{revAmt})
                     </button>
                     <button
                       className="btn btn-outline"
@@ -1180,11 +1204,11 @@ const LiveTracking = () => {
                       disabled={revisionActionLoading}
                       onClick={() => handleDecideRevision(rev.id, 'REJECTED')}
                     >
-                      Reject
+                      Decline (Visiting Fee ₹{PLATFORM_VISITING_FEE})
                     </button>
                   </div>
                 </div>
-              ))}
+              );})}
 
             {/* Start OTP handover protocol & Acceptance gate */}
             <AnimatePresence>
@@ -1266,7 +1290,19 @@ const LiveTracking = () => {
             </AnimatePresence>
 
             {/* Before & After Photo Evidence (Shows ONLY real uploaded proof photos) */}
-            {(bookingData?.beforePhoto || bookingData?.afterPhoto || (proofs && proofs.length > 0)) && (
+            {(() => {
+              const resolvedBeforePhoto =
+                bookingData?.beforePhoto ||
+                bookingData?.proofs?.before ||
+                proofs?.find((p) => String(p.type || '').toUpperCase() === 'BEFORE_WORK')?.imageUrl ||
+                null;
+              const resolvedAfterPhoto =
+                bookingData?.afterPhoto ||
+                bookingData?.proofs?.after ||
+                proofs?.find((p) => String(p.type || '').toUpperCase() === 'AFTER_WORK')?.imageUrl ||
+                null;
+              if (!resolvedBeforePhoto && !resolvedAfterPhoto) return null;
+              return (
               <div style={{ marginTop: '16px', padding: '16px', background: 'var(--bg-page)', borderRadius: '12px', border: '1px solid var(--glass-edge)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <strong style={{ fontSize: '0.85rem', color: 'var(--ink)' }}>Verified Proof of Work (Audit Photos)</strong>
@@ -1277,39 +1313,40 @@ const LiveTracking = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
                     <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {bookingData?.beforePhoto ? (
-                        <img src={bookingData.beforePhoto} alt="Before work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      {resolvedBeforePhoto ? (
+                        <img src={resolvedBeforePhoto} alt="Before work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', textAlign: 'center', padding: '8px' }}>Pending specialist photo</span>
                       )}
                     </div>
                     <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>Before Work</span>
-                      <span style={{ color: bookingData?.beforePhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{bookingData?.beforePhoto ? 'Uploaded ✓' : 'Pending'}</span>
+                      <span style={{ color: resolvedBeforePhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{resolvedBeforePhoto ? 'Uploaded ✓' : 'Pending'}</span>
                     </div>
                   </div>
                   <div style={{ border: '1px solid var(--glass-edge)', borderRadius: '8px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.5)' }}>
                     <div style={{ height: '90px', background: 'var(--glass-edge)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {bookingData?.afterPhoto ? (
-                        <img src={bookingData.afterPhoto} alt="After work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      {resolvedAfterPhoto ? (
+                        <img src={resolvedAfterPhoto} alt="After work" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <span style={{ fontSize: '0.72rem', color: 'var(--ink-3)', textAlign: 'center', padding: '8px' }}>Captured on completion</span>
                       )}
                     </div>
                     <div style={{ padding: '6px 8px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>After Work</span>
-                      <span style={{ color: bookingData?.afterPhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{bookingData?.afterPhoto ? 'Completed ✓' : 'Pending'}</span>
+                      <span style={{ color: resolvedAfterPhoto ? 'var(--status-success-text)' : 'var(--ink-3)' }}>{resolvedAfterPhoto ? 'Completed ✓' : 'Pending'}</span>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+              );
+            })()}
 
             <AnimatePresence>
               {activeStep === 4 && (
                 <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: '16px', textAlign: 'center' }}>
                   <Link
-                    to={`/customer/review/${bookingId}?service=${encodeURIComponent(serviceName)}&worker=${encodeURIComponent(workerName)}`}
+                    to={`/customer/review/${encodeURIComponent(String(bookingId || bookingData?.bookingId || '').replace(/^#/, ''))}?service=${encodeURIComponent(serviceName)}&worker=${encodeURIComponent(workerName)}&price=${encodeURIComponent(bookingData?.amount || price)}`}
                     className="btn btn-primary"
                     style={{ width: '100%', padding: '12px', fontSize: '1rem', fontWeight: 800 }}
                   >

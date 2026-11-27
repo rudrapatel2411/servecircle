@@ -26,8 +26,15 @@ import WorkerDutySwitch from '../../components/WorkerDutySwitch';
 import { useWorkerAuth } from './useWorkerAuth';
 import { fetchWorkerJobs, respondToJobRequest } from './workerApi';
 import { formatInr, isSameDay } from './workerHelpers';
-import { getWorkerCategory } from '../../utils/workerCategoryHelper';
-import { getWorkflowBookings, subscribeWorkflowUpdates } from '../../utils/serviceWorkflowEngine';
+import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
+import {
+  getWorkflowBookings,
+  getWorkflowWorkerEarnings,
+  acceptWorkflowBooking,
+  declineWorkflowBooking,
+  matchesBookingId,
+  subscribeWorkflowUpdates,
+} from '../../utils/serviceWorkflowEngine';
 import '../Dashboard.css';
 import './WorkerPages.css';
 
@@ -110,15 +117,45 @@ const WorkerDashboard = () => {
  const [actionLoading, setActionLoading] = useState('');
  const [showIdCardModal, setShowIdCardModal] = useState(false);
 
+ const [wfEarnings, setWfEarnings] = useState(() => getWorkflowWorkerEarnings());
+
  const loadJobs = async () => {
- if (!token) return;
+ const currentWorkerCat = getWorkerCategory(user);
+ const myWorkerId = String(user?.id || user?._id || '');
+ const wfAll = getWorkflowBookings()
+ .filter((wf) => {
+   if (myWorkerId && wf.declinedWorkers?.includes(myWorkerId) && (wf.status === 'pending' || wf.status === 'assigned')) return false;
+   return doesServiceMatchWorker(currentWorkerCat, wf.category, wf.service);
+ })
+ .map((wf) => ({
+   ...wf,
+   _id: wf.id,
+   scheduledDate: wf.date || wf.scheduledDate || new Date().toISOString(),
+   scheduledTime: wf.timeSlot || wf.scheduledTime || '10:00 AM',
+   workerEarnings: Math.round((wf.totalAmount || wf.amount || wf.basePrice || 499) * 0.9),
+   isWorkflow: true,
+ }));
+ setWfEarnings(getWorkflowWorkerEarnings());
+ if (!token) {
+   setJobs(wfAll);
+   return;
+ }
  setLoading(true);
  setError('');
  try {
  const data = await fetchWorkerJobs(token);
- setJobs(data);
+ const dbList = Array.isArray(data) ? data : [];
+ const merged = [...dbList];
+ wfAll.forEach((wf) => {
+   const exists = merged.some(
+     (m) => m._id === wf._id || (wf.backendId && m._id === wf.backendId) || (m.bookingId && matchesBookingId(wf, m.bookingId))
+   );
+   if (!exists) merged.unshift(wf);
+ });
+ setJobs(merged);
  } catch (err) {
- setError(err.message || 'Could not load jobs');
+ if (wfAll.length > 0) setJobs(wfAll);
+ else setError(err.message || 'Could not load jobs');
  } finally {
  setLoading(false);
  }
@@ -126,10 +163,12 @@ const WorkerDashboard = () => {
 
  useEffect(() => {
  loadJobs();
+ const unsub = subscribeWorkflowUpdates(() => loadJobs());
+ return unsub;
  // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [token]);
+ }, [token, user]);
 
- const pendingJobs = useMemo(() => jobs.filter((job) => job.status === 'pending'), [jobs]);
+ const pendingJobs = useMemo(() => jobs.filter((job) => job.status === 'pending' || job.status === 'assigned'), [jobs]);
  const todayJobs = useMemo(
  () => jobs.filter((job) => job.status !== 'completed' && job.status !== 'cancelled' && isSameDay(job.scheduledDate)),
  [jobs]
@@ -142,24 +181,43 @@ const WorkerDashboard = () => {
  const weekAgo = new Date();
  weekAgo.setDate(now.getDate() - 7);
 
- return completedJobs
+ const dbWeekly = completedJobs
  .filter((job) => new Date(job.scheduledDate) >= weekAgo && new Date(job.scheduledDate) <= now)
  .reduce((sum, job) => sum + (job.amount || 0), 0);
- }, [completedJobs]);
+ return dbWeekly + (wfEarnings?.totalEarned || 0);
+ }, [completedJobs, wfEarnings]);
 
  const stats = [
  { icon: <HiOutlineBriefcase />, value: String(todayJobs.length), label: t('worker.todayJobs', 'Today\'s Jobs'), color: '#3b82f6', bg: '#dbeafe' },
  { icon: <HiOutlineBanknotes />, value: formatInr(weeklyEarnings), label: t('worker.weeklyEarnings', 'Weekly Earnings'), color: '#3b7dc1', bg: '#e1ebf5' },
  { icon: <HiOutlineClipboardDocumentCheck />, value: String(pendingJobs.length), label: t('worker.pendingRequests', 'Pending Requests'), color: '#f59e0b', bg: '#fef3c7' },
- { icon: <HiOutlineTrophy />, value: `${completedJobs.length}/50`, label: t('worker.proBadge', 'Pro Badge'), color: '#8b5cf6', bg: '#ede9fe' },
+ { icon: <HiOutlineTrophy />, value: `${completedJobs.length + (wfEarnings?.completedCount || 0)}/50`, label: t('worker.proBadge', 'Pro Badge'), color: '#8b5cf6', bg: '#ede9fe' },
  ];
 
  const handleRespond = async (bookingId, action) => {
- if (!token) return;
+ const currentJob = jobs.find((j) => j._id === bookingId || j.id === bookingId);
+ const apiId = String(currentJob?.backendId || bookingId || '').replace(/^#/, '');
+ const isWf = Boolean(currentJob?.isWorkflow) || String(bookingId).includes('SC-');
  setActionLoading(`${bookingId}-${action}`);
  setError('');
  try {
- await respondToJobRequest(token, bookingId, action);
+ if (isWf) {
+   if (action === 'accept') {
+     acceptWorkflowBooking(currentJob?.id || bookingId, {
+       id: user?.id || 'worker-tech-01',
+       name: user?.name || 'Verified Specialist',
+       phone: user?.phone || '+91 98250 12345',
+       rating: 4.9,
+     });
+   } else {
+     declineWorkflowBooking(currentJob?.id || bookingId, user?.id || user?._id || 'worker-tech-01');
+   }
+ }
+ if (token && apiId) {
+   await respondToJobRequest(token, apiId, action).catch((err) => {
+     if (!isWf) throw err;
+   });
+ }
  await loadJobs();
  } catch (err) {
  setError(err.message || 'Action failed');

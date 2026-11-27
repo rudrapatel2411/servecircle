@@ -403,6 +403,11 @@ const WorkerJobs = () => {
           backendId: m._id,
           bookingId: m.bookingId || linkedWf.id,
           startOtp: linkedWf.startOtp || m.startOtp,
+          quotation: linkedWf.quotation || m.quotation,
+          beforePhoto: linkedWf.beforePhoto || m.beforePhoto,
+          afterPhoto: linkedWf.afterPhoto || m.afterPhoto,
+          hasBeforeProof: Boolean(m.hasBeforeProof || linkedWf.hasBeforeProof || linkedWf.beforePhoto),
+          hasAfterProof: Boolean(m.hasAfterProof || linkedWf.hasAfterProof || linkedWf.afterPhoto),
           within15Km: true,
           distanceKm: linkedWf.distanceKm,
           isWorkflow: true,
@@ -1210,6 +1215,20 @@ const WorkerJobs = () => {
  <span>Job is in progress. Upload work proof photos, revise estimate if extra parts are needed, and click <strong>Complete Service</strong> once finished.</span>
  </div>
 
+ {job.quotation && (
+ <div style={{
+   background: job.quotation.status === 'APPROVED' ? '#f0fdf4' : job.quotation.status === 'REJECTED' ? '#fef2f2' : '#fefce8',
+   border: `1px solid ${job.quotation.status === 'APPROVED' ? '#bbf7d0' : job.quotation.status === 'REJECTED' ? '#fecaca' : '#fde047'}`,
+   borderRadius: '8px', padding: '8px 12px', marginBottom: '10px', fontSize: '0.78rem',
+   color: job.quotation.status === 'APPROVED' ? '#166534' : job.quotation.status === 'REJECTED' ? '#991b1b' : '#854d0e',
+   fontWeight: 700,
+ }}>
+   {job.quotation.status === 'PENDING' && `⏳ Quotation Sent (+₹${job.quotation.totalAmount}) — Waiting for customer decision`}
+   {job.quotation.status === 'APPROVED' && `✓ Quotation Approved (+₹${job.quotation.totalAmount})`}
+   {job.quotation.status === 'REJECTED' && `✗ Quotation Declined by Customer`}
+ </div>
+ )}
+
  <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
  {!job.hasBeforeProof && (
  <button
@@ -1462,6 +1481,7 @@ const WorkerJobs = () => {
  onClose={() => setActiveRevisionJob(null)}
  token={token}
  bookingId={activeRevisionJob?._id || activeRevisionJob?.id}
+ backendId={activeRevisionJob?.backendId}
  originalAmount={activeRevisionJob?.amount}
  onSuccess={() => loadJobs(activeTab)}
  />

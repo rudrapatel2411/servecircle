@@ -8,6 +8,7 @@ export default function WorkerEstimateRevisionModal({
   onClose,
   token,
   bookingId,
+  backendId,
   originalAmount = 0,
   onSuccess,
 }) {
@@ -63,8 +64,9 @@ export default function WorkerEstimateRevisionModal({
         console.warn("Workflow quote sync notice:", e);
       }
       try {
-        if (token && !String(bookingId).startsWith('#SC')) {
-          const res = await submitQuoteRevision(token, bookingId, {
+        const apiTargetId = String(backendId || bookingId || '').replace(/^#/, '');
+        if (token && apiTargetId) {
+          const res = await submitQuoteRevision(token, apiTargetId, {
             items: validItems,
             totalAmount: totalRevisedAmount,
             notes,
