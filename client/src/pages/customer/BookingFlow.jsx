@@ -8,7 +8,7 @@ import {
  HiOutlineCreditCard, HiOutlineWallet, HiOutlineBanknotes, HiOutlineDevicePhoneMobile, HiCheckCircle, HiOutlineShieldCheck
 } from 'react-icons/hi2';
 import { mockWorkersForService } from './WorkerComparison';
-import { getSession, requestApi } from '../../utils/authSession.js';
+import { getSession, getCustomerSession, requestApi } from '../../utils/authSession.js';
 import { servicesRegistry } from '../../data/servicesRegistry';
 import { socket } from '../../socket';
 import { broadcastNotificationToTabs } from '../../utils/notificationSync';
@@ -504,7 +504,7 @@ const BookingFlow = () => {
 
  const handleBook = async (confirmedMethod) => {
   const finalMethod = confirmedMethod || paymentMethod || 'Cash';
-  const session = getSession();
+  const session = getCustomerSession() || getSession();
   if (!session?.token) {
    navigate('/login', { replace: true, state: { from: '/customer/book' } });
    return;
@@ -515,26 +515,12 @@ const BookingFlow = () => {
    const finalCategory = CATEGORY_DISPLAY_MAP[formData.category?.toLowerCase()] || formData.category || 'Home Repairs';
    const cleanAddress = formData.address ? `${formData.address}, ${formData.city || 'Ahmedabad'}` : 'Satellite, Ahmedabad';
    const finalServiceAmount = Math.max(0, totalAmount ?? subtotal ?? 499);
+   const generatedStartOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
-   // Create booking in the Centralized Reactive Workflow Engine with Start OTP & 15km area broadcast
-   const workflowBooking = createWorkflowBooking({
-    serviceName: formData.service || 'Home Service',
-    category: finalCategory,
-    amount: finalServiceAmount,
-    address: cleanAddress,
-    scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
-    scheduledTime: formData.time || '10:00 AM - 12:00 PM',
-    customerName: session?.user?.name || 'Customer',
-    customerPhone: session?.user?.phone || '9876543210',
-    notes: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
-    paymentMethod: finalMethod,
-   });
-
-   const resolvedId = workflowBooking.id;
-
-   // Also attempt backend creation if available
+   // Attempt authoritative backend creation first so DB and workflow share one unified Booking ID + OTP
+   let apiBooking = null;
    try {
-    await requestApi('/bookings', {
+    apiBooking = await requestApi('/bookings', {
      method: 'POST',
      token: session.token,
      body: {
@@ -550,11 +536,31 @@ const BookingFlow = () => {
       paymentMethod: finalMethod,
       isEmergency: isExpressMode,
       requirements,
+      startOtp: generatedStartOtp,
      },
     });
    } catch (backendErr) {
     console.warn('Backend booking sync note (workflow engine active):', backendErr.message);
    }
+
+   // Create linked booking in the Centralized Reactive Workflow Engine with Start OTP & 15km area broadcast
+   const workflowBooking = createWorkflowBooking({
+    id: apiBooking?.bookingId || '',
+    backendId: apiBooking?._id || apiBooking?.id || '',
+    startOtp: apiBooking?.startOtp || generatedStartOtp,
+    serviceName: formData.service || 'Home Service',
+    category: finalCategory,
+    amount: finalServiceAmount,
+    address: cleanAddress,
+    scheduledDate: formData.date === 'Today' ? new Date().toISOString() : formData.date,
+    scheduledTime: formData.time || '10:00 AM - 12:00 PM',
+    customerName: session?.user?.name || 'Customer',
+    customerPhone: session?.user?.phone || '9876543210',
+    notes: [formData.landmark, specialInstructions].filter(Boolean).join(' | '),
+    paymentMethod: finalMethod,
+   });
+
+   const resolvedId = workflowBooking.id;
 
    showToast('Booking placed! Broadcasting to nearby specialists within 15 km...');
    navigate(`/customer/live-tracking?bookingId=${encodeURIComponent(resolvedId)}&service=${encodeURIComponent(formData.service || 'Service')}&price=${finalServiceAmount}&startOtp=${workflowBooking.startOtp}`);

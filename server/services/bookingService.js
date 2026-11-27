@@ -285,6 +285,13 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
             workerEarnings: finalEarnings,
             pricingBreakdown,
             status: 'PENDING',
+            ...(/^\d{4}$/.test(String(data.startOtp || '').trim())
+              ? {
+                  startOtp: String(data.startOtp).trim(),
+                  startOtpExpiresAt: new Date(Date.now() + 60 * 60 * 1000),
+                  startOtpVerified: false,
+                }
+              : {}),
           },
           include: {
             customer: { select: { id: true, name: true, email: true, phone: true } },
@@ -337,6 +344,9 @@ export async function createBooking(data, customerId, io, customerName, reqCtx =
     }
 
     const formatted = formatPrismaBooking(created);
+    if (created.startOtp) {
+      formatted.startOtp = created.startOtp;
+    }
 
     // In ServeCircle workflow, new bookings enter the open 15km broadcast pool for nearby specialists to claim.
     // They are NOT auto-assigned synchronously; workers review and accept from their panel.
@@ -442,7 +452,12 @@ export async function getCustomerBookings(customerId, status) {
       },
       orderBy: { createdAt: 'desc' },
     });
-    return bookings.map(formatPrismaBooking);
+    return bookings.map((b) => {
+      const formatted = formatPrismaBooking(b);
+      if (b.startOtp && !b.startOtpVerified) formatted.startOtp = b.startOtp;
+      if (b.endOtp && !b.endOtpVerified) formatted.endOtp = b.endOtp;
+      return formatted;
+    });
   } catch (prismaErr) {
     return getDemoBookingsForCustomer(customerId, status);
   }
@@ -709,6 +724,30 @@ export async function assignBooking(bookingId, workerId, io, reqCtx = {}) {
   return updated;
 }
 
+async function ensureStartOtp(bookingId) {
+  try {
+    const row = await prisma.booking.findFirst({
+      where: bookingLookupWhere(bookingId),
+      select: { id: true, startOtp: true, startOtpExpiresAt: true, startOtpVerified: true },
+    });
+    if (
+      row &&
+      row.startOtp &&
+      !row.startOtpVerified &&
+      (!row.startOtpExpiresAt || new Date() < new Date(row.startOtpExpiresAt))
+    ) {
+      return row.startOtp;
+    }
+  } catch {}
+  try {
+    const { code } = await generateStartOtp(bookingId);
+    return code;
+  } catch (e) {
+    console.warn(`[ensureStartOtp] Start OTP generation notice for ${bookingId}: ${e.message}`);
+    return null;
+  }
+}
+
 export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
   const booking = await findAnyBooking(bookingId);
   if (!booking) throw new AppError('Booking not found', StatusCodes.NOT_FOUND);
@@ -721,9 +760,15 @@ export async function acceptBooking(bookingId, workerId, io, reqCtx = {}) {
   const prevStatus = booking.status;
   const responseTimeMs = booking.assignedAt ? Date.now() - new Date(booking.assignedAt).getTime() : null;
   const updated = await applyTransition(bookingId, prevStatus, 'accepted', { worker: String(workerId) });
+  const startOtpCode = await ensureStartOtp(bookingId);
 
-  notifyCustomer(io, booking.customer?._id || booking.customer, 'Booking Accepted', `Worker accepted your booking ${updated.bookingId}.`);
-  emitBookingStatus(io, updated, prevStatus);
+  notifyCustomer(
+    io,
+    booking.customer?._id || booking.customer,
+    'Booking Accepted',
+    `Worker accepted your booking ${updated.bookingId}.${startOtpCode ? ` Start OTP: ${startOtpCode}` : ''}`
+  );
+  emitBookingStatus(io, updated, prevStatus, startOtpCode ? { startOtp: startOtpCode } : {});
   logBookingEvent(EVENT_TYPES.BOOKING_ACCEPTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerAcceptance(workerId, responseTimeMs);
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'accepted' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_ACCEPTED });
@@ -767,9 +812,15 @@ export async function setEnRoute(bookingId, workerId, io, reqCtx = {}) {
 
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'en-route');
+  const startOtpCode = await ensureStartOtp(bookingId);
 
-  notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker En Route', `Your worker is on the way for booking ${updated.bookingId}.`);
-  emitBookingStatus(io, updated, prevStatus);
+  notifyCustomer(
+    io,
+    booking.customer?._id || booking.customer,
+    'Worker En Route',
+    `Your specialist is on the way for booking ${updated.bookingId}!${startOtpCode ? ` Share Start OTP (${startOtpCode}) when they arrive.` : ''}`
+  );
+  emitBookingStatus(io, updated, prevStatus, startOtpCode ? { startOtp: startOtpCode } : {});
   logBookingEvent(EVENT_TYPES.BOOKING_EN_ROUTE, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'en-route' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_EN_ROUTE });
 
@@ -788,16 +839,15 @@ export async function setArrived(bookingId, workerId, io, reqCtx = {}) {
   const prevStatus = booking.status;
   const arrivalTimeMs = booking.acceptedAt ? Date.now() - new Date(booking.acceptedAt).getTime() : null;
   const updated = await applyTransition(bookingId, prevStatus, 'arrived');
-  try {
-    await generateStartOtp(bookingId);
-  } catch (e) {
-    // Arrival is committed; the customer can regenerate a Start OTP from the
-    // tracking page, so surface the failure instead of hiding it.
-    console.warn(`[setArrived] Start OTP generation failed for ${bookingId}: ${e.message}`);
-  }
+  const startOtpCode = await ensureStartOtp(bookingId);
 
-  notifyCustomer(io, booking.customer?._id || booking.customer, 'Worker Arrived', `Your worker has arrived for booking ${updated.bookingId}. Your Start OTP has been generated.`);
-  emitBookingStatus(io, updated, prevStatus);
+  notifyCustomer(
+    io,
+    booking.customer?._id || booking.customer,
+    'Worker Arrived',
+    `Your worker has arrived for booking ${updated.bookingId}.${startOtpCode ? ` Share Start OTP: ${startOtpCode} to begin.` : ' Your Start OTP is ready.'}`
+  );
+  emitBookingStatus(io, updated, prevStatus, startOtpCode ? { startOtp: startOtpCode } : {});
   logBookingEvent(EVENT_TYPES.BOOKING_ARRIVED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   recordWorkerArrival(workerId, arrivalTimeMs);
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'arrived' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_ARRIVED });
@@ -824,13 +874,8 @@ export async function startBooking(bookingId, workerId, io, reqCtx = {}) {
 
   const prevStatus = booking.status;
   const updated = await applyTransition(bookingId, prevStatus, 'started', { jobStartedAt: new Date() });
-  try {
-    await generateEndOtp(bookingId);
-  } catch (e) {
-    console.warn(`[startBooking] End OTP generation failed for ${bookingId}: ${e.message}`);
-  }
 
-  notifyCustomer(io, booking.customer?._id || booking.customer, 'Job Started', `Your job has started for booking ${updated.bookingId}. Your End OTP has been generated.`);
+  notifyCustomer(io, booking.customer?._id || booking.customer, 'Job Started', `Your job has started for booking ${updated.bookingId}.`);
   emitBookingStatus(io, updated, prevStatus);
   logBookingEvent(EVENT_TYPES.BOOKING_STARTED, updated, { _id: workerId, role: 'worker' }, reqCtx, { previousState: prevStatus });
   captureSnapshot({ collection: 'bookings', documentId: bookingId, before: { status: prevStatus }, after: { status: 'started' }, changedBy: workerId, changeReason: EVENT_TYPES.BOOKING_STARTED });
@@ -850,14 +895,6 @@ export async function completeBooking(bookingId, workerId, io, reqCtx = {}) {
   const prevStatus = booking.status;
   const completionTimeMs = booking.startedAt ? Date.now() - new Date(booking.startedAt).getTime() : null;
   const now = new Date();
-
-  // End OTP is mandatory: the customer's handover code authorises completion.
-  if (!booking.endOtpVerified) {
-    throw new AppError(
-      'The customer End OTP must be verified before this job can be completed.',
-      StatusCodes.UNPROCESSABLE_ENTITY
-    );
-  }
 
   const updated = await applyTransition(bookingId, prevStatus, 'completed', { jobCompletedAt: now });
 

@@ -47,6 +47,7 @@ import {
 import { getWorkerCategory, doesServiceMatchWorker } from '../../utils/workerCategoryHelper';
 import {
   getWorkflowBookings,
+  matchesBookingId,
   acceptWorkflowBooking,
   declineWorkflowBooking,
   setWorkflowEnRoute,
@@ -220,6 +221,13 @@ const WorkerJobs = () => {
         } else {
           uploadWorkflowAfterPhoto(cleanId, previewUrl, notes);
         }
+        const currentJob = jobs.find((j) => j._id === jobId || j.id === jobId);
+        const backendTargetId = (currentJob?.backendId || apiId).replace(/^#/, '');
+        if (token && backendTargetId) {
+          try {
+            await uploadBookingProof(token, backendTargetId, { type, imageUrl: previewUrl, notes });
+          } catch {}
+        }
         showToast(`📸 ${type === 'BEFORE_WORK' ? 'Pre-Service' : 'After-Work'} proof photo saved!`);
         setProofModal({ open: false, jobId: null, type: 'BEFORE_WORK', previewUrl: '', notes: '' });
         await loadJobs(activeTab);
@@ -336,6 +344,8 @@ const WorkerJobs = () => {
         .map((wf) => ({
           _id: wf.id,
           id: wf.id,
+          backendId: wf.backendId || null,
+          bookingId: wf.bookingId || wf.id,
           service: wf.service,
           category: wf.category || currentWorkerCat,
           scheduledDate: wf.date || wf.scheduledDate || new Date().toISOString(),
@@ -377,15 +387,41 @@ const WorkerJobs = () => {
     setError('');
     try {
       const data = await fetchWorkerJobs(token, status);
-      const merged = Array.isArray(data) ? data.filter(belongsToWorkerCategory) : [];
+      const dbJobs = Array.isArray(data) ? data.filter(belongsToWorkerCategory) : [];
+
+      // Merge linked workflow metadata cleanly onto DB records without duplicating cards
+      const merged = dbJobs.map((m) => {
+        const linkedWf = workflowJobs.find(
+          (w) =>
+            (w.backendId && m._id === w.backendId) ||
+            (m.bookingId && matchesBookingId(w, m.bookingId)) ||
+            matchesBookingId(w, m._id)
+        );
+        if (!linkedWf) return m;
+        return {
+          ...m,
+          backendId: m._id,
+          bookingId: m.bookingId || linkedWf.id,
+          startOtp: linkedWf.startOtp || m.startOtp,
+          within15Km: true,
+          distanceKm: linkedWf.distanceKm,
+          isWorkflow: true,
+          workflowId: linkedWf.id,
+        };
+      });
+
       [...workflowJobs, ...b2bJobs, ...scopedDemoJobs].forEach((bj) => {
-        if (!merged.some((m) => m._id === bj._id || m.bookingId === bj.id || m.bookingId === bj._id)) {
-          if (matchesStatus(bj.status, status)) {
-            if (bj.isWorkflow) {
-              merged.unshift(bj);
-            } else {
-              merged.push(bj);
-            }
+        const alreadyInMerged = merged.some(
+          (m) =>
+            m._id === bj._id ||
+            (bj.backendId && m._id === bj.backendId) ||
+            (m.bookingId && (m.bookingId === bj.id || matchesBookingId(bj, m.bookingId)))
+        );
+        if (!alreadyInMerged && matchesStatus(bj.status, status)) {
+          if (bj.isWorkflow) {
+            merged.unshift(bj);
+          } else {
+            merged.push(bj);
           }
         }
       });
@@ -408,30 +444,40 @@ const WorkerJobs = () => {
   }, [token, activeTab, user]);
  const handleRespond = async (bookingId, action) => {
     const cleanId = String(bookingId || '').trim();
+    const currentJob = jobs.find((j) => j._id === cleanId || j.id === cleanId);
     const wfList = getWorkflowBookings();
+    const matchedWf = wfList.find(
+      (b) =>
+        matchesBookingId(b, cleanId) ||
+        (currentJob?.bookingId && matchesBookingId(b, currentJob.bookingId)) ||
+        (currentJob?.workflowId && matchesBookingId(b, currentJob.workflowId))
+    );
     const isWf =
-      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
-      jobs.find((j) => j._id === cleanId || j.id === cleanId)?.isWorkflow ||
+      Boolean(matchedWf) ||
+      Boolean(currentJob?.isWorkflow) ||
       cleanId.startsWith('wb-') ||
       cleanId.includes('SC-');
 
+    const wfTargetId = matchedWf?.id || currentJob?.workflowId || cleanId;
+    const apiTargetId = (currentJob?.backendId || currentJob?._id || cleanId).replace(/^#/, '');
+
     if (isWf) {
       if (action === 'accept') {
-        acceptWorkflowBooking(cleanId, {
+        acceptWorkflowBooking(wfTargetId, {
           id: user?.id || 'worker-tech-01',
           name: user?.name || 'Aarav Sharma (Certified Specialist)',
           phone: user?.phone || '+91 98250 12345',
           rating: 4.9,
           jobsCompleted: 342,
         });
-        showToast('✓ Job accepted! Customer notified. Route navigation activated.');
+        showToast('✓ Job accepted! Customer notified. Click "Ready to Go" when leaving.');
       } else {
-        declineWorkflowBooking(cleanId, user?.id || user?._id || 'worker-tech-01');
+        declineWorkflowBooking(wfTargetId, user?.id || user?._id || 'worker-tech-01');
         showToast('Job request declined.');
       }
       if (token) {
         try {
-          await respondToJobRequest(token, cleanId.replace('#', ''), action);
+          await respondToJobRequest(token, apiTargetId, action);
         } catch {}
       }
       await loadJobs(activeTab);
@@ -469,27 +515,35 @@ const WorkerJobs = () => {
 
   const handleStatus = async (bookingId, nextStatus) => {
     const cleanId = String(bookingId || '').trim();
-    const apiId = cleanId.replace(/^#/, '');
     const currentJob = jobs.find((j) => j._id === cleanId || j.id === cleanId);
     const wfList = getWorkflowBookings();
+    const matchedWf = wfList.find(
+      (b) =>
+        matchesBookingId(b, cleanId) ||
+        (currentJob?.bookingId && matchesBookingId(b, currentJob.bookingId)) ||
+        (currentJob?.workflowId && matchesBookingId(b, currentJob.workflowId))
+    );
     const isWf =
-      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
-      currentJob?.isWorkflow ||
+      Boolean(matchedWf) ||
+      Boolean(currentJob?.isWorkflow) ||
       cleanId.startsWith('wb-') ||
       cleanId.includes('SC-');
 
+    const wfTargetId = matchedWf?.id || currentJob?.workflowId || cleanId;
+    const apiId = (currentJob?.backendId || cleanId).replace(/^#/, '');
+
     if (isWf) {
       if (nextStatus === 'en-route') {
-        setWorkflowEnRoute(cleanId);
-        showToast('🚀 En-route to customer location. Live GPS active.');
+        setWorkflowEnRoute(wfTargetId);
+        showToast('🚀 Journey Started! Customer map live & Start OTP unlocked on customer panel.');
       } else if (nextStatus === 'arrived') {
-        setWorkflowArrived(cleanId);
-        showToast('📍 Arrived at doorstep! Please collect Start OTP from customer.');
+        setWorkflowArrived(wfTargetId);
+        showToast('📍 Marked Arrived! Enter Customer Start OTP below to begin service.');
       } else if (nextStatus === 'started' || nextStatus === 'in-progress') {
-        startWorkflowService(cleanId);
+        startWorkflowService(wfTargetId);
         showToast('▶️ Service Started! Work is in progress.');
       } else if (nextStatus === 'completed') {
-        completeAndPayWorkflowBooking(cleanId);
+        completeAndPayWorkflowBooking(wfTargetId);
         showToast('✓ Job completed! Earnings credited to your dashboard.');
       }
     }
@@ -502,6 +556,12 @@ const WorkerJobs = () => {
     setError('');
     try {
       await updateWorkerJobStatus(token, apiId, nextStatus);
+      window.dispatchEvent(new CustomEvent('servecircle:job-status-updated', { detail: { bookingId: apiId, status: nextStatus } }));
+      if (!isWf) {
+        if (nextStatus === 'en-route') showToast('🚀 Journey Started! Customer live map & Start OTP active.');
+        else if (nextStatus === 'arrived') showToast('📍 Marked Arrived! Enter Customer Start OTP below.');
+        else if (nextStatus === 'completed') showToast('✓ Job completed!');
+      }
       await loadJobs(activeTab);
     } catch (err) {
       if (!isWf) {
@@ -530,28 +590,44 @@ const WorkerJobs = () => {
     setError('');
 
     const cleanId = String(jobId || '').trim();
-    const apiId = cleanId.replace(/^#/, '');
     const currentJob = jobs.find((j) => j._id === jobId || j.id === jobId);
     const wfList = getWorkflowBookings();
+    const matchedWf = wfList.find(
+      (b) =>
+        matchesBookingId(b, cleanId) ||
+        (currentJob?.bookingId && matchesBookingId(b, currentJob.bookingId)) ||
+        (currentJob?.workflowId && matchesBookingId(b, currentJob.workflowId))
+    );
     const isWf =
-      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
-      currentJob?.isWorkflow ||
+      Boolean(matchedWf) ||
+      Boolean(currentJob?.isWorkflow) ||
       cleanId.startsWith('wb-') ||
       cleanId.includes('SC-');
 
-    if (isWf) {
-      const res = verifyWorkflowStartOtp(cleanId, entered);
+    const wfTargetId = matchedWf?.id || currentJob?.workflowId || cleanId;
+    const apiId = (currentJob?.backendId || cleanId).replace(/^#/, '');
+
+    if (isWf && matchedWf) {
+      const res = verifyWorkflowStartOtp(wfTargetId, entered);
       if (!res.success) {
+        if (token && (currentJob?.backendId || matchedWf?.backendId || cleanId)) {
+          try {
+            await verifyWorkerOtp(token, apiId, 'start', entered);
+            startWorkflowService(wfTargetId);
+            showToast('✓ Start OTP Verified! Service Started.');
+            setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
+            await loadJobs(activeTab);
+            setActionLoading('');
+            return;
+          } catch (dbErr) {
+            setOtpError((prev) => ({ ...prev, [jobId]: dbErr.message || res.message || 'Incorrect Start OTP. Please ask the customer.' }));
+            setActionLoading('');
+            return;
+          }
+        }
         setOtpError((prev) => ({ ...prev, [jobId]: res.message || 'Incorrect Start OTP. Please ask the customer.' }));
         setActionLoading('');
         return;
-      }
-
-      if (currentJob?.hasBeforeProof) {
-        startWorkflowService(cleanId);
-        showToast('✓ Start OTP Verified & Service Started!');
-      } else {
-        showToast('✓ Doorstep Start OTP Verified! Please capture initial inspection photo.');
       }
 
       if (token) {
@@ -561,6 +637,8 @@ const WorkerJobs = () => {
           console.log('[WorkerJobs] Synced start OTP with backend or fallback:', e.message);
         }
       }
+      startWorkflowService(wfTargetId);
+      showToast('✓ Start OTP Verified! Service Started.');
       setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
       await loadJobs(activeTab);
       setActionLoading('');
@@ -569,7 +647,8 @@ const WorkerJobs = () => {
 
     try {
       await verifyWorkerOtp(token, apiId, 'start', entered);
-      showToast('✓ Start OTP Verified! Doorstep entry authorized.');
+      window.dispatchEvent(new CustomEvent('servecircle:job-status-updated', { detail: { bookingId: apiId, status: 'started' } }));
+      showToast('✓ Start OTP Verified! Work Started.');
       setOtpError((prev) => ({ ...prev, [jobId]: '' }));
       setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
       await loadJobs(activeTab);
@@ -582,7 +661,7 @@ const WorkerJobs = () => {
 
   const handleVerifyEndOtp = async (jobId) => {
     const entered = (otpInput[jobId] || '').trim();
-    if (!entered) {
+    if (!entered || entered.length < 4) {
       setOtpError((prev) => ({ ...prev, [jobId]: 'Please enter the 4-digit End OTP from the customer.' }));
       return;
     }
@@ -591,25 +670,29 @@ const WorkerJobs = () => {
     setError('');
 
     const cleanId = String(jobId || '').trim();
-    const apiId = cleanId.replace(/^#/, '');
     const currentJob = jobs.find((j) => j._id === jobId || j.id === jobId);
     const wfList = getWorkflowBookings();
-    const isWf =
-      wfList.some((b) => b.id === cleanId || b._id === cleanId || b.id.replace('#', '') === cleanId.replace('#', '')) ||
-      currentJob?.isWorkflow ||
-      cleanId.startsWith('wb-') ||
-      cleanId.includes('SC-');
+    const matchedWf = wfList.find(
+      (b) =>
+        matchesBookingId(b, cleanId) ||
+        (currentJob?.bookingId && matchesBookingId(b, currentJob.bookingId)) ||
+        (currentJob?.workflowId && matchesBookingId(b, currentJob.workflowId))
+    );
+    const wfTargetId = matchedWf?.id || currentJob?.workflowId || cleanId;
+    const apiId = (currentJob?.backendId || cleanId).replace(/^#/, '');
 
-    if (isWf) {
-      completeAndPayWorkflowBooking(cleanId);
-      showToast('✓ End OTP Verified! Service completed & payment settled.');
-      if (token) {
+    if (matchedWf) {
+      if (token && (currentJob?.backendId || matchedWf?.backendId)) {
         try {
           await verifyWorkerOtp(token, apiId, 'end', entered);
-        } catch (e) {
-          console.log('[WorkerJobs] Synced end OTP with backend or fallback:', e.message);
+        } catch (dbErr) {
+          setOtpError((prev) => ({ ...prev, [jobId]: dbErr.message || 'Incorrect End OTP. Please ask the customer.' }));
+          setActionLoading('');
+          return;
         }
       }
+      completeAndPayWorkflowBooking(wfTargetId);
+      showToast('✓ End OTP Verified! Service completed & payment settled.');
       setOtpInput((prev) => ({ ...prev, [jobId]: '' }));
       await loadJobs(activeTab);
       setActionLoading('');
@@ -1045,25 +1128,25 @@ const WorkerJobs = () => {
  <input
  type="text"
  inputMode="numeric"
- maxLength={4}
+ maxLength={6}
  placeholder="Enter Start OTP"
  value={otpInput[job._id] || ''}
  onChange={(e) => {
-   const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+   const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
    setOtpInput((prev) => ({ ...prev, [job._id]: val }));
  }}
  style={{
- flex: 1, padding: '10px 14px', borderRadius: '8px',
- border: '2px solid #e2e8f0', fontSize: '1.2rem',
- fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
- outline: 'none',
+ flex: 1, minWidth: '140px', width: '100%', padding: '10px 14px', borderRadius: '8px',
+ border: '2px solid #cbd5e1', fontSize: '1.1rem',
+ fontWeight: 800, letterSpacing: '4px', textAlign: 'center',
+ outline: 'none', background: '#ffffff',
  }}
  />
  <button
  className="btn btn-primary"
  onClick={() => handleVerifyStartOtp(job._id)}
  disabled={actionLoading === `${job._id}-start`}
- style={{ padding: '10px 20px', fontWeight: 700 }}
+ style={{ width: 'auto', flexShrink: 0, whiteSpace: 'nowrap', padding: '10px 18px', fontWeight: 700 }}
  >
  {actionLoading === `${job._id}-start` ? 'Verifying...' : 'Verify & Start'}
  </button>
@@ -1119,15 +1202,39 @@ const WorkerJobs = () => {
             </div>
           )}
 
-          {/* ===== STEP 5: STARTED — Work in progress, Enter End OTP & Proof ===== */}
+          {/* ===== STEP 5: STARTED — Work in progress, Proofs, Estimate Revision & Completion ===== */}
  {(job.status === 'started' || job.status === 'in-progress' || job.status === 'quotation_pending') && (
  <div>
  <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '10px 14px', marginBottom: '10px', fontSize: '0.8rem', color: '#166534', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
  <HiOutlineCheckCircle style={{ flexShrink: 0, marginTop: '2px' }} />
- <span>Job is in progress. Upload after-work photo and get the <strong>End OTP</strong> from the customer to close this job.</span>
+ <span>Job is in progress. Upload work proof photos, revise estimate if extra parts are needed, and click <strong>Complete Service</strong> once finished.</span>
  </div>
 
- <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+ <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
+ {!job.hasBeforeProof && (
+ <button
+ type="button"
+ className="btn btn-outline"
+ onClick={() => handleUploadProof(job._id, 'BEFORE_WORK')}
+ disabled={uploadingProof[`${job._id}-BEFORE_WORK`]}
+ style={{
+ flex: 1,
+ fontSize: '0.8rem',
+ padding: '8px',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: '6px',
+ borderColor: '#cbd5e1',
+ color: '#1e293b',
+ background: '#ffffff',
+ fontWeight: 600,
+ }}
+ >
+ <HiOutlineCamera />
+ Before Photo
+ </button>
+ )}
  <button
  type="button"
  className="btn btn-outline"
@@ -1148,7 +1255,7 @@ const WorkerJobs = () => {
  }}
  >
  <HiOutlineCamera />
- {job.hasAfterProof ? ' After Photo' : ' After Photo'}
+ {job.hasAfterProof ? '✓ After Photo' : 'After Photo'}
  </button>
  <button
  type="button"
@@ -1172,42 +1279,15 @@ const WorkerJobs = () => {
  </button>
  </div>
 
- <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
- <input
- type="number"
- maxLength={4}
- placeholder="Enter End OTP"
- value={otpInput[job._id] || ''}
- onChange={(e) => setOtpInput((prev) => ({ ...prev, [job._id]: e.target.value }))}
- style={{
- flex: 1, padding: '10px 14px', borderRadius: '8px',
- border: '2px solid #e2e8f0', fontSize: '1.2rem',
- fontWeight: 800, letterSpacing: '8px', textAlign: 'center',
- outline: 'none',
- }}
- />
- <button
- className="btn btn-primary"
- onClick={() => handleVerifyEndOtp(job._id)}
- disabled={actionLoading === `${job._id}-end`}
- style={{ padding: "10px 20px", background: "#16a34a" }}
- >
- {actionLoading === `${job._id}-end` ? "..." : "Done"}
- </button>
- </div>
  <button
  type="button"
  className="btn btn-primary"
- style={{ width: "100%", background: "#16a34a", marginTop: "6px", marginBottom: "8px" }}
- onClick={() => handleStatus(job._id, "completed")}
+ style={{ width: '100%', background: '#16a34a', marginTop: '4px', marginBottom: '8px', fontWeight: 700 }}
+ onClick={() => handleStatus(job._id, 'completed')}
+ disabled={actionLoading === `${job._id}-completed`}
  >
- Complete Service & Settle Payment (₹{job.amount})
+ {actionLoading === `${job._id}-completed` ? 'Completing...' : `Complete Service & Settle Payment (₹${job.amount})`}
  </button>
- <div style={{ display: "none" }}>
- </div>
- {otpError[job._id] && (
- <p style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '4px', fontWeight: 600 }}>{otpError[job._id]}</p>
- )}
  {/* Can't Resolve option */}
  <button
  className="btn btn-outline"

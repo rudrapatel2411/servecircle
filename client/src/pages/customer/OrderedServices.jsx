@@ -411,33 +411,12 @@ const OrderedServices = () => {
                         </div>
                       )}
 
-                      {/* ── End OTP for Active jobs ─────────── */}
+                      {/* ── In-Progress Job Status Notice ─────────── */}
                       {order.status === 'active' && (
                         <div className="sunken" style={{ padding: '18px', marginBottom: '18px', borderColor: 'rgba(54, 160, 122, 0.35)' }}>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '12px' }}>
-                            Work is in progress. When done, the worker will ask for the End OTP.
+                          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px' }}>
+                            Work is currently in progress at your premises. Your verified specialist will upload completion photos and mark the service complete once finished.
                           </div>
-                          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <input
-                              type="number"
-                              placeholder="Enter End OTP"
-                              value={endOtpInput[order.id] || ''}
-                              onChange={(e) => setEndOtpInput((prev) => ({ ...prev, [order.id]: e.target.value }))}
-                              className="sunken"
-                              style={{
-                                flex: 1, minWidth: '160px', padding: '10px 16px', fontSize: '1.1rem',
-                                fontWeight: 800, letterSpacing: '6px', textAlign: 'center',
-                              }}
-                            />
-                            <PrimaryButton
-                              onClick={() => handleVerifyEndOtp(order)}
-                            >
-                              Confirm Done
-                            </PrimaryButton>
-                          </div>
-                          {endOtpError[order.id] && (
-                            <p style={{ color: 'var(--status-danger-text)', fontSize: '0.8rem', marginTop: '8px', fontWeight: 600 }}>{endOtpError[order.id]}</p>
-                          )}
                           <a
                             href="tel:1800233911"
                             className="glass-sm"

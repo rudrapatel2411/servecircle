@@ -1,4 +1,4 @@
-﻿/**
+/**
  * otpService.js — PostgreSQL (Prisma) dual-OTP protocol
  *
  * Start OTP  : worker may begin work only after the customer shares it (arrived → started)
@@ -163,9 +163,10 @@ export async function regenerateStartOtp(bookingId, requestingUser) {
   const booking = await findBookingOrThrow(bookingId);
   assertOwnerOrAdmin(booking, requestingUser);
 
-  if (toDbStatus(booking.status) !== 'ARRIVED') {
+  const allowedStatuses = ['ACCEPTED', 'EN_ROUTE', 'ARRIVED'];
+  if (!allowedStatuses.includes(toDbStatus(booking.status))) {
     throw new AppError(
-      `Start OTP can only be regenerated when booking status is "arrived". Current status: "${String(booking.status).toLowerCase()}"`,
+      `Start OTP can only be generated after worker accepts or starts journey. Current status: "${String(booking.status).toLowerCase()}"`,
       StatusCodes.UNPROCESSABLE_ENTITY
     );
   }
@@ -198,7 +199,7 @@ export async function regenerateEndOtp(bookingId, requestingUser) {
  * Preconditions: status ARRIVED, assigned worker, code not already used,
  * not locked, not expired.
  */
-export async function verifyStartOtp(bookingId, submittedCode, workerId) {
+export async function verifyStartOtp(bookingId, submittedCode, workerId, io = null) {
   const booking = await findBookingOrThrow(bookingId);
 
   if (toDbStatus(booking.status) !== 'ARRIVED') {
@@ -256,7 +257,7 @@ export async function verifyStartOtp(bookingId, submittedCode, workerId) {
   await prisma.booking.update({ where: { id: booking.id }, data: { startOtp: null } });
 
   // State machine: arrived → started (also generates the End OTP)
-  return startBooking(booking.id, workerId);
+  return startBooking(booking.id, workerId, io);
 }
 
 /**

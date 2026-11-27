@@ -1,9 +1,14 @@
 export const matchesBookingId = (b, targetId) => {
   if (!b || !targetId) return false;
-  if (b.id === targetId || b._id === targetId) return true;
+  if (b.id === targetId || b._id === targetId || b.backendId === targetId) return true;
   const aClean = String(b.id || b._id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const backendClean = String(b.backendId || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const bClean = String(targetId).toLowerCase().replace(/[^a-z0-9]/g, '');
-  return aClean === bClean || aClean.endsWith(bClean) || bClean.endsWith(aClean);
+  return (
+    aClean === bClean ||
+    (backendClean && backendClean === bClean) ||
+    (bClean.length >= 4 && (aClean.endsWith(bClean) || bClean.endsWith(aClean)))
+  );
 };
 
 export const findBookingIndex = (all, bookingId) => {
@@ -119,6 +124,9 @@ export const getWorkflowBookingById = (bookingId) => {
  * Step 1: Customer creates a new booking
  */
 export const createWorkflowBooking = ({
+  id = '',
+  backendId = '',
+  startOtp: providedOtp = '',
   serviceName,
   category = 'Home Repairs',
   amount = 499,
@@ -130,14 +138,18 @@ export const createWorkflowBooking = ({
   notes = '',
   paymentMethod = 'Wallet',
 }) => {
-  // Generate random 4-digit security Start OTP
-  const startOtp = Math.floor(1000 + Math.random() * 9000).toString();
-  const bookingNumber = `#SC-${Math.floor(2850 + Math.random() * 7000)}`;
+  // Generate random 4-digit security Start OTP (or preserve caller/backend OTP)
+  const startOtp = /^\d{4}$/.test(String(providedOtp || '').trim())
+    ? String(providedOtp).trim()
+    : Math.floor(1000 + Math.random() * 9000).toString();
+  const bookingNumber = id ? String(id).trim() : `#SC-${Math.floor(2850 + Math.random() * 7000)}`;
   const distanceKm = (1.5 + Math.random() * 7.5).toFixed(1); // 1.5 to 9.0 km (well within 15 km)
 
   const newBooking = {
     id: bookingNumber,
-    _id: bookingNumber,
+    _id: backendId || bookingNumber,
+    backendId: backendId || null,
+    bookingId: bookingNumber,
     service: serviceName,
     serviceName,
     category,

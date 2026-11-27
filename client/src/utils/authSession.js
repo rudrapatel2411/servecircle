@@ -1,4 +1,5 @@
 const SESSION_KEY = 'servecircle_session';
+const CUSTOMER_SESSION_KEY = 'servecircle_customer_session';
 const WORKER_SESSION_KEY = 'servecircle_worker_session';
 
 export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -63,15 +64,32 @@ export const getSession = () => {
   return session;
 };
 
+export const getCustomerSession = () => {
+  const tryParse = (raw) => {
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed?.token && parsed?.user?.role === 'customer' && !isTokenExpired(parsed.token)) {
+        return parsed;
+      }
+    } catch {}
+    return null;
+  };
+  return tryParse(localStorage.getItem(CUSTOMER_SESSION_KEY)) || tryParse(localStorage.getItem(SESSION_KEY));
+};
+
 export const saveSession = (session) => {
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   if (session?.user?.role === 'worker') {
     localStorage.setItem(WORKER_SESSION_KEY, JSON.stringify(session));
+  } else if (session?.user?.role === 'customer') {
+    localStorage.setItem(CUSTOMER_SESSION_KEY, JSON.stringify(session));
   }
 };
 
 export const clearSession = () => {
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(CUSTOMER_SESSION_KEY);
   localStorage.removeItem(WORKER_SESSION_KEY);
 };
 

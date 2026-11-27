@@ -1,5 +1,43 @@
 # ServeCircle Project Brain
 
+## Working plan — Remove End OTP Gate & Fix Live Tracking Progression Past Confirmed (done, verified 2026-11-27)
+
+**User requirement:**
+"end otp nahi dalna hai and customer pannel me map me sirf confirmed se aage hi nahi badh raha hai and baki kaa kaam workflow ke according dekh lo"
+
+**Root Causes Resolved:**
+1. **Customer Live Tracking Stuck at "Confirmed" (`activeStep = 0`)**:
+   - **Multi-Tab Session Overwrite (`authSession.js`, `BookingFlow.jsx`, `LiveTracking.jsx`)**: Logging into the Worker panel in another tab overwrote `localStorage.servecircle_session`, causing `LiveTracking.jsx` to call `/bookings/my` with the worker's token (`[]` results) and join the worker's socket room ID instead of the customer's. Added isolated `servecircle_customer_session` (`getCustomerSession()`) so Customer and Worker sessions never collide across tabs.
+   - **Stale Local Workflow Regression (`LiveTracking.jsx`)**: `loadFromWorkflow()` previously re-ran whenever `workerName` updated and overwrote newer backend DB status (`en-route`, `arrived`, `started`, `completed`) with stale localStorage `accepted` (`step 0`). Added `STATUS_PROGRESS_RANK` and `highestStatusRef` monotonic guard plus `focus`/`visibilitychange` instant refresh and 2.5s polling.
+2. **End OTP Removed From Booking Completion Workflow**:
+   - `server/services/bookingService.js`: Removed `generateEndOtp` emission from `startBooking()` and removed the mandatory `endOtpVerified` block from `completeBooking()`.
+   - `client/src/pages/worker/WorkerJobs.jsx`: Removed `Enter End OTP` input and `Done` OTP button from Step 5; kept Before/After Photos, Estimate Revision (`Revise Estimate`), and `Complete Service & Settle Payment` direct completion.
+   - `client/src/pages/customer/LiveTracking.jsx` & `OrderedServices.jsx`: Removed the End OTP card/input UI so service proceeds cleanly from `Start OTP Verified -> In Progress (Photos/Quotation) -> Completed -> Review & Rating`.
+
+## Working plan — Real-Time En-Route Tracking, Instant Start OTP Reveal & Arrived OTP Input Flow (done, verified 2026-11-27)
+
+**User requirement:**
+"worker pannel me jab hum ready to go and start journey wala button dabate hai to cusotmer pannel me worker map me ghar aate hue dikh jana chhaiye and otp bhi usi page pe generayte ho jana chhaiye. baad me worker pahuch jata hai to baad me woker ke isi page me otp likhne ka option bhi aa jana chhiaye mark arrived wale page pe baad me kaam workflow ke according start ho jana chhiaye"
+
+**Root Causes Resolved:**
+1. **Leaflet `Error: Map container is being reused by another instance` (`LiveTracking.jsx`, `WorkerJobRouteMap.jsx`)**:
+   - Split map creation from marker/route/animation updates in `LiveTracking.jsx` so `L.map()` initializes once on mount and a separate effect animates the technician approaching along the route polyline when `en-route` (`Ready to Go`).
+   - Added missing `HiOutlineCheckCircle` import in `LiveTracking.jsx` and exported `joinCustomerSocketRoom` / `joinWorkerSocketRoom` in `client/src/socket.js`.
+2. **Instant Start OTP Generation & Real-Time Sync (`bookingService.js`, `otpService.js`, `notificationService.js`, `BookingFlow.jsx`, `LiveTracking.jsx`)**:
+   - `ensureStartOtp` ensures a valid Start OTP exists on accept / en-route / arrive and emits `startOtp` via targeted `booking_status_changed` socket payload and `getCustomerBookings`.
+   - `LiveTracking.jsx` initializes Start OTP immediately on acceptance/en-route and auto-fetches if missing, using `normalizeBookingStatus()` across all steppers and banners.
+3. **Worker Panel Arrived OTP Input UI & End-to-End Verification (`WorkerJobs.jsx`, `WorkerPages.css`, `workerApi.js`)**:
+   - Fixed `.worker-action-buttons > button` CSS so the Start OTP / End OTP inputs are no longer crushed by `width: 100%` flex siblings.
+   - Updated Start & End OTP inputs to accept up to 6 digits (`maxLength={6}`) so both 4-digit workflow OTPs and 6-digit backend DB OTPs verify without truncation.
+   - Added `'started': 'start'` to `workerApi.js`, preserved `backendId` on workflow items, and aligned `handleVerifyStartOtp` / `handleVerifyEndOtp` / `confirmUploadProof` with PostgreSQL backend state.
+
+**Verification:**
+- Synced all updated files to `D:\ServeCircle`.
+- `npm --prefix "D:/ServeCircle/client" run build`: PASS (652 modules, 0 errors).
+- `node "D:/ServeCircle/server/scripts/verify-full-service-workflow.mjs"`: PASS (12/12 checks).
+- Live HTTP + PostgreSQL E2E test (`POST /bookings` -> `accept` -> `en-route` -> customer `/bookings/my` sees `en-route` + `startOtp` -> `arrive` -> wrong OTP rejected HTTP 400 -> valid `startOtp` transitions to `started` + generates `endOtp` -> `endOtp` completes booking): PASS (`E2E_LIVE_DB_PASS`).
+- Strict zero `git push` maintained.
+
 ## Working plan — Diagnose server.js startup failure (done, verified 2026-11-25)
 
 - **Finding:** `npm run dev` fails with `EADDRINUSE` because another `node server.js` process already owns port 5000. The existing process responds `HTTP 200` at `/api/health`.
@@ -24,6 +62,96 @@ This is guidance, not a cage: use judgment for work outside the listed plan, rec
 > [!IMPORTANT]
 > **STRICT USER RULE — NEVER DIRECT PUSH (`git push`)**:
 > Under NO circumstances execute `git push` or push any commits or branches to the remote repository. All edits, test verifications, and git commits must remain strictly 100% local. Pushing to remote is strictly reserved for the user only.
+
+## Working plan — Strict Category Isolation Across Worker Job Queues & Dispatch (done, verified 2026-11-27)
+
+**User issue:**
+Customer (Krunal Joshi) booked a "Care & Family" service (`SC-2815`: "Salon & Beauty at Home"), yet the Care & Family worker panel displayed "General Electrical Work" and "AC Repair & Diagnostics" jobs while "Care & Family" orders did not appear on Page 1.
+
+**Root Causes Resolved:**
+1. **`WorkerJobs.jsx` Pending Workflow Bypass & Unfiltered Merges:**
+   - Removed the unconditional `if (wf.status === 'pending' || wf.status === 'assigned') return true;` bypass in `loadJobs` that leaked every category's pending workflow orders to every worker.
+   - Filtered `b2bJobs`, `DEMO_JOBS` (kept intact in file), and backend API `data` strictly through `doesServiceMatchWorker(currentWorkerCat, job.category, job.service)` so workers only see orders matching their `serviceCategory`.
+2. **Backend `getWorkerJobs` (`server/services/bookingService.js`) & `getDemoBookingsForWorker` (`server/utils/demoBookingStore.js`):**
+   - Created `server/constants/categoryMatcher.js` (`CANONICAL_CATEGORY_GROUPS`, `resolveCanonicalCategoryGroup`, `doesCategoryMatchWorker`).
+   - Updated `getWorkerJobs(workerId, status, workerCategory)` and `server/routes/bookings.js` to resolve the worker's `WorkerProfile.serviceCategory` and filter unassigned `PENDING` broadcast pool jobs strictly by canonical category group.
+   - Updated `orderBy` to `[{ createdAt: 'desc' }, { scheduledDate: 'desc' }]` so new orders appear immediately at the top.
+   - Hoisted `serviceCategory` inside `server/middleware/auth.js:formatUser`.
+3. **Socket.IO Category Room Scoping (`server/services/bookingService.js`, `server/server.js`):**
+   - Scoped category-tagged `worker_notification` emits strictly to `workers_category_<category>` rooms instead of broadcasting into `workers_broadcast`.
+4. **Canonical Matching Fix (`client/src/utils/workerCategoryHelper.js`, `BookingFlow.jsx`):**
+   - Fixed `doesServiceMatchWorker` so explicit `reqCat` compares strictly by canonical group (eliminating false matches from generic keywords like `'home'` in `homerepairs` matching `'Salon & Beauty at Home'`), and unified mismatched names (`'Home IT & Smart Devices'` ↔ `'Home IT & Tech Support'`, `'Packers & Movers'` ↔ `'Relocation & Packers'`, `'Food Kitchen'` ↔ `'Food & Kitchen'`, etc.).
+   - Updated `BookingFlow.jsx:inferCategoryFromService` to include Care & Family services (`salon`, `beauty`, `makeup`, `bridal`, `senior citizen`, `cook placement`, `yoga coach`).
+
+**Verification:**
+- Synced all updated server and client files to `D:\ServeCircle`.
+- `npm --prefix "D:/ServeCircle/client" run build`: PASS (652 modules, 0 errors).
+- `npm --prefix client run build`: PASS (652 modules, 0 errors).
+- Live HTTP test `GET http://localhost:5000/api/bookings/jobs?status=all` as `carefamily.worker@gmail.com`: returned ONLY `[{"id":"SC-2815","service":"Salon & Beauty at Home","cat":"Care & Family","status":"pending"}]`.
+- `node server/scripts/verify-full-service-workflow.mjs`: PASS (12/12 checks).
+- Strict zero `git push` maintained.
+
+## Working plan — Fix Prisma Error: Unknown field `address` for select statement on model `User` (done, verified 2026-11-27)
+
+**Server error:**
+`Unknown field 'address' for select statement on model 'User'. Available options are marked with ?.`
+
+**Root Cause & Resolution:**
+- In `server/services/bookingService.js:getWorkerJobs` (line 475), the Prisma query had:
+  `customer: { select: { id: true, name: true, phone: true, address: true } }`.
+- In Prisma schema, `address` is a direct column on the `Booking` model, NOT on the `User` model.
+- Additionally, when `status` was `'all'`, `norm && norm !== 'all'` was needed to prevent passing `status: 'ALL'` to Prisma (which only accepts valid `BookingStatus` enum values).
+- Replaced with:
+  `customer: { select: { id: true, name: true, email: true, phone: true } }, worker: { select: { id: true, name: true, phone: true } }` and filtered only when `norm && norm !== 'all'`.
+- Synced to `D:\ServeCircle\server\services\bookingService.js` and restarted Node server on port 5000.
+- Verified: `getWorkerJobs` executed directly against PostgreSQL Prisma returning 10 jobs cleanly with 0 Prisma errors.
+
+## Working plan — End-to-End Acceptance, Immediate Customer Start OTP Reveal, En-Route/Arrived Transitions & Doorstep OTP Verification (done, verified 2026-11-27)
+
+**User requirement:**
+"accept karne ke baad customer ko notification jana chhaiye and customer ke paas turant baad otp generate ho jana chhaiye and worker on the way wali process bhi start ho jani chhahiye and voh arrived bhi ho jana chhaiye and customer ke pass jo otp generate ho vahi otp jab worker dale tab hi services start honi chhiaye and baki ka aage ka workflow bhi usi tarah se kaam hona chhaiye"
+(With screenshot showing `Route /api/bookings/ not found` error banner when verifying Start OTP on `#SC-8386`).
+
+**Root Cause Analysis:**
+1. **Red Banner: `Route /api/bookings/ not found`**:
+   - In `WorkerJobs.jsx`: `handleVerifyStartOtp` was calling `verifyWorkerOtp(token, jobId, 'start', entered)` with `jobId = '#SC-8386'`.
+   - In fetch and browsers, `#` is the URL fragment delimiter. Calling `/api/bookings/#SC-8386/start-otp/verify` truncated the path to `POST /api/bookings/`!
+   - Express has no router for `POST /api/bookings/` or `PATCH /api/bookings/`, returning HTTP 404: `Route /api/bookings/ not found`.
+   - `handleVerifyStartOtp` was also NOT invoking `verifyWorkflowStartOtp` to validate against the 4-digit security code stored in `serviceWorkflowEngine`.
+2. **Missing Real-Time Notifications across the Stepper**:
+   - When the worker transitioned to En-Route (`setWorkflowEnRoute`), Arrived (`setWorkflowArrived`), OTP Verified (`verifyWorkflowStartOtp`), and Started (`startWorkflowService`), direct customer notifications were missing.
+3. **Start OTP Reveal & Tab Retention**:
+   - `LiveTracking.jsx` state `displayedStartOtp` defaulted to `''` instead of `searchParams.get('startOtp')`, causing delay until workflow loaded.
+   - In `WorkerJobs.jsx`, the "Arrived" tab strictly matched `norm === 'arrived'`. When status became `'verified'`, the card vanished into the 'Started' tab while the worker was trying to upload the before-service photo.
+
+**Solutions Implemented:**
+1. **Sanitized Path & IDs in `workerApi.js`**:
+   - Added `sanitizePath` to `apiRequest` to strip any `#` from request URLs.
+   - Added `cleanId = encodeURIComponent(String(bookingId || '').replace(/^#/, ''))` to all booking endpoints (`respondToJobRequest`, `updateWorkerJobStatus`, `verifyWorkerOtp`, `uploadBookingProof`, `fetchBookingProofs`, `submitQuoteRevision`, `decideQuoteRevision`, `collectCodPayment`).
+2. **Robust Multi-Layer OTP Verification in `WorkerJobs.jsx`**:
+   - In `handleVerifyStartOtp`:
+     * Validates 4-digit numeric code.
+     * Checks `isWf`. Runs `verifyWorkflowStartOtp(cleanId, entered)`.
+     * If OTP matches: status advances to `verified`, customer screen updates to `Doorstep Entry Authorized!`, and if photo was already uploaded, automatically starts service.
+     * Safely syncs with backend using sanitized ID without surfacing 404 banners.
+   - Updated Start OTP input to `type="text" inputMode="numeric" maxLength={4}` with clean numeric filter.
+   - Updated `matchesStatus` so the `'arrived'` tab retains `['arrived', 'verified', 'before_photo_uploaded']`.
+3. **End-to-End Customer Notification Dispatch (`serviceWorkflowEngine.js`)**:
+   - `acceptWorkflowBooking` -> broadcasts `booking_accepted` with `startOtp`.
+   - `setWorkflowEnRoute` -> broadcasts `worker_enroute`.
+   - `setWorkflowArrived` -> broadcasts `worker_arrived` with Start OTP prompt.
+   - `verifyWorkflowStartOtp` -> broadcasts `otp_verified`.
+   - `startWorkflowService` -> broadcasts `service_started`.
+   - `completeAndPayWorkflowBooking` -> broadcasts `booking_completed` with payment settlement.
+4. **Immediate Start OTP Reveal in `LiveTracking.jsx`**:
+   - Initialized `displayedStartOtp` with `searchParams.get('startOtp') || ''`.
+   - Normalized ID lookup: `const targetId = String(rawTarget).trim().replace(/^#/, '')`.
+   - Fallback rendering guarantees 4-digit code is always shown without `—`.
+5. **Sync to `D:\ServeCircle` & Build Validation**:
+   - Synced all 5 files to `D:\ServeCircle`.
+   - Client production build in `D:\ServeCircle\client`: PASS (652 modules, 0 errors in 5.76s).
+   - Live backend health: HTTP 200 on port 5000.
+   - Full test suite `verify-full-service-workflow.mjs`: PASS (12/12 checks).
 
 ## Working plan — Rock-Solid Working Accept & Decline Actions Across All Consoles (done, verified 2026-11-27)
 

@@ -368,8 +368,15 @@
   padding: 16px;
 }
 
-.worker-action-buttons button {
+.worker-action-buttons > button {
   width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.worker-action-buttons button {
   display: inline-flex;
   align-items: center;
   justify-content: center;

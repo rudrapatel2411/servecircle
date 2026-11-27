@@ -36,6 +36,16 @@ export const joinUserRoom = (user, panel) => {
   }
 };
 
+export const joinCustomerSocketRoom = (customerId) => {
+  if (!customerId) return;
+  joinUserRoom({ id: customerId, _id: customerId, role: 'customer' }, 'customer');
+};
+
+export const joinWorkerSocketRoom = (workerId) => {
+  if (!workerId) return;
+  joinUserRoom({ id: workerId, _id: workerId, role: 'worker' }, 'worker');
+};
+
 // Reconnect handler ensures room is restored automatically
 socket.on('connect', () => {
   if (activeSessionContext) {

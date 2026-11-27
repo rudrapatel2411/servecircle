@@ -272,7 +272,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { otp } = req.body || {};
     if (!otp) throw new AppError('OTP code is required', StatusCodes.BAD_REQUEST);
-    const booking = await verifyStartOtp(req.params.id, otp, req.user._id);
+    const booking = await verifyStartOtp(req.params.id, otp, req.user._id, req.io);
     res.json(booking);
   })
 );

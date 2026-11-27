@@ -10,6 +10,7 @@ import {
   HiOutlineShieldExclamation,
   HiOutlineMapPin,
   HiOutlineCheckBadge,
+  HiOutlineCheckCircle,
   HiOutlineArrowPath,
   HiOutlineWrench,
   HiOutlineBuildingOffice2,
@@ -17,8 +18,8 @@ import {
 } from 'react-icons/hi2';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { socket } from '../../socket';
-import { getSession, requestApi } from '../../utils/authSession';
+import { socket, joinCustomerSocketRoom } from '../../socket';
+import { getSession, getCustomerSession, requestApi } from '../../utils/authSession';
 import BookingChatModal from '../../components/BookingChatModal';
 import {
   getWorkflowBookingById,
@@ -29,26 +30,54 @@ import {
 import '../Dashboard.css';
 import './CustomerPages.css';
 
+const normalizeBookingStatus = (status) =>
+  String(status || '').toLowerCase().trim().replace(/_/g, '-');
+
+const STATUS_PROGRESS_RANK = {
+  pending: 0,
+  assigned: 1,
+  confirmed: 2,
+  accepted: 2,
+  'en-route': 3,
+  'on-the-way': 3,
+  arrived: 4,
+  verified: 5,
+  'before-photo-uploaded': 6,
+  'in-progress': 7,
+  started: 7,
+  'quotation-pending': 7,
+  'after-photo-uploaded': 8,
+  completed: 9,
+  paid: 10,
+  closed: 11,
+};
+
+const getStatusRank = (status) => STATUS_PROGRESS_RANK[normalizeBookingStatus(status)] ?? -1;
+
 const statusToStep = (status) => {
-  switch (status) {
+  switch (normalizeBookingStatus(status)) {
     case 'pending':
       return { step: 0, text: 'Finding an available professional nearby...', eta: null, otp: false };
     case 'assigned':
       return { step: 0, text: 'Professional assigned! Awaiting confirmation.', eta: 18, otp: false };
     case 'confirmed':
     case 'accepted':
-      return { step: 0, text: 'Professional accepted and is preparing tools.', eta: 15, otp: false };
+      return { step: 0, text: 'Professional accepted and is preparing tools.', eta: 15, otp: true };
     case 'en-route':
-    case 'on_the_way':
-      return { step: 1, text: 'Worker is en route to your location.', eta: 10, otp: false };
+    case 'on-the-way':
+      return { step: 1, text: 'Specialist is on the way to your home.', eta: 10, otp: true };
     case 'arrived':
-      return { step: 2, text: 'Arrived at your doorstep!', eta: 0, otp: true };
-    case 'in_progress':
+      return { step: 2, text: 'Arrived at your doorstep! Share Start OTP to begin.', eta: 0, otp: true };
+    case 'verified':
+    case 'before-photo-uploaded':
+    case 'before_photo_uploaded':
+    case 'in-progress':
     case 'started':
-      return { step: 3, text: 'Job in progress...', eta: 0, otp: false };
+      return { step: 3, text: 'Job in progress at your premises...', eta: 0, otp: false };
     case 'rejected':
       return { step: 0, text: 'Worker declined; checking next available pro.', eta: null, otp: false };
     case 'cancelled':
+    case 'cancelled-visiting-fee':
       return { step: 0, text: 'This booking was cancelled.', eta: 0, otp: false };
     case 'completed':
       return { step: 4, text: 'Job completed successfully!', eta: 0, otp: false };
@@ -78,7 +107,7 @@ const LiveTracking = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
-  const session = getSession();
+  const session = getCustomerSession() || getSession();
   const token = session?.token;
 
   // Dynamic parameters from checkout / bookings
@@ -91,8 +120,6 @@ const LiveTracking = () => {
   const [displayedStartOtp, setDisplayedStartOtp] = useState(
     searchParams.get('startOtp') || ''
   );
-  const [displayedEndOtp, setDisplayedEndOtp] = useState('');
-  const [endOtpError, setEndOtpError] = useState('');
   const [proofs, setProofs] = useState([]);
   const [otpError, setOtpError] = useState('');
 
@@ -106,9 +133,10 @@ const LiveTracking = () => {
   const [workerAvailability, setWorkerAvailability] = useState('checking');
 
   // Strict acceptance gate: worker must accept before GPS route and Start OTP unlock
+  const normStatusForGate = normalizeBookingStatus(bookingData?.status);
   const isWorkerAccepted = Boolean(
     bookingData?.status
-      ? !['pending', 'checking', 'rejected', 'cancelled', 'cancelled_visiting_fee'].includes(bookingData.status)
+      ? !['pending', 'checking', 'rejected', 'cancelled', 'cancelled-visiting-fee'].includes(normStatusForGate)
       : workerAvailability === 'accepted'
   );
   const [acceptanceNotice, setAcceptanceNotice] = useState('');
@@ -126,7 +154,8 @@ const LiveTracking = () => {
   const [revisionActionLoading, setRevisionActionLoading] = useState(false);
   const [callRelayNotice, setCallRelayNotice] = useState('');
 
-  // Leaflet map refs
+  // Leaflet map refs & monotonic status guard
+  const highestStatusRef = useRef('pending');
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const workerMarkerRef = useRef(null);
@@ -170,33 +199,88 @@ const LiveTracking = () => {
   // --- Fetch Booking Details ---
   useEffect(() => {
     let isMounted = true;
+    highestStatusRef.current = 'pending';
+    const customerUserId = session?.user?.id || session?.user?._id;
+    if (customerUserId) {
+      joinCustomerSocketRoom(customerUserId);
+    }
+
+    const cleanTarget = String(bookingId || '').replace(/^#/, '').trim();
+
+    const applyStatusSafely = (rawStatus, incomingObj = {}) => {
+      const normStatus = normalizeBookingStatus(rawStatus);
+      const isTerminal = ['rejected', 'cancelled', 'cancelled-visiting-fee'].includes(normStatus);
+      const incomingRank = getStatusRank(normStatus);
+      const currentRank = getStatusRank(highestStatusRef.current);
+
+      // Never regress an already-progressed status back to an earlier stale stage
+      const effectiveStatus = isTerminal || incomingRank >= currentRank ? normStatus : highestStatusRef.current;
+      highestStatusRef.current = effectiveStatus;
+
+      setBookingData((prev) => ({
+        ...(prev || {}),
+        ...incomingObj,
+        status: effectiveStatus,
+      }));
+
+      if (effectiveStatus === 'rejected') {
+        setWorkerAvailability('unavailable');
+        return effectiveStatus;
+      }
+      if (effectiveStatus === 'cancelled' || effectiveStatus === 'cancelled-visiting-fee') {
+        setWorkerAvailability('unavailable');
+        setCurrentStatusText('This booking was cancelled.');
+        setActiveStep(0);
+        return effectiveStatus;
+      }
+      if (effectiveStatus === 'pending') {
+        setWorkerAvailability('checking');
+      } else {
+        setWorkerAvailability('accepted');
+      }
+
+      const mapping = statusToStep(effectiveStatus);
+      setActiveStep(mapping.step);
+      setCurrentStatusText(mapping.text);
+      if (mapping.eta !== null) setEta(mapping.eta);
+      setOtpVisible(mapping.otp);
+      return effectiveStatus;
+    };
+
     const fetchBookingDetails = async () => {
-      if (!token || !bookingId) return;
-      // If active reactive workflow booking exists, it is the authoritative source of truth
-      if (getWorkflowBookingById(bookingId)) return;
+      if (!token) return;
       try {
         const myBookings = await requestApi('/bookings/my', { token });
-        if (isMounted && Array.isArray(myBookings)) {
-          const match = myBookings.find(
-            (b) =>
-              b.bookingId === bookingId ||
-              b._id === bookingId ||
-              (b.bookingId && String(b.bookingId).includes(bookingId))
-          );
+        if (isMounted && Array.isArray(myBookings) && myBookings.length > 0) {
+          const match = bookingId
+            ? myBookings.find((b) => {
+                const bRef = String(b.bookingId || '').replace(/^#/, '').trim();
+                return (
+                  b._id === bookingId ||
+                  b.id === bookingId ||
+                  bRef === cleanTarget ||
+                  (cleanTarget && bRef && (bRef.includes(cleanTarget) || cleanTarget.includes(bRef)))
+                );
+              })
+            : myBookings.find((b) => !['completed', 'cancelled', 'paid', 'closed'].includes(normalizeBookingStatus(b.status))) || myBookings[0];
           if (match) {
-            setBookingData(match);
-
-            // Check if explicitly rejected
-            if (match.status === 'rejected') {
-              setWorkerAvailability('unavailable');
-              return;
+            const effectiveStatus = applyStatusSafely(match.status, match);
+            if (match.startOtp) {
+              setDisplayedStartOtp(match.startOtp);
             }
 
-            const mapping = statusToStep(match.status);
-            setActiveStep(mapping.step);
-            setCurrentStatusText(mapping.text);
-            if (mapping.eta !== null) setEta(mapping.eta);
-            setOtpVisible(mapping.otp);
+            // Ensure Start OTP is always generated & visible once worker accepts, starts journey, or arrives
+            if (['accepted', 'en-route', 'arrived'].includes(effectiveStatus) && !match.startOtp) {
+              try {
+                const otpRes = await requestApi(`/bookings/${match._id || match.id}/start-otp/regenerate`, {
+                  method: 'POST',
+                  token,
+                });
+                if (isMounted && otpRes?.code) {
+                  setDisplayedStartOtp(otpRes.code);
+                }
+              } catch {}
+            }
 
             try {
               const revs = await requestApi(`/bookings/${match._id || match.id}/quote-revisions`, { token });
@@ -215,6 +299,14 @@ const LiveTracking = () => {
 
     fetchBookingDetails();
     fetchProofs();
+    const syncTimer = setInterval(fetchBookingDetails, 2500);
+    const onFocusOrVisible = () => {
+      if (document.visibilityState !== 'hidden') {
+        fetchBookingDetails();
+      }
+    };
+    window.addEventListener('focus', onFocusOrVisible);
+    document.addEventListener('visibilitychange', onFocusOrVisible);
 
     const checkLocalBooking = () => {
       try {
@@ -224,10 +316,7 @@ const LiveTracking = () => {
           const list = JSON.parse(raw);
           const match = list.find(b => b.bookingId === bookingId || b._id === bookingId || b.id === bookingId);
           if (match && isMounted) {
-            setBookingData(prev => prev ? { ...match, ...prev } : match);
-            const mapping = statusToStep(match.status);
-            setActiveStep(mapping.step);
-            setCurrentStatusText(mapping.text);
+            applyStatusSafely(match.status, match);
           }
         }
       } catch (_) {}
@@ -237,6 +326,9 @@ const LiveTracking = () => {
 
     return () => {
       isMounted = false;
+      clearInterval(syncTimer);
+      window.removeEventListener('focus', onFocusOrVisible);
+      document.removeEventListener('visibilitychange', onFocusOrVisible);
       window.removeEventListener('servecircle:job-status-updated', checkLocalBooking);
     };
   }, [bookingId, token]);
@@ -251,20 +343,6 @@ const LiveTracking = () => {
       setDisplayedStartOtp(result.code);
     } catch (error) {
       setOtpError(error.message || 'Could not get the start code. Please try again.');
-    }
-  };
-
-  const requestEndOtp = async () => {
-    setEndOtpError('');
-    try {
-      const targetId = bookingData?._id || bookingData?.id || bookingId;
-      const result = await requestApi(`/bookings/${targetId}/end-otp/regenerate`, {
-        method: 'POST',
-        token,
-      });
-      setDisplayedEndOtp(result.code);
-    } catch {
-      setDisplayedEndOtp('9182');
     }
   };
 
@@ -345,16 +423,40 @@ const LiveTracking = () => {
 
   // Socket listeners for live status and proofs
   useEffect(() => {
+    const cleanTarget = String(bookingId || '').replace(/^#/, '').trim();
     const handleStatusUpdate = (data) => {
       if (!data) return;
-      if (data.bookingId === bookingId || (bookingData && data.bookingId === bookingData.bookingId)) {
-        const mapping = statusToStep(data.currentStatus);
+      const incomingRef = String(data.bookingId || '').replace(/^#/, '').trim();
+      const currentRef = String(bookingData?.bookingId || '').replace(/^#/, '').trim();
+      const matches =
+        (incomingRef && cleanTarget && incomingRef === cleanTarget) ||
+        (incomingRef && currentRef && incomingRef === currentRef) ||
+        (data._id && bookingData?._id && data._id === bookingData._id);
+
+      if (matches) {
+        const normStatus = normalizeBookingStatus(data.currentStatus);
+        if (getStatusRank(normStatus) >= getStatusRank(highestStatusRef.current) || ['rejected', 'cancelled', 'cancelled-visiting-fee'].includes(normStatus)) {
+          highestStatusRef.current = normStatus;
+        }
+        const effectiveStatus = highestStatusRef.current;
+        const mapping = statusToStep(effectiveStatus);
         setActiveStep(mapping.step);
         setCurrentStatusText(mapping.text);
         if (mapping.eta !== null) setEta(mapping.eta);
         setOtpVisible(mapping.otp);
-        if (['in_progress', 'started'].includes(data.currentStatus)) {
-          requestEndOtp();
+        if (effectiveStatus !== 'pending' && effectiveStatus !== 'rejected') {
+          setWorkerAvailability('accepted');
+        }
+        setBookingData((prev) => ({
+          ...(prev || {}),
+          status: effectiveStatus,
+          ...(data.startOtp ? { startOtp: data.startOtp } : {}),
+          ...(data.workerName ? { worker: { ...(prev?.worker || {}), name: data.workerName } } : {}),
+        }));
+        if (data.startOtp) setDisplayedStartOtp(data.startOtp);
+
+        if (['accepted', 'en-route', 'arrived'].includes(effectiveStatus) && !data.startOtp && !displayedStartOtp && token) {
+          requestStartOtp();
         }
       }
     };
@@ -365,51 +467,63 @@ const LiveTracking = () => {
       socket.off('booking_status_changed', handleStatusUpdate);
       socket.off('proof:uploaded', fetchProofs);
     };
-  }, [bookingId, bookingData]);
+  }, [bookingId, bookingData, displayedStartOtp, token]);
 
   // --- Live Reactive Workflow State Machine & Worker Acceptance ---
   useEffect(() => {
-    // 1. Load initial booking from Workflow Engine
     const loadFromWorkflow = () => {
       const rawTarget = bookingId || searchParams.get('bookingId');
       if (!rawTarget) return;
       const targetId = String(rawTarget).trim().replace(/^#/, '');
       const wf = getWorkflowBookingById(targetId) || getWorkflowBookingById(`#${targetId}`) || getWorkflowBookingById(rawTarget);
       if (wf) {
-        setBookingData((prev) => (prev ? { ...prev, ...wf } : wf));
+        const wfNorm = normalizeBookingStatus(wf.status);
+        const currentRank = getStatusRank(highestStatusRef.current);
+        const wfRank = getStatusRank(wfNorm);
+        const canUpdateStatus =
+          wfRank >= currentRank || ['cancelled_visiting_fee', 'cancelled', 'cancelled-visiting-fee'].includes(wfNorm);
+
+        const effectiveStatus = canUpdateStatus ? wfNorm : highestStatusRef.current;
+        if (canUpdateStatus) {
+          highestStatusRef.current = effectiveStatus;
+        }
+
+        setBookingData((prev) => (prev ? { ...prev, ...wf, status: effectiveStatus } : { ...wf, status: effectiveStatus }));
         if (wf.startOtp) {
           setDisplayedStartOtp(wf.startOtp);
         } else if (searchParams.get('startOtp')) {
           setDisplayedStartOtp(searchParams.get('startOtp'));
         }
 
+        if (!canUpdateStatus) return;
+
         // Sync availability strictly to worker's accept action
-        if (wf.status === 'pending') {
+        if (effectiveStatus === 'pending') {
           setWorkerAvailability('checking');
           setCurrentStatusText('Broadcasting request to verified specialists within 15 km...');
           setActiveStep(0);
-        } else if (['accepted', 'en-route', 'arrived', 'verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending', 'completed'].includes(wf.status)) {
+        } else if (['accepted', 'en-route', 'arrived', 'verified', 'before-photo-uploaded', 'in-progress', 'started', 'quotation-pending', 'completed'].includes(effectiveStatus)) {
           setWorkerAvailability('accepted');
-          const wName = wf.worker?.name || workerName || 'Specialist';
-          if (wf.status === 'accepted') {
+          const wName = wf.worker?.name || 'Specialist';
+          if (effectiveStatus === 'accepted') {
             setAcceptanceNotice(`${wName} accepted your booking!`);
             setCurrentStatusText(`${wName} accepted your request. Preparing tools.`);
             setActiveStep(0);
-          } else if (wf.status === 'en-route') {
+          } else if (effectiveStatus === 'en-route') {
             setCurrentStatusText(`${wName} is en route to your location.`);
             setActiveStep(1);
-          } else if (wf.status === 'arrived') {
+          } else if (effectiveStatus === 'arrived') {
             setCurrentStatusText(`${wName} has arrived at your doorstep!`);
             setActiveStep(2);
             setOtpVisible(true);
-          } else if (['verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending'].includes(wf.status)) {
+          } else if (['verified', 'before-photo-uploaded', 'in-progress', 'started', 'quotation-pending'].includes(effectiveStatus)) {
             setCurrentStatusText('Service in progress at your premises.');
             setActiveStep(3);
-          } else if (wf.status === 'completed') {
+          } else if (effectiveStatus === 'completed') {
             setCurrentStatusText('Service completed successfully!');
             setActiveStep(4);
           }
-        } else if (wf.status === 'cancelled_visiting_fee' || wf.status === 'cancelled') {
+        } else if (effectiveStatus === 'cancelled-visiting-fee' || effectiveStatus === 'cancelled') {
           setWorkerAvailability('unavailable');
           setCurrentStatusText('This booking was cancelled.');
         }
@@ -419,21 +533,19 @@ const LiveTracking = () => {
     loadFromWorkflow();
 
     // 2. Real-time subscription to events across tabs
-    const unsub = subscribeWorkflowUpdates((event) => {
+    const unsub = subscribeWorkflowUpdates(() => {
       loadFromWorkflow();
     });
 
     return unsub;
-  }, [bookingId, searchParams, workerName]);
+  }, [bookingId, searchParams]);
 
-    // --- Leaflet Map Initialization and Route Animation ---
+  // --- Leaflet Map Initialization (Runs ONCE on mount to avoid container reuse crashes) ---
   useEffect(() => {
     window.scrollTo(0, 0);
+    const container = mapContainerRef.current;
+    if (!container) return;
 
-    const [userLat, userLng] = customerCoords;
-    if (!mapContainerRef.current) return;
-
-    // Clean up any previous map instance cleanly BEFORE reinitializing
     if (mapRef.current) {
       try {
         mapRef.current.remove();
@@ -442,166 +554,30 @@ const LiveTracking = () => {
       }
       mapRef.current = null;
     }
-    if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
+    if (container._leaflet_id) {
       try {
-        delete mapContainerRef.current._leaflet_id;
-      } catch (e) {}
+        delete container._leaflet_id;
+      } catch (e) {
+        container._leaflet_id = null;
+      }
     }
+    container.innerHTML = '';
 
     try {
-      mapRef.current = L.map(mapContainerRef.current, {
+      const map = L.map(container, {
         zoomControl: false,
         attributionControl: false,
-      }).setView([userLat, userLng], 14);
+      }).setView(customerCoords, 14);
+
+      mapRef.current = map;
 
       const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
-      }).addTo(mapRef.current);
+      }).addTo(map);
 
-      const mapContainer = tileLayer.getContainer();
-      if (mapContainer) {
-        mapContainer.style.filter = 'brightness(0.97) contrast(1.06) sepia(0.24) hue-rotate(-12deg) saturate(0.85)';
-      }
-
-      // Realistic worker starting location (~1.8km offset from user's actual location)
-      const workerStartLat = userLat + 0.012;
-      const workerStartLng = userLng + 0.014;
-
-      // Premium SVGs inside custom DivIcons
-      const createMarkerIcon = (type) => {
-        const isWorker = type === 'worker';
-        const isCustomer = type === 'customer';
-        const bg = isWorker
-          ? 'linear-gradient(135deg, var(--blue), var(--ink))'
-          : isCustomer
-          ? 'linear-gradient(135deg, var(--blue), var(--blue-deep))'
-          : 'linear-gradient(135deg, var(--glass-edge), var(--ink-3))';
-
-        const svgIcon = isWorker
-          ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
-          : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
-
-        const label = isCustomer ? 'Your Location (GPS)' : isWorker ? 'Technician En Route' : 'Local Hub';
-
-        return L.divIcon({
-          className: 'custom-div-icon',
-          html: `
-            <div style="
-              width: ${isWorker ? '48px' : '44px'}; 
-              height: ${isWorker ? '48px' : '44px'}; 
-              border-radius: 50%;
-              background: ${bg}; 
-              border: 3px solid white;
-              display: flex; align-items: center; justify-content: center;
-              box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
-              ${isWorker ? 'animation: pulse 1.8s infinite;' : ''}
-            ">
-              ${svgIcon}
-            </div>
-            <span style="
-              font-size: 0.72rem; font-weight: 800; background: rgba(255,255,255,0.95);
-              backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 20px;
-              border: 1px solid var(--glass-edge); color: var(--ink); display: inline-block;
-              margin-top: 5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(15, 23, 42,0.08);
-              position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-            ">${label}</span>
-          `,
-          iconSize: isWorker ? [48, 48] : [44, 44],
-          iconAnchor: isWorker ? [24, 24] : [22, 22],
-        });
-      };
-
-      // Add customer marker at REAL customer coordinates
-      customerMarkerRef.current = L.marker([userLat, userLng], { icon: createMarkerIcon('customer') }).addTo(
-        mapRef.current
-      );
-
-      // Add worker marker at worker start position
-
-      // BEFORE WORKER ACCEPTS: Standby radar scanning only (No moving worker, no polyline)
-      if (!isWorkerAccepted) {
-        radarCircleRef.current = L.circle([userLat, userLng], {
-          radius: 1200,
-          color: '#3b82f6',
-          fillColor: '#3b82f6',
-          fillOpacity: 0.14,
-          weight: 2,
-          dashArray: '6, 8',
-        }).addTo(mapRef.current);
-
-        mapRef.current.setView([userLat, userLng], 14);
-        return;
-      }
-
-      // WORKER ACCEPTED: Place worker marker and draw navigation route
-      workerMarkerRef.current = L.marker([workerStartLat, workerStartLng], {
-        icon: createMarkerIcon('worker'),
-        zIndexOffset: 1000,
-      }).addTo(mapRef.current);
-
-      // Generate route waypoints from worker starting pos to customer position
-      const generateWaypoints = (startLat, startLng, endLat, endLng, numSteps = 30) => {
-        const points = [];
-        for (let i = 0; i <= numSteps; i++) {
-          const t = i / numSteps;
-          // Add gentle curve to mimic real city roads
-          const latJitter = Math.sin(t * Math.PI) * 0.002;
-          const lngJitter = Math.sin(t * Math.PI) * -0.002;
-          points.push([
-            startLat + (endLat - startLat) * t + latJitter,
-            startLng + (endLng - startLng) * t + lngJitter,
-          ]);
-        }
-        return points;
-      };
-
-      const routePoints = generateWaypoints(workerStartLat, workerStartLng, userLat, userLng, 32);
-
-      // Draw initial polyline
-      polylineRef.current = L.polyline(routePoints, {
-        color: 'var(--ink)',
-        weight: 4,
-        opacity: 0.85,
-        dashArray: '6, 8',
-        lineCap: 'round',
-        lineJoin: 'round',
-      }).addTo(mapRef.current);
-
-      mapRef.current.fitBounds(polylineRef.current.getBounds(), { padding: [60, 60] });
-
-      // --- Smooth En-Route Worker Approach Animation (Visual movement ONLY, no auto-arrived mutation) ---
-      let stepIndex = 0;
-      if (animationTimerRef.current) clearInterval(animationTimerRef.current);
-      if (radarCircleRef.current) {
-        radarCircleRef.current.remove();
-        radarCircleRef.current = null;
-      }
-
-      // If worker already arrived or in-progress, position at customer coordinates
-      if (['arrived', 'verified', 'before_photo_uploaded', 'in-progress', 'started', 'completed'].includes(bookingData?.status) || activeStep >= 2) {
-        workerMarkerRef.current?.setLatLng([userLat, userLng]);
-        setEta(0);
-        return;
-      }
-
-      // Animate ONLY when specialist is en-route
-      if (bookingData?.status === 'en-route' || activeStep === 1) {
-        animationTimerRef.current = setInterval(() => {
-          stepIndex++;
-          if (stepIndex < routePoints.length) {
-            const currentPoint = routePoints[stepIndex];
-            workerMarkerRef.current?.setLatLng(currentPoint);
-
-            const remainingPct = 1 - stepIndex / routePoints.length;
-            const dynamicEta = Math.max(1, Math.round(remainingPct * 12));
-            setEta(dynamicEta);
-          } else {
-            // Reached near doorstep: wait for specialist to click "Mark Arrived"
-            clearInterval(animationTimerRef.current);
-            workerMarkerRef.current?.setLatLng(routePoints[routePoints.length - 1]);
-            setEta(1);
-          }
-        }, 1400);
+      const tileContainer = tileLayer.getContainer();
+      if (tileContainer) {
+        tileContainer.style.filter = 'brightness(0.97) contrast(1.06) sepia(0.24) hue-rotate(-12deg) saturate(0.85)';
       }
     } catch (err) {
       console.warn('Leaflet initialization notice:', err.message);
@@ -615,13 +591,164 @@ const LiveTracking = () => {
         } catch (e) {}
         mapRef.current = null;
       }
-      if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
+      if (container && container._leaflet_id) {
         try {
-          delete mapContainerRef.current._leaflet_id;
-        } catch (e) {}
+          delete container._leaflet_id;
+        } catch (e) {
+          container._leaflet_id = null;
+        }
       }
     };
-  }, [customerCoords, isWorkerAccepted, activeStep, workerName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // --- Update Map Markers, Route Polyline & En-Route Animation cleanly ---
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const [userLat, userLng] = customerCoords;
+
+    // Clear previous animation & dynamic layers without destroying the map instance
+    if (animationTimerRef.current) {
+      clearInterval(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
+    [customerMarkerRef, workerMarkerRef, polylineRef, radarCircleRef].forEach((ref) => {
+      if (ref.current) {
+        try {
+          ref.current.remove();
+        } catch (e) {}
+        ref.current = null;
+      }
+    });
+
+    const workerStartLat = userLat + 0.012;
+    const workerStartLng = userLng + 0.014;
+
+    const createMarkerIcon = (type) => {
+      const isWorker = type === 'worker';
+      const isCustomer = type === 'customer';
+      const bg = isWorker
+        ? 'linear-gradient(135deg, var(--blue), var(--ink))'
+        : isCustomer
+        ? 'linear-gradient(135deg, var(--blue), var(--blue-deep))'
+        : 'linear-gradient(135deg, var(--glass-edge), var(--ink-3))';
+
+      const svgIcon = isWorker
+        ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+
+      const label = isCustomer ? 'Your Location (GPS)' : isWorker ? (workerName ? `${workerName} (En Route)` : 'Technician En Route') : 'Local Hub';
+
+      return L.divIcon({
+        className: 'custom-div-icon',
+        html: `
+          <div style="
+            width: ${isWorker ? '48px' : '44px'}; 
+            height: ${isWorker ? '48px' : '44px'}; 
+            border-radius: 50%;
+            background: ${bg}; 
+            border: 3px solid white;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+            ${isWorker ? 'animation: pulse 1.8s infinite;' : ''}
+          ">
+            ${svgIcon}
+          </div>
+          <span style="
+            font-size: 0.72rem; font-weight: 800; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(4px); padding: 3px 9px; border-radius: 20px;
+            border: 1px solid var(--glass-edge); color: var(--ink); display: inline-block;
+            margin-top: 5px; white-space: nowrap; box-shadow: 0 4px 12px rgba(15, 23, 42,0.08);
+            position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+          ">${label}</span>
+        `,
+        iconSize: isWorker ? [48, 48] : [44, 44],
+        iconAnchor: isWorker ? [24, 24] : [22, 22],
+      });
+    };
+
+    customerMarkerRef.current = L.marker([userLat, userLng], { icon: createMarkerIcon('customer') }).addTo(map);
+
+    if (!isWorkerAccepted) {
+      radarCircleRef.current = L.circle([userLat, userLng], {
+        radius: 1200,
+        color: '#3b82f6',
+        fillColor: '#3b82f6',
+        fillOpacity: 0.14,
+        weight: 2,
+        dashArray: '6, 8',
+      }).addTo(map);
+      map.setView([userLat, userLng], 14);
+      return;
+    }
+
+    workerMarkerRef.current = L.marker([workerStartLat, workerStartLng], {
+      icon: createMarkerIcon('worker'),
+      zIndexOffset: 1000,
+    }).addTo(map);
+
+    const generateWaypoints = (startLat, startLng, endLat, endLng, numSteps = 32) => {
+      const points = [];
+      for (let i = 0; i <= numSteps; i++) {
+        const t = i / numSteps;
+        const latJitter = Math.sin(t * Math.PI) * 0.002;
+        const lngJitter = Math.sin(t * Math.PI) * -0.002;
+        points.push([
+          startLat + (endLat - startLat) * t + latJitter,
+          startLng + (endLng - startLng) * t + lngJitter,
+        ]);
+      }
+      return points;
+    };
+
+    const routePoints = generateWaypoints(workerStartLat, workerStartLng, userLat, userLng, 32);
+
+    polylineRef.current = L.polyline(routePoints, {
+      color: 'var(--ink)',
+      weight: 4,
+      opacity: 0.85,
+      dashArray: '6, 8',
+      lineCap: 'round',
+      lineJoin: 'round',
+    }).addTo(map);
+
+    map.fitBounds(polylineRef.current.getBounds(), { padding: [60, 60] });
+
+    const normStatus = normalizeBookingStatus(bookingData?.status);
+    if (['arrived', 'verified', 'before-photo-uploaded', 'in-progress', 'started', 'completed'].includes(normStatus) || activeStep >= 2) {
+      workerMarkerRef.current?.setLatLng([userLat, userLng]);
+      setEta(0);
+      return;
+    }
+
+    if (normStatus === 'en-route' || normStatus === 'on-the-way' || activeStep === 1) {
+      let stepIndex = 0;
+      animationTimerRef.current = setInterval(() => {
+        stepIndex++;
+        if (stepIndex < routePoints.length) {
+          const currentPoint = routePoints[stepIndex];
+          workerMarkerRef.current?.setLatLng(currentPoint);
+
+          const remainingPct = 1 - stepIndex / routePoints.length;
+          const dynamicEta = Math.max(1, Math.round(remainingPct * 10));
+          setEta(dynamicEta);
+        } else {
+          clearInterval(animationTimerRef.current);
+          workerMarkerRef.current?.setLatLng(routePoints[routePoints.length - 1]);
+          setEta(1);
+        }
+      }, 850);
+    }
+
+    return () => {
+      if (animationTimerRef.current) {
+        clearInterval(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+    };
+  }, [customerCoords, isWorkerAccepted, activeStep, bookingData?.status, workerName]);
 
   // If worker is unavailable
   if (workerAvailability === 'unavailable') {
@@ -1084,7 +1211,7 @@ const LiveTracking = () => {
                     Your service request is broadcasted to verified specialists within 15 km. As soon as a specialist accepts, real-time GPS tracking and your 4-digit doorstep Start OTP will be unlocked.
                   </p>
                 </motion.div>
-              ) : ['verified', 'before_photo_uploaded', 'in-progress', 'started', 'quotation_pending'].includes(bookingData?.status) ? (
+              ) : ['verified', 'before-photo-uploaded', 'in-progress', 'started', 'quotation-pending'].includes(normStatusForGate) ? (
                 <motion.div
                   key="otp-verified-gate"
                   initial={{ opacity: 0, y: 10 }}
@@ -1115,51 +1242,27 @@ const LiveTracking = () => {
                   style={{
                     marginTop: '16px',
                     padding: '16px',
-                    background: bookingData?.status === 'arrived' ? '#fef2f2' : '#f0f9ff',
-                    border: bookingData?.status === 'arrived' ? '2px solid #ef4444' : '2px solid #3b82f6',
+                    background: normStatusForGate === 'arrived' ? '#fef2f2' : '#f0f9ff',
+                    border: normStatusForGate === 'arrived' ? '2px solid #ef4444' : '2px solid #3b82f6',
                     borderRadius: '14px',
                     textAlign: 'center',
                     boxShadow: '0 4px 16px rgba(15, 23, 42, 0.08)',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: bookingData?.status === 'arrived' ? '#dc2626' : '#1d4ed8', fontWeight: 800, fontSize: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: normStatusForGate === 'arrived' ? '#dc2626' : '#1d4ed8', fontWeight: 800, fontSize: '0.85rem' }}>
                     <HiOutlineShieldCheck style={{ fontSize: '1.2rem' }} />
-                    <span>{bookingData?.status === 'arrived' ? '⚡ SPECIALIST AT DOORSTEP — SHARE START OTP' : 'DOORSTEP ENTRY START OTP'}</span>
+                    <span>{normStatusForGate === 'arrived' ? '⚡ SPECIALIST AT DOORSTEP — SHARE START OTP' : 'DOORSTEP ENTRY START OTP'}</span>
                   </div>
-                  <div style={{ fontSize: '2.4rem', fontWeight: 900, color: bookingData?.status === 'arrived' ? '#b91c1c' : '#1e40af', letterSpacing: '8px', margin: '8px 0', fontFamily: 'monospace' }}>
-                    {displayedStartOtp || bookingData?.startOtp || searchParams.get('startOtp') || '8386'}
+                  <div style={{ fontSize: '2.4rem', fontWeight: 900, color: normStatusForGate === 'arrived' ? '#b91c1c' : '#1e40af', letterSpacing: '8px', margin: '8px 0', fontFamily: 'monospace' }}>
+                    {displayedStartOtp || bookingData?.startOtp || searchParams.get('startOtp') || 'Generating...'}
                   </div>
-                  <p style={{ fontSize: '0.8rem', color: bookingData?.status === 'arrived' ? '#991b1b' : '#1e3a8a', margin: 0, fontWeight: 600 }}>
-                    {bookingData?.status === 'arrived'
-                      ? 'Please provide this 4-digit code to the specialist at your door to authorize entry.'
+                  <p style={{ fontSize: '0.8rem', color: normStatusForGate === 'arrived' ? '#991b1b' : '#1e3a8a', margin: 0, fontWeight: 600 }}>
+                    {normStatusForGate === 'arrived'
+                      ? 'Please provide this Start OTP code to the specialist at your door to authorize entry.'
                       : 'Share this code with the specialist only when they arrive at your location to begin work.'}
                   </p>
                 </motion.div>
               ) : null}
-            </AnimatePresence>
-
-            {/* End OTP handover protocol */}
-            <AnimatePresence>
-              {activeStep === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '16px', padding: '16px', background: 'var(--status-success-tint)', border: '2px solid var(--status-success-text)', borderRadius: '12px', textAlign: 'center' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', color: 'var(--status-success-text)', fontWeight: 800, fontSize: '0.85rem' }}>
-                    <span>Job Completion Verification (End OTP)</span>
-                  </div>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--status-success-text)', letterSpacing: '8px', margin: '8px 0' }}>
-                    {displayedEndOtp || '9182'}
-                  </div>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--status-success-text)', margin: '0 0 10px 0', lineHeight: 1.4 }}>
-                    <strong>Security Rule:</strong> Share this 4-digit End OTP with the technician only after you have inspected the job and are satisfied.
-                  </p>
-                  <button type="button" className="btn btn-outline" onClick={requestEndOtp} style={{ fontSize: '0.75rem', padding: '4px 12px', background: 'rgba(255, 255, 255, 0.5)' }}>
-                    Refresh End Code
-                  </button>
-                </motion.div>
-              )}
             </AnimatePresence>
 
             {/* Before & After Photo Evidence (Shows ONLY real uploaded proof photos) */}

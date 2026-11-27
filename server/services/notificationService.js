@@ -309,21 +309,31 @@ export function notifyCallAccepted(io, { requestId, workerId, workerName, custom
 //   - worker_<workerId>
 //   - customer_<customerId>
 // ─────────────────────────────────────────────────────────────────────────────
-export function emitBookingStatus(io, booking, prevStatus) {
+export function emitBookingStatus(io, booking, prevStatus, customerExtra = {}) {
   if (!io) return;
-  const payload = {
+  const workerName =
+    typeof booking.worker === 'object' && booking.worker !== null
+      ? booking.worker.name
+      : undefined;
+
+  const basePayload = {
+    _id: booking._id || booking.id,
     bookingId: booking.bookingId,
     previousStatus: prevStatus,
     currentStatus: booking.status,
+    workerName,
     updatedAt: new Date().toISOString(),
   };
 
-  io.to('admin_room').emit('booking_status_changed', payload);
+  io.to('admin_room').emit('booking_status_changed', basePayload);
 
   if (booking.worker) {
-    io.to(`worker_${booking.worker._id || booking.worker.id || booking.worker}`).emit('booking_status_changed', payload);
+    io.to(`worker_${booking.worker._id || booking.worker.id || booking.worker}`).emit('booking_status_changed', basePayload);
   }
   if (booking.customer) {
-    io.to(`customer_${booking.customer._id || booking.customer.id || booking.customer}`).emit('booking_status_changed', payload);
+    io.to(`customer_${booking.customer._id || booking.customer.id || booking.customer}`).emit('booking_status_changed', {
+      ...basePayload,
+      ...customerExtra,
+    });
   }
 }

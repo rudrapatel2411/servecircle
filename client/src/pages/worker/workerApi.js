@@ -140,6 +140,7 @@ export const updateWorkerJobStatus = async (token, bookingId, status) => {
   const endpointByStatus = {
     'en-route': 'en-route',
     arrived: 'arrive',
+    started: 'start',
     completed: 'complete',
   };
   const endpoint = endpointByStatus[status];

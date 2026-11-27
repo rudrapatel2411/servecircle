@@ -24,10 +24,15 @@ export default function WorkerJobRouteMap({ job }) {
       }
       mapInstanceRef.current = null;
     }
-    if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
-      try {
-        delete mapContainerRef.current._leaflet_id;
-      } catch (e) {}
+    if (mapContainerRef.current) {
+      if (mapContainerRef.current._leaflet_id) {
+        try {
+          delete mapContainerRef.current._leaflet_id;
+        } catch (e) {
+          mapContainerRef.current._leaflet_id = null;
+        }
+      }
+      mapContainerRef.current.innerHTML = '';
     }
 
     // Default Ahmedabad base coordinates: Satellite area
