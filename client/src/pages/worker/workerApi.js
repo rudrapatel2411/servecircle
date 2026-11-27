@@ -170,6 +170,10 @@ export const updateDutyStatus = async (token, { dutyStatus, latitude, longitude 
   });
 };
 
+export const fetchWorkerActivity = async (token) => {
+  return apiRequest('/users/worker/activity', { token });
+};
+
 export const fetchWorkerAvailability = async (token, workerId) => {
   const query = workerId ? `?workerId=${encodeURIComponent(workerId)}` : '';
   return apiRequest(`/users/worker/availability${query}`, { token });

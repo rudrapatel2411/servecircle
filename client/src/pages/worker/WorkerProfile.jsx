@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
  HiOutlineArrowPath,
  HiOutlineCheckBadge,
  HiOutlineUserCircle,
- HiOutlineShieldCheck
+ HiOutlineShieldCheck,
+ HiOutlineClock,
 } from 'react-icons/hi2';
 import WorkerAuthPrompt from './WorkerAuthPrompt';
 import WorkerIDCardModal from '../../components/WorkerIDCardModal';
@@ -141,9 +143,18 @@ const WorkerProfile = () => {
  </h1>
  <p className="page-subtitle">Manage your details, skills, and visibility profile.</p>
  </div>
+ <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+ <Link
+ to="/worker/activity"
+ className="btn btn-primary"
+ style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}
+ >
+ <HiOutlineClock /> Your Activity
+ </Link>
  <button className="btn btn-outline" onClick={loadProfile}>
  <HiOutlineArrowPath /> Refresh
  </button>
+ </div>
  </div>
 
  <div className="dashboard-grid">

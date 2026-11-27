@@ -711,3 +711,29 @@
     min-width: 0;
   }
 }
+
+/* Top-Right Important Notification Popup Animation */
+@keyframes slideInTopRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(32px, -10px, 0) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.toast-top-right {
+  animation: slideInTopRight 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 640px) {
+  .toast-top-right {
+    top: 72px !important;
+    right: 12px !important;
+    left: 12px !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}

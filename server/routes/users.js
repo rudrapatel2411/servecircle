@@ -1,4 +1,5 @@
 import express from 'express';
+import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/prisma.js';
 import { protect, authorize, optionalAuth } from '../middleware/auth.js';
@@ -273,6 +274,76 @@ router.patch(
         data: updateData,
       });
 
+      // Persist duty session transitions (ONLINE -> PAUSED -> OFFLINE) in PostgreSQL
+      try {
+        const openSessions = await prisma.$queryRaw`
+          SELECT id, "startedAt", status
+          FROM "WorkerDutySession"
+          WHERE "workerId" = ${user.id} AND "endedAt" IS NULL
+          ORDER BY "startedAt" DESC
+          LIMIT 1
+        `;
+        const openSession = openSessions?.[0] || null;
+        const now = new Date();
+
+        if (enumDuty === 'ONLINE') {
+          if (openSession) {
+            await prisma.$executeRaw`
+              UPDATE "WorkerDutySession"
+              SET status = 'ONLINE'::"DutyStatus", "updatedAt" = ${now}
+              WHERE id = ${openSession.id}
+            `;
+          } else {
+            await prisma.$executeRaw`
+              INSERT INTO "WorkerDutySession" (id, "workerId", "startedAt", status, "durationSeconds", "jobsCompleted", earnings, "createdAt", "updatedAt")
+              VALUES (${randomUUID()}, ${user.id}, ${now}, 'ONLINE'::"DutyStatus", 0, 0, 0, ${now}, ${now})
+            `;
+          }
+        } else if (enumDuty === 'PAUSED') {
+          if (openSession) {
+            await prisma.$executeRaw`
+              UPDATE "WorkerDutySession"
+              SET status = 'PAUSED'::"DutyStatus", "updatedAt" = ${now}
+              WHERE id = ${openSession.id}
+            `;
+          } else {
+            await prisma.$executeRaw`
+              INSERT INTO "WorkerDutySession" (id, "workerId", "startedAt", status, "durationSeconds", "jobsCompleted", earnings, "createdAt", "updatedAt")
+              VALUES (${randomUUID()}, ${user.id}, ${now}, 'PAUSED'::"DutyStatus", 0, 0, 0, ${now}, ${now})
+            `;
+          }
+        } else if (enumDuty === 'OFFLINE' && openSession) {
+          const startedAt = new Date(openSession.startedAt);
+          const durationSeconds = Math.max(0, Math.floor((now.getTime() - startedAt.getTime()) / 1000));
+          const completedBookings = await prisma.booking.findMany({
+            where: {
+              workerId: user.id,
+              status: { in: ['COMPLETED', 'PAID', 'CLOSED'] },
+              updatedAt: { gte: startedAt, lte: now },
+            },
+            select: { id: true, amount: true, workerEarnings: true },
+          });
+          const jobsCompleted = completedBookings.length;
+          const earnings = completedBookings.reduce(
+            (sum, b) => sum + Number(b.workerEarnings ?? b.amount ?? 0),
+            0
+          );
+
+          await prisma.$executeRaw`
+            UPDATE "WorkerDutySession"
+            SET "endedAt" = ${now},
+                status = 'OFFLINE'::"DutyStatus",
+                "durationSeconds" = ${durationSeconds},
+                "jobsCompleted" = ${jobsCompleted},
+                earnings = ${earnings},
+                "updatedAt" = ${now}
+            WHERE id = ${openSession.id}
+          `;
+        }
+      } catch (sessionErr) {
+        console.warn('WorkerDutySession sync notice:', sessionErr.message);
+      }
+
       const updated = await prisma.user.findUnique({
         where: { id: user.id },
         include: {
@@ -319,6 +390,97 @@ router.patch(
     }
 
     throw new AppError('Worker profile not found', StatusCodes.NOT_FOUND);
+  })
+);
+
+// GET /worker/activity — fetch worker's real DB duty sessions (online -> offline) and work done in each session
+router.get(
+  '/worker/activity',
+  protect,
+  asyncHandler(async (req, res) => {
+    let targetUserId = String(req.user._id || req.user.id);
+    if (req.user.role === 'admin' && req.query.workerId) {
+      targetUserId = String(req.query.workerId);
+    }
+
+    const sessions = await prisma.$queryRaw`
+      SELECT id, "workerId", "startedAt", "endedAt", status, "durationSeconds", "jobsCompleted", earnings, "createdAt"
+      FROM "WorkerDutySession"
+      WHERE "workerId" = ${targetUserId}
+      ORDER BY "startedAt" DESC
+      LIMIT 100
+    `;
+
+    const now = new Date();
+    const enrichedSessions = await Promise.all(
+      (sessions || []).map(async (s) => {
+        const start = new Date(s.startedAt);
+        const end = s.endedAt ? new Date(s.endedAt) : now;
+        const durationSeconds = s.endedAt
+          ? Number(s.durationSeconds || 0)
+          : Math.max(0, Math.floor((end.getTime() - start.getTime()) / 1000));
+
+        const workedBookings = await prisma.booking.findMany({
+          where: {
+            workerId: targetUserId,
+            status: { in: ['COMPLETED', 'PAID', 'CLOSED'] },
+            updatedAt: { gte: start, lte: end },
+          },
+          orderBy: { updatedAt: 'desc' },
+          select: {
+            id: true,
+            bookingId: true,
+            serviceName: true,
+            category: true,
+            amount: true,
+            workerEarnings: true,
+            status: true,
+            completedAt: true,
+            updatedAt: true,
+            customer: { select: { name: true } },
+          },
+        });
+
+        const jobsCount = workedBookings.length;
+        const sessionEarnings = workedBookings.reduce(
+          (sum, b) => sum + Number(b.workerEarnings ?? b.amount ?? 0),
+          0
+        );
+
+        return {
+          id: s.id,
+          startedAt: s.startedAt,
+          endedAt: s.endedAt,
+          status: String(s.status || 'OFFLINE').toLowerCase(),
+          durationSeconds,
+          jobsCompleted: jobsCount,
+          earnings: sessionEarnings,
+          jobs: workedBookings.map((b) => ({
+            id: b.id,
+            bookingId: b.bookingId,
+            service: b.serviceName || b.category || 'Service',
+            category: b.category || '',
+            customerName: b.customer?.name || 'Customer',
+            amount: Number(b.workerEarnings ?? b.amount ?? 0),
+            status: String(b.status || '').toLowerCase(),
+            completedAt: b.completedAt || b.updatedAt,
+          })),
+        };
+      })
+    );
+
+    const summary = enrichedSessions.reduce(
+      (acc, s) => {
+        acc.totalSessions += 1;
+        acc.totalDurationSeconds += Number(s.durationSeconds || 0);
+        acc.totalJobsCompleted += Number(s.jobsCompleted || 0);
+        acc.totalEarnings += Number(s.earnings || 0);
+        return acc;
+      },
+      { totalSessions: 0, totalDurationSeconds: 0, totalJobsCompleted: 0, totalEarnings: 0 }
+    );
+
+    return res.json({ sessions: enrichedSessions, summary });
   })
 );
 

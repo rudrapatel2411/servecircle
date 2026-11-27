@@ -26,6 +26,7 @@ import {
   HiOutlineSparkles,
   HiOutlineArrowLeft,
   HiOutlineTruck,
+  HiOutlineClock,
 } from 'react-icons/hi2';
 import { generalServicesData } from '../data/generalServicesData';
 import { getWorkerCategory } from '../utils/workerCategoryHelper';
@@ -66,6 +67,7 @@ const sidebarConfig = {
     { path: '/worker/earnings', icon: <HiOutlineBanknotes />, labelKey: 'worker.earnings' },
     { path: '/worker/training', icon: <HiOutlineAcademicCap />, labelKey: 'worker.training' },
     { path: '/worker/profile', icon: <HiOutlineUserCircle />, labelKey: 'worker.profile' },
+    { path: '/worker/activity', icon: <HiOutlineClock />, labelKey: 'worker.activity', fallbackLabel: 'Your Activity' },
     { path: '/worker/become-a-pro', icon: <HiOutlineAcademicCap style={{ color: '#d97706' }} />, labelKey: 'customer.becomeAPro', fallbackLabel: 'Become a Pro' },
   ],
   admin: [

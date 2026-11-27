@@ -1,5 +1,41 @@
 # ServeCircle Project Brain
 
+## Working plan — Worker "Your Activity" DB-Backed Duty Sessions & Notification Exclusion (done, verified 2026-11-27)
+
+**User request:**
+"and jo online and offline janeka notification hai usko notification ke andar count mat karo usko workor ke profile me ek new page banao your activity usme store karvao and esa hona chiaye ki on se off jane ke bich kitna work kiya hai agar nahi kiya hai toh kuch nahi and isko mock data mat rakhna sirf db me store karvana correctly and feature proof"
+
+**Changes Implemented:**
+1. **PostgreSQL Schema (`server/prisma/schema.prisma`)**: Added `WorkerDutySession` model (`workerId`, `startedAt`, `endedAt`, `status`, `durationSeconds`, `jobsCompleted`, `earnings`) and created the `"WorkerDutySession"` table + index in PostgreSQL via `prisma db execute`.
+2. **Backend Duty Session & Activity API (`server/routes/users.js`)**:
+   - `PATCH /api/users/worker/duty-status`: Automatically opens a `WorkerDutySession` on `ONLINE`, updates status on `PAUSED`, and closes the session on `OFFLINE` while computing `durationSeconds`, `jobsCompleted`, and `earnings` from real `Booking` records completed between `startedAt` and `endedAt`.
+   - `GET /api/users/worker/activity`: Returns real PostgreSQL `WorkerDutySession` history, enriched with the exact completed `Booking` records in each session's window and summary totals (zero mock data).
+3. **Notification Bell Exclusion (`client/src/components/DashboardNavbar.jsx`)**:
+   - Added `skipInbox: true` to `buildDutyNotification` and skipped `setNotifications` when `skipInbox` is set, so online/offline/pause alerts still show the top-right popup + sound + voice without incrementing `unreadCount` or appearing in the notification dropdown.
+4. **Worker "Your Activity" Page (`client/src/pages/worker/WorkerActivity.jsx`, `workerApi.js`, `WorkerProfile.jsx`, `Sidebar.jsx`, `App.jsx`)**:
+   - Created `WorkerActivity.jsx` at `/worker/activity`, linked from `WorkerProfile.jsx` and `Sidebar.jsx`. Displays real DB duty sessions and only shows work details for sessions where jobs were actually completed between Online and Offline.
+
+**Verification:**
+- `npm --prefix client run build`: PASS.
+- `node -c server/routes/users.js`: PASS.
+
+## Working plan — All-Stage Worker & Customer Notifications with Sound, Top-Right Popup & Duty Status Alerts (done, verified 2026-11-27)
+
+**User request:**
+"workor and customer dono me sab updates and stages pe notification ane chiaye and sound ke sath ane chiaye and imp popup ke sath ane chiaye upar right side ki or and jab workor on ya offline jaye toh on par wokor tou are online and offline jane par you are offline and pause par sirf pause"
+
+**Changes Implemented:**
+1. **`client/src/utils/notificationSound.js`**: Added Web Audio API notification sound synthesizer (`playNotificationSound(type)`) + Web Speech API voice alerts (`speakNotification` / `playNotificationAlert`) with automatic `AudioContext` unlock, distinct chimes, and spoken voice (`"You are online"`, `"You are offline"`, `"Pause"`, and stage updates).
+2. **`client/src/utils/serviceWorkflowEngine.js`**: Added `broadcastNotificationToTabs` dispatches for both `worker` and `customer` across all workflow stages (Booking Created/Confirmed, Accepted, En-Route, Arrived, Start OTP Verified, Before-Service Photo, Service Started, Quotation Submitted, Quotation Approved/Declined, After-Service Photo, Completed & Paid).
+3. **`client/src/components/DashboardNavbar.jsx` & `client/src/components/DashboardNavbar.css`**:
+   - Moved the floating important popup to **top-right** (`top: 84px`, `right: 24px`) with frosted glass styling, `Important Update` badge, `slideInTopRight` animation, and timer reset (`toastTimerRef`).
+   - Wired `playNotificationSound(notif.type)` inside `addNotification`.
+   - Added `buildDutyNotification` and `servecircle:duty-changed` listener with 1500ms dedupe so switching worker duty status from either the Navbar toggle or `WorkerDutySwitch` triggers sound + top-right popup with exact titles: **"You are online"**, **"You are offline"**, and **"Pause"**.
+   - Updated header duty status text to display `Duty ON`, `Paused`, or `Duty OFF`.
+
+**Verification:**
+- `npm --prefix client run build`: PASS (653 modules transformed, 0 errors in 3.97s).
+
 ## Working plan — Full End-to-End Workflow Audit & Cross-Panel Bug Sweep (done, verified 2026-11-27)
 
 **User request:**

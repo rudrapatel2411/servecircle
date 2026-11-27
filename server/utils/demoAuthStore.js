@@ -449,6 +449,7 @@ export async function ensureDemoUsersInDB(prismaOrModel) {
           const validPlan = ['BASIC', 'SILVER', 'GOLD', 'PLATINUM'].includes(planUpper) ? planUpper : 'BASIC';
           const existingSub = await prisma.subscription.findFirst({
             where: { userId: existing.id },
+            select: { id: true },
           });
           if (!existingSub) {
             await prisma.subscription.create({

@@ -219,6 +219,19 @@ export const createWorkflowBooking = ({
     canAccept: true,
   });
 
+  // Notify customer that booking is confirmed & broadcasted
+  broadcastNotificationToTabs({
+    id: `booking_confirmed_${newBooking.id}`,
+    bookingId: newBooking.id,
+    type: 'booking_confirmed',
+    targetRole: 'customer',
+    targetCustomerName: newBooking.customer?.name,
+    targetCustomerPhone: newBooking.customer?.phone,
+    title: `✅ Booking Confirmed (#${newBooking.id})`,
+    message: `Your ${newBooking.service} request is confirmed and sent to verified specialists nearby. Start OTP: ${newBooking.startOtp}`,
+    startOtp: newBooking.startOtp,
+  });
+
   notifySubscribers('BOOKING_CREATED', newBooking);
   return newBooking;
 };
@@ -265,9 +278,23 @@ export const acceptWorkflowBooking = (bookingId, workerProfile = null) => {
     targetCustomerName: current.customer?.name,
     targetCustomerPhone: current.customer?.phone,
     title: `✓ Specialist Assigned!`,
-    message: `${assignedWorker.name} has accepted your booking #${current.id} and is preparing tools.`,
+    message: `${assignedWorker.name} has accepted your booking #${current.id} and is preparing tools. Start OTP: ${current.startOtp}`,
     workerName: assignedWorker.name,
     workerPhone: assignedWorker.phone,
+    startOtp: current.startOtp,
+  });
+
+  // Confirm acceptance to the accepting worker
+  broadcastNotificationToTabs({
+    id: `worker_accept_confirm_${current.id}`,
+    bookingId: current.id,
+    type: 'booking_accepted',
+    targetRole: 'worker',
+    targetWorkerId: assignedWorker.id || assignedWorker._id || assignedWorker.email,
+    targetCategory: current.category,
+    category: current.category,
+    title: `✓ Job Accepted (#${current.id})`,
+    message: `You accepted ${current.service} for ${current.customer?.name || 'Customer'}. Tap "Ready to Go" when heading out.`,
   });
 
   notifySubscribers('JOB_ACCEPTED', current);
@@ -317,10 +344,22 @@ export const setWorkflowEnRoute = (bookingId) => {
     targetRole: 'customer',
     targetCustomerName: all[index].customer?.name,
     targetCustomerPhone: all[index].customer?.phone,
-    title: `Technician En Route`,
+    title: `🚗 Technician En Route`,
     message: `${all[index].worker?.name || 'Your specialist'} is on the way to your doorstep. ETA ~8 mins.`,
     workerName: all[index].worker?.name,
     startOtp: all[index].startOtp,
+  });
+
+  broadcastNotificationToTabs({
+    id: `worker_enroute_confirm_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'worker_enroute',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `🚗 En Route Started (#${all[index].id})`,
+    message: `Live GPS tracking is active. Customer ${all[index].customer?.name || ''} has been notified.`,
   });
 
   notifySubscribers('STATUS_CHANGED', all[index]);
@@ -351,6 +390,18 @@ export const setWorkflowArrived = (bookingId) => {
     message: `${all[index].worker?.name || 'Technician'} has arrived at your doorstep! Share Start OTP (${all[index].startOtp}) to begin work.`,
     workerName: all[index].worker?.name,
     startOtp: all[index].startOtp,
+  });
+
+  broadcastNotificationToTabs({
+    id: `worker_arrived_confirm_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'worker_arrived',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `📍 Arrived at Doorstep (#${all[index].id})`,
+    message: `Collect the 4-digit Start OTP from ${all[index].customer?.name || 'the customer'} to start service.`,
   });
 
   notifySubscribers('WORKER_ARRIVED', all[index]);
@@ -389,6 +440,18 @@ export const verifyWorkflowStartOtp = (bookingId, enteredOtp) => {
     message: `${current.worker?.name || 'Specialist'} verified your Start OTP. Safe doorstep service authorized.`,
   });
 
+  broadcastNotificationToTabs({
+    id: `worker_otp_verified_${current.id}`,
+    bookingId: current.id,
+    type: 'otp_verified',
+    targetRole: 'worker',
+    targetWorkerId: current.worker?.id || current.worker?._id || current.worker?.email,
+    targetCategory: current.category,
+    category: current.category,
+    title: `✓ Start OTP Verified (#${current.id})`,
+    message: `Doorstep entry authorized. Upload Before-Service Photo and start work.`,
+  });
+
   notifySubscribers('OTP_VERIFIED', current);
   return { success: true, booking: current };
 };
@@ -410,6 +473,30 @@ export const uploadWorkflowBeforePhoto = (bookingId, photoUrl, notes = '') => {
   all[index].status = 'before_photo_uploaded';
 
   saveWorkflowBookings(all);
+
+  broadcastNotificationToTabs({
+    id: `before_photo_cust_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'photo_uploaded',
+    targetRole: 'customer',
+    targetCustomerName: all[index].customer?.name,
+    targetCustomerPhone: all[index].customer?.phone,
+    title: `📸 Before-Service Photo Uploaded`,
+    message: `${all[index].worker?.name || 'Your specialist'} uploaded the pre-service inspection photo for #${all[index].id}.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `before_photo_worker_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'photo_uploaded',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `📸 Before-Service Photo Saved (#${all[index].id})`,
+    message: `Pre-service inspection proof uploaded successfully.`,
+  });
+
   notifySubscribers('BEFORE_PHOTO_UPLOADED', all[index]);
   return all[index];
 };
@@ -434,8 +521,20 @@ export const startWorkflowService = (bookingId) => {
     targetRole: 'customer',
     targetCustomerName: all[index].customer?.name,
     targetCustomerPhone: all[index].customer?.phone,
-    title: `Service In Progress`,
+    title: `🔧 Service In Progress`,
     message: `${all[index].worker?.name || 'Specialist'} has commenced work on ${all[index].service}.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `worker_started_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'service_started',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `🔧 Service Started (#${all[index].id})`,
+    message: `Work is now in progress for ${all[index].service}.`,
   });
 
   notifySubscribers('SERVICE_STARTED', all[index]);
@@ -463,6 +562,30 @@ export const submitWorkflowQuotation = (bookingId, { items, totalAmount, notes =
   all[index].status = 'quotation_pending';
 
   saveWorkflowBookings(all);
+
+  broadcastNotificationToTabs({
+    id: `quote_cust_${all[index].id}_${quotation.id}`,
+    bookingId: all[index].id,
+    type: 'quote_received',
+    targetRole: 'customer',
+    targetCustomerName: all[index].customer?.name,
+    targetCustomerPhone: all[index].customer?.phone,
+    title: `📋 New Quotation Received (#${all[index].id})`,
+    message: `${all[index].worker?.name || 'Specialist'} sent an extra work/parts estimate of ₹${quotation.totalAmount}. Please review & approve.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `quote_worker_${all[index].id}_${quotation.id}`,
+    bookingId: all[index].id,
+    type: 'quote_received',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `📋 Quotation Sent (#${all[index].id})`,
+    message: `Estimate of ₹${quotation.totalAmount} sent to ${all[index].customer?.name || 'customer'} for approval.`,
+  });
+
   notifySubscribers('QUOTATION_SUBMITTED', all[index]);
   return all[index];
 };
@@ -514,6 +637,35 @@ export const decideWorkflowQuotation = (bookingId, decision, rejectionReason = '
 
   all[index] = current;
   saveWorkflowBookings(all);
+
+  const isApproved = decision === 'APPROVED';
+  broadcastNotificationToTabs({
+    id: `quote_decided_worker_${current.id}_${Date.now()}`,
+    bookingId: current.id,
+    type: 'quote_decided',
+    targetRole: 'worker',
+    targetWorkerId: current.worker?.id || current.worker?._id || current.worker?.email,
+    targetCategory: current.category,
+    category: current.category,
+    title: isApproved ? `✅ Quotation Approved (#${current.id})` : `⚠️ Quotation Declined (#${current.id})`,
+    message: isApproved
+      ? `${current.customer?.name || 'Customer'} approved the ₹${current.quotation.totalAmount} estimate. You can proceed with work.`
+      : `${current.customer?.name || 'Customer'} declined the estimate. ₹${Math.round(PLATFORM_VISITING_FEE * 0.85)} visiting payout credited.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `quote_decided_cust_${current.id}_${Date.now()}`,
+    bookingId: current.id,
+    type: 'quote_decided',
+    targetRole: 'customer',
+    targetCustomerName: current.customer?.name,
+    targetCustomerPhone: current.customer?.phone,
+    title: isApproved ? `✅ Quotation Approved (#${current.id})` : `Booking Cancelled — Visiting Fee Applied`,
+    message: isApproved
+      ? `Updated total is ₹${current.amount}. Your specialist is resuming work.`
+      : `Estimate declined. ₹${PLATFORM_VISITING_FEE} platform visiting fee settled.`,
+  });
+
   notifySubscribers('QUOTATION_DECIDED', current);
   return current;
 };
@@ -533,6 +685,30 @@ export const uploadWorkflowAfterPhoto = (bookingId, photoUrl, notes = '') => {
   all[index].status = 'after_photo_uploaded';
 
   saveWorkflowBookings(all);
+
+  broadcastNotificationToTabs({
+    id: `after_photo_cust_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'photo_uploaded',
+    targetRole: 'customer',
+    targetCustomerName: all[index].customer?.name,
+    targetCustomerPhone: all[index].customer?.phone,
+    title: `📸 After-Service Photo Uploaded`,
+    message: `${all[index].worker?.name || 'Your specialist'} uploaded the post-service completion photo for #${all[index].id}.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `after_photo_worker_${all[index].id}`,
+    bookingId: all[index].id,
+    type: 'photo_uploaded',
+    targetRole: 'worker',
+    targetWorkerId: all[index].worker?.id || all[index].worker?._id || all[index].worker?.email,
+    targetCategory: all[index].category,
+    category: all[index].category,
+    title: `📸 After-Service Photo Saved (#${all[index].id})`,
+    message: `Completion proof uploaded. Tap "Complete Service" to settle payment.`,
+  });
+
   notifySubscribers('AFTER_PHOTO_UPLOADED', all[index]);
   return all[index];
 };
@@ -585,6 +761,18 @@ export const completeAndPayWorkflowBooking = (bookingId, paymentMethod = 'Wallet
     targetCustomerPhone: current.customer?.phone,
     title: `✓ Service Completed & Paid`,
     message: `Your service ${current.service} has been completed and payment of ₹${payableAmount} settled.`,
+  });
+
+  broadcastNotificationToTabs({
+    id: `worker_completed_${current.id}`,
+    bookingId: current.id,
+    type: 'booking_completed',
+    targetRole: 'worker',
+    targetWorkerId: current.worker?.id || current.worker?._id || current.worker?.email,
+    targetCategory: current.category,
+    category: current.category,
+    title: `💰 Job Completed & Payout Credited (#${current.id})`,
+    message: `${current.service} completed! ₹${workerPayout} credited to your earnings.`,
   });
 
   notifySubscribers('JOB_COMPLETED', current);

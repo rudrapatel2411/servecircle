@@ -43,6 +43,7 @@ import {
 import { getWorkerCategory, doesServiceMatchWorker } from '../utils/workerCategoryHelper';
 import { acceptWorkflowBooking } from '../utils/serviceWorkflowEngine';
 import { getWorkerSession, setWorkerSession, updateDutyStatus, respondToJobRequest } from '../pages/worker/workerApi';
+import { playNotificationAlert } from '../utils/notificationSound';
 import './DashboardNavbar.css';
 
 const DashboardNavbar = ({ panel }) => {
@@ -68,6 +69,8 @@ const DashboardNavbar = ({ panel }) => {
  const [activeCallRequests, setActiveCallRequests] = useState([]); // For worker panel
  const dropdownRef = useRef(null);
  const notifRef = useRef(null);
+ const toastTimerRef = useRef(null);
+ const lastDutyNotifRef = useRef({ status: null, ts: 0 });
  const navigate = useNavigate();
   const location = useLocation();
   const navRef = useRef(null);
@@ -109,16 +112,64 @@ const DashboardNavbar = ({ panel }) => {
 
  const unreadCount = notifications.filter((n) => !n.read).length;
 
+ const buildDutyNotification = (statusValue) => {
+  const s = String(statusValue || '').toLowerCase();
+  if (s === 'online') {
+    return {
+      id: `duty_online_${Date.now()}`,
+      title: 'You are online',
+      message: 'Worker is now online and ready to receive job requests.',
+      type: 'duty_online',
+      targetRole: 'worker',
+      skipInbox: true,
+      date: new Date().toLocaleString('en-IN'),
+    };
+  }
+  if (s === 'paused') {
+    return {
+      id: `duty_paused_${Date.now()}`,
+      title: 'Pause',
+      message: 'Pause',
+      type: 'duty_paused',
+      targetRole: 'worker',
+      skipInbox: true,
+      date: new Date().toLocaleString('en-IN'),
+    };
+  }
+  return {
+    id: `duty_offline_${Date.now()}`,
+    title: 'You are offline',
+    message: 'Worker is now offline. New job dispatches are turned off.',
+    type: 'duty_offline',
+    targetRole: 'worker',
+    skipInbox: true,
+    date: new Date().toLocaleString('en-IN'),
+  };
+ };
+
  // Listen to external duty changes (e.g. from WorkerDutySwitch on dashboard or jobs page)
  useEffect(() => {
  const handleExternalDutyChange = (e) => {
- if (e.detail?.dutyStatus && e.detail.dutyStatus.toLowerCase() !== dutyStatus.toLowerCase()) {
- setDutyStatus(e.detail.dutyStatus.toLowerCase());
+ if (e.detail?.dutyStatus) {
+ const nextStatus = e.detail.dutyStatus.toLowerCase();
+ if (nextStatus !== dutyStatus.toLowerCase()) {
+ setDutyStatus(nextStatus);
+ }
+ if (panel === 'worker') {
+ const now = Date.now();
+ const alreadyNotified =
+ lastDutyNotifRef.current.status === nextStatus &&
+ now - lastDutyNotifRef.current.ts < 1500;
+ if (!alreadyNotified) {
+ lastDutyNotifRef.current = { status: nextStatus, ts: now };
+ addNotification(buildDutyNotification(nextStatus));
+ }
+ }
  }
  };
  window.addEventListener('servecircle:duty-changed', handleExternalDutyChange);
  return () => window.removeEventListener('servecircle:duty-changed', handleExternalDutyChange);
- }, [dutyStatus]);
+ }, [dutyStatus, panel]);
 
  const handleDutyToggle = async (targetStatus) => {
  if (dutyLoading || dutyStatus === targetStatus) {
@@ -142,24 +193,13 @@ const DashboardNavbar = ({ panel }) => {
  if (workerSession) {
  setWorkerSession({ ...workerSession, user: nextUser });
  }
+ lastDutyNotifRef.current = { status: targetStatus, ts: Date.now() };
  window.dispatchEvent(
  new CustomEvent('servecircle:duty-changed', {
  detail: { dutyStatus: targetStatus, user: nextUser },
  })
  );
- const toastPayload = {
- id: `duty_${Date.now()}`,
- title: 'Duty Status Updated',
- message:
- targetStatus === 'online'
- ? 'You are now ONLINE. Ready to receive customer booking dispatches!'
- : targetStatus === 'paused'
- ? 'You are ON BREAK. New job requests are paused.'
- : 'You are now OFFLINE. New booking dispatches are turned off.',
- type: targetStatus === 'online' ? 'system' : 'alert',
- date: new Date().toLocaleString('en-IN'),
- };
- addNotification(toastPayload);
+ addNotification(buildDutyNotification(targetStatus));
  } catch (err) {
  console.warn('Duty toggle failed:', err);
  addNotification({
@@ -240,21 +280,27 @@ const DashboardNavbar = ({ panel }) => {
  if (dismissed.includes(id)) return;
  const readIds = getReadNotificationIds();
  const notif = { ...data, id, read: data.read || readIds.includes(id), ...extra };
- setNotifications((prev) => {
- if (
- prev.some(
- (n) =>
- (n.id && n.id === notif.id) ||
- (notif.requestId && notif.type === 'call_request' && n.requestId === notif.requestId && n.type === 'call_request')
- )
- ) {
- return prev;
+ if (!notif.skipInbox) {
+  setNotifications((prev) => {
+  if (
+  prev.some(
+  (n) =>
+  (n.id && n.id === notif.id) ||
+  (notif.requestId && notif.type === 'call_request' && n.requestId === notif.requestId && n.type === 'call_request')
+  )
+  ) {
+  return prev;
+  }
+  return [notif, ...prev].slice(0, 50);
+  });
  }
- return [notif, ...prev].slice(0, 50);
- });
  setLatestToast(notif);
  setShowToast(true);
- setTimeout(() => setShowToast(false), 6000);
+ playNotificationAlert(notif);
+ if (toastTimerRef.current) {
+  clearTimeout(toastTimerRef.current);
+ }
+ toastTimerRef.current = setTimeout(() => setShowToast(false), 6500);
  };
 
  // Accept a call request (for worker panel)
@@ -578,6 +624,20 @@ const DashboardNavbar = ({ panel }) => {
  broadcast: '#3b82f6',
  system: '#8b5cf6',
  booking_update: '#f59e0b',
+ booking_confirmed: '#2563eb',
+ booking_request: '#10b981',
+ booking_accepted: '#10b981',
+ worker_enroute: '#0ea5e9',
+ worker_arrived: '#f59e0b',
+ otp_verified: '#10b981',
+ photo_uploaded: '#6366f1',
+ service_started: '#2563eb',
+ quote_received: '#f59e0b',
+ quote_decided: '#8b5cf6',
+ booking_completed: '#059669',
+ duty_online: '#16a34a',
+ duty_offline: '#64748b',
+ duty_paused: '#d97706',
  call_request: '#10b981',
  call_accepted: '#10b981',
  promotion: '#ec4899',
@@ -590,6 +650,20 @@ const DashboardNavbar = ({ panel }) => {
  broadcast: '📢',
  system: '⚙️',
  booking_update: '📅',
+ booking_confirmed: '✅',
+ booking_request: '⚡',
+ booking_accepted: '🤝',
+ worker_enroute: '🚗',
+ worker_arrived: '📍',
+ otp_verified: '🔐',
+ photo_uploaded: '📸',
+ service_started: '🔧',
+ quote_received: '📋',
+ quote_decided: '💬',
+ booking_completed: '🎉',
+ duty_online: '🟢',
+ duty_offline: '⚫',
+ duty_paused: '⏸️',
  call_request: '📞',
  call_accepted: '✅',
  promotion: '✨',
@@ -670,11 +744,11 @@ const DashboardNavbar = ({ panel }) => {
             <span style={{
               fontSize: '0.78rem',
               fontWeight: 700,
-              color: dutyStatus === 'online' ? '#2B8663' : 'var(--ink2)',
+              color: dutyStatus === 'online' ? '#2B8663' : dutyStatus === 'paused' ? '#b45309' : 'var(--ink2)',
               letterSpacing: '0.01em',
               whiteSpace: 'nowrap',
             }}>
-              {dutyLoading ? 'Updating...' : dutyStatus === 'online' ? 'Duty ON' : 'Duty OFF'}
+              {dutyLoading ? 'Updating...' : dutyStatus === 'online' ? 'Duty ON' : dutyStatus === 'paused' ? 'Paused' : 'Duty OFF'}
             </span>
             <button
               type="button"
@@ -1185,40 +1259,63 @@ const DashboardNavbar = ({ panel }) => {
  onClose={() => setIsVerifyModalOpen(false)}
  />
 
- {/* Floating Action Toast Notification */}
+ {/* Floating Important Popup Notification (Top-Right) */}
  {showToast && latestToast && (
  <div
- className="toast-notification animate-slide-in-left"
+ className="toast-notification toast-top-right"
+ role="alert"
+ aria-live="assertive"
  style={{
  position: 'fixed',
- bottom: panel === 'worker' ? '96px' : '24px',
+ top: '84px',
+ bottom: 'auto',
  right: '24px',
  left: 'auto',
- background: 'white',
- borderLeft: `4px solid ${notifTypeColor[latestToast.type] || 'var(--primary-500)'}`,
- boxShadow: 'var(--shadow-lg)',
- padding: '16px 24px',
- borderRadius: 'var(--radius-md)',
+ background: 'rgba(255, 255, 255, 0.96)',
+ backdropFilter: 'blur(16px)',
+ WebkitBackdropFilter: 'blur(16px)',
+ border: '1px solid rgba(226, 232, 240, 0.95)',
+ borderLeft: `5px solid ${notifTypeColor[latestToast.type] || 'var(--primary-500)'}`,
+ boxShadow: '0 20px 48px rgba(15, 23, 42, 0.18), 0 4px 14px rgba(15, 23, 42, 0.08)',
+ padding: '16px 20px',
+ borderRadius: '16px',
  zIndex: 9999,
  display: 'flex',
  alignItems: 'flex-start',
- gap: '16px',
- maxWidth: '380px',
+ gap: '14px',
+ maxWidth: '400px',
+ minWidth: '300px',
  }}
  >
- <span style={{ fontSize: '1.4rem', marginTop: '2px' }}>
+ <span style={{ fontSize: '1.5rem', marginTop: '2px', flexShrink: 0 }}>
  {notifTypeIcon[latestToast.type] || notifTypeIcon.default || '🔔'}
  </span>
- <div style={{ flex: 1 }}>
- <h4 style={{ fontSize: '0.95rem', marginBottom: '4px', color: 'var(--navy-800)', fontWeight: 700 }}>
+ <div style={{ flex: 1, minWidth: 0 }}>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+ <span
+ style={{
+ fontSize: '0.65rem',
+ fontWeight: 800,
+ textTransform: 'uppercase',
+ letterSpacing: '0.06em',
+ padding: '2px 7px',
+ borderRadius: '999px',
+ background: `${notifTypeColor[latestToast.type] || '#2563eb'}18`,
+ color: notifTypeColor[latestToast.type] || '#2563eb',
+ }}
+ >
+ Important Update
+ </span>
+ </div>
+ <h4 style={{ fontSize: '0.98rem', margin: '0 0 4px', color: 'var(--navy-800)', fontWeight: 800 }}>
  {latestToast.title}
  </h4>
- <p style={{ fontSize: '0.85rem', color: 'var(--gray-600)', margin: 0 }}>
+ <p style={{ fontSize: '0.84rem', color: 'var(--gray-600)', margin: 0, lineHeight: 1.4 }}>
  {latestToast.message}
  </p>
 
  {/* Direct Job Request Accept button inside toast for worker panel */}
-	{panel === 'worker' && (latestToast.type === 'booking_request' || latestToast.title?.toLowerCase()?.includes('request') || latestToast.bookingId) && (
+	{panel === 'worker' && (latestToast.canAccept || latestToast.type === 'booking_request') && (
 		<div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
 			<button
 				type="button"

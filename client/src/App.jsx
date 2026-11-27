@@ -77,6 +77,7 @@ import WorkerSchedule from './pages/worker/WorkerSchedule';
 import WorkerEarnings from './pages/worker/WorkerEarnings';
 import WorkerTraining from './pages/worker/WorkerTraining';
 import WorkerProfile from './pages/worker/WorkerProfile';
+import WorkerActivity from './pages/worker/WorkerActivity';
 import BecomeAProHub from './pages/worker/BecomeAProHub';
 import WorkerRelocation from './pages/worker/WorkerRelocation';
 import WorkerTravel from './pages/worker/WorkerTravel';
@@ -210,6 +211,7 @@ function App() {
           <Route path="earnings" element={<WorkerEarnings />} />
           <Route path="training" element={<WorkerTraining />} />
           <Route path="profile" element={<WorkerProfile />} />
+          <Route path="activity" element={<WorkerActivity />} />
           <Route path="become-a-pro" element={<BecomeAProHub />} />
         </Route>
 
